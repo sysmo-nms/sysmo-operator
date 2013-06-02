@@ -1,0 +1,22 @@
+NmsPDU DEFINITIONS EXPLICIT TAGS ::=
+-- Use the DEFINITIONS EXPLICIT TAGS in your definition file.
+-- Due to limitation in Tcl/ASN library BER encoding functions, follow these 
+-- rules if you plan to use it. For example, the default Tkorder client:
+-- * define tags in CHOICE constructs
+-- * do not define tags in SEQUENCE constructs
+-- * do not use SET constructs
+
+BEGIN
+
+IMPORTS 
+    SupercastPDU    FROM ModSupercast
+    EsnmpPDU        FROM ModEsnmp
+    TrackerPDU      FROM ModTracker;
+
+PDU ::= CHOICE {
+    modSupercastPDU [0] SupercastPDU,
+    modEsnmpPDU     [1] EsnmpPDU,
+    modTrackerPDU   [2] TrackerPDU
+}
+
+END

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import sys
 import pyasn1
@@ -11,15 +11,15 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 class SupercastClient(QtGui.QMainWindow):
-
     def __init__(self, parent=None):
         super(SupercastClient, self).__init__(parent)
 
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
         self.resize(400, 300)
-        self.pushButton1    = QtGui.QPushButton("START", self)
-        self.setCentralWidget(self.pushButton1)
+        self.setCentralWidget(SupercastClientCenter(self))
+        #self.pushButton1    = QtGui.QPushButton("START", self)
+        #self.setCentralWidget(self.pushButton1)
 
         " Status bar "
         self.statusBar = QtGui.QStatusBar(self)
@@ -75,6 +75,14 @@ class SupercastClient(QtGui.QMainWindow):
         self.statusBar.showMessage(msg)
 
 
+class SupercastClientCenter(QtGui.QFrame):
+    def __init__(self, parent=None):
+        super(SupercastClientCenter, self).__init__(parent)
+        self.pushButton1    = QtGui.QPushButton("START", self)
+
+class SupercastClientLeft(QtGui.QFrame):
+    def __init__(self, parent=None):
+        super(SupercastClientLeft, self).__init__(parent)
 
 
 if __name__ == "__main__":
