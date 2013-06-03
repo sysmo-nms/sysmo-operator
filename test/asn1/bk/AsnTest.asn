@@ -1,0 +1,8 @@
+AsnTest DEFINITIONS IMPLICIT TAGS ::=
+
+BEGIN
+EXPORTS AString;
+
+AString ::= PrintableString
+
+END

@@ -1,4 +1,8 @@
-% depuis "make start" de "nms_project",
+-module(pdu).
+-compile(export_all).
+
+
+
 AsnPdu = {modTrackerPDU,
         {fromServer,
             {cmdResp,
