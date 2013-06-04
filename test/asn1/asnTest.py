@@ -47,10 +47,42 @@ arghh = decoder.decode(modTrackerPdu)
 
 print "!!!!! ->>>> ", arghh, " <<<<<<<<<- !!!!!!!!!"
 
+# create a choice of 2 things
 
+class NmsPDU(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('modSupercastPDU', univ.Integer()),
+        namedtype.NamedType('modEsnmpPDU', univ.Integer()),
+        namedtype.NamedType('modTrackerPDU', NmsPDU_TrackerPDU())
+    )
 
+class NmsPDU_TrackerPDU(univ.Choice):
+    compenentType = namedtype.NamedTypes(
+        namedtype.NamedType('fromServer', NmsPDU_TrackerPDU_FromServer()),
+        namedtype.NamedType('fromClient', univ.Integer()),
+    )
 
+class NmsPDU_TrackerPDU_FromServer(univ.Choice):
+    compenentType = namedtype.NamedTypes(
+        namedtype.NamedType('targetInfo', univ.Integer()),
+        namedtype.NamedType('probeInfo', univ.Integer()),
+        namedtype.NamedType('probeFetch', univ.Integer()),
+        namedtype.NamedType('probeDump', univ.Integer()),
+        namedtype.NamedType('cmdResp', NmsPDU_TrackerPDU_FromServer_CmdResp()),
+        namedtype.NamedType('probeModInfo', univ.Integer())
+    )
 
+class NmsPDU_TrackerPDU_FromServer_CmdResp(univ.Sequence):
+    compenentType = namedtype.NamedTypes(
+        namedtype.NamedType('cmdId', univ.Integer()),
+        namedtype.NamedType('cmdMsg', char.PrintableString())
+    )
+
+c = TChoice()
+c.setComponentByName('message', 'hello')
+
+print c.prettyPrint()
+a = encoder.encode(c)
 
 
 
