@@ -48,6 +48,39 @@ class NmsPDU(univ.Choice):
                     2
                 )
             )
+        ),
+        namedtype.NamedType(
+            'tt',
+            univ.Choice(
+                componentType = namedtype.NamedTypes(
+                    namedtype.NamedType(
+                        'c1',
+                        char.PrintableString().subtype(
+                            implicitTag=tag.Tag(
+                                tag.tagClassContext,
+                                tag.tagFormatSimple,
+                                4
+                            )
+                        )
+                    ),
+                    namedtype.NamedType(
+                        'c2',
+                        char.PrintableString().subtype(
+                            implicitTag=tag.Tag(
+                                tag.tagClassContext,
+                                tag.tagFormatSimple,
+                                5
+                            )
+                        )
+                    )
+                )
+            ).subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    3
+                )
+            )
         )
     )
 
@@ -63,20 +96,20 @@ extendedPdu = eF.read(); eF.close()
 " OK "
 decodedSimplePdu, b = decoder.decode(simplePdu, asn1Spec=TestPDU())
 print simplePdu, decodedSimplePdu
+print encoder.encode(decodedSimplePdu)
 
 " OK "
 decodedExtendedPdu, b = decoder.decode(extendedPdu, asn1Spec=NmsPDU())
 print extendedPdu, decodedExtendedPdu
-
-
+print encoder.encode(decodedExtendedPdu)
 
 
 " SIMPLE pdu created by pyasnlib "
-simplePdu = TestPDU()
-simplePdu.setComponentByName('choiceOne', "YZ")
-simpleEncoded = encoder.encode(simplePdu)
+sPdu = TestPDU()
+sPdu.setComponentByName('choiceOne', "YZ")
+sEncoded = encoder.encode(sPdu)
 sP          = open('pbinary_modTest_choiceOne.bin', 'w')
-sP.write(simpleEncoded); sP.close()
+sP.write(sEncoded); sP.close()
 
 " erlang read OK "
 # {ok, B} = file:read_file('pbinary_modTest_choiceOne.bin').
@@ -84,7 +117,7 @@ sP.write(simpleEncoded); sP.close()
 # {ok,{choiceOne,"YZ"}}
 
 " pyasn1 read OK "
-returnDecoded, b = decoder.decode(simpleEncoded, asn1Spec=TestPDU())
+returnDecoded, b = decoder.decode(sEncoded, asn1Spec=TestPDU())
 print returnDecoded
 
 
@@ -92,20 +125,35 @@ print returnDecoded
 " EXTENDED pdu created by pyasnlib "
 " Probleme avec choices ici "
 " pyasn1.error.PyAsn1Error: Component type error TestPDU() vs TestPDU() "
-
 " voir http://sourceforge.net/mailarchive/forum.php?thread_name=E1I9I2V-000B1q-Ut%40ffe1.ukr.net&forum_name=pyasn1-users "
-extendedPdu = NmsPDU()
-msgTest = char.PrintableString().subtype(
-    explicitTag=tag.Tag(
-        tag.tagClassContext,
-        tag.tagFormatSimple,
-        1
+
+workingTuple, a = decoder.decode(extendedPdu, asn1Spec=NmsPDU())
+workingData = encoder.encode(workingTuple)
+print 
+print 
+print 
+print 
+
+print "----------"
+
+newPdu = NmsPDU()
+newPdu.setComponentByName(
+    'modTest',
+    univ.Choice(
+        componentType = namedtype.NamedTypes(
+            namedtype.NamedType('c1', "lkj")
+        )
+    ).subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
     )
 )
 
-extendedPdu.setComponentByName('modTest', TestPDU(msgTest))
 
-print extendedPdu
-print simplePdu
+#print newPdu
 
-print str(simplePdu)
+xPdu = encoder.encode(newPdu)
+print xPdu
