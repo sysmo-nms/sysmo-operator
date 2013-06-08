@@ -1,122 +1,111 @@
 #!/usr/bin/env python2
 
-from pyasn1.type import char, univ, namedtype, tag
-from pyasn1.codec.ber import encoder, decoder
+from pyasn1.type        import char, univ, namedtype, tag
+from pyasn1.codec.ber   import encoder, decoder
 
-" decode and encode asn1 terms "
-
-
-
-" encode "
-class CommandResponce(univ.Choice):
+class TestPDU(univ.Choice):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('aab', univ.Integer()),
-        namedtype.NamedType('bbc', univ.OctetString())
-    )
-
-c = CommandResponce()
-c.setComponentByName('aab', 123)
-c.setComponentByName('bbc', 'hello jojo')
-# print "initial value!!!!!!!!!!!!!!! ", c
-
-# binPdu = encoder.encode(c)
-# print "value encoded!!!!!!!!!!!!!!! ", binPdu
-
-# test = decoder.decode(binPdu)
-# print "value decoded!!!!!!!!!!!!!!! ", test
-
-
-" decode "
-fd  = open("NmsPDU_modTrackerPDU_fromServer_cmdResp_CmdResponce.bin")
-modTrackerPdu = fd.read()
-
-# print "hello pyasn1", pdu
-i_integer   = encoder.encode(univ.Integer(999))
-i_return    = decoder.decode(i_integer)
-#print i_integer, " --> ",  i_return
-
-p_string    = encoder.encode(char.PrintableString("hello world"))
-p_return    = decoder.decode(p_string)
-#print p_string, " --> ",  p_return
-
-arghh = decoder.decode(modTrackerPdu)
-
-# voir http://pyasn1.sourceforge.net/codecs.html#2.1
-# "decoding untagged types" (any and choice)
-#rtt, modTrackerPdu = decoder.decode(modTrackerPdu, asn1Spec=univ.Choice())
-
-#print "!!!!! ->>>> ", arghh, " <<<<<<<<<- !!!!!!!!!"
-
-# create a choice of 2 things
-
-
-class NmsPDU_TrackerPDU_FromServer_CmdResp(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('cmdId', univ.Integer()),
-        namedtype.NamedType('cmdMsg', char.PrintableString())
-    )
-
-class NmsPDU_TrackerPDU_FromServer(univ.Choice):
-    componentType = namedtype.NamedTypes(
-#        namedtype.NamedType('tragetInfo', univ.Integer()),
-#        namedtype.NamedType('probeInfo', char.PrintableString()),
-#        namedtype.NamedType('probeFetch', char.PrintableString()),
-        namedtype.NamedType('probeDump', char.PrintableString()),
-        namedtype.NamedType('cmdResp', NmsPDU_TrackerPDU_FromServer_CmdResp()),
-#        namedtype.NamedType('probeModInfo', char.PrintableString())
-    )
-
-# class NmsPDU_TrackerPDU_FromServer(univ.Choice):
-#     componentType = namedtype.NamedTypes(
-#         namedtype.NamedType('targetInfo', univ.Integer()),
-#         namedtype.NamedType('probeInfo', univ.Integer()),
-#         namedtype.NamedType('probeFetch', univ.Integer()),
-#         namedtype.NamedType('probeDump', univ.Integer()),
-#         namedtype.NamedType('cmdResp', NmsPDU_TrackerPDU_FromServer_CmdResp()),
-#         namedtype.NamedType('probeModInfo', univ.Integer())
-#     )
-
-class NmsPDU_TrackerPDU(univ.Choice):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('fromServer', NmsPDU_TrackerPDU_FromServer()),
-        namedtype.NamedType('fromClient', univ.Integer()),
+        namedtype.NamedType(
+            'choiceOne',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'choiceTwo',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    2
+                )
+            )
+        )
     )
 
 class NmsPDU(univ.Choice):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('modSupercastPDU', univ.Integer()),
-        namedtype.NamedType('modEsnmpPDU', univ.Integer()),
-        namedtype.NamedType('modTrackerPDU', NmsPDU_TrackerPDU())
+        namedtype.NamedType(
+            'modTest',
+            TestPDU().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'modTrackerPDU',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    2
+                )
+            )
+        )
     )
 
-cmdResp = NmsPDU_TrackerPDU_FromServer_CmdResp()
-cmdResp.setComponentByName('cmdId', 23)
-cmdResp.setComponentByName('cmdMsg', "hello")
-
-#fromSrv = NmsPDU_TrackerPDU_FromServer()
-#fromSrv.setComponentByName('cmdResp', cmdResp)
-
-#trackerPdu = NmsPDU_TrackerPDU()
-#trackerPdu.setComponentByName('fromServer', fromSrv)
-
-#nmsPdu = NmsPDU()
-#nmsPdu.setComponentByName('modTrackerPDU', trackerPdu)
 
 
 
-testC = NmsPDU_TrackerPDU_FromServer()
-#testC.setComponentByName('choix1', 234)
-#testC.setComponentByName('choix2', "hello")
-testC.setComponentByName('cmdResp', cmdResp)
+" read pdu created by erlang asn lib asntest.erl "
+sF          = open('ebinary_modTest_choiceOne.bin')
+simplePdu   = sF.read(); sF.close()
+eF          = open('ebinary_NmsPDU_modTest_choiceOne.bin')
+extendedPdu = eF.read(); eF.close()
+
+" OK "
+decodedSimplePdu, b = decoder.decode(simplePdu, asn1Spec=TestPDU())
+print simplePdu, decodedSimplePdu
+
+" OK "
+decodedExtendedPdu, b = decoder.decode(extendedPdu, asn1Spec=NmsPDU())
+print extendedPdu, decodedExtendedPdu
 
 
 
-encodeTest = testC
-print  encodeTest.getName()
-print  encodeTest.getComponent()
-print "pdu is: ", encodeTest
-data = encoder.encode(encodeTest)
-print "data is: ", data
-dataDec, other = decoder.decode(data, asn1Spec=encodeTest)
-print "dataDec is: ", dataDec
 
+" SIMPLE pdu created by pyasnlib "
+simplePdu = TestPDU()
+simplePdu.setComponentByName('choiceOne', "YZ")
+simpleEncoded = encoder.encode(simplePdu)
+sP          = open('pbinary_modTest_choiceOne.bin', 'w')
+sP.write(simpleEncoded); sP.close()
+
+" erlang read OK "
+# {ok, B} = file:read_file('pbinary_modTest_choiceOne.bin').
+# 'ModTest':decode('TestPDU', B).
+# {ok,{choiceOne,"YZ"}}
+
+" pyasn1 read OK "
+returnDecoded, b = decoder.decode(simpleEncoded, asn1Spec=TestPDU())
+print returnDecoded
+
+
+
+" EXTENDED pdu created by pyasnlib "
+" Probleme avec choices ici "
+" pyasn1.error.PyAsn1Error: Component type error TestPDU() vs TestPDU() "
+
+" voir http://sourceforge.net/mailarchive/forum.php?thread_name=E1I9I2V-000B1q-Ut%40ffe1.ukr.net&forum_name=pyasn1-users "
+extendedPdu = NmsPDU()
+msgTest = char.PrintableString().subtype(
+    explicitTag=tag.Tag(
+        tag.tagClassContext,
+        tag.tagFormatSimple,
+        1
+    )
+)
+
+extendedPdu.setComponentByName('modTest', TestPDU(msgTest))
+
+print extendedPdu
+print simplePdu
+
+print str(simplePdu)

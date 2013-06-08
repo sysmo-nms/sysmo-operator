@@ -88,9 +88,9 @@ info() ->
 'enc_TestPDU'(Val, TagIn) ->
    {EncBytes,EncLen} = case element(1,Val) of
       choiceOne ->
-         ?RT_BER:encode_restricted_string([], element(2,Val), 19, [<<128>>]);
-      choiceTwo ->
          ?RT_BER:encode_restricted_string([], element(2,Val), 19, [<<129>>]);
+      choiceTwo ->
+         ?RT_BER:encode_restricted_string([], element(2,Val), 19, [<<130>>]);
       Else -> 
          exit({error,{asn1,{invalid_choice_type,Else}}})
    end,
@@ -108,12 +108,12 @@ Tlv1 = ?RT_BER:match_tags(Tlv,TagIn),
 case (case Tlv1 of [CtempTlv1] -> CtempTlv1; _ -> Tlv1 end) of
 
 %% 'choiceOne'
-    {131072, V1} -> 
+    {131073, V1} -> 
         {choiceOne, ?RT_BER:decode_restricted_string(V1,[],19,[])};
 
 
 %% 'choiceTwo'
-    {131073, V1} -> 
+    {131074, V1} -> 
         {choiceTwo, ?RT_BER:decode_restricted_string(V1,[],19,[])};
 
       Else -> 

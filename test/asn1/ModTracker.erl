@@ -1988,17 +1988,17 @@ end,
 'enc_TrackerPDU_fromServer'(Val, TagIn) ->
       {EncBytes,EncLen} = case element(1,Val) of
       targetInfo ->
-         'enc_TargetInfo'(element(2,Val), [<<48>>,<<161>>]);
+         'enc_TargetInfo'(element(2,Val), [<<161>>]);
       probeInfo ->
-         'enc_ProbeInfo'(element(2,Val), [<<48>>,<<162>>]);
+         'enc_ProbeInfo'(element(2,Val), [<<162>>]);
       probeFetch ->
-         'enc_ProbeFetch'(element(2,Val), [<<48>>,<<163>>]);
+         'enc_ProbeFetch'(element(2,Val), [<<163>>]);
       probeDump ->
-         'enc_ProbeDump'(element(2,Val), [<<48>>,<<164>>]);
+         'enc_ProbeDump'(element(2,Val), [<<164>>]);
       cmdResp ->
-         'enc_CommandResponce'(element(2,Val), [<<48>>,<<165>>]);
+         'enc_CommandResponce'(element(2,Val), [<<165>>]);
       probeModInfo ->
-         'enc_ProbeModuleInfo'(element(2,Val), [<<48>>,<<166>>]);
+         'enc_ProbeModuleInfo'(element(2,Val), [<<166>>]);
       Else -> 
          exit({error,{asn1,{invalid_choice_type,Else}}})
    end,
@@ -2012,32 +2012,32 @@ case (case Tlv1 of [CtempTlv1] -> CtempTlv1; _ -> Tlv1 end) of
 
 %% 'targetInfo'
     {131073, V1} -> 
-        {targetInfo, 'dec_TargetInfo'(V1, [16])};
+        {targetInfo, 'dec_TargetInfo'(V1, [])};
 
 
 %% 'probeInfo'
     {131074, V1} -> 
-        {probeInfo, 'dec_ProbeInfo'(V1, [16])};
+        {probeInfo, 'dec_ProbeInfo'(V1, [])};
 
 
 %% 'probeFetch'
     {131075, V1} -> 
-        {probeFetch, 'dec_ProbeFetch'(V1, [16])};
+        {probeFetch, 'dec_ProbeFetch'(V1, [])};
 
 
 %% 'probeDump'
     {131076, V1} -> 
-        {probeDump, 'dec_ProbeDump'(V1, [16])};
+        {probeDump, 'dec_ProbeDump'(V1, [])};
 
 
 %% 'cmdResp'
     {131077, V1} -> 
-        {cmdResp, 'dec_CommandResponce'(V1, [16])};
+        {cmdResp, 'dec_CommandResponce'(V1, [])};
 
 
 %% 'probeModInfo'
     {131078, V1} -> 
-        {probeModInfo, 'dec_ProbeModuleInfo'(V1, [16])};
+        {probeModInfo, 'dec_ProbeModuleInfo'(V1, [])};
 
       Else -> 
          exit({error,{asn1,{invalid_choice_tag,Else}}})
@@ -2056,17 +2056,17 @@ case (case Tlv1 of [CtempTlv1] -> CtempTlv1; _ -> Tlv1 end) of
 'enc_TrackerPDU_fromClient'(Val, TagIn) ->
       {EncBytes,EncLen} = case element(1,Val) of
       createTarget ->
-         'enc_TargetCreate'(element(2,Val), [<<48>>,<<161>>]);
+         'enc_TargetCreate'(element(2,Val), [<<161>>]);
       updateTarget ->
-         'enc_TargetUpdate'(element(2,Val), [<<48>>,<<162>>]);
+         'enc_TargetUpdate'(element(2,Val), [<<162>>]);
       deleteTarget ->
-         'enc_TargetDelete'(element(2,Val), [<<48>>,<<163>>]);
+         'enc_TargetDelete'(element(2,Val), [<<163>>]);
       createProbe ->
-         'enc_ProbeCreate'(element(2,Val), [<<48>>,<<164>>]);
+         'enc_ProbeCreate'(element(2,Val), [<<164>>]);
       updateProbe ->
-         'enc_ProbeUpdate'(element(2,Val), [<<48>>,<<165>>]);
+         'enc_ProbeUpdate'(element(2,Val), [<<165>>]);
       deleteProbe ->
-         'enc_ProbeDelete'(element(2,Val), [<<48>>,<<166>>]);
+         'enc_ProbeDelete'(element(2,Val), [<<166>>]);
       Else -> 
          exit({error,{asn1,{invalid_choice_type,Else}}})
    end,
@@ -2080,32 +2080,32 @@ case (case Tlv1 of [CtempTlv1] -> CtempTlv1; _ -> Tlv1 end) of
 
 %% 'createTarget'
     {131073, V1} -> 
-        {createTarget, 'dec_TargetCreate'(V1, [16])};
+        {createTarget, 'dec_TargetCreate'(V1, [])};
 
 
 %% 'updateTarget'
     {131074, V1} -> 
-        {updateTarget, 'dec_TargetUpdate'(V1, [16])};
+        {updateTarget, 'dec_TargetUpdate'(V1, [])};
 
 
 %% 'deleteTarget'
     {131075, V1} -> 
-        {deleteTarget, 'dec_TargetDelete'(V1, [16])};
+        {deleteTarget, 'dec_TargetDelete'(V1, [])};
 
 
 %% 'createProbe'
     {131076, V1} -> 
-        {createProbe, 'dec_ProbeCreate'(V1, [16])};
+        {createProbe, 'dec_ProbeCreate'(V1, [])};
 
 
 %% 'updateProbe'
     {131077, V1} -> 
-        {updateProbe, 'dec_ProbeUpdate'(V1, [16])};
+        {updateProbe, 'dec_ProbeUpdate'(V1, [])};
 
 
 %% 'deleteProbe'
     {131078, V1} -> 
-        {deleteProbe, 'dec_ProbeDelete'(V1, [16])};
+        {deleteProbe, 'dec_ProbeDelete'(V1, [])};
 
       Else -> 
          exit({error,{asn1,{invalid_choice_tag,Else}}})

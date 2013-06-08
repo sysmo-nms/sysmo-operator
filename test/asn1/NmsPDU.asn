@@ -7,6 +7,7 @@ NmsPDU DEFINITIONS IMPLICIT TAGS ::=
 -- * do not use SET constructs
 
 BEGIN
+EXPORTS PDU;
 
 IMPORTS 
 --    SupercastPDU    FROM ModSupercast

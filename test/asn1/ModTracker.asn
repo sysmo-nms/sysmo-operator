@@ -1,5 +1,6 @@
-ModTracker DEFINITIONS EXPLICIT TAGS ::=
+ModTracker DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
+EXPORTS TrackerPDU;
 
 IpAdd   ::= PrintableString
 
