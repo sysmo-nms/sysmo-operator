@@ -1,4 +1,4 @@
-NmsPDU DEFINITIONS EXPLICIT TAGS ::=
+NmsPDU DEFINITIONS IMPLICIT TAGS ::=
 -- Use the DEFINITIONS EXPLICIT TAGS in your definition file.
 -- Due to limitation in Tcl/ASN library BER encoding functions, follow these 
 -- rules if you plan to use it. For example, the default Tkorder client:
@@ -9,13 +9,14 @@ NmsPDU DEFINITIONS EXPLICIT TAGS ::=
 BEGIN
 
 IMPORTS 
-    SupercastPDU    FROM ModSupercast
-    EsnmpPDU        FROM ModEsnmp
+--    SupercastPDU    FROM ModSupercast
+--    EsnmpPDU        FROM ModEsnmp
+    TestPDU         FROM ModTest
     TrackerPDU      FROM ModTracker;
 
 PDU ::= CHOICE {
-    modSupercastPDU [0] SupercastPDU,
-    modEsnmpPDU     [1] EsnmpPDU,
+--    modSupercastPDU [0] SupercastPDU,
+    modTest         [1] TestPDU,
     modTrackerPDU   [2] TrackerPDU
 }
 

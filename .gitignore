@@ -1,3 +1,7 @@
 Makefile
 *.swp
 *.swo
+*.asn1db
+*.beam
+*.hrl
+*.bin
