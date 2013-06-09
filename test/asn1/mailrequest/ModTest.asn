@@ -1,0 +1,10 @@
+ModTest DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+EXPORTS TestPDU;
+
+TestPDU ::= CHOICE {
+    choiceOne   [1] PrintableString,
+    choiceTwo   [2] PrintableString
+}
+
+END

@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
 
 import sys
-import pyasn1
 
-from PySide import QtCore, QtGui, QtNetwork
+from PySide             import QtCore, QtGui, QtNetwork
+from pyasn1.type        import char, univ, namedtype, tag
+from pyasn1.codec.ber   import encoder, decoder
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -90,3 +91,11 @@ if __name__ == "__main__":
     supercastUi  = SupercastClient()
     supercastUi.show()
     sys.exit(supercastApp.exec_())
+
+
+
+" PDUs "
+class SupercastPDU(char.PrintableSting):    pass
+class EsnmpPDU(char.PrintableSting):        pass
+class TrackerPDU(char.PrintableSting):      pass
+class NmsPDU(char.PrintableString):         pass
