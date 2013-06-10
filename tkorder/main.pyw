@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-import  sys
+import  sys, time
 from    supercast   import decode, encode
 from    PySide      import QtCore, QtGui, QtNetwork
 
@@ -116,7 +116,13 @@ class SupercastClientLeft(QtGui.QFrame):
 
 
 if __name__ == "__main__":
-    supercastApp = QtGui.QApplication(sys.argv)
-    supercastUi  = SupercastClient()
+    supercastApp    = QtGui.QApplication(sys.argv)
+    splash_pixmap   = QtGui.QPixmap("/home/seb/Images/overcast2.png")
+    splash          = QtGui.QSplashScreen(splash_pixmap)
+    splash.show()
+
+    supercastUi     = SupercastClient()
+    splash.finish(supercastUi)
     supercastUi.show()
+
     sys.exit(supercastApp.exec_())
