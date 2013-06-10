@@ -283,11 +283,119 @@ class NmsPDU(univ.Choice):
 ##############################################################################
 ##############################################################################
 def decode(pdu):
-    pduTuple, a = decoder.decode(pdu, asn1Spec=NmsPDU())
-    return pduTuple
+    msg, x = decoder.decode(pdu, asn1Spec=NmsPDU())
+
+    msg1        = msg.getComponent()
+    msg1_type   = msg.getName()
+    if msg1_type == 'modSupercastPDU':
+        msg2        = msg1.getComponent()
+        msg2_type   = msg1.getName()
+        if msg2_type == 'fromServer':
+            msg3        = msg2.getComponent()
+            msg3_type   = msg2.getName()
+            if   msg3_type == 'unsubscribeOk':
+                print "unsubscribeOk message", msg3
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    str(msg3)
+                }
+            elif msg3_type == 'subscribeOk':
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    str(msg3)
+                }
+            elif msg3_type == 'subscribeErr':
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    str(msg3)
+                }
+            elif msg3_type == 'unsubscribeErr':
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    str(msg3)
+                }
+            elif msg3_type == 'chanInfo':
+                channel = msg3.getComponentByName('channel')
+                evtype  = msg3.getComponentByName('type')
+                if      evtype == 0: eventType = 'create'
+                elif    evtype == 1: eventType = 'delete'
+                elif    evtype == 2: eventType = 'update'
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'channelId':      str(channel),
+                        'eventType':    str(eventType)
+                    }
+                }
+            elif msg3_type == 'authReq':
+                if      msg3 == 0: authProto = 'localFile'
+                elif    msg3 == 1: authProto = 'ldap'
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    str(authProto)
+                }
+            elif msg3_type == 'authAck':
+                groups      = msg3.getComponentByName('groups')
+                chans       = msg3.getComponentByName('staticChans')
+                group_list  = list()
+                chan_list   = list()
+                for idx in range(len(groups)):
+                    group_list.append(str(groups.getComponentByPosition(idx)))
+
+                for idx in range(len(chans)):
+                    i = chans.getComponentByPosition(idx)
+                    channel    = str(i.getComponentByName('channel'))
+                    evtype     = int(i.getComponentByName('type'))
+                    if      evtype == 0: eventType = 'create'
+                    elif    evtype == 1: eventType = 'delete'
+                    elif    evtype == 2: eventType = 'update'
+                    chan_list.append({
+                        'channelId': channel,
+                        'eventType': eventType
+                    })
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'groups':   group_list,
+                        'chans':    chan_list
+                    }
+                }
+            elif msg3_type == 'authError':
+                error  = int(msg3.getComponentByName('error'))
+                userId = str(msg3.getComponentByName('userId'))
+                passw  = str(msg3.getComponentByName('pass'))
+                if      error == 0: errorType = 'noSuchUser'
+                elif    error == 1: errorType = 'badPass'
+                elif    error == 2: errorType = 'timeout'
+                elif    error == 3: errorType = 'other'
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'error':    errorType,
+                        'userId':   userId,
+                        'pass':     passw
+                    }
+                }
+            else:
+                print "unknwon message", msg3_type
+                return {}
+        else: 
+            print "unknwon message", msg3_type
+            return {}
+    else:
+        print "Unknown pdu: ", msg1_type
+        return {}
 
 
-def genPdu_unsubscribe(chanString):
+def encode_unsubscribe(chanString):
     chan = SupercastChan(chanString).subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
@@ -317,7 +425,7 @@ def genPdu_unsubscribe(chanString):
     pdu = encoder.encode(pduDef)
     return pdu
 
-def genPdu_subscribe(chanString):
+def encode_subscribe(chanString):
     chan = SupercastChan(chanString).subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
@@ -347,7 +455,7 @@ def genPdu_subscribe(chanString):
     pdu = encoder.encode(pduDef)
     return pdu
 
-def genPdu_authResp(userId, password):
+def encode_authResp(userId, password):
     authResp = SupercastAuthResp().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
@@ -383,11 +491,11 @@ def genPdu_authResp(userId, password):
     return pdu
 
 
-fd = open('/tmp/pdu.bin', 'r')
+# fd = open('/tmp/pdu.bin', 'r')
 # fw = open('/tmp/ret.bin', 'w')
-pdu = fd.read(); fd.close()
-a = decode(pdu)
+# pdu = fd.read(); fd.close()
+# a = decode(pdu)
+# print "Return is ", a
 # x = genPdu_unsubscribe("channel-Xkki")
 # 
 # fw.write(x); fw.close()
-print type(a)
