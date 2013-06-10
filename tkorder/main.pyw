@@ -1,9 +1,7 @@
 #!/usr/bin/env python2
-
-import sys
-from PySide             import QtCore, QtGui, QtNetwork
-#from pyasn1.type        import char, univ, namedtype, tag
-#from pyasn1.codec.ber   import encoder, decoder
+import  sys
+from    supercast   import decode, encode
+from    PySide      import QtCore, QtGui, QtNetwork
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -33,9 +31,13 @@ class SupercastClient(QtGui.QMainWindow):
         menuFile    = menu.addMenu('Engage')
         menuFile.addAction(exitAction)
 
-        " Server connexion "
+        " Server connexion and socket related "
+        self.header_len     = 4
+        self.header_data    = QtCore.QByteArray()
+        self.payload_len    = 0
+        self.payload_data   = QtCore.QByteArray()
         self.server         = 'localhost'
-        self.port           = 8889
+        self.port           = 8888
         self.messagesCount  = 0
         self.tcpSocket      = QtNetwork.QTcpSocket()
         self.tcpSocket.connected.connect(self.socketConnected)
@@ -50,12 +52,35 @@ class SupercastClient(QtGui.QMainWindow):
     #
     #
     " SELF.SOCKET methods "
+    #
+    #
+    " four bytes header to unpack before reading the payload "
     def socketReadyRead(self):
-        data                = self.tcpSocket.read(1024)
-        #data                = self.tcpSocket.readAll() ?
-        self.messagesCount += 1
-        self.updateStatusBar("Message count: " + str(self.messagesCount))
-        print "datas are: ", data
+        ha = self.header_data.size()
+        hl = self.header_len
+
+        while 1:
+            if (ha != hl):
+                self.header_data.append(self.tcpSocket.readData(hl - ha))
+                if (self.header_data.size() == hl):
+                    (self.payload_len, True) = self.header_data.toHex().toInt()
+                    self.payload_data.append(
+                        self.tcpSocket.readData(self.payload_len))
+                    if (self.payload_data.size() == self.payload_len):
+                        self.handleServerMessage(self.payload_data)
+                        self.header_data  = QtCore.QByteArray()
+                        self.payload_data = QtCore.QByteArray()
+                        if self.tcpSocket.bytesAvailable() == 0: break
+            else:
+                self.payload_data.append(
+                    self.tcpSocket.readData(
+                        self.payload_size - self.payload_data.size() ) )
+                if (self.payload_data.size() == self.payload_len):
+                    self.handleServerMessage(self.payload_data)
+                    self.header_data  = QtCore.QByteArray()
+                    self.payload_data = QtCore.QByteArray()
+                    if self.tcpSocket.bytesAvailable() == 0: break
+            
 
     def socketConnected(self):
         print "socket is connected"
@@ -67,6 +92,11 @@ class SupercastClient(QtGui.QMainWindow):
 
     def socketErrorEvent(self, event):
         print "error event is: ", event
+
+    def handleServerMessage(self, msg):
+        print "hello, message is ", decode(msg)
+
+
 
     #
     #
@@ -90,5 +120,3 @@ if __name__ == "__main__":
     supercastUi  = SupercastClient()
     supercastUi.show()
     sys.exit(supercastApp.exec_())
-
-
