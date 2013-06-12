@@ -205,7 +205,6 @@ class SupercastLogInDialog(QtGui.QDialog):
         self.saveCredentials = QtGui.QCheckBox("Remember me", self)
 
         self.logInButton    = QtGui.QPushButton("LogIn")
-        self.logInButton.setDefault(True)
 
         self.cancelButton   = QtGui.QPushButton("Cancel")
 
@@ -252,7 +251,7 @@ class SupercastLogInDialog(QtGui.QDialog):
 
         self.supercastClient.setSocketAuthUser('admuser')
         self.supercastClient.setSocketAuthPass('passwd')
-        self.supercastClient.setSocketServer('localhost')
+        self.supercastClient.setSocketServer('192.168.0.10')
         self.supercastClient.setSocketPort(8888)
         self.supercastClient.connect()
         self.supercastClient.show()
