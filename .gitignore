@@ -1,4 +1,5 @@
 Makefile
+*.pyc
 *.swp
 *.swo
 *.asn1db
