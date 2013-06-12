@@ -116,7 +116,7 @@ class SupercastClient(QtGui.QMainWindow):
         self.tcpSocket.write(p)
         #print "send message: ", p.size(), len(pdu)
 
-    " EVENTS "
+    " SERVER EVENTS "
     " four bytes header to unpack before reading the payload "
     def socketReadyRead(self):
         print "hhhhhhhhhhhhhhhhhhhhhh"
@@ -251,7 +251,7 @@ class SupercastLogInDialog(QtGui.QDialog):
         #self.supercastClient.setSocketPort(port)
 
         self.supercastClient.setSocketAuthUser('admuser')
-        self.supercastClient.setSocketAuthPass('passwdi')
+        self.supercastClient.setSocketAuthPass('passwd')
         self.supercastClient.setSocketServer('localhost')
         self.supercastClient.setSocketPort(8888)
         self.supercastClient.connect()
@@ -269,11 +269,11 @@ class SupercastLogInDialog(QtGui.QDialog):
         self.splash = splashScreen
         self.splash.show()
 
-###############################################################################
-###############################################################################
-## MOVE THIS TO A MODULE SPECIFIC FILE ########################################
-###############################################################################
-###############################################################################
+
+
+
+
+
 class SupercastClientMain(QtGui.QTabWidget):
     def __init__(self, parent):
         super(SupercastClientMain, self).__init__(parent)
@@ -283,7 +283,6 @@ class SupercastClientMain(QtGui.QTabWidget):
         self.setMovable(True)
         self.setUsesScrollButtons(True)
         self.setTabShape(QtGui.QTabWidget.Rounded)
-        return None
 
 
 
