@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 from pyasn1.type        import char,univ,namedtype,tag,namedval
 from pyasn1.codec.ber   import encoder, decoder
 

@@ -23,7 +23,6 @@ class SupercastClient(QtGui.QMainWindow):
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
         self.resize(400, 300)
-        self.setCentralWidget(SupercastCentralWidget(self))
 
         " Status bar "
         self.statusBar = QtGui.QStatusBar(self)
@@ -49,6 +48,7 @@ class SupercastClient(QtGui.QMainWindow):
         self.initGroupsInfos()
 
         " End init "
+        self.setCenter()
         self.updateStatusBar("Started!")
 
 
@@ -80,13 +80,21 @@ class SupercastClient(QtGui.QMainWindow):
     def initMpd(self):
         self.mpd = dict()
         self.setMessageProcessor('modSupercastPDU', self.handleSupercastPDU)
-        #self.setMessageProcessor('modTrackerPDU', Tracker.handle)
 
     def initChanInfos(self):
         self.chanDb = dict()
 
     def initGroupsInfos(self):
         self.groupList = list()
+
+    def setCenter(self):
+        self.setCentralWidget(QtGui.QTabWidget(self))
+        self.centralWidget().addTab(ModTracker.ModTracker(self), 'ModTracker')
+        self.centralWidget().addTab(QtGui.QLabel("MAPS", self), 'Maps')
+        self.centralWidget().setTabPosition(QtGui.QTabWidget.West)
+        self.centralWidget().setMovable(True)
+        self.centralWidget().setUsesScrollButtons(True)
+        self.centralWidget().setTabShape(QtGui.QTabWidget.Rounded)
 
     def setSocketAuthUser(self, userName):
         self.userName = userName
@@ -99,7 +107,6 @@ class SupercastClient(QtGui.QMainWindow):
 
     def setSocketPort(self, port):
         self.port   = port
-
 
     def setMessageProcessor(self, fromKey, function):
         self.mpd.update({fromKey: function})
@@ -130,6 +137,8 @@ class SupercastClient(QtGui.QMainWindow):
             self.setGroups(msg['value']['groups'])
             for item in msg['value']['chans']:
                 self.handleChanInfo(item)
+        elif (msgType == 'subscribeOk'):
+            pass
         else:
             print "handle other", msgType
 
@@ -164,7 +173,6 @@ class SupercastClient(QtGui.QMainWindow):
                         self.tcpSocket.readData(self.payload_len)
                     )
                     if (self.payload_data.size() == self.payload_len):
-                        print "what?", self.payload_data
                         self.handleServerMessage(self.payload_data)
                         self.initSocketPduCtrl()
                         if self.tcpSocket.bytesAvailable() == 0:
@@ -182,7 +190,6 @@ class SupercastClient(QtGui.QMainWindow):
                         break
 
     def socketConnected(self):
-        print "socket is connected"
         self.updateStatusBar("Connected!")
 
     def socketDisconnected(self):
@@ -202,6 +209,19 @@ class SupercastClient(QtGui.QMainWindow):
     def updateStatusBar(self, msg):
         self.statusBar.showMessage(msg)
 
+class SupercastCentralWidget(QtGui.QTabWidget):
+    def __init__(self, parent):
+        super(SupercastCentralWidget, self).__init__(parent)
+
+        " modules includes "
+        self.addTab(ModTracker.ModTracker(self), 'ModTracker')
+        self.addTab(QtGui.QLabel("MAPS", self), 'Maps')
+
+        self.setTabPosition(QtGui.QTabWidget.West)
+        self.setMovable(True)
+        self.setUsesScrollButtons(True)
+        self.setTabShape(QtGui.QTabWidget.Rounded)
+
 ###########################################################################
 ###########################################################################
 ## LOG IN DIALOG ##########################################################
@@ -209,7 +229,6 @@ class SupercastClient(QtGui.QMainWindow):
 ###########################################################################
 class SupercastLogInDialog(QtGui.QDialog):
     def __init__(self, parent=None):
-        print "auto log in will come here"
         super(SupercastLogInDialog, self).__init__(parent)
 
         self.setWindowTitle("Log in to Supercast/ENMS server")
@@ -297,17 +316,6 @@ class SupercastLogInDialog(QtGui.QDialog):
         self.splash.show()
 
 
-class SupercastCentralWidget(QtGui.QTabWidget):
-    def __init__(self, parent):
-        super(SupercastCentralWidget, self).__init__(parent)
-
-        #self.addTab(ModTracker.ModTrackerFrame(self))
-        self.addTab(QtGui.QLabel("MAPS", self), 'Maps')
-
-        self.setTabPosition(QtGui.QTabWidget.West)
-        self.setMovable(True)
-        self.setUsesScrollButtons(True)
-        self.setTabShape(QtGui.QTabWidget.Rounded)
 
 
 
