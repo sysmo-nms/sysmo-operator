@@ -294,7 +294,7 @@ def decode(pdu):
             msg3        = msg2.getComponent()
             msg3_type   = msg2.getName()
             if   msg3_type == 'unsubscribeOk':
-                print "unsubscribeOk message", msg3
+                print("unsubscribeOk message", msg3)
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
@@ -385,13 +385,13 @@ def decode(pdu):
                     }
                 }
             else:
-                print "unknwon message", msg3_type
+                print("unknwon message", msg3_type)
                 return {}
         else: 
-            print "unknwon message", msg3_type
+            print("unknwon message", msg3_type)
             return {}
     else:
-        print "Unknown pdu: ", msg1_type
+        print("Unknown pdu: ", msg1_type)
         return {}
 
 

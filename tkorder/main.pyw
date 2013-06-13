@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3.2
 import  sys, time
 from    supercast   import decode, encode
 from    PySide      import QtCore, QtGui, QtNetwork
@@ -108,7 +108,7 @@ class SupercastClient(QtGui.QMainWindow):
         message = decode(msg)
         handler = self.mpd.get(message['from'])
         if (handler == None):
-            print "pdu to unknown destination", message['from']
+            print("pdu to unknown destination", message['from'])
         else:
             handler(message)
 
@@ -127,7 +127,7 @@ class SupercastClient(QtGui.QMainWindow):
             for item in msg['value']['chans']:
                 self.handleChanInfo(item)
         else:
-            print "handle other", msgType
+            print("handle other", msgType)
 
     def handleChanInfo(self, msg):
         if (msg['eventType'] == 'create'):
@@ -160,7 +160,7 @@ class SupercastClient(QtGui.QMainWindow):
                         self.tcpSocket.readData(self.payload_len)
                     )
                     if (self.payload_data.size() == self.payload_len):
-                        print "what?", self.payload_data
+                        print("what?", self.payload_data)
                         self.handleServerMessage(self.payload_data)
                         self.initSocketPduCtrl()
                         if self.tcpSocket.bytesAvailable() == 0:
@@ -178,15 +178,15 @@ class SupercastClient(QtGui.QMainWindow):
                         break
 
     def socketConnected(self):
-        print "socket is connected"
+        print("socket is connected")
         self.updateStatusBar("Connected!")
 
     def socketDisconnected(self):
-        print "socket is disconnected"
+        print("socket is disconnected")
         self.updateStatusBar("disconnected!")
 
     def socketErrorEvent(self, event):
-        print "error event is: ", event
+        print("error event is: ", event)
 
 
 
@@ -205,7 +205,7 @@ class SupercastClient(QtGui.QMainWindow):
 ###########################################################################
 class SupercastLogInDialog(QtGui.QDialog):
     def __init__(self, parent=None):
-        print "auto log in will come here"
+        print("auto log in will come here")
         super(SupercastLogInDialog, self).__init__(parent)
 
         self.setWindowTitle("Log in to Supercast/ENMS server")
