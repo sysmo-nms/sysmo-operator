@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.2
+#!/usr/bin/env python2
 import  sys, time
 from    supercast   import decode, encode
 from    PySide      import QtCore, QtGui, QtNetwork
