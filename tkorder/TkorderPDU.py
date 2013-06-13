@@ -1,35 +1,99 @@
 #!/usr/bin/env python2
 
-from pyasn1.type import char,univ,namedtype,tag,namedval
+from pyasn1.type        import char,univ,namedtype,tag,namedval
 from pyasn1.codec.ber   import encoder, decoder
 
 ##############################################################################
 ##############################################################################
-#### ASN1 DEFINITIONS ########################################################
-##############################################################################
-##############################################################################
-
-##############################################################################
 #### ENMS PDU DEF ############################################################
+##############################################################################
 ##############################################################################
 class EsnmpPDU(univ.Choice):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('text', char.PrintableString()),
+        namedtype.NamedType(
+            'text', char.PrintableString()),
         namedtype.NamedType('id', univ.Integer())
     )
 
+##############################################################################
 ##############################################################################
 #### TRACKER PDU DEF #########################################################
 ##############################################################################
+##############################################################################
 " Tracker PDUs are defined here "
-class TrackerPDU(univ.Choice):
+class TrackerProbeInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('text', char.PrintableString()),
-        namedtype.NamedType('id', univ.Integer())
+        namedtype.NamedType('name',  char.PrintableString),
+        namedtype.NamedType('info',  char.PrintableString)
     )
 
+class TrackerProbeModuleInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'name',
+            char.PrintableString()
+        ),
+        namedtype.NamedType(
+            'info',
+            char.PrintableString()
+        )
+    )
+
+class TrackerPDU_fromClient(char.PrintableString): pass
+
+class TrackerPDU_fromServer(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'probeModInfo',
+            TrackerProbeModuleInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    6
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'probeInfo',
+            TrackerProbeInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    2
+                )
+            )
+        )
+    )
+
+class TrackerPDU(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'fromServer',
+            TrackerPDU_fromServer().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    0
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'fromClient',
+            TrackerPDU_fromClient().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        )
+    )
+
+
+##############################################################################
 ##############################################################################
 #### SUPERCAST PDU DEF #######################################################
+##############################################################################
 ##############################################################################
 class SupercastChan(char.PrintableString): pass
 
@@ -259,10 +323,6 @@ class NmsPDU(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'modEsnmpPDU'    ,
-            char.PrintableString()
-        ),
-        namedtype.NamedType(
             'modTrackerPDU'  , 
             TrackerPDU().subtype(
                 implicitTag=tag.Tag(
@@ -388,8 +448,32 @@ def decode(pdu):
                 print "unknwon message", msg3_type
                 return {}
         else: 
-            print "unknwon message", msg3_type
+            print "unknwon message", msg2_type
             return {}
+    elif msg1_type == 'modTrackerPDU':
+        msg2        = msg1.getComponent()
+        msg2_type   = msg1.getName()
+        if msg2_type == 'fromServer':
+            msg3        = msg2.getComponent()
+            msg3_type   = msg2.getName()
+            if msg3_type == 'probeModInfo':
+                name = str(msg3.getComponentByName('name'))
+                info = str(msg3.getComponentByName('info'))
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'name': name,
+                        'info': info
+                    }
+                }
+            else:
+                print "unknwon message", msg3_type
+                return {}
+        else:
+            print "unknwon message", msg2_type
+            return {}
+        print msg2, msg2_type
     else:
         print "Unknown pdu: ", msg1_type
         return {}
@@ -510,10 +594,12 @@ def encode_authResp(userId, password):
     return pdu
 
 
-# fd = open('/tmp/pdu.bin', 'r')
+#fd = open('/tmp/pdu.bin', 'r')
 # fw = open('/tmp/ret.bin', 'w')
-# pdu = fd.read(); fd.close()
-# a = decode(pdu)
+#pdu = fd.read(); fd.close()
+#print pdu
+#a = decoder.decode(pdu, asn1Spec=NmsPDU())
+#print a
 # print "Return is ", a
 # x = genPdu_unsubscribe("channel-Xkki")
 # 

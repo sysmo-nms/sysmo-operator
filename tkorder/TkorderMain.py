@@ -1,6 +1,9 @@
 #!/usr/bin/env python2
-import  sys, time
-from    supercast   import decode, encode
+import  time
+import  sys
+import  ModTracker
+
+from    TkorderPDU  import decode, encode
 from    PySide      import QtCore, QtGui, QtNetwork
 
 try:
@@ -20,7 +23,7 @@ class SupercastClient(QtGui.QMainWindow):
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
         self.resize(400, 300)
-        self.setCentralWidget(SupercastClientMain(self))
+        self.setCentralWidget(SupercastCentralWidget(self))
 
         " Status bar "
         self.statusBar = QtGui.QStatusBar(self)
@@ -77,6 +80,7 @@ class SupercastClient(QtGui.QMainWindow):
     def initMpd(self):
         self.mpd = dict()
         self.setMessageProcessor('modSupercastPDU', self.handleSupercastPDU)
+        #self.setMessageProcessor('modTrackerPDU', Tracker.handle)
 
     def initChanInfos(self):
         self.chanDb = dict()
@@ -210,7 +214,7 @@ class SupercastLogInDialog(QtGui.QDialog):
 
         self.setWindowTitle("Log in to Supercast/ENMS server")
 
-        myGrid  = QtGui.QGridLayout()
+        myGrid  = QtGui.QGridLayout(self)
 
         self.serverLabel   = QtGui.QLabel("Server:", self)
         self.serverName     = QtGui.QLineEdit(self)
@@ -276,6 +280,7 @@ class SupercastLogInDialog(QtGui.QDialog):
         self.supercastClient.setSocketAuthPass('passwd')
         self.supercastClient.setSocketServer('192.168.0.10')
         self.supercastClient.setSocketPort(8888)
+
         self.supercastClient.connect()
         self.supercastClient.show()
         self.splash.close()
@@ -292,15 +297,13 @@ class SupercastLogInDialog(QtGui.QDialog):
         self.splash.show()
 
 
-
-
-
-
-class SupercastClientMain(QtGui.QTabWidget):
+class SupercastCentralWidget(QtGui.QTabWidget):
     def __init__(self, parent):
-        super(SupercastClientMain, self).__init__(parent)
-        self.addTab(QtGui.QLabel("TRACKER HERE", self), 'Tracker')
+        super(SupercastCentralWidget, self).__init__(parent)
+
+        #self.addTab(ModTracker.ModTrackerFrame(self))
         self.addTab(QtGui.QLabel("MAPS", self), 'Maps')
+
         self.setTabPosition(QtGui.QTabWidget.West)
         self.setMovable(True)
         self.setUsesScrollButtons(True)
@@ -308,8 +311,8 @@ class SupercastClientMain(QtGui.QTabWidget):
 
 
 
-def main():
-    supercastApp    = QtGui.QApplication(sys.argv)
+def main(arguments):
+    supercastApp    = QtGui.QApplication(arguments)
 
     splash_pixmap   = QtGui.QPixmap("/home/seb/Images/overcast2.png")
     splash          = QtGui.QSplashScreen(splash_pixmap)
@@ -324,4 +327,4 @@ def main():
     sys.exit(supercastApp.exec_())
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
