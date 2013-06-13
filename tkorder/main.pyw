@@ -114,12 +114,10 @@ class SupercastClient(QtGui.QMainWindow):
         p = QtCore.QByteArray().fromHex(hex(len(pdu))).rightJustified(4, '\0')
         p.append(pdu)
         self.tcpSocket.write(p)
-        #print "send message: ", p.size(), len(pdu)
 
     " SERVER EVENTS "
     " four bytes header to unpack before reading the payload "
     def socketReadyRead(self):
-        print "hhhhhhhhhhhhhhhhhhhhhh"
         ha = self.header_data.size()
         hl = self.header_len
 
@@ -127,32 +125,26 @@ class SupercastClient(QtGui.QMainWindow):
             if (ha != hl):
                 self.header_data.append(self.tcpSocket.readData(hl - ha))
                 if (self.header_data.size() == hl):
-                    (self.payload_len, True) = self.header_data.toHex().toInt()
-                    print "ERROR IS HERE WHEN: (0, False)"
-                    print "header complete, now read data: ", self.header_data.toHex().toInt()
+                    self.payload_len = int(str(self.header_data.toHex()), 16)
                     self.payload_data.append(
-                        self.tcpSocket.readData(self.payload_len))
+                        self.tcpSocket.readData(self.payload_len)
+                    )
                     if (self.payload_data.size() == self.payload_len):
                         self.handleServerMessage(self.payload_data)
                         self.initSocketPduCtrl()
-                        if self.tcpSocket.bytesAvailable() == 0: break
+                        if self.tcpSocket.bytesAvailable() == 0:
+                            break
             else:
                 self.payload_data.append(
                     self.tcpSocket.readData(
-                        self.payload_size - self.payload_data.size() ) )
-                print "header complete 1"
-                self.debugPduCtrl()
+                        self.payload_len - self.payload_data.size()
+                    )
+                )
                 if (self.payload_data.size() == self.payload_len):
-                    print "payload complete 1"
-                    self.debugPduCtrl()
                     self.handleServerMessage(self.payload_data)
                     self.initSocketPduCtrl()
-                    if self.tcpSocket.bytesAvailable() == 0: break
-            
-
-    def debugPduCtrl(self):
-        print "ici: ", self.header_data.size(), " ", self.header_len
-        print "ela: ", self.payload_data.size(), " ", self.payload_len
+                    if self.tcpSocket.bytesAvailable() == 0:
+                        break
 
     def socketConnected(self):
         print "socket is connected"
