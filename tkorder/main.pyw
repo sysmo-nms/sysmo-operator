@@ -38,6 +38,13 @@ class SupercastClient(QtGui.QMainWindow):
         self.initSocket()
         self.initMpd()
 
+        " Server channel info "
+        self.initChanInfos()
+        self.autoSubscribe = True
+
+        " User group info "
+        self.initGroupsInfos()
+
         " End init "
         self.updateStatusBar("Started!")
 
@@ -71,6 +78,12 @@ class SupercastClient(QtGui.QMainWindow):
         self.mpd = dict()
         self.setMessageProcessor('modSupercastPDU', self.handleSupercastPDU)
 
+    def initChanInfos(self):
+        self.chanDb = dict()
+
+    def initGroupsInfos(self):
+        self.groupList = list()
+
     def setSocketAuthUser(self, userName):
         self.userName = userName
 
@@ -94,12 +107,14 @@ class SupercastClient(QtGui.QMainWindow):
     def handleServerMessage(self, msg):
         message = decode(msg)
         handler = self.mpd.get(message['from'])
-        handler(message)
+        if (handler == None):
+            print "pdu to unknown destination", message['from']
+        else:
+            handler(message)
 
     def handleSupercastPDU(self, msg):
-        print "hello, handlesupercastpdu message is ", msg
         msgType = msg['msgType']
-        if msgType == 'authReq':
+        if (msgType == 'authReq'):
             self.serverAuthProto = msg['value']
             pdu = encode(
                 'authResp',
@@ -107,8 +122,23 @@ class SupercastClient(QtGui.QMainWindow):
                 password=self.userPass
             )
             self.sendToServer(pdu)
+        elif (msgType == 'authAck'):
+            self.setGroups(msg['value']['groups'])
+            for item in msg['value']['chans']:
+                self.handleChanInfo(item)
         else:
-            print "handle other"
+            print "handle other", msgType
+
+    def handleChanInfo(self, msg):
+        if (msg['eventType'] == 'create'):
+            self.chanDb.update({msg['channelId']: None})
+            if (self.autoSubscribe == True):
+                pdu = encode('subscribe', msg['channelId'])
+                self.sendToServer(pdu)
+                
+
+    def setGroups(self, msg):
+        self.groupList = msg
 
     def sendToServer(self, pdu):
         p = QtCore.QByteArray().fromHex(hex(len(pdu))).rightJustified(4, '\0')
@@ -130,6 +160,7 @@ class SupercastClient(QtGui.QMainWindow):
                         self.tcpSocket.readData(self.payload_len)
                     )
                     if (self.payload_data.size() == self.payload_len):
+                        print "what?", self.payload_data
                         self.handleServerMessage(self.payload_data)
                         self.initSocketPduCtrl()
                         if self.tcpSocket.bytesAvailable() == 0:
