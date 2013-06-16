@@ -1,10 +1,11 @@
 #!/usr/bin/env python2
 import  time
 import  sys
-import  ModTracker
 
-from    TkorderPDU  import decode, encode
 from    PySide      import QtCore, QtGui, QtNetwork
+from    TkorderPDU  import decode, encode
+import  ModTracker
+import  TkorderCentral
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -17,8 +18,19 @@ except AttributeError:
 ###########################################################################
 ###########################################################################
 class SupercastClient(QtGui.QMainWindow):
+    @classmethod
+    def setSingleton(cls, obj):
+        cls.singleton = obj
+
+    @classmethod
+    def singleton(cls):
+        return cls.singleton
+
     def __init__(self, parent=None):
         super(SupercastClient, self).__init__(parent)
+
+        " This is a singleton. Can be accessed here "
+        SupercastClient.setSingleton(self)
 
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
@@ -48,7 +60,7 @@ class SupercastClient(QtGui.QMainWindow):
         self.initGroupsInfos()
 
         " End init "
-        self.setCenter()
+        self.setCentralWidget(TkorderCentral.TkorderCentralWidget(self))
         self.updateStatusBar("Started!")
 
 
@@ -86,15 +98,6 @@ class SupercastClient(QtGui.QMainWindow):
 
     def initGroupsInfos(self):
         self.groupList = list()
-
-    def setCenter(self):
-        self.setCentralWidget(QtGui.QTabWidget(self))
-        self.centralWidget().addTab(ModTracker.ModTracker(self), 'ModTracker')
-        self.centralWidget().addTab(QtGui.QLabel("MAPS", self), 'Maps')
-        self.centralWidget().setTabPosition(QtGui.QTabWidget.West)
-        self.centralWidget().setMovable(True)
-        self.centralWidget().setUsesScrollButtons(True)
-        self.centralWidget().setTabShape(QtGui.QTabWidget.Rounded)
 
     def setSocketAuthUser(self, userName):
         self.userName = userName
@@ -209,24 +212,12 @@ class SupercastClient(QtGui.QMainWindow):
     def updateStatusBar(self, msg):
         self.statusBar.showMessage(msg)
 
-class SupercastCentralWidget(QtGui.QTabWidget):
-    def __init__(self, parent):
-        super(SupercastCentralWidget, self).__init__(parent)
-
-        " modules includes "
-        self.addTab(ModTracker.ModTracker(self), 'ModTracker')
-        self.addTab(QtGui.QLabel("MAPS", self), 'Maps')
-
-        self.setTabPosition(QtGui.QTabWidget.West)
-        self.setMovable(True)
-        self.setUsesScrollButtons(True)
-        self.setTabShape(QtGui.QTabWidget.Rounded)
-
 ###########################################################################
 ###########################################################################
 ## LOG IN DIALOG ##########################################################
 ###########################################################################
 ###########################################################################
+# TODO QFormLayout a la place du grid
 class SupercastLogInDialog(QtGui.QDialog):
     def __init__(self, parent=None):
         super(SupercastLogInDialog, self).__init__(parent)
@@ -302,7 +293,6 @@ class SupercastLogInDialog(QtGui.QDialog):
 
         self.supercastClient.connect()
         self.supercastClient.show()
-        self.splash.close()
         self.close()
         
     def cancelPushed(self):
@@ -311,28 +301,16 @@ class SupercastLogInDialog(QtGui.QDialog):
     def setSupercastClient(self, supercastClient):
         self.supercastClient = supercastClient
 
-    def setSplash(self, splashScreen):
-        self.splash = splashScreen
-        self.splash.show()
-
 
 
 
 
 def main(arguments):
     supercastApp    = QtGui.QApplication(arguments)
-
-    splash_pixmap   = QtGui.QPixmap("/home/seb/Images/overcast2.png")
-    splash          = QtGui.QSplashScreen(splash_pixmap)
-    
     supercastUi     = SupercastClient()
-
     loginUi         = SupercastLogInDialog()
+
     loginUi.setSupercastClient(supercastUi)
-    loginUi.setSplash(splash)
     loginUi.show()
 
     sys.exit(supercastApp.exec_())
-
-if __name__ == "__main__":
-    main(sys.argv)
