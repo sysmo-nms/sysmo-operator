@@ -19,22 +19,60 @@ class EsnmpPDU(univ.Choice):
 ##############################################################################
 ##############################################################################
 " Tracker PDUs are defined here "
+
+class TargetProperty(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('name',     char.PrintableString()),
+        namedtype.NamedType('value',    univ.OctetString())
+    )
+
+class TargetProperties(univ.SequenceOf):
+    componentType = TargetProperty()
+
+class ProbeInfoType(univ.Enumerated):
+    namedValues = namedval.NamedValues(
+        ('create', 0),
+        ('delete', 1),
+        ('update', 2)
+    )
+
+class TargetInfoType(univ.Enumerated):
+    namedValues = namedval.NamedValues(
+        ('create', 0),
+        ('delete', 1),
+        ('update', 2)
+    )
+
+class ProbeType(univ.Enumerated):
+    namedValues = namedval.NamedValues(
+        ('fetch', 0),
+        ('status', 1)
+    )
+
 class TrackerProbeInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('name',  char.PrintableString),
-        namedtype.NamedType('info',  char.PrintableString)
+        namedtype.NamedType('channel',  char.PrintableString()),
+        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('name',     char.PrintableString()),
+        namedtype.NamedType('type',     ProbeType()),
+        namedtype.NamedType('probeMod', char.PrintableString()),
+        namedtype.NamedType('status',   char.PrintableString()),
+        namedtype.NamedType('step',     univ.Integer()),
+        namedtype.NamedType('timeout',  univ.Integer()),
+        namedtype.NamedType('infoType', ProbeInfoType())
     )
 
 class TrackerProbeModuleInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType(
-            'name',
-            char.PrintableString()
-        ),
-        namedtype.NamedType(
-            'info',
-            char.PrintableString()
-        )
+        namedtype.NamedType('name', char.PrintableString()),
+        namedtype.NamedType('info', char.PrintableString())
+    )
+
+class TrackerTargetInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('channel',     char.PrintableString()),
+        namedtype.NamedType('properties',   TargetProperties()),
+        namedtype.NamedType('type',         TargetInfoType())
     )
 
 class TrackerPDU_fromClient(char.PrintableString): pass
@@ -42,12 +80,12 @@ class TrackerPDU_fromClient(char.PrintableString): pass
 class TrackerPDU_fromServer(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
-            'probeModInfo',
-            TrackerProbeModuleInfo().subtype(
+            'targetInfo',
+            TrackerTargetInfo().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
-                    6
+                    1
                 )
             )
         ),
@@ -58,6 +96,16 @@ class TrackerPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     2
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'probeModInfo',
+            TrackerProbeModuleInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    6
                 )
             )
         )
@@ -237,14 +285,8 @@ class SupercastPDU_fromServer(univ.Choice):
 
 class SupercastAuthResp(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType(
-            'userId',
-            char.PrintableString()
-        ),
-        namedtype.NamedType(
-            'pass',
-            char.PrintableString()
-        )
+        namedtype.NamedType('userId',   char.PrintableString()),
+        namedtype.NamedType('pass',     char.PrintableString())
     )
 
 
@@ -465,6 +507,19 @@ def decode(pdu):
                         'info': info
                     }
                 }
+            elif msg3_type == 'targetInfo':
+                targetId    = str(msg3.getComponentByName('channel'))
+                infoType    = str(msg3.getComponentByName('type'))
+                infoProp    = msg3.getComponentByName('properties')
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'channel': targetId,
+                        'properties': infoProp,
+                        'infoType': infoType
+                    }
+                }
             else:
                 print "unknwon message", msg3_type
                 return {}
@@ -596,6 +651,7 @@ def encode_authResp(userId, password):
 # fw = open('/tmp/ret.bin', 'w')
 #pdu = fd.read(); fd.close()
 #print pdu
+
 #a = decoder.decode(pdu, asn1Spec=NmsPDU())
 #print a
 # print "Return is ", a
