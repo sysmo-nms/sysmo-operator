@@ -520,6 +520,31 @@ def decode(pdu):
                         'infoType': infoType
                     }
                 }
+            elif msg3_type == 'probeInfo':
+                channel     = str(msg3.getComponentByName('channel'))
+                probeId     = str(msg3.getComponentByName('id'))
+                name        = str(msg3.getComponentByName('name'))
+                probeType   = str(msg3.getComponentByName('type'))
+                probeModule = str(msg3.getComponentByName('probeMod'))
+                status      = str(msg3.getComponentByName('status'))
+                step        = str(msg3.getComponentByName('step'))
+                timeout     = str(msg3.getComponentByName('timeout'))
+                infoType    = str(msg3.getComponentByName('infoType'))
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'channel':  channel,
+                        'id':       probeId,
+                        'name':     name,
+                        'type':     probeType,
+                        'probeMod': probeModule,
+                        'status':   status,
+                        'step':     step,
+                        'timeout':  timeout,
+                        'infoType': infoType
+                    }
+                }
             else:
                 print "unknwon message", msg3_type
                 return {}

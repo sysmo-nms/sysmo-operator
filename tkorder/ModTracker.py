@@ -2,6 +2,14 @@ from PySide import QtGui, QtCore
 import TkorderMain
 
 class ModTracker(QtGui.QSplitter):
+    @classmethod
+    def initTargetView(cls):
+        cls.targetView = ''
+
+    @classmethod
+    def targetView(cls):
+        return cls.targetView
+
     def __init__(self, parent):
         super(ModTracker, self).__init__(parent)
 
@@ -32,6 +40,7 @@ class LeftPane(QtGui.QFrame):
         else:
             cls.singleton.hide()
 
+
     def __init__(self, parent):
         super(LeftPane, self).__init__(parent)
         LeftPane.setSingleton(self)
@@ -42,12 +51,14 @@ class LeftPane(QtGui.QFrame):
         grid.addWidget(self.treeview, 1, 0)
         self.setLayout(grid)
 
+
 class LeftPaneTree(QtGui.QTreeView):
     def __init__(self, parent):
         super(LeftPaneTree, self).__init__(parent)
         model = QtGui.QFileSystemModel()
         model.setRootPath(QtCore.QDir.currentPath())
         self.setModel(model)
+
 
 class RightPane(QtGui.QFrame):
     # TODO stacked widget
