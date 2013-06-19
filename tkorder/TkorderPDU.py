@@ -509,40 +509,45 @@ def decode(pdu):
                 }
             elif msg3_type == 'targetInfo':
                 targetId    = str(msg3.getComponentByName('channel'))
-                infoType    = str(msg3.getComponentByName('type'))
+                infoType    = msg3.getComponentByName('type')
                 infoProp    = msg3.getComponentByName('properties')
+                if      infoType == 0: infoT = 'create'
+                elif    infoType == 1: infoT = 'delete'
+                elif    infoType == 2: infoT = 'update'
+                else:   infoT = 'nothing'
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel': targetId,
-                        'properties': infoProp,
-                        'infoType': infoType
+                        'channel':      targetId,
+                        'properties':   infoProp,
+                        'infoType':     infoT
                     }
                 }
             elif msg3_type == 'probeInfo':
                 channel     = str(msg3.getComponentByName('channel'))
-                probeId     = str(msg3.getComponentByName('id'))
+                probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
-                probeType   = str(msg3.getComponentByName('type'))
+                probeType   = msg3.getComponentByName('type')
                 probeModule = str(msg3.getComponentByName('probeMod'))
                 status      = str(msg3.getComponentByName('status'))
-                step        = str(msg3.getComponentByName('step'))
-                timeout     = str(msg3.getComponentByName('timeout'))
-                infoType    = str(msg3.getComponentByName('infoType'))
+                step        = msg3.getComponentByName('step')
+                timeout     = msg3.getComponentByName('timeout')
+                infoType    = msg3.getComponentByName('infoType')
+
                 return {
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
                         'channel':  channel,
-                        'id':       probeId,
+                        'id':       int(probeId),
                         'name':     name,
-                        'type':     probeType,
+                        'type':     probeType.prettyPrint(),
                         'probeMod': probeModule,
                         'status':   status,
-                        'step':     step,
-                        'timeout':  timeout,
-                        'infoType': infoType
+                        'step':     int(step),
+                        'timeout':  int(timeout),
+                        'infoType': infoType.prettyPrint()
                     }
                 }
             else:
