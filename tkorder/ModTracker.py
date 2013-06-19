@@ -1,4 +1,5 @@
 from PySide import QtGui, QtCore
+import ModTrackerIcons
 import TkorderMain
 
 class ModTracker(QtGui.QSplitter):
@@ -65,7 +66,7 @@ class LeftPane(QtGui.QFrame):
 class RightPane(QtGui.QFrame):
     def __init__(self, parent):
         super(RightPane, self).__init__(parent)
-        self.button      =  QtGui.QPushButton("toggle left")
+        self.button = QtGui.QPushButton("toggle left")
         grid = QtGui.QGridLayout()
         grid.addWidget(self.button,   0, 0)
         self.setLayout(grid)
@@ -84,8 +85,33 @@ class RightPane(QtGui.QFrame):
 class TrackerTView(QtGui.QTreeView):
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
-        self.setModel(TrackerTViewModel())
+        self.header = QtGui.QHeaderView(QtCore.Qt.Horizontal, self)
 
+        #
+        # QTreeview
+        self.setAnimated(True)
+        #self.setHeaderHidden(True)
+        self.setIndentation(15)
+        self.setUniformRowHeights(True)
+        self.expandAll()
+        #self.setRootIsDecorated(False)
+
+        # <- QAbasctractItemView 
+        self.setModel(TrackerTViewModel(self))
+        self.setAlternatingRowColors(True)
+        self.setDragEnabled(False)
+        self.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+        self.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+        # self.setIconSize(size) !!!! j en veux plusieurs moi
+        self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+
+        # <- QAbstractScrollArea
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+
+        # <- QFrame
+        self.setFrameShadow(QtGui.QFrame.Sunken)
+        self.setFrameShape(QtGui.QFrame.StyledPanel)
 
 class TrackerTViewModel(QtGui.QStandardItemModel):
     @classmethod
@@ -104,32 +130,48 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
     def handleProbeModInfo(cls, msg):
         cls.tvm.pModInfo(msg)
 
-    def __init__(self):
-        super(TrackerTViewModel, self).__init__()
-        parentItem  = self.invisibleRootItem()
-        self.elements    = QtGui.QStandardItem("Elements")
-        self.views       = QtGui.QStandardItem("Views")
-        self.probes      = QtGui.QStandardItem("Probes")
+    def __init__(self, parent):
+        super(TrackerTViewModel, self).__init__(parent)
+        parentItem      = self.invisibleRootItem()
+        self.elements   = QtGui.QStandardItem("Elements")
+        self.views      = QtGui.QStandardItem("Views")
+        self.probes     = QtGui.QStandardItem("Probes")
+
+        # QStandardItemModel
+        self.setColumnCount(1)
+        self.setHorizontalHeaderLabels(['Class/Elements'])
+        #self.setHorizontalHeaderItem(0, QtGui.QStandardItem('jlk'))
+        #self.setVerticalHeaderItem(0, QtGui.QStandardItem('jlk'))
+        #self.setVerticalHeaderLabels(['jj/fjsdlk'])
+
+        self.elements.setFlags(QtCore.Qt.ItemIsEnabled)
+        self.views.setFlags(QtCore.Qt.ItemIsEnabled)
+        self.probes.setFlags(QtCore.Qt.ItemIsEnabled)
+
+
         parentItem.appendRows([self.elements,self.views,self.probes])
+
         TrackerTViewModel.setTVM(self)
 
     def pModInfo(self, msg):
         val     = msg['value']
         info    = val['info']
         name    = val['name']
-        #probesRoot = self.findItems(
-            #"Probes", 
-            #flags=QtCore.Qt.MatchExactly,
-            #column=0
-        #)
-        self.probes.appendRow(QtGui.QStandardItem(name))
+        newItem = QtGui.QStandardItem(name)
+        newItem.setFlags(QtCore.Qt.ItemIsSelectable)
+        newItem.setFlags(QtCore.Qt.ItemIsEnabled)
+
+        self.probes.appendRow(newItem)
 
     def tInfo(self, msg):
         val     = msg['value']
         channel = val['channel']
         infoType = val['infoType']
         if infoType == 'create':
-            self.elements.appendRow(QtGui.QStandardItem(channel))
+            newItem = QtGui.QStandardItem(channel)
+            newItem.setFlags(QtCore.Qt.ItemIsSelectable)
+            newItem.setFlags(QtCore.Qt.ItemIsEnabled)
+            self.elements.appendRow(newItem)
             self.elements.sortChildren(0)
 
     def pInfo(self, msg):
@@ -144,6 +186,9 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
             column=0
         )
         parentItem = parentItemList.pop()
-        parentItem.appendRow(QtGui.QStandardItem(name))
+        newItem = QtGui.QStandardItem(name)
+        newItem.setFlags(QtCore.Qt.ItemIsSelectable)
+        newItem.setFlags(QtCore.Qt.ItemIsEnabled)
+        parentItem.appendRow(newItem)
 
 
