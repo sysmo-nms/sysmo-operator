@@ -145,6 +145,5 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         )
         parentItem = parentItemList.pop()
         parentItem.appendRow(QtGui.QStandardItem(name))
-        print val
 
 

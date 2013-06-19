@@ -119,8 +119,6 @@ class SupercastClient(QtGui.QMainWindow):
         self.tcpSocket.connectToHost(self.server, self.port)
 
     def handleServerMessage(self, msg):
-        fd = open('/tmp/pdu.bin', 'w')
-        fd.write(msg), fd.close()
         message = decode(msg)
         handler = self.mpd.get(message['from'])
         if (handler == None):
