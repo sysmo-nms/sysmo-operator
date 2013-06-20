@@ -1,5 +1,5 @@
 from PySide import QtGui, QtCore
-import ModTrackerIcons
+import TkorderIcons
 import TkorderMain
 
 class ModTracker(QtGui.QSplitter):
@@ -55,12 +55,13 @@ class LeftPane(QtGui.QFrame):
         super(LeftPane, self).__init__(parent)
         LeftPane.setSingleton(self)
         self.treeview   =  TrackerTView(self)
+        self.treeview.clicked[QtCore.QModelIndex].connect(TrackerTView.clic)
+
         self.button     =  QtGui.QPushButton("left here", self)
         grid = QtGui.QGridLayout()
         grid.addWidget(self.button,   0, 0)
         grid.addWidget(self.treeview, 1, 0)
         self.setLayout(grid)
-
 
 
 class RightPane(QtGui.QFrame):
@@ -70,7 +71,7 @@ class RightPane(QtGui.QFrame):
         grid = QtGui.QGridLayout()
         grid.addWidget(self.button,   0, 0)
         self.setLayout(grid)
-        self.connect(
+        QtCore.QObject.connect(
             self.button,
             QtCore.SIGNAL("clicked()"),
             LeftPane.toggle
@@ -83,27 +84,35 @@ class RightPane(QtGui.QFrame):
 #####################################################################
 #####################################################################
 class TrackerTView(QtGui.QTreeView):
+    @classmethod
+    def set(cls, i):
+        cls.tv = i
+
+    @classmethod
+    def clic(cls, i):
+        model = cls.tv.model()
+        item  = model.itemFromIndex(i)
+
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
+        TrackerTView.set(self)
         self.header = QtGui.QHeaderView(QtCore.Qt.Horizontal, self)
 
-        #
         # QTreeview
         self.setAnimated(True)
-        #self.setHeaderHidden(True)
+        self.setHeaderHidden(True)
         self.setIndentation(15)
         self.setUniformRowHeights(True)
-        self.expandAll()
         #self.setRootIsDecorated(False)
 
         # <- QAbasctractItemView 
-        self.setModel(TrackerTViewModel(self))
         self.setAlternatingRowColors(True)
         self.setDragEnabled(False)
         self.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-        # self.setIconSize(size) !!!! j en veux plusieurs moi
+        self.setIconSize(QtCore.QSize(30, 30)) #!!!! j en veux plusieurs moi
         self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.setModel(TrackerTViewModel(self))
 
         # <- QAbstractScrollArea
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -112,6 +121,9 @@ class TrackerTView(QtGui.QTreeView):
         # <- QFrame
         self.setFrameShadow(QtGui.QFrame.Sunken)
         self.setFrameShape(QtGui.QFrame.StyledPanel)
+
+        # from QTreeView
+        self.expandAll()
 
 class TrackerTViewModel(QtGui.QStandardItemModel):
     @classmethod
@@ -128,67 +140,57 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
 
     @classmethod
     def handleProbeModInfo(cls, msg):
-        cls.tvm.pModInfo(msg)
+        return
 
     def __init__(self, parent):
         super(TrackerTViewModel, self).__init__(parent)
         parentItem      = self.invisibleRootItem()
-        self.elements   = QtGui.QStandardItem("Elements")
-        self.views      = QtGui.QStandardItem("Views")
-        self.probes     = QtGui.QStandardItem("Probes")
 
         # QStandardItemModel
         self.setColumnCount(1)
-        self.setHorizontalHeaderLabels(['Class/Elements'])
-        #self.setHorizontalHeaderItem(0, QtGui.QStandardItem('jlk'))
-        #self.setVerticalHeaderItem(0, QtGui.QStandardItem('jlk'))
-        #self.setVerticalHeaderLabels(['jj/fjsdlk'])
-
-        self.elements.setFlags(QtCore.Qt.ItemIsEnabled)
-        self.views.setFlags(QtCore.Qt.ItemIsEnabled)
-        self.probes.setFlags(QtCore.Qt.ItemIsEnabled)
-
-
-        parentItem.appendRows([self.elements,self.views,self.probes])
-
+        self.setHorizontalHeaderLabels([''])
         TrackerTViewModel.setTVM(self)
 
-    def pModInfo(self, msg):
-        val     = msg['value']
-        info    = val['info']
-        name    = val['name']
-        newItem = QtGui.QStandardItem(name)
-        newItem.setFlags(QtCore.Qt.ItemIsSelectable)
-        newItem.setFlags(QtCore.Qt.ItemIsEnabled)
-
-        self.probes.appendRow(newItem)
-
     def tInfo(self, msg):
-        val     = msg['value']
-        channel = val['channel']
-        infoType = val['infoType']
+        val         = msg['value']
+        channel     = val['channel']
+        infoType    = val['infoType']
+        properties  = val['properties']
+        icon        = TkorderIcons.get('weather-clear-night')
+        i2  = icon.pixmap(5,5)
         if infoType == 'create':
-            newItem = QtGui.QStandardItem(channel)
+            newItem = QtGui.QStandardItem()
+            newItem.setData(channel,    QtCore.Qt.DisplayRole)
+            newItem.setData(icon,       QtCore.Qt.DecorationRole)
+            newItem.setData(properties, QtCore.Qt.UserRole)
             newItem.setFlags(QtCore.Qt.ItemIsSelectable)
             newItem.setFlags(QtCore.Qt.ItemIsEnabled)
-            self.elements.appendRow(newItem)
-            self.elements.sortChildren(0)
+            self.appendRow(newItem)
+            #self.elements.sortChildren(0)
 
     def pInfo(self, msg):
         val     = msg['value']
         parent  = val['channel']
         name    = val['name']
         probeId = val['id']
-
+        status  = val['status']
+        timeout = val['timeout']
+        step    = val['step']
+        pid     = val['id']
+        icon    = TkorderIcons.get('weather-clear-night')
         parentItemList = self.findItems(
             parent,
             flags=QtCore.Qt.MatchRecursive,
             column=0
         )
         parentItem = parentItemList.pop()
-        newItem = QtGui.QStandardItem(name)
+        newItem = QtGui.QStandardItem()
+        newItem.setData(name,   QtCore.Qt.DisplayRole)
+        newItem.setData(icon,   QtCore.Qt.DecorationRole)
+        newItem.setData(status, QtCore.Qt.UserRole)
+        newItem.setData(timeout,QtCore.Qt.UserRole + 1)
+        newItem.setData(step,   QtCore.Qt.UserRole + 2)
+        newItem.setData(pid,    QtCore.Qt.UserRole + 3)
         newItem.setFlags(QtCore.Qt.ItemIsSelectable)
         newItem.setFlags(QtCore.Qt.ItemIsEnabled)
         parentItem.appendRow(newItem)
-
-

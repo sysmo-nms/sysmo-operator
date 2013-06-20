@@ -5,6 +5,7 @@ import  sys
 from    PySide      import QtCore, QtGui, QtNetwork
 from    TkorderPDU  import decode, encode
 import  ModTracker
+from  TkorderIcons  import TkorderIcons
 import  TkorderCentral
 
 try:
@@ -31,6 +32,7 @@ class SupercastClient(QtGui.QMainWindow):
 
         " This is a singleton. Can be accessed here "
         SupercastClient.setSingleton(self)
+        TkorderIcons.init()
 
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
@@ -41,7 +43,7 @@ class SupercastClient(QtGui.QMainWindow):
         self.setStatusBar(self.statusBar)
 
         " Menu bar "
-        exitAction  = QtGui.QAction(QtGui.QIcon('exit.png'), 'Exit', self)
+        exitAction  = QtGui.QAction(TkorderIcons.get('system-log-out'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
         menu        = self.menuBar()
@@ -300,8 +302,6 @@ class SupercastLogInDialog(QtGui.QDialog):
 
     def setSupercastClient(self, supercastClient):
         self.supercastClient = supercastClient
-
-
 
 
 
