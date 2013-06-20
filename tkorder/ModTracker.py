@@ -4,12 +4,33 @@ import TkorderMain
 
 class ModTracker(QtGui.QSplitter):
     @classmethod
-    def initTargetView(cls):
-        cls.targetView = ''
+    def setMyself(cls, myself):
+        cls.myself = myself
 
     @classmethod
-    def targetView(cls):
-        return cls.targetView
+    def myself(cls):
+        return cls.myself
+
+    @classmethod
+    def initView(cls):
+        stack = cls.myself.rightStack
+        stack.addWidget(WideView(cls.myself))
+
+    @classmethod
+    def setView(cls, item):
+        if   item.data(QtCore.Qt.UserRole) == 'target':
+            target  = item
+            probeId = None 
+        elif item.data(QtCore.Qt.UserRole) == 'probe':
+            target = TrackerTViewModel.findTargetByName(item.data(QtCore.Qt.UserRole + 2))
+            probeId = item.data(QtCore.Qt.UserRole + 1)
+
+        rightStack = cls.myself.rightStack
+        rightStack.setView(target, probeId)
+
+    @classmethod
+    def setMaxOpenStacks(cls, num):
+        cls.maxOpenStacks = num
 
     def __init__(self, parent):
         super(ModTracker, self).__init__(parent)
@@ -18,8 +39,15 @@ class ModTracker(QtGui.QSplitter):
         sin = TkorderMain.SupercastClient.singleton
         sin.setMessageProcessor('modTrackerPDU', self.handleMsg)
 
-        self.addWidget(LeftPane(self))
-        self.addWidget(RightPane(self))
+        self.leftTree   = LeftPane(self)
+        self.rightStack = RightPane(self)
+        self.rightStack.setMaxOpenChans(3)
+
+        self.addWidget(self.leftTree)
+        self.addWidget(self.rightStack)
+        
+        ModTracker.setMyself(self)
+        ModTracker.initView()
 
     def handleMsg(self, msg):
         mType = msg['msgType']
@@ -34,6 +62,49 @@ class ModTracker(QtGui.QSplitter):
             print "unknown message type: ", mType
 
 
+
+class RightPane(QtGui.QStackedWidget):
+    def __init__(self, parent):
+        super(RightPane, self).__init__(parent)
+        self.maxOpenChans   = 3
+        self.chanList       = None
+
+    def setView(self, target, probeId):
+        targetName      = target.data(QtCore.Qt.UserRole + 1)
+        currentWidget   = self.widget(1)
+        if currentWidget == None:
+            self.insertWidget(1, ElementView(self, targetName, probeId))
+        else:
+            self.removeWidget(currentWidget)
+            currentWidget.deleteLater()
+            self.insertWidget(1, ElementView(self, targetName, probeId))
+        self.setCurrentIndex(1)
+
+    def setMaxOpenChans(self, num):
+        self.maxOpenChans = 3
+
+class WideView(QtGui.QFrame):
+    def __init__(self, parent):
+        super(WideView, self).__init__(parent)
+        self.fr = QtGui.QLabel("WIDEVIEW")
+        grid = QtGui.QGridLayout()
+        grid.addWidget(self.fr, 0, 0)
+        self.setLayout(grid)
+
+class ElementView(QtGui.QFrame):
+    def __init__(self, parent, targetName, probeId):
+        super(ElementView, self).__init__(parent)
+        self.fr = QtGui.QLabel(targetName)
+        grid = QtGui.QGridLayout()
+        grid.addWidget(self.fr, 0, 0)
+        self.setLayout(grid)
+
+
+#####################################################################
+#####################################################################
+###### LEFT PANNEL VIEW #############################################
+#####################################################################
+#####################################################################
 class LeftPane(QtGui.QFrame):
     @classmethod
     def setSingleton(cls, obj):
@@ -63,26 +134,6 @@ class LeftPane(QtGui.QFrame):
         grid.addWidget(self.treeview, 1, 0)
         self.setLayout(grid)
 
-
-class RightPane(QtGui.QFrame):
-    def __init__(self, parent):
-        super(RightPane, self).__init__(parent)
-        self.button = QtGui.QPushButton("toggle left")
-        grid = QtGui.QGridLayout()
-        grid.addWidget(self.button,   0, 0)
-        self.setLayout(grid)
-        QtCore.QObject.connect(
-            self.button,
-            QtCore.SIGNAL("clicked()"),
-            LeftPane.toggle
-        )
-
-
-#####################################################################
-#####################################################################
-###### TREEVIEW MODEL ###############################################
-#####################################################################
-#####################################################################
 class TrackerTView(QtGui.QTreeView):
     @classmethod
     def set(cls, i):
@@ -92,6 +143,7 @@ class TrackerTView(QtGui.QTreeView):
     def clic(cls, i):
         model = cls.tv.model()
         item  = model.itemFromIndex(i)
+        ModTracker.setView(item)
 
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
@@ -142,6 +194,17 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
     def handleProbeModInfo(cls, msg):
         return
 
+    @classmethod
+    def findTargetByName(cls, targetName):
+        tv = cls.tvm
+        parentItemList = tv.findItems(
+            targetName,
+            flags=QtCore.Qt.MatchRecursive,
+            column=0
+        )
+        parentItem = parentItemList.pop()
+        return parentItem
+
     def __init__(self, parent):
         super(TrackerTViewModel, self).__init__(parent)
         parentItem      = self.invisibleRootItem()
@@ -156,41 +219,49 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         channel     = val['channel']
         infoType    = val['infoType']
         properties  = val['properties']
+        itemType    = 'target'
         icon        = TkorderIcons.get('weather-clear-night')
         i2  = icon.pixmap(5,5)
         if infoType == 'create':
             newItem = QtGui.QStandardItem()
             newItem.setData(channel,    QtCore.Qt.DisplayRole)
             newItem.setData(icon,       QtCore.Qt.DecorationRole)
-            newItem.setData(properties, QtCore.Qt.UserRole)
+            newItem.setData(itemType,   QtCore.Qt.UserRole)
+            newItem.setData(channel,    QtCore.Qt.UserRole + 1)
+            newItem.setData(properties, QtCore.Qt.UserRole + 2)
             newItem.setFlags(QtCore.Qt.ItemIsSelectable)
             newItem.setFlags(QtCore.Qt.ItemIsEnabled)
             self.appendRow(newItem)
             #self.elements.sortChildren(0)
 
     def pInfo(self, msg):
-        val     = msg['value']
-        parent  = val['channel']
-        name    = val['name']
-        probeId = val['id']
-        status  = val['status']
-        timeout = val['timeout']
-        step    = val['step']
-        pid     = val['id']
-        icon    = TkorderIcons.get('weather-clear-night')
-        parentItemList = self.findItems(
-            parent,
-            flags=QtCore.Qt.MatchRecursive,
-            column=0
-        )
-        parentItem = parentItemList.pop()
+        val         = msg['value']
+        parent      = val['channel']
+        name        = val['name']
+        probeId     = val['id']
+        status      = val['status']
+        timeout     = val['timeout']
+        step        = val['step']
+        pid         = val['id']
+        itemType    = 'probe'
+        icon        = TkorderIcons.get('weather-clear-night')
+        #parentItemList = self.findItems(
+            #parent,
+            #flags=QtCore.Qt.MatchRecursive,
+            #column=0
+        #)
+        #parentItem = parentItemList.pop()
+        parentItem = TrackerTViewModel.findTargetByName(parent)
         newItem = QtGui.QStandardItem()
         newItem.setData(name,   QtCore.Qt.DisplayRole)
         newItem.setData(icon,   QtCore.Qt.DecorationRole)
-        newItem.setData(status, QtCore.Qt.UserRole)
-        newItem.setData(timeout,QtCore.Qt.UserRole + 1)
-        newItem.setData(step,   QtCore.Qt.UserRole + 2)
-        newItem.setData(pid,    QtCore.Qt.UserRole + 3)
+        newItem.setData(itemType, QtCore.Qt.UserRole)
+        newItem.setData(pid,    QtCore.Qt.UserRole + 1)
+        newItem.setData(parent, QtCore.Qt.UserRole + 2)
+        newItem.setData(timeout,QtCore.Qt.UserRole + 3)
+        newItem.setData(step,   QtCore.Qt.UserRole + 4)
+        newItem.setData(name,   QtCore.Qt.UserRole + 5)
+        newItem.setData(status, QtCore.Qt.UserRole + 6)
         newItem.setFlags(QtCore.Qt.ItemIsSelectable)
         newItem.setFlags(QtCore.Qt.ItemIsEnabled)
         parentItem.appendRow(newItem)
