@@ -43,7 +43,7 @@ class SupercastClient(QtGui.QMainWindow):
         self.setStatusBar(self.statusBar)
 
         " Menu bar "
-        exitAction  = QtGui.QAction(TkorderIcons.get('system-log-out'), 'Exit', self)
+        exitAction  = QtGui.QAction(TkorderIcons.get('system-log-out'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
         menu        = self.menuBar()
@@ -290,7 +290,7 @@ class SupercastLogInDialog(QtGui.QDialog):
 
         self.supercastClient.setSocketAuthUser('admuser')
         self.supercastClient.setSocketAuthPass('passwd')
-        self.supercastClient.setSocketServer('192.168.0.10')
+        self.supercastClient.setSocketServer('192.168.0.11')
         self.supercastClient.setSocketPort(8888)
 
         self.supercastClient.connect()
