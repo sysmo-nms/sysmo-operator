@@ -308,6 +308,7 @@ class SupercastLogInDialog(QtGui.QDialog):
 def main(arguments):
     supercastApp    = QtGui.QApplication(arguments)
     supercastUi     = SupercastClient()
+    supercastApp.setWindowIcon(TkorderIcons.get('applications-development'))
     loginUi         = SupercastLogInDialog()
 
     loginUi.setSupercastClient(supercastUi)
