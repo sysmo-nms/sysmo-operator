@@ -1,8 +1,8 @@
-from PySide import QtGui, QtCore
-import TkorderIcons
-import TkorderMain
+from    PySide import QtGui, QtCore
+import  TkorderIcons
+import  TkorderMain
 
-class ModTracker(QtGui.QSplitter):
+class TrackerWindow(QtGui.QSplitter):
     @classmethod
     def setMyself(cls, myself):
         cls.myself = myself
@@ -33,7 +33,7 @@ class ModTracker(QtGui.QSplitter):
         cls.maxOpenStacks = num
 
     def __init__(self, parent):
-        super(ModTracker, self).__init__(parent)
+        super(TrackerWindow, self).__init__(parent)
 
         " forward 'modTrackerPDU to me "
         sin = TkorderMain.SupercastClient.singleton
@@ -46,8 +46,8 @@ class ModTracker(QtGui.QSplitter):
         self.addWidget(self.leftTree)
         self.addWidget(self.rightStack)
         
-        ModTracker.setMyself(self)
-        ModTracker.initView()
+        TrackerWindow.setMyself(self)
+        TrackerWindow.initView()
 
     def handleMsg(self, msg):
         mType = msg['msgType']
@@ -146,7 +146,7 @@ class TrackerTView(QtGui.QTreeView):
     def clic(cls, i):
         model = cls.tv.model()
         item  = model.itemFromIndex(i)
-        ModTracker.setView(item)
+        TrackerWindow.setView(item)
 
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
