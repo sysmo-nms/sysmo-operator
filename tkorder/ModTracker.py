@@ -53,10 +53,13 @@ class ModTracker(QtGui.QSplitter):
         mType = msg['msgType']
 
         if   (mType == 'probeInfo'):
+            print "received probeInfo"
             TrackerTViewModel.handleProbeInfo(msg)
         elif (mType == 'targetInfo'):
+            print "received targetInfo"
             TrackerTViewModel.handleTargetInfo(msg)
         elif (mType == 'probeModInfo'):
+            print "received probeModInfo"
             TrackerTViewModel.handleProbeModInfo(msg)
         else:
             print "unknown message type: ", mType
