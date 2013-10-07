@@ -55,13 +55,13 @@ class TrackerWindow(QtGui.QSplitter):
 
         if   (mType == 'probeInfo'):
             print "received probeInfo"
-            PowerTree.TrackerTViewModel.handleProbeInfo(msg)
+            PowerTree.handle(msg)
         elif (mType == 'targetInfo'):
             print "received targetInfo"
-            PowerTree.TrackerTViewModel.handleTargetInfo(msg)
+            PowerTree.handle(msg)
         elif (mType == 'probeModInfo'):
             print "received probeModInfo"
-            PowerTree.TrackerTViewModel.handleProbeModInfo(msg)
+            PowerTree.handle(msg)
         else:
             print "unknown message type: ", mType
 
