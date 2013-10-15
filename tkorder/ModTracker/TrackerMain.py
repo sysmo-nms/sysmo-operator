@@ -2,6 +2,7 @@ from    PySide import QtGui, QtCore
 import  TkorderIcons
 import  TkorderMain
 import  PowerTree
+import  Supercast
 
 class TrackerWindow(QtGui.QSplitter):
     @classmethod
@@ -37,8 +38,7 @@ class TrackerWindow(QtGui.QSplitter):
         super(TrackerWindow, self).__init__(parent)
 
         " forward 'modTrackerPDU to me "
-        sin = TkorderMain.SupercastClient.singleton
-        sin.setMessageProcessor('modTrackerPDU', self.handleMsg)
+        Supercast.Socket.my.setMessageProcessor('modTrackerPDU', self.handleMsg)
 
         self.leftTree   = PowerTree.PowerTreeContainer(self)
         self.rightStack = RightPane(self)
