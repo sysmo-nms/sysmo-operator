@@ -120,10 +120,35 @@ class Socket(QTcpSocket):
     def socketErrorEvent(self, event):
         print "error event is: ", event
 
-# TODO QFormLayout a la place du grid
+# TODO
 class LogInDialog(QDialog):
     def __init__(self, parent=None):
         super(LogInDialog, self).__init__(parent)
+        self.passLineEdit = QLineEdit(self)
+        self.nameLineEdit = QLineEdit(self)
+        self.serverLineEdit = QLineEdit(self)
+        self.serverPortEdit = QSpinBox(self)
+        self.setMinimumWidth(500)
+
+        buttons = QDialogButtonBox(self)
+        buttons.addButton(QDialogButtonBox.Abort)
+        buttons.addButton(QDialogButtonBox.Open)
+        buttons.addButton(QDialogButtonBox.Help)
+
+        formLayout = QFormLayout()
+        formLayout.addRow(self.tr("&Name:"), self.nameLineEdit)
+        formLayout.addRow(self.tr("&Password:"), self.passLineEdit)
+        formLayout.addRow(self.tr("&Server:"), self.serverLineEdit)
+        formLayout.addRow(self.tr("&Port:"), self.serverPortEdit)
+        formLayout.addRow(buttons)
+        self.formLayout = formLayout
+
+        self.setLayout(self.formLayout)
+
+
+class LogInDialog2(QDialog):
+    def __init__(self, parent=None):
+        super(LogInDialog2, self).__init__(parent)
 
         self.setWindowTitle("Log in to Supercast/ENMS server")
 

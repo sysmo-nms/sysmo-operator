@@ -64,9 +64,9 @@ def main(arguments):
     tkorderApp    = QApplication(arguments)
     tkorderUi     = TkorderClient()
     tkorderApp.setWindowIcon(
-        TkorderIcons.get('applications-development'))
-    loginUi         = Supercast.LogInDialog()
-
+        TkorderIcons.get('applications-development')
+    )
+    loginUi         = Supercast.LogInDialog2()
     loginUi.supercastClient = tkorderUi
     loginUi.show()
 
