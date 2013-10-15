@@ -102,3 +102,6 @@ class ElementView(QtGui.QFrame):
         grid = QtGui.QGridLayout()
         grid.addWidget(self.fr, 0, 0)
         self.setLayout(grid)
+
+
+
