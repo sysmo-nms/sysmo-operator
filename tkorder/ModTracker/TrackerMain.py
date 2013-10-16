@@ -7,16 +7,16 @@ import  Supercast
 class TrackerWindow(QtGui.QSplitter):
     @classmethod
     def setMyself(cls, myself):
-        cls.myself = myself
+        cls._myself = myself
 
     @classmethod
     def myself(cls):
-        return cls.myself
+        return cls._myself
 
     @classmethod
     def initView(cls):
-        stack = cls.myself.rightStack
-        stack.addWidget(WideView(cls.myself))
+        stack = cls._myself.rightStack
+        stack.addWidget(WideView(cls._myself))
 
     @classmethod
     def setView(cls, item):
@@ -24,10 +24,11 @@ class TrackerWindow(QtGui.QSplitter):
             target  = item
             probeId = None 
         elif item.data(QtCore.Qt.UserRole) == 'probe':
-            target = PowerTree.TrackerTViewModel.findTargetByName(item.data(QtCore.Qt.UserRole + 2))
+            target = PowerTree.TrackerTViewModel.findTargetByName(
+                item.data(QtCore.Qt.UserRole + 2))
             probeId = item.data(QtCore.Qt.UserRole + 1)
 
-        rightStack = cls.myself.rightStack
+        rightStack = cls._myself.rightStack
         rightStack.setView(target, probeId)
 
     @classmethod

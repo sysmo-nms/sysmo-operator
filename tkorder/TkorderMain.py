@@ -5,8 +5,8 @@ import  sys
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    PySide.QtNetwork    import *
-from    TkorderPDU          import decode, encode
 from    TkorderIcons        import TkorderIcons
+#from    SupercastPDU        import decode, encode
 import  Supercast
 import  ModTracker
 import  ModTracker.TrackerMain

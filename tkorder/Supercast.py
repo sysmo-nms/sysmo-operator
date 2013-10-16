@@ -5,7 +5,7 @@ import  sys
 from    PySide.QtNetwork    import *
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
-from    TkorderPDU  import decode, encode
+from    SupercastPDU        import decode, encode
 
 class Socket(QTcpSocket):
     def __init__(self, parent=None):
