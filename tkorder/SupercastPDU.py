@@ -29,6 +29,15 @@ class TargetProperty(univ.Sequence):
 class TargetProperties(univ.SequenceOf):
     componentType = TargetProperty()
 
+class TargetProbeReturnKeyVal(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('name',     char.PrintableString()),
+        namedtype.NamedType('value',    univ.Integer())
+    )
+
+class TargetProbeReturnKeyVals(univ.SequenceOf):
+    componentType = TargetProbeReturnKeyVal()
+
 class ProbeInfoType(univ.Enumerated):
     namedValues = namedval.NamedValues(
         ('create', 0),
@@ -60,6 +69,23 @@ class TrackerProbeInfo(univ.Sequence):
         namedtype.NamedType('step',     univ.Integer()),
         namedtype.NamedType('timeout',  univ.Integer()),
         namedtype.NamedType('infoType', ProbeInfoType())
+    )
+
+class TrackerProbeActivity(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('channel',  char.PrintableString()),
+        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('info',     char.PrintableString()),
+    )
+
+class TrackerProbeReturn(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('channel',  char.PrintableString()),
+        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('status',   char.PrintableString()),
+        namedtype.NamedType('originalReply',    char.PrintableString()),
+        namedtype.NamedType('timestamp',        univ.Integer()),
+        namedtype.NamedType('keyVals',   TargetProbeReturnKeyVals())
     )
 
 class TrackerProbeModuleInfo(univ.Sequence):
@@ -106,6 +132,26 @@ class TrackerPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     6
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'probeActivity',
+            TrackerProbeActivity().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    7
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'probeReturn',
+            TrackerProbeReturn().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    8
                 )
             )
         )
@@ -383,6 +429,7 @@ class NmsPDU(univ.Choice):
 ##############################################################################
 ##############################################################################
 def decode(pdu):
+    print "llllllll"
     msg, x = decoder.decode(str(pdu), asn1Spec=NmsPDU())
 
     msg1        = msg.getComponent()
@@ -550,6 +597,38 @@ def decode(pdu):
                         'infoType': infoType.prettyPrint()
                     }
                 }
+            elif msg3_type == 'probeActivity':
+                channel     = str(msg3.getComponentByName('channel'))
+                probeId     = msg3.getComponentByName('id')
+                info        = str(msg3.getComponentByName('info'))
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'channel':  channel,
+                        'id':       int(probeId),
+                        'info':     info
+                    }
+                }
+            elif msg3_type == 'probeReturn':
+                channel     = str(msg3.getComponentByName('channel'))
+                probeId     = msg3.getComponentByName('id')
+                status      = str(msg3.getComponentByName('status'))
+                original_rep = str(msg3.getComponentByName('originalReply'))
+                timestamp   = msg3.getComponentByName('timestamp')
+                keyVals    = msg3.getComponentByName('keyVals')
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'channel':  channel,
+                        'id':       int(probeId),
+                        'status':     status,
+                        'originalRep': original_rep,
+                        'timestamp': timestamp,
+                        'keyVals': keyVals
+                    }
+                }
             else:
                 print "unknwon message", msg3_type
                 return {}
@@ -683,6 +762,7 @@ def encode_authResp(userId, password):
 #print pdu
 
 #a = decoder.decode(pdu, asn1Spec=NmsPDU())
+#a = decode(pdu)
 #print a
 # print "Return is ", a
 # x = genPdu_unsubscribe("channel-Xkki")

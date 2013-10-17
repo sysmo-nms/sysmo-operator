@@ -8,6 +8,10 @@ from    PySide.QtGui        import *
 from    SupercastPDU        import decode, encode
 
 class Socket(QTcpSocket):
+    @classmethod
+    def subscribe(cls, targetName):
+        cls.my.subscribeToChannel(targetName)
+
     def __init__(self, parent=None):
         super(Socket,self).__init__(parent)
         Socket.my = self
@@ -75,7 +79,7 @@ class Socket(QTcpSocket):
             for item in msg['value']['chans']:
                 self.handleChanInfo(item)
         elif (msgType == 'subscribeOk'):
-            pass
+            print "subsOk: ", msg
         else:
             print "handle other", msgType
 
@@ -83,8 +87,11 @@ class Socket(QTcpSocket):
         if (msg['eventType'] == 'create'):
             self.chanDb.update({msg['channelId']: None})
             if (self.autoSubscribe == True):
-                pdu = encode('subscribe', msg['channelId'])
-                self.sendToServer(pdu)
+                Socket.subscribe(msg['channelId'])
+
+    def subscribeToChannel(self, channel):
+        pdu = encode('subscribe', channel)
+        self.sendToServer(pdu)
 
     def sendToServer(self, pdu):
         request = QByteArray()
@@ -216,7 +223,7 @@ class LogInDialog2(QDialog):
 
         Socket.my.setSocketAuthUser('admuser')
         Socket.my.setSocketAuthPass('passwd')
-        Socket.my.setSocketServer('192.168.0.9')
+        Socket.my.setSocketServer('192.168.0.8')
         Socket.my.setSocketPort(8888)
 
         Socket.my.connectServer()

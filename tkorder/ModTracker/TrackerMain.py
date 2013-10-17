@@ -28,6 +28,9 @@ class TrackerWindow(QtGui.QSplitter):
                 item.data(QtCore.Qt.UserRole + 2))
             probeId = item.data(QtCore.Qt.UserRole + 1)
 
+        targetName      = target.data(QtCore.Qt.UserRole + 1)
+        print "i should subscribe to: ", targetName
+        Supercast.Socket.subscribe(targetName)
         rightStack = cls._myself.rightStack
         rightStack.setView(target, probeId)
 
@@ -63,6 +66,8 @@ class TrackerWindow(QtGui.QSplitter):
         elif (mType == 'probeModInfo'):
             print "received probeModInfo"
             PowerTree.handle(msg)
+        elif (mType == 'probeActivity'):
+            print "received probeActivity"
         else:
             print "unknown message type: ", mType
 
