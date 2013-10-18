@@ -67,7 +67,7 @@ class TrackerWindow(QtGui.QSplitter):
             print "received probeModInfo"
             PowerTree.handle(msg)
         elif (mType == 'probeActivity'):
-            print "received probeActivity"
+            print "received probeActivity", msg
         else:
             print "unknown message type: ", mType
 
