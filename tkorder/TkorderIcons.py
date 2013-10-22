@@ -52,7 +52,8 @@ class TkorderIcons():
             'weather-showers-scattered': QtGui.QIcon("icons/weather-showers-scattered.svg"),
             'weather-showers': QtGui.QIcon("icons/weather-showers.svg"),
             'weather-snow': QtGui.QIcon("icons/weather-snow.svg"),
-            'weather-storm': QtGui.QIcon("icons/weather-storm.svg")
+            'weather-storm': QtGui.QIcon("icons/weather-storm.svg"),
+            'Filter': QtGui.QIcon("icons/Filter.svg")
         }
 
     @classmethod
