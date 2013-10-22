@@ -20,9 +20,19 @@ class TkorderClient(QMainWindow):
         TkorderIcons.init()
         TkorderClient.singleton = self
 
+
+        self.readSettings()
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
-        self.resize(400, 300)
+        #self.resize(1200, 600)
+        #self.setMinimumSize(1000,500)
+
+        " Tray icon "
+        self.trayMenu = QMenu(self)
+        self.trayIcon = QSystemTrayIcon(self)
+        self.trayIcon.setContextMenu(self.trayMenu)
+        self.trayIcon.setIcon(TkorderIcons.get('applications-development'))
+        self.trayIcon.setVisible(True)
 
         " Status bar "
         self.statusBar = QStatusBar(self)
@@ -49,6 +59,19 @@ class TkorderClient(QMainWindow):
 
     def updateStatusBar(self, msg):
         self.statusBar.showMessage(msg)
+
+    def readSettings(self):
+        settings = QSettings("Kmars", "tkorder")
+        print settings.value("geometry")
+        self.restoreGeometry(settings.value("geometry"))
+        self.restoreState(settings.value("windowState"))
+
+    def closeEvent(self, event):
+        settings = QSettings("Kmars", "tkorder")
+        settings.setValue("geometry", self.saveGeometry())
+        settings.setValue("windowState", self.saveState())
+        print self.saveGeometry()
+        QMainWindow.closeEvent(self, event)
 
 class TkorderCentralWidget(QFrame):
     def __init__(self, parent):
