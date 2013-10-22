@@ -41,10 +41,39 @@ class PowerTreeContainer(QtGui.QFrame):
         self.treeview   =  TrackerTView(self)
         self.treeview.clicked[QtCore.QModelIndex].connect(TrackerTView.clic)
 
-        self.button     =  QtGui.QPushButton("left here", self)
+        self.clearButton    = QtGui.QPushButton(self)
+        self.clearButton.setIcon(TkorderIcons.get('edit-clear'))
+        self.clearButton.setIconSize(QtCore.QSize(20,20))
+        self.clearButton.setFixedWidth(30)
+        self.clearButton.setFlat(True)
+
+        self.filterMenu = QtGui.QMenu(self)
+        self.filterButton    = QtGui.QPushButton(self)
+        self.filterButton.setIcon(TkorderIcons.get('Filter'))
+        self.filterButton.setIconSize(QtCore.QSize(20,20))
+        self.filterButton.setFixedWidth(30)
+        self.filterButton.setFlat(True)
+        self.filterButton.setMenu(self.filterMenu)
+
+        self.configureMenu = QtGui.QMenu(self)
+        self.configureButton    = QtGui.QPushButton(self)
+        self.configureButton.setIcon(TkorderIcons.get('preferences-system-session'))
+        self.configureButton.setIconSize(QtCore.QSize(20,20))
+        self.configureButton.setFixedWidth(50)
+        self.configureButton.setFlat(True)
+        self.configureButton.setMenu(self.configureMenu)
+
+        self.lineEdit   =   QtGui.QLineEdit(self)
+        self.lineEdit.setPlaceholderText("Filtrer les sondes")
+
+
         grid = QtGui.QGridLayout()
-        grid.addWidget(self.button,   0, 0)
-        grid.addWidget(self.treeview, 1, 0)
+        grid.setHorizontalSpacing(0)
+        grid.addWidget(self.lineEdit,       0, 0)
+        grid.addWidget(self.clearButton,    0, 1)
+        grid.addWidget(self.filterButton,   0, 2)
+        grid.addWidget(self.configureButton,   0, 3)
+        grid.addWidget(self.treeview,       1, 0, 1, 4)
         self.setLayout(grid)
 
 class TrackerTView(QtGui.QTreeView):
@@ -75,7 +104,7 @@ class TrackerTView(QtGui.QTreeView):
         self.setDragEnabled(False)
         self.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-        self.setIconSize(QtCore.QSize(30, 30)) #!!!! j en veux plusieurs moi
+        #self.setIconSize(QtCore.QSize(30, 30)) #!!!! j en veux plusieurs moi
         self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.setModel(TrackerTViewModel(self))
 
