@@ -58,6 +58,14 @@ class ProbeType(univ.Enumerated):
         ('status', 1)
     )
 
+class TrackerProbeDump(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('channel',  char.PrintableString()),
+        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('type',     ProbeType()),
+        namedtype.NamedType('data',     univ.OctetString()),
+    )
+
 class TrackerProbeInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
@@ -125,6 +133,16 @@ class TrackerPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     2
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'probeDump',
+            TrackerProbeDump().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    4
                 )
             )
         ),
@@ -596,6 +614,22 @@ def decode(pdu):
                         'step':     int(step),
                         'timeout':  int(timeout),
                         'infoType': infoType.prettyPrint()
+                    }
+                }
+            elif msg3_type == 'probeDump':
+                channel     = str(msg3.getComponentByName('channel'))
+                probeId     = msg3.getComponentByName('id')
+                probeType   = msg3.getComponentByName('type')
+                binaryData  = msg3.getComponentByName('data')
+
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'channel': channel,
+                        'id': int(probeId),
+                        'type': probeType,
+                        'data': binaryData
                     }
                 }
             elif msg3_type == 'probeActivity':
