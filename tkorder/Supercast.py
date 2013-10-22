@@ -219,6 +219,10 @@ class LogInDialog2(QDialog):
 
         self.setWindowTitle("Log in to Supercast/ENMS server")
 
+        # self.progress = QProgressDialog("Connexion.", "Cancel", 0, 100)
+        # self.progress.setWindowModality(Qt.WindowModal)
+        # self.progress.show()
+
         myGrid  = QGridLayout(self)
 
         self.serverLabel   = QLabel("Server:", self)
@@ -292,3 +296,4 @@ class LogInDialog2(QDialog):
         
     def cancelPushed(self):
         self.close()
+

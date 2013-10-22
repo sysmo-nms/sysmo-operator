@@ -90,11 +90,14 @@ class TrackerTView(QtGui.QTreeView):
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
         TrackerTView.set(self)
-        self.header = QtGui.QHeaderView(QtCore.Qt.Horizontal, self)
+        #self.header = QtGui.QHeaderView(QtCore.Qt.Horizontal, self)
+        #self.header.setClickable(True)
+        #self.header.setSortIndicatorShown(True)
 
         # QTreeview
         self.setAnimated(True)
-        self.setHeaderHidden(True)
+        #self.setHeader(self.header)
+        #Clickabl.setHeaderHidden(True)
         self.setIndentation(15)
         self.setUniformRowHeights(True)
         #self.setRootIsDecorated(False)
@@ -104,7 +107,7 @@ class TrackerTView(QtGui.QTreeView):
         self.setDragEnabled(False)
         self.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-        #self.setIconSize(QtCore.QSize(30, 30)) #!!!! j en veux plusieurs moi
+        self.setIconSize(QtCore.QSize(30, 30)) 
         self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.setModel(TrackerTViewModel(self))
 
@@ -113,8 +116,8 @@ class TrackerTView(QtGui.QTreeView):
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         # <- QFrame
-        self.setFrameShadow(QtGui.QFrame.Sunken)
-        self.setFrameShape(QtGui.QFrame.StyledPanel)
+        #self.setFrameShadow(QtGui.QFrame.Sunken)
+        #self.setFrameShape(QtGui.QFrame.StyledPanel)
 
         # from QTreeView
         self.expandAll()
