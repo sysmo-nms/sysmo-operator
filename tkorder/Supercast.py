@@ -123,12 +123,15 @@ class Link(QTcpSocket):
         else:
             q = self.subscribedChans
             m = self.maxChans
-            if len(q) == m:
-                unsub = q.popleft()
-                self.sendToServer(encode('unsubscribe', unsub))
-                q.append(chan)
+            # is allready registered?
+            if chan in q: pass
             else:
-                q.append(chan)
+                if len(q) == m:
+                    unsub = q.popleft()
+                    self.sendToServer(encode('unsubscribe', unsub))
+                    q.append(chan)
+                else:
+                    q.append(chan)
 
 
     def _unsubscribeFromChannel(self, channel):
