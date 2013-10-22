@@ -63,6 +63,7 @@ class TrackerProbeDump(univ.Sequence):
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('id',       univ.Integer()),
         namedtype.NamedType('type',     ProbeType()),
+        namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('data',     univ.OctetString()),
     )
 
@@ -620,6 +621,7 @@ def decode(pdu):
                 channel     = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
                 probeType   = msg3.getComponentByName('type')
+                module      = msg3.getComponentByName('module')
                 binaryData  = msg3.getComponentByName('data')
 
                 return {
@@ -629,6 +631,7 @@ def decode(pdu):
                         'channel': channel,
                         'id': int(probeId),
                         'type': probeType,
+                        'module': module,
                         'data': binaryData
                     }
                 }
