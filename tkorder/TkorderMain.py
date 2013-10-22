@@ -62,7 +62,6 @@ class TkorderClient(QMainWindow):
 
     def readSettings(self):
         settings = QSettings("Kmars", "tkorder")
-        print settings.value("geometry")
         self.restoreGeometry(settings.value("geometry"))
         self.restoreState(settings.value("windowState"))
 
@@ -70,7 +69,6 @@ class TkorderClient(QMainWindow):
         settings = QSettings("Kmars", "tkorder")
         settings.setValue("geometry", self.saveGeometry())
         settings.setValue("windowState", self.saveState())
-        print self.saveGeometry()
         QMainWindow.closeEvent(self, event)
 
 class TkorderCentralWidget(QFrame):
