@@ -6,21 +6,44 @@ from    PySide.QtNetwork    import *
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    SupercastPDU        import decode, encode
+from    collections         import deque
 
-class Socket(QTcpSocket):
+class Link(QTcpSocket):
     @classmethod
-    def subscribe(cls, targetName):
-        cls.my.subscribeToChannel(targetName)
+    def subscribe(cls, channel):
+        cls.my._subscribeToChannel(channel)
+
+    @classmethod
+    def unsubscribe(cls, channel):
+        cls.my._unsubscribeFromChannel(channel)
+
+    @classmethod
+    def setMaxChannels(cls, maxChans):
+        cls.my.maxChans = maxChans
+
+    @classmethod
+    def getMaxChannels(cls): 
+        return cls.my.maxChans
+
+
+    @classmethod
+    def setMessageProcessor(cls, a, b,):
+        cls.my._setMessageProcessor(a, b)
+
 
     def __init__(self, parent=None):
-        super(Socket,self).__init__(parent)
-        Socket.my = self
+        super(Link,self).__init__(parent)
+        Link.my = self
+
         self.nextBlockSize  = 0
         self.headerLen      = 4
 
         # default
         self.setSocketServer('localhost')
         self.setSocketPort(8888)
+        self.maxChans = 2
+        self.subscribedChans = deque([])
+        self.specialChans   = ['target-MasterChan']
 
         self.connected.connect(self.socketConnected)
         self.readyRead.connect(self.socketReadyRead)
@@ -32,7 +55,7 @@ class Socket(QTcpSocket):
         self.userPass   = ''
         self.groupList = list()
         self.mpd = dict()
-        self.setMessageProcessor('modSupercastPDU', self.handleSupercastPDU)
+        self._setMessageProcessor('modSupercastPDU', self.handleSupercastPDU)
         self.chanDb = dict()
 
     def setSocketAuthUser(self, userName):
@@ -50,7 +73,7 @@ class Socket(QTcpSocket):
     def setSocketPort(self, port):
         self.port   = port
 
-    def setMessageProcessor(self, fromKey, function):
+    def _setMessageProcessor(self, fromKey, function):
         self.mpd.update({fromKey: function})
 
     def connectServer(self):
@@ -77,20 +100,39 @@ class Socket(QTcpSocket):
         elif (msgType == 'authAck'):
             self.setGroups(msg['value']['groups'])
             for item in msg['value']['chans']:
-                self.handleChanInfo(item)
+                self._handleChanInfo(item)
         elif (msgType == 'subscribeOk'):
-            print "subsOk: ", msg
+            self._subscribeSuccess(msg['value'])
+        elif (msgType == 'unsubscribeOk'): pass
         else:
             print "handle other", msgType
 
-    def handleChanInfo(self, msg):
+    def _handleChanInfo(self, msg):
         if (msg['eventType'] == 'create'):
             self.chanDb.update({msg['channelId']: None})
             if (self.autoSubscribe == True):
-                Socket.subscribe(msg['channelId'])
+                Link.subscribe(msg['channelId'])
 
-    def subscribeToChannel(self, channel):
+    def _subscribeToChannel(self, channel):
         pdu = encode('subscribe', channel)
+        self.sendToServer(pdu)
+
+    def _subscribeSuccess(self, chan):
+        # is a special chan?
+        if chan in self.specialChans: pass
+        else:
+            q = self.subscribedChans
+            m = self.maxChans
+            if len(q) == m:
+                unsub = q.popleft()
+                self.sendToServer(encode('unsubscribe', unsub))
+                q.append(chan)
+            else:
+                q.append(chan)
+
+
+    def _unsubscribeFromChannel(self, channel):
+        pdu = encode('unsubscribe', channel)
         self.sendToServer(pdu)
 
     def sendToServer(self, pdu):
@@ -122,10 +164,25 @@ class Socket(QTcpSocket):
 
     def socketDisconnected(self):
         print "socket is disconnected"
-        self.updateStatusBar("disconnected!")
 
     def socketErrorEvent(self, event):
         print "error event is: ", event
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # TODO
 class LogInDialog(QDialog):
@@ -221,12 +278,12 @@ class LogInDialog2(QDialog):
         #self.supercastClient.setSocketServer(host)
         #self.supercastClient.setSocketPort(port)
 
-        Socket.my.setSocketAuthUser('admuser')
-        Socket.my.setSocketAuthPass('passwd')
-        Socket.my.setSocketServer('192.168.0.8')
-        Socket.my.setSocketPort(8888)
+        Link.my.setSocketAuthUser('admuser')
+        Link.my.setSocketAuthPass('passwd')
+        Link.my.setSocketServer('192.168.0.9')
+        Link.my.setSocketPort(8888)
 
-        Socket.my.connectServer()
+        Link.my.connectServer()
         self.supercastClient.show()
         self.close()
         

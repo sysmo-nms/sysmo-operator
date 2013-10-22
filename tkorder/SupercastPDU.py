@@ -432,7 +432,6 @@ class NmsPDU(univ.Choice):
 ##############################################################################
 ##############################################################################
 def decode(pdu):
-    print "llllllll"
     msg, x = decoder.decode(str(pdu), asn1Spec=NmsPDU())
 
     msg1        = msg.getComponent()
@@ -444,7 +443,6 @@ def decode(pdu):
             msg3        = msg2.getComponent()
             msg3_type   = msg2.getName()
             if   msg3_type == 'unsubscribeOk':
-                print "unsubscribeOk message", msg3
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
@@ -659,7 +657,7 @@ def encode(pduType, chanString=None, userId=None, password=None):
             return False
     elif pduType == 'unsubscribe':
         if chanString != None: 
-            return encode_subscribe(chanString)
+            return encode_unsubscribe(chanString)
         else:
             return False
     elif pduType == 'authResp':

@@ -38,7 +38,7 @@ class TkorderClient(QMainWindow):
         menuFile.addAction(exitAction)
 
         " Server connexion and socket related "
-        self.supercast = Supercast.Socket(self)
+        self.supercast = Supercast.Link(self)
         self.supercast.setSocketServer('localhost')
         self.supercast.setSocketPort(8888)
 

@@ -29,8 +29,7 @@ class TrackerWindow(QtGui.QSplitter):
             probeId = item.data(QtCore.Qt.UserRole + 1)
 
         targetName      = target.data(QtCore.Qt.UserRole + 1)
-        print "i should subscribe to: ", targetName
-        Supercast.Socket.subscribe(targetName)
+        Supercast.Link.subscribe(targetName)
         rightStack = cls._myself.rightStack
         rightStack.setView(target, probeId)
 
@@ -42,7 +41,7 @@ class TrackerWindow(QtGui.QSplitter):
         super(TrackerWindow, self).__init__(parent)
 
         " forward 'modTrackerPDU to me "
-        Supercast.Socket.my.setMessageProcessor('modTrackerPDU', self.handleMsg)
+        Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
 
         self.leftTree   = PowerTree.PowerTreeContainer(self)
         self.rightStack = RightPane(self)
@@ -58,16 +57,17 @@ class TrackerWindow(QtGui.QSplitter):
         mType = msg['msgType']
 
         if   (mType == 'probeInfo'):
-            print "received probeInfo"
+            #print "received probeInfo"
             PowerTree.handle(msg)
         elif (mType == 'targetInfo'):
-            print "received targetInfo"
+            #print "received targetInfo"
             PowerTree.handle(msg)
         elif (mType == 'probeModInfo'):
-            print "received probeModInfo"
+            #print "received probeModInfo"
             PowerTree.handle(msg)
         elif (mType == 'probeActivity'):
-            print "received probeActivity", msg
+            pass
+            #print "received probeActivity"
         else:
             print "unknown message type: ", mType
 
