@@ -155,7 +155,6 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         channel     = val['channel']
         infoType    = val['infoType']
         properties  = val['properties']
-        print "lkkkkkkkkkkkkkkkk", properties
         itemType    = 'target'
         icon        = TkorderIcons.get('weather-clear-night')
         i2  = icon.pixmap(5,5)

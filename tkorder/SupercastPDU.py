@@ -20,14 +20,14 @@ class EsnmpPDU(univ.Choice):
 ##############################################################################
 " Tracker PDUs are defined here "
 
-class TargetProperty(univ.Sequence):
+class Property(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('name',     char.PrintableString()),
-        namedtype.NamedType('value',    univ.OctetString())
+        namedtype.NamedType('key',      char.PrintableString()),
+        namedtype.NamedType('value',    char.PrintableString())
     )
 
 class TargetProperties(univ.SequenceOf):
-    componentType = TargetProperty()
+    componentType = Property()
 
 class TargetProbeReturnKeyVal(univ.Sequence):
     componentType = namedtype.NamedTypes(
@@ -578,6 +578,7 @@ def decode(pdu):
                 targetId    = str(msg3.getComponentByName('channel'))
                 infoType    = msg3.getComponentByName('type')
                 infoProp    = msg3.getComponentByName('properties')
+                print "infoprop: ", infoProp
                 if      infoType == 0: infoT = 'create'
                 elif    infoType == 1: infoT = 'delete'
                 elif    infoType == 2: infoT = 'update'
