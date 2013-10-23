@@ -55,7 +55,7 @@ class Link(QTcpSocket):
         self.userPass   = ''
         self.groupList = list()
         self.mpd = dict()
-        self._setMessageProcessor('modSupercastPDU', self.handleSupercastPDU)
+        self._setMessageProcessor('modSupercastPDU', self._handleSupercastPDU)
         self.chanDb = dict()
 
     def setSocketAuthUser(self, userName):
@@ -73,13 +73,10 @@ class Link(QTcpSocket):
     def setSocketPort(self, port):
         self.port   = port
 
-    def _setMessageProcessor(self, fromKey, function):
-        self.mpd.update({fromKey: function})
-
     def connectServer(self):
         self.connectToHost(self.server, self.port)
 
-    def handleServerMessage(self, msg):
+    def _handleServerMessage(self, msg):
         message = decode(msg)
         handler = self.mpd.get(message['from'])
         if (handler == None):
@@ -87,7 +84,7 @@ class Link(QTcpSocket):
         else:
             handler(message)
 
-    def handleSupercastPDU(self, msg):
+    def _handleSupercastPDU(self, msg):
         msgType = msg['msgType']
         if (msgType == 'authReq'):
             self.serverAuthProto = msg['value']
@@ -103,9 +100,14 @@ class Link(QTcpSocket):
                 self._handleChanInfo(item)
         elif (msgType == 'subscribeOk'):
             self._subscribeSuccess(msg['value'])
-        elif (msgType == 'unsubscribeOk'): pass
+            self._broadcast(msg)
+        elif (msgType == 'unsubscribeOk'):
+            self._broadcast(msg)
         else:
             print "handle other", msgType
+
+    def _setMessageProcessor(self, fromKey, function):
+        self.mpd.update({fromKey: function})
 
     def _handleChanInfo(self, msg):
         if (msg['eventType'] == 'create'):
@@ -138,6 +140,14 @@ class Link(QTcpSocket):
         pdu = encode('unsubscribe', channel)
         self.sendToServer(pdu)
 
+    def _broadcast(self, msg):
+        for key in self.mpd:
+            if key == 'modSupercastPDU': pass
+            else:
+                handler = self.mpd.get(key)
+                handler(msg)
+
+
     def sendToServer(self, pdu):
         request = QByteArray()
         stream = QDataStream(request,
@@ -161,7 +171,7 @@ class Link(QTcpSocket):
     
             payload = stream.readRawData(self.nextBlockSize)
             self.nextBlockSize = 0
-            self.handleServerMessage(payload)
+            self._handleServerMessage(payload)
 
     def socketConnected(self): pass
 

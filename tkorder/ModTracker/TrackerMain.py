@@ -68,9 +68,12 @@ class TrackerWindow(QtGui.QSplitter):
         elif (mType == 'probeModInfo'):
             #print "received probeModInfo"
             Tree.handle(msg)
-        elif (mType == 'probeActivity'):
-            pass
+        elif (mType == 'probeActivity'): pass
             #print "received probeActivity"
+        elif (mType == 'subscribeOk'):
+            print "subscribeOk message"
+        elif (mType == 'unsubscribeOk'):
+            print "unsubscribeOk message"
         else:
             print "unknown message type: ", mType
     
