@@ -70,10 +70,9 @@ class TrackerWindow(QtGui.QSplitter):
             Tree.handle(msg)
         elif (mType == 'probeActivity'): pass
             #print "received probeActivity"
-        elif (mType == 'subscribeOk'):
-            print "subscribeOk message"
+        elif (mType == 'subscribeOk'): pass
         elif (mType == 'unsubscribeOk'):
-            print "unsubscribeOk message"
+            self.rightStack.unsubscribeOkMsg(msg)
         else:
             print "unknown message type: ", mType
     
@@ -85,15 +84,33 @@ class TrackerWindow(QtGui.QSplitter):
 class Stack(QtGui.QStackedWidget):
     def __init__(self, parent):
         super(Stack, self).__init__(parent)
-        self.chanList       = None
+        self.stackDict       = dict()
 
-    def setView(self, target, probeId):
-        targetName      = target.data(QtCore.Qt.UserRole + 1)
-        currentWidget   = self.widget(1)
-        if currentWidget == None:
-            self.insertWidget(1, Target.ElementView(self, targetName, probeId))
-        else:
-            self.removeWidget(currentWidget)
-            currentWidget.deleteLater()
-            self.insertWidget(1, Target.ElementView(self, targetName, probeId))
-        self.setCurrentIndex(1)
+    def setView(self, targetItem, probeId):
+        targetName      = targetItem.data(QtCore.Qt.UserRole + 1)
+        # target is allready set?
+        if targetName in self.stackDict.keys():
+            self.setCurrentWidget(self.stackDict[targetName])
+            return
+
+        # then create the widget
+        stackWidget = Target.ElementView(self, targetName, probeId)
+        self.addWidget(stackWidget)
+        self.stackDict[targetName] = stackWidget
+
+        # set it current:
+        self.setCurrentWidget(stackWidget)
+        return
+
+    def unsubscribeOkMsg(self, msg):
+        " these messages unstack target specified in the msg"
+        key = msg['value']
+        if key in self.stackDict.keys():
+            stackWidget = self.stackDict[key]
+            # remove from stack
+            self.removeWidget(stackWidget)
+            # destroy it
+            stackWidget.destroy()
+            # then remove it from stackDict
+            del self.stackDict[key]
+        return

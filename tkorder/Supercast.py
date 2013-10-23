@@ -41,7 +41,7 @@ class Link(QTcpSocket):
         # default
         self.setSocketServer('localhost')
         self.setSocketPort(8888)
-        self.maxChans = 2
+        self.maxChans = 3
         self.subscribedChans = deque([])
         self.specialChans   = ['target-MasterChan']
 
