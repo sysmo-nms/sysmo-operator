@@ -26,6 +26,15 @@ class Property(univ.Sequence):
         namedtype.NamedType('value',    char.PrintableString())
     )
 
+class Groups(univ.SequenceOf):
+    componentType = char.PrintableString()
+
+class PermConf(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('read',     Groups()),
+        namedtype.NamedType('write',    Groups())
+    )
+
 class TargetProperties(univ.SequenceOf):
     componentType = Property()
 
@@ -72,11 +81,14 @@ class TrackerProbeInfo(univ.Sequence):
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('id',       univ.Integer()),
         namedtype.NamedType('name',     char.PrintableString()),
-        namedtype.NamedType('type',     ProbeType()),
+        namedtype.NamedType('perm',     PermConf()),
         namedtype.NamedType('probeMod', char.PrintableString()),
+        namedtype.NamedType('probeConf', char.PrintableString()),
         namedtype.NamedType('status',   char.PrintableString()),
-        namedtype.NamedType('step',     univ.Integer()),
         namedtype.NamedType('timeout',  univ.Integer()),
+        namedtype.NamedType('step',     univ.Integer()),
+        namedtype.NamedType('type',     ProbeType()),
+        namedtype.NamedType('active',   univ.Integer()),
         namedtype.NamedType('infoType', ProbeInfoType())
     )
 
@@ -578,7 +590,6 @@ def decode(pdu):
                 targetId    = str(msg3.getComponentByName('channel'))
                 infoType    = msg3.getComponentByName('type')
                 infoProp    = msg3.getComponentByName('properties')
-                print "infoprop: ", infoProp
                 if      infoType == 0: infoT = 'create'
                 elif    infoType == 1: infoT = 'delete'
                 elif    infoType == 2: infoT = 'update'
@@ -596,11 +607,14 @@ def decode(pdu):
                 channel     = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
-                probeType   = msg3.getComponentByName('type')
-                probeModule = str(msg3.getComponentByName('probeMod'))
+                perm        = msg3.getComponentByName('perm')
+                probeMod    = str(msg3.getComponentByName('probeMod'))
+                probeConf   = str(msg3.getComponentByName('probeConf'))
                 status      = str(msg3.getComponentByName('status'))
-                step        = msg3.getComponentByName('step')
                 timeout     = msg3.getComponentByName('timeout')
+                step        = msg3.getComponentByName('step')
+                probeType   = msg3.getComponentByName('type')
+                active      = msg3.getComponentByName('active')
                 infoType    = msg3.getComponentByName('infoType')
 
                 return {
@@ -610,11 +624,14 @@ def decode(pdu):
                         'channel':  channel,
                         'id':       int(probeId),
                         'name':     name,
+                        'perm':     perm,
                         'type':     probeType.prettyPrint(),
-                        'probeMod': probeModule,
+                        'probeMod': probeMod,
+                        'probeconf': probeConf,
                         'status':   status,
                         'step':     int(step),
                         'timeout':  int(timeout),
+                        'active':   int(active),
                         'infoType': infoType.prettyPrint()
                     }
                 }
