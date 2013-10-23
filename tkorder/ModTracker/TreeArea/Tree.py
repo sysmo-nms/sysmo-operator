@@ -1,6 +1,6 @@
 from    PySide import QtGui, QtCore
 import  TkorderIcons
-import  TrackerMain
+#import  TrackerMain
 
 
 #####################################################################
@@ -18,26 +18,20 @@ def handle(msg):
     else:
         print "what", msgType
 
-class PowerTreeContainer(QtGui.QFrame):
-    @classmethod
-    def setSingleton(cls, obj):
-        cls._singleton = obj
-
-    @classmethod
-    def singleton(cls):
-        return cls._singleton
-
+class TreeContainer(QtGui.QFrame):
     @classmethod
     def toggle(cls):
-        if (cls._singleton.isHidden() == True):
-            cls._singleton.show()
+        if (cls.singleton.isHidden() == True):
+            cls.singleton.show()
         else:
-            cls._singleton.hide()
+            cls.singleton.hide()
 
 
     def __init__(self, parent):
-        super(PowerTreeContainer, self).__init__(parent)
-        PowerTreeContainer.setSingleton(self)
+        super(TreeContainer, self).__init__(parent)
+        TreeContainer.singleton = self
+        self.trackerMain  = parent
+
         self.treeview   =  TrackerTView(self)
         self.treeview.clicked[QtCore.QModelIndex].connect(TrackerTView.clic)
 
@@ -69,6 +63,9 @@ class PowerTreeContainer(QtGui.QFrame):
         grid.addWidget(self.treeview,       1, 0, 1, 4)
         self.setLayout(grid)
 
+    def updateEvent(self, event):
+        self.trackerMain.updateEvent(event)
+
 class TrackerTView(QtGui.QTreeView):
     @classmethod
     def set(cls, i):
@@ -78,7 +75,9 @@ class TrackerTView(QtGui.QTreeView):
     def clic(cls, i):
         model = cls.tv.model()
         item  = model.itemFromIndex(i)
-        TrackerMain.TrackerWindow.setView(item)
+        #TrackerMain.TrackerWindow.setView(item)
+        TreeContainer.singleton.updateEvent(item)
+       
 
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
