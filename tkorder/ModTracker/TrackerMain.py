@@ -81,6 +81,9 @@ class TrackerWindow(QtGui.QSplitter):
     def updateEvent(self, event):
         TrackerWindow.setView(event)
 
+    def getTargetInfo(self, target):
+        print "will return target dict", target
+
 class Stack(QtGui.QStackedWidget):
     def __init__(self, parent):
         super(Stack, self).__init__(parent)
@@ -93,8 +96,10 @@ class Stack(QtGui.QStackedWidget):
             self.setCurrentWidget(self.stackDict[targetName])
             return
 
+        # temp XXX
+        targetDict = self._itemToDict(targetItem)
         # then create the widget
-        stackWidget = Target.ElementView(self, targetName, probeId)
+        stackWidget = Target.ElementView(self, targetName, probeId, targetDict)
         self.addWidget(stackWidget)
         self.stackDict[targetName] = stackWidget
 
@@ -114,3 +119,6 @@ class Stack(QtGui.QStackedWidget):
             # then remove it from stackDict
             del self.stackDict[key]
         return
+
+    def _itemToDict(self, item):
+        print item.data(QtCore.Qt.UserRole + 2), "lkj"
