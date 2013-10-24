@@ -26,6 +26,27 @@ class Property(univ.Sequence):
         namedtype.NamedType('value',    char.PrintableString())
     )
 
+class Properties(univ.SequenceOf):
+    componentType = Property()
+
+class Logger(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('conf',     char.PrintableString())
+    )
+
+class Loggers(univ.SequenceOf):
+    componentType = Logger()
+
+class Inspector(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('conf',     char.PrintableString())
+    )
+
+class Inspectors(univ.SequenceOf):
+    componentType = Inspector()
+
 class Groups(univ.SequenceOf):
     componentType = char.PrintableString()
 
@@ -83,11 +104,14 @@ class TrackerProbeInfo(univ.Sequence):
         namedtype.NamedType('name',     char.PrintableString()),
         namedtype.NamedType('perm',     PermConf()),
         namedtype.NamedType('probeMod', char.PrintableString()),
-        namedtype.NamedType('probeConf', char.PrintableString()),
+        namedtype.NamedType('probeConf',    char.PrintableString()),
         namedtype.NamedType('status',   char.PrintableString()),
         namedtype.NamedType('timeout',  univ.Integer()),
         namedtype.NamedType('step',     univ.Integer()),
         namedtype.NamedType('type',     ProbeType()),
+        namedtype.NamedType('inspectors',   Inspectors()),
+        namedtype.NamedType('loggers',  Loggers()),
+        namedtype.NamedType('properties',   Properties()),
         namedtype.NamedType('active',   univ.Integer()),
         namedtype.NamedType('infoType', ProbeInfoType())
     )
@@ -614,27 +638,73 @@ def decode(pdu):
                 timeout     = msg3.getComponentByName('timeout')
                 step        = msg3.getComponentByName('step')
                 probeType   = msg3.getComponentByName('type')
+                inspectors  = msg3.getComponentByName('inspectors')
+                loggers     = msg3.getComponentByName('loggers')
+                properties  = msg3.getComponentByName('properties')
                 active      = msg3.getComponentByName('active')
                 infoType    = msg3.getComponentByName('infoType')
 
-                return {
+
+                readPerm    = perm.getComponentByName('read')
+                writePerm   = perm.getComponentByName('write')
+                permDict    = {'read': [], 'write': []}
+                for i in range(len(readPerm)):
+                    permDict['read'].append(
+                        str(readPerm.getComponentByPosition(i))
+                    )
+
+                for i in range(len(writePerm)):
+                    permDict['write'].append(
+                        str(writePerm.getComponentByPosition(i))
+                    )
+
+                inspectorsDict = {}
+                for i in range(len(inspectors)):
+                    ins = inspectors.getComponentByPosition(i)
+                    mod  = ins.getComponentByName('module')
+                    conf = ins.getComponentByName('conf')
+                    inspectorsDict[str(mod)] = str(conf)
+
+                loggersDict = {}
+                for i in range(len(loggers)):
+                    logger = loggers.getComponentByPosition(i)
+                    mod  = logger.getComponentByName('module')
+                    conf = logger.getComponentByName('conf')
+                    loggersDict[str(mod)] = str(conf)
+
+                propertiesDict = {}
+                for i in range(len(properties)):
+                    prop    = properties.getComponentByPosition(i)
+                    key     = prop.getComponentByName('key')
+                    value   = prop.getComponentByName('value')
+                    propertiesDict[str(key)] = str(value)
+
+                print propertiesDict
+
+                # return {
+                a = {
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
                         'channel':  channel,
                         'id':       int(probeId),
                         'name':     name,
-                        'perm':     perm,
-                        'type':     probeType.prettyPrint(),
+                        'perm':     permDict,
                         'probeMod': probeMod,
                         'probeconf': probeConf,
                         'status':   status,
-                        'step':     int(step),
                         'timeout':  int(timeout),
+                        'step':     int(step),
+                        'type':     probeType.prettyPrint(),
+                        'inspectors':   inspectorsDict,
+                        'loggers':  loggersDict,
+                        'properties':   propertiesDict,
                         'active':   int(active),
                         'infoType': infoType.prettyPrint()
                     }
                 }
+                #print a
+                return a
             elif msg3_type == 'probeDump':
                 channel     = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
