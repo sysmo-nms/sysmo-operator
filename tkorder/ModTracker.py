@@ -1,23 +1,15 @@
 from    PySide      import QtGui, QtCore
-from    TkorderMain import *
-from    Viewers     import Wide, Target
-from    TreeArea    import Tree
 import  TkorderIcons
 import  Supercast
+import  ModTrackerTree
+import  ModTrackerCube
+import  ModTrackerGraphite
 
-class TrackerWindow(QtGui.QSplitter):
-    @classmethod
-    def setMyself(cls, myself):
-        cls._myself = myself
-
-    @classmethod
-    def myself(cls):
-        return cls._myself
-
+class TrackerMain(QtGui.QSplitter):
     @classmethod
     def initView(cls):
-        stack = cls._myself.rightStack
-        stack.addWidget(Wide.View(cls._myself))
+        stack = cls.singleton.rightStack
+        stack.addWidget(ModTrackerCube.View(cls.singleton))
 
     @classmethod
     def setView(cls, item):
@@ -25,21 +17,17 @@ class TrackerWindow(QtGui.QSplitter):
             target  = item
             probeId = None 
         elif item.data(QtCore.Qt.UserRole) == 'probe':
-            target = Tree.TrackerTViewModel.findTargetByName(
+            target = ModTrackerTree.TrackerTViewModel.findTargetByName(
                 item.data(QtCore.Qt.UserRole + 2))
             probeId = item.data(QtCore.Qt.UserRole + 1)
 
         targetName      = target.data(QtCore.Qt.UserRole + 1)
         Supercast.Link.subscribe(targetName)
-        rightStack = cls._myself.rightStack
+        rightStack = cls.singleton.rightStack
         rightStack.setView(target, probeId)
 
-    @classmethod
-    def setMaxOpenStacks(cls, num):
-        cls.maxOpenStacks = num
-
     def __init__(self, parent):
-        super(TrackerWindow, self).__init__(parent)
+        super(TrackerMain, self).__init__(parent)
 
         " forward 'modTrackerPDU to me "
         Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
@@ -47,27 +35,27 @@ class TrackerWindow(QtGui.QSplitter):
         " splitter test "
         self.splitterMoved.connect(self.splitterMoving)
 
-        self.leftTree   = Tree.TreeContainer(self)
+        self.leftTree   = ModTrackerTree.TreeContainer(self)
         self.rightStack = Stack(self)
 
         self.addWidget(self.leftTree)
         self.addWidget(self.rightStack)
         
-        TrackerWindow.setMyself(self)
-        TrackerWindow.initView()
+        TrackerMain.singleton = self
+        TrackerMain.initView()
 
     def handleMsg(self, msg):
         mType = msg['msgType']
 
         if   (mType == 'probeInfo'):
             #print "received probeInfo"
-            Tree.handle(msg)
+            ModTrackerTree.handle(msg)
         elif (mType == 'targetInfo'):
             #print "received targetInfo"
-            Tree.handle(msg)
+            ModTrackerTree.handle(msg)
         elif (mType == 'probeModInfo'):
             #print "received probeModInfo"
-            Tree.handle(msg)
+            ModTrackerTree.handle(msg)
         elif (mType == 'probeActivity'): pass
             #print "received probeActivity"
         elif (mType == 'subscribeOk'): pass
@@ -79,7 +67,7 @@ class TrackerWindow(QtGui.QSplitter):
     def splitterMoving(self, a, b): pass
 
     def updateEvent(self, event):
-        TrackerWindow.setView(event)
+        TrackerMain.setView(event)
 
     def getTargetInfo(self, target):
         print "will return target dict", target
@@ -99,7 +87,8 @@ class Stack(QtGui.QStackedWidget):
         # temp XXX
         targetDict = self._itemToDict(targetItem)
         # then create the widget
-        stackWidget = Target.ElementView(self, targetName, probeId, targetDict)
+        stackWidget = ModTrackerGraphite.ElementView(
+            self, targetName, probeId, targetDict)
         self.addWidget(stackWidget)
         self.stackDict[targetName] = stackWidget
 

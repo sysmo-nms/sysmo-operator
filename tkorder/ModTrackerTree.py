@@ -74,7 +74,7 @@ class TrackerTView(QtGui.QTreeView):
     def clic(cls, i):
         model = cls.tv.model()
         item  = model.itemFromIndex(i)
-        #TrackerMain.TrackerWindow.setView(item)
+        #TrackerMain.Main.setView(item)
         TreeContainer.singleton.updateEvent(item)
        
 

@@ -9,12 +9,11 @@ from    TkorderIcons        import TkorderIcons
 #from    SupercastPDU        import decode, encode
 import  Supercast
 import  ModTracker
-import  ModTracker.TrackerMain
 
 _fromUtf8 = lambda s: s
 
 class TkorderClient(QMainWindow):
-
+    " The main tkorder window "
     def __init__(self, parent=None):
         super(TkorderClient, self).__init__(parent)
         TkorderIcons.init()
@@ -22,6 +21,7 @@ class TkorderClient(QMainWindow):
 
 
         self.readSettings()
+
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
         #self.resize(1200, 600)
@@ -80,7 +80,7 @@ class TkorderCentralWidget(QFrame):
         super(TkorderCentralWidget, self).__init__(parent)
 
         layout      = QGridLayout()
-        modTracker  = ModTracker.TrackerMain.TrackerWindow(self)
+        modTracker  = ModTracker.TrackerMain(self)
         layout.addWidget(modTracker, 0, 0)
 
         self.setLayout(layout)

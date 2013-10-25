@@ -1,7 +1,4 @@
 from    PySide      import QtGui, QtCore
-from    TkorderMain import *
-import  TkorderIcons
-import  Supercast
 
 
 class View(QtGui.QFrame):

@@ -1,7 +1,7 @@
 from PySide import QtGui
 
 
-class TkorderIcons():
+class TkorderIcons(object):
     @classmethod
     def init(cls):
         cls.iconSet = {

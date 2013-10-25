@@ -679,10 +679,7 @@ def decode(pdu):
                     value   = prop.getComponentByName('value')
                     propertiesDict[str(key)] = str(value)
 
-                print propertiesDict
-
-                # return {
-                a = {
+                return {
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
@@ -703,8 +700,6 @@ def decode(pdu):
                         'infoType': infoType.prettyPrint()
                     }
                 }
-                #print a
-                return a
             elif msg3_type == 'probeDump':
                 channel     = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')

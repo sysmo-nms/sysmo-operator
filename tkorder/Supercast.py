@@ -11,29 +11,29 @@ from    collections         import deque
 class Link(QTcpSocket):
     @classmethod
     def subscribe(cls, channel):
-        cls.my._subscribeToChannel(channel)
+        cls.singleton._subscribeToChannel(channel)
 
     @classmethod
     def unsubscribe(cls, channel):
-        cls.my._unsubscribeFromChannel(channel)
+        cls.singleton._unsubscribeFromChannel(channel)
 
     @classmethod
     def setMaxChannels(cls, maxChans):
-        cls.my.maxChans = maxChans
+        cls.singleton.maxChans = maxChans
 
     @classmethod
     def getMaxChannels(cls): 
-        return cls.my.maxChans
+        return cls.singleton.maxChans
 
 
     @classmethod
     def setMessageProcessor(cls, a, b,):
-        cls.my._setMessageProcessor(a, b)
+        cls.singleton._setMessageProcessor(a, b)
 
 
     def __init__(self, parent=None):
         super(Link,self).__init__(parent)
-        Link.my = self
+        Link.singleton = self
 
         self.nextBlockSize  = 0
         self.headerLen      = 4
@@ -295,12 +295,12 @@ class LogInDialog2(QDialog):
         #self.supercastClient.setSocketServer(host)
         #self.supercastClient.setSocketPort(port)
 
-        Link.my.setSocketAuthUser('admuser')
-        Link.my.setSocketAuthPass('passwd')
-        Link.my.setSocketServer('192.168.0.9')
-        Link.my.setSocketPort(8888)
+        Link.singleton.setSocketAuthUser('admuser')
+        Link.singleton.setSocketAuthPass('passwd')
+        Link.singleton.setSocketServer('192.168.0.9')
+        Link.singleton.setSocketPort(8888)
 
-        Link.my.connectServer()
+        Link.singleton.connectServer()
         self.supercastClient.show()
         self.close()
         
