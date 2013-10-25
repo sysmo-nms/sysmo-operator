@@ -250,12 +250,16 @@ class LogInDialog2(QDialog):
 
         self.saveCredentials = QCheckBox("Remember me", self)
 
-        self.logInButton    = QPushButton("LogIn")
-
+        #self.logInButton    = QPushButton("LogIn")
         self.cancelButton   = QPushButton("Cancel")
 
+        self.logAsAdmin     = QPushButton("admuser")
+        self.logAsUser      = QPushButton("simple user")
+
         self.buttonBox      = QDialogButtonBox(Qt.Horizontal)
-        self.buttonBox.addButton(self.logInButton,
+        self.buttonBox.addButton(self.logAsAdmin,
+            QDialogButtonBox.AcceptRole)
+        self.buttonBox.addButton(self.logAsUser,
             QDialogButtonBox.AcceptRole)
         self.buttonBox.addButton(self.cancelButton,
             QDialogButtonBox.DestructiveRole)
@@ -271,10 +275,21 @@ class LogInDialog2(QDialog):
         myGrid.addWidget(self.buttonBox,        4, 0, 1, 3)
         myGrid.setColumnMinimumWidth(1, 250)
 
+        #self.connect(
+        #    self.logInButton,
+        #    SIGNAL("clicked()"), 
+        #    self.logInPushed
+        #)
+
         self.connect(
-            self.logInButton,
+            self.logAsAdmin,
             SIGNAL("clicked()"), 
-            self.logInPushed
+            self.logAsAdminAction
+        )
+        self.connect(
+            self.logAsUser,
+            SIGNAL("clicked()"), 
+            self.logAsUserAction
         )
         self.connect(
             self.cancelButton,
@@ -304,6 +319,46 @@ class LogInDialog2(QDialog):
         self.supercastClient.show()
         self.close()
         
+    def logAsAdminAction(self):
+        host    = self.serverName.text()
+        port    = self.serverPort.value()
+        user    = self.userName.text()
+        passwd  = self.passWord.text()
+
+        #self.supercastClient.setSocketAuthUser(user)
+        #self.supercastClient.setSocketAuthPass(passwd)
+        #self.supercastClient.setSocketServer(host)
+        #self.supercastClient.setSocketPort(port)
+
+        Link.singleton.setSocketAuthUser('admuser')
+        Link.singleton.setSocketAuthPass('passwd')
+        Link.singleton.setSocketServer('192.168.0.9')
+        Link.singleton.setSocketPort(8888)
+
+        Link.singleton.connectServer()
+        self.supercastClient.show()
+        self.close()
+
+    def logAsUserAction(self):
+        host    = self.serverName.text()
+        port    = self.serverPort.value()
+        user    = self.userName.text()
+        passwd  = self.passWord.text()
+
+        #self.supercastClient.setSocketAuthUser(user)
+        #self.supercastClient.setSocketAuthPass(passwd)
+        #self.supercastClient.setSocketServer(host)
+        #self.supercastClient.setSocketPort(port)
+
+        Link.singleton.setSocketAuthUser('simpleuser')
+        Link.singleton.setSocketAuthPass('passwd')
+        Link.singleton.setSocketServer('192.168.0.9')
+        Link.singleton.setSocketPort(8888)
+
+        Link.singleton.connectServer()
+        self.supercastClient.show()
+        self.close()
+
     def cancelPushed(self):
         self.close()
 
