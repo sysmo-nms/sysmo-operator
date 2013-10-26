@@ -6,7 +6,6 @@ from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    PySide.QtNetwork    import *
 from    TkorderIcons        import TkorderIcons
-#from    SupercastPDU        import decode, encode
 import  Supercast
 import  ModTracker
 
