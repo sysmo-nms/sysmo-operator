@@ -3,7 +3,7 @@ import  TkorderIcons
 import  Supercast
 import  ModTrackerTree
 import  ModTrackerCube
-import  ModTrackerGraphite
+import  ModTrackerTargetView
 
 class TrackerMain(QtGui.QSplitter):
     @classmethod
@@ -36,20 +36,34 @@ class TrackerMain(QtGui.QSplitter):
         self.splitterMoved.connect(self.splitterMoving)
 
         self.leftTree   = ModTrackerTree.TreeContainer(self)
-        self.rightStack = Stack(self)
+        self.rightStack = ModTrackerTargetView.Stack(self)
 
         self.addWidget(self.leftTree)
         self.addWidget(self.rightStack)
         
+        self.targets    = dict()
         TrackerMain.singleton = self
         TrackerMain.initView()
+
+    def handleProbeInfo(self, msg):
+        # TODO integrade the targets dict() with ModTrackerTree
+        probeInfo   = msg['value']
+        channel     = probeInfo['channel']
+        probeId     = probeInfo['id']
+        if channel in self.targets:
+            self.targets[channel][probeId]  = probeInfo
+        else:
+            self.targets[channel]           = dict()
+            self.targets[channel][probeId]  = probeInfo
+
+        ModTrackerTree.handle(msg)
 
     def handleMsg(self, msg):
         mType = msg['msgType']
 
         if   (mType == 'probeInfo'):
             #print "received probeInfo"
-            ModTrackerTree.handle(msg)
+            self.handleProbeInfo(msg)
         elif (mType == 'targetInfo'):
             #print "received targetInfo"
             ModTrackerTree.handle(msg)
@@ -59,6 +73,10 @@ class TrackerMain(QtGui.QSplitter):
         elif (mType == 'probeActivity'): pass
             #print "received probeActivity"
         elif (mType == 'subscribeOk'): pass
+        elif (mType == 'probeDump'):
+            print "probeDump"
+        elif (mType == 'probeReturn'):
+            self.rightStack.handleProbeReturn(msg)
         elif (mType == 'unsubscribeOk'):
             self.rightStack.unsubscribeOkMsg(msg)
         else:
@@ -96,6 +114,12 @@ class Stack(QtGui.QStackedWidget):
         self.setCurrentWidget(stackWidget)
         return
 
+    def dumpMsg(self, msg):
+        print "dump"
+
+    def returnMsg(self, msg):
+        print "return"
+
     def unsubscribeOkMsg(self, msg):
         " these messages unstack target specified in the msg"
         key = msg['value']
@@ -111,3 +135,4 @@ class Stack(QtGui.QStackedWidget):
 
     def _itemToDict(self, item):
         print item.data(QtCore.Qt.UserRole + 2), "lkj"
+

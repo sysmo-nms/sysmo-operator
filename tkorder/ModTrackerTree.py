@@ -180,7 +180,6 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         step        = val['step']
         pid         = val['id']
         itemType    = 'probe'
-        print "probe:  status: ",  name,  " ", status
         if (status == 'OK'):
             icon = TkorderIcons.get('weather-clear')
         elif (status == 'WARNING'):

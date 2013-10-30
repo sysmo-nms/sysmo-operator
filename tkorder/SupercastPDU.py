@@ -749,12 +749,12 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':  channel,
-                        'id':       int(probeId),
-                        'status':     status,
-                        'originalRep': original_rep,
-                        'timestamp': timestamp,
-                        'keyVals': keyVals
+                        'channel':      channel,
+                        'id':           int(probeId),
+                        'status':       status,
+                        'originalRep':  original_rep,
+                        'timestamp':    int(timestamp),
+                        'keyVals':      keyVals
                     }
                 }
             else:
