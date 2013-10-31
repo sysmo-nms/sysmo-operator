@@ -49,6 +49,11 @@ class Stack(QStackedWidget):
         if chan in self.stackDict:
             self.stackDict[chan].handleProbeReturn(msg)
 
+    def handleProbeDump(self, msg):
+        chan = msg['value']['channel']
+        if chan in self.stackDict:
+            self.stackDict[chan].handleProbeDump(msg)
+
 class ElementView(QFrame):
     def __init__(self, parent, targetName):
         super(ElementView, self).__init__(parent)
@@ -61,6 +66,9 @@ class ElementView(QFrame):
 
     def handleProbeReturn(self, msg):
         self.body.handleProbeReturn(msg)
+
+    def handleProbeDump(self, msg):
+        self.body.handleProbeDump(msg)
         
 class ElementViewHead(QFrame):
     def __init__(self, parent, targetName):
@@ -88,6 +96,12 @@ class ElementViewBody(QScrollArea):
         probeView   = probeLayout.widget()
         probeView.handleProbeReturn(msg)
 
+    def handleProbeDump(self, msg):
+        probeId     = msg['value']['id']
+        probeLayout = self.grid.itemAtPosition(probeId, 0)
+        probeView   = probeLayout.widget()
+        probeView.handleProbeDump(msg)
+
 
 class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
@@ -110,3 +124,8 @@ class ProbeView(QFrame):
         time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
         string  = value['originalRep'].rstrip()
         self.logArea.append(time + "-> " + string)
+        #self.logArea.append(str(tstamp) + ">>>" + string)
+
+    def handleProbeDump(self, msg):
+        # TODO format each timestamp to match the handleProbeReturn print
+        self.logArea.append(str(msg['value']['data']).rstrip())

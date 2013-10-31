@@ -74,7 +74,7 @@ class TrackerMain(QtGui.QSplitter):
             #print "received probeActivity"
         elif (mType == 'subscribeOk'): pass
         elif (mType == 'probeDump'):
-            print "probeDump"
+            self.rightStack.handleProbeDump(msg)
         elif (mType == 'probeReturn'):
             self.rightStack.handleProbeReturn(msg)
         elif (mType == 'unsubscribeOk'):
