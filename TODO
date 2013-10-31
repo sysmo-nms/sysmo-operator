@@ -1,3 +1,2 @@
 - add unit test,
 - setup.py,
-- XXX bug somewere/sometimes in TkorderPDU or TkorderMain.tcpSocket.readyRead()
