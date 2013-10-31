@@ -128,4 +128,12 @@ class ProbeView(QFrame):
 
     def handleProbeDump(self, msg):
         # TODO format each timestamp to match the handleProbeReturn print
+        if msg['value']['logger'] == 'btracker_logger_text':
+            self.btrackerLoggerTextDump(msg)
+        else:
+            print "don't know what to do with this dump"
+
+    def btrackerLoggerTextDump(self, msg):
         self.logArea.append(str(msg['value']['data']).rstrip())
+
+

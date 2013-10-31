@@ -714,7 +714,7 @@ def decode(pdu):
                         'channel': channel,
                         'id': int(probeId),
                         'type': probeType,
-                        'module': module,
+                        'logger': module,
                         'data': binaryData
                     }
                 }
