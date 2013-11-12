@@ -1,2 +1,4 @@
 - add unit test,
 - setup.py,
+
+- tko do not take consideration of messages comming from a probe_status_move
