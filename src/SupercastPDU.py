@@ -82,17 +82,10 @@ class TargetInfoType(univ.Enumerated):
         ('update', 2)
     )
 
-class ProbeType(univ.Enumerated):
-    namedValues = namedval.NamedValues(
-        ('fetch', 0),
-        ('status', 1)
-    )
-
 class TrackerProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('id',       univ.Integer()),
-        namedtype.NamedType('type',     ProbeType()),
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('data',     univ.OctetString()),
     )
@@ -108,7 +101,6 @@ class TrackerProbeInfo(univ.Sequence):
         namedtype.NamedType('status',   char.PrintableString()),
         namedtype.NamedType('timeout',  univ.Integer()),
         namedtype.NamedType('step',     univ.Integer()),
-        namedtype.NamedType('type',     ProbeType()),
         namedtype.NamedType('inspectors',   Inspectors()),
         namedtype.NamedType('loggers',  Loggers()),
         namedtype.NamedType('properties',   Properties()),
@@ -637,7 +629,6 @@ def decode(pdu):
                 status      = str(msg3.getComponentByName('status'))
                 timeout     = msg3.getComponentByName('timeout')
                 step        = msg3.getComponentByName('step')
-                probeType   = msg3.getComponentByName('type')
                 inspectors  = msg3.getComponentByName('inspectors')
                 loggers     = msg3.getComponentByName('loggers')
                 properties  = msg3.getComponentByName('properties')
@@ -692,7 +683,6 @@ def decode(pdu):
                         'status':   status,
                         'timeout':  int(timeout),
                         'step':     int(step),
-                        'type':     probeType.prettyPrint(),
                         'inspectors':   inspectorsDict,
                         'loggers':  loggersDict,
                         'properties':   propertiesDict,
@@ -703,7 +693,6 @@ def decode(pdu):
             elif msg3_type == 'probeDump':
                 channel     = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
-                probeType   = msg3.getComponentByName('type')
                 module      = msg3.getComponentByName('module')
                 binaryData  = msg3.getComponentByName('data')
 
@@ -713,7 +702,6 @@ def decode(pdu):
                     'value':    {
                         'channel': channel,
                         'id': int(probeId),
-                        'type': probeType,
                         'logger': module,
                         'data': binaryData
                     }
