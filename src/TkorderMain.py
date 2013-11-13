@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import  time
+import  os
 import  sys
 
 from    PySide.QtCore       import *
@@ -86,6 +87,10 @@ class TkorderCentralWidget(QFrame):
 
 def main(arguments):
     tkorderApp    = QApplication(arguments)
+    fo = open('dib.stylesheet')
+    styleSheet = fo.read()
+    fo.close()
+    tkorderApp.setStyleSheet(styleSheet)
     tkorderUi     = TkorderClient()
     tkorderApp.setWindowIcon(
         TkorderIcons.get('applications-development')
