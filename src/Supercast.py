@@ -126,7 +126,10 @@ class Link(QTcpSocket):
             q = self.subscribedChans
             m = self.maxChans
             # is allready registered?
-            if chan in q: pass
+            if chan in q:
+                # do nothing but put the clicked element on the head
+                q.remove(chan)
+                q.append(chan)
             else:
                 if len(q) == m:
                     unsub = q.popleft()
