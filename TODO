@@ -1,4 +1,7 @@
 - add unit test,
 - setup.py,
 
+BUG
 - tko do not take consideration of messages comming from a probe_status_move
+- left list do not update a clic on a target in the supercast queue. Test
+it with 4 elements. It will not rotate logicaly.
