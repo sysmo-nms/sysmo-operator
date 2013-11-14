@@ -1,5 +1,6 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
+import  os
 import  datetime
 import  TkorderIcons
 import  ModTracker
@@ -8,6 +9,7 @@ class Stack(QStackedWidget):
     def __init__(self, parent):
         super(Stack, self).__init__(parent)
         self.stackDict       = dict()
+        self.vardir = os.path.join(os.getcwd(), 'var')
 
     def setView(self, targetItem, probeId):
         targetName      = targetItem.data(Qt.UserRole + 1)
