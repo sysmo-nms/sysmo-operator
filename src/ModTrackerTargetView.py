@@ -32,7 +32,7 @@ class Stack(QStackedWidget):
         print "return"
 
     def unsubscribeOkMsg(self, msg):
-        " these messages unstack target specified in the msg"
+        " these messages unstack the target specified in the msg"
         key = msg['value']
         if key in self.stackDict.keys():
             stackWidget = self.stackDict[key]
