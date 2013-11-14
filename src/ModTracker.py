@@ -2,14 +2,14 @@ from    PySide      import QtGui, QtCore
 import  TkorderIcons
 import  Supercast
 import  ModTrackerTree
-import  ModTrackerCube
+import  ModTrackerWideView
 import  ModTrackerTargetView
 
 class TrackerMain(QtGui.QSplitter):
     @classmethod
     def initView(cls):
         stack = cls.singleton.rightStack
-        stack.addWidget(ModTrackerCube.View(cls.singleton))
+        stack.addWidget(ModTrackerWideView.View(cls.singleton))
 
     @classmethod
     def setView(cls, item):
