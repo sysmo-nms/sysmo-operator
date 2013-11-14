@@ -4,6 +4,7 @@ import  os
 import  datetime
 import  TkorderIcons
 import  ModTracker
+import  rrdtool
 
 class Stack(QStackedWidget):
     def __init__(self, parent):
@@ -144,15 +145,6 @@ class ProbeView(QFrame):
         data    = msg['value']['data']
         vardir  = Stack.vardir
         rrdFile = os.path.join(vardir, chan + '-' + str(pid) + '.rrd')
-
-        try:
-            os.remove(rrdFile)
-        except OSError: pass
-        
-        f = open(rrdFile, 'wb')
+        f       = open(rrdFile, 'wb')
         f.write(data)
         f.close()
-
-        #print "type is ", class(data)
-        #for key in msg['value'].keys():
-            #print key
