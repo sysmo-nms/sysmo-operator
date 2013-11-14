@@ -29,11 +29,55 @@ class Property(univ.Sequence):
 class Properties(univ.SequenceOf):
     componentType = Property()
 
-class Logger(univ.Sequence):
+class Bind(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('replacement',  char.PrintableString()),
+        namedtype.NamedType('macro',        char.PrintableString())
+    )
+
+class Binds(univ.SequenceOf):
+    componentType = Bind()
+
+class LoggerRrd(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('create',   char.PrintableString()),
+        namedtype.NamedType('update',   char.PrintableString()),
+        namedtype.NamedType('graph',    char.PrintableString()),
+        namedtype.NamedType('binds',    Binds())
+    )
+
+class LoggerText(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('conf',     char.PrintableString())
     )
+
+class Logger(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'loggerRrd',
+            LoggerRrd().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    0
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'loggerText',
+            LoggerText().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        )
+    )
+
+
 
 class Loggers(univ.SequenceOf):
     componentType = Logger()
@@ -102,7 +146,7 @@ class TrackerProbeInfo(univ.Sequence):
         namedtype.NamedType('timeout',  univ.Integer()),
         namedtype.NamedType('step',     univ.Integer()),
         namedtype.NamedType('inspectors',   Inspectors()),
-        namedtype.NamedType('loggers',  Loggers()),
+        namedtype.NamedType('loggers',      Loggers()),
         namedtype.NamedType('properties',   Properties()),
         namedtype.NamedType('active',   univ.Integer()),
         namedtype.NamedType('infoType', ProbeInfoType())
@@ -659,9 +703,32 @@ def decode(pdu):
                 loggersDict = {}
                 for i in range(len(loggers)):
                     logger = loggers.getComponentByPosition(i)
-                    mod  = logger.getComponentByName('module')
-                    conf = logger.getComponentByName('conf')
-                    loggersDict[str(mod)] = str(conf)
+                    ltype  = logger.getName()
+                    if ltype == 'loggerText':
+                        logger2 = logger.getComponent()
+                        mod  = logger2.getComponentByName('module')
+                        conf = logger2.getComponentByName('conf')
+                        loggersDict[str(mod)] = str(conf)
+                    elif ltype == 'loggerRrd':
+                        logger2 = logger.getComponent()
+                        mod     = logger2.getComponentByName('module')
+
+                        create  = logger2.getComponentByName('create')
+                        update  = logger2.getComponentByName('update')
+                        graph   = logger2.getComponentByName('graph')
+                        binds   = logger2.getComponentByName('binds')
+                        bindsD = dict()
+                        for j in range(len(binds)):
+                            bind = binds.getComponentByPosition(j)
+                            rep  = bind.getComponentByName('replacement')
+                            mac  = bind.getComponentByName('macro')
+                            bindsD[str(rep)] = str(mac)
+                        conf   = dict()
+                        conf['create'] = str(create)
+                        conf['update'] = str(update)
+                        conf['graph']  = str(graph)
+                        conf['binds']  = str(bindsD)
+                        loggersDict[str(mod)] = conf
 
                 propertiesDict = {}
                 for i in range(len(properties)):
