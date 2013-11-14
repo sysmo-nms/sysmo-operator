@@ -9,7 +9,7 @@ class Stack(QStackedWidget):
     def __init__(self, parent):
         super(Stack, self).__init__(parent)
         self.stackDict       = dict()
-        self.vardir = os.path.join(os.getcwd(), 'var')
+        Stack.vardir = os.path.join(os.getcwd(), 'var')
 
     def setView(self, targetItem, probeId):
         targetName      = targetItem.data(Qt.UserRole + 1)
@@ -133,9 +133,26 @@ class ProbeView(QFrame):
         if msg['value']['logger'] == 'btracker_logger_text':
             self.btrackerLoggerTextDump(msg)
         else:
-            print "don't know what to do with this dump"
+            self.btrackerLoggerRrdDump(msg)
 
     def btrackerLoggerTextDump(self, msg):
         self.logArea.append(str(msg['value']['data']).rstrip())
 
+    def btrackerLoggerRrdDump(self, msg):
+        chan    = msg['value']['channel']
+        pid     = msg['value']['id']
+        data    = msg['value']['data']
+        vardir  = Stack.vardir
+        rrdFile = os.path.join(vardir, chan + '-' + str(pid) + '.rrd')
 
+        try:
+            os.remove(rrdFile)
+        except OSError: pass
+        
+        f = open(rrdFile, 'wb')
+        f.write(data)
+        f.close()
+
+        #print "type is ", class(data)
+        #for key in msg['value'].keys():
+            #print key

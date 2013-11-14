@@ -770,7 +770,7 @@ def decode(pdu):
                         'channel': channel,
                         'id': int(probeId),
                         'logger': module,
-                        'data': binaryData
+                        'data': str(binaryData)
                     }
                 }
             elif msg3_type == 'probeActivity':
