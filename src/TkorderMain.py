@@ -2,6 +2,7 @@
 import  time
 import  os
 import  sys
+import  pprint
 
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
@@ -43,9 +44,15 @@ class TkorderClient(QMainWindow):
             TkorderIcons.get('system-log-out'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
+        debugAction  = QAction(
+            TkorderIcons.get('applications-development'), '&Debug', self)
+        debugAction.setShortcut('Ctrl+D')
+        debugAction.triggered.connect(self.logTargets)
+
         menu        = self.menuBar()
         menuFile    = menu.addMenu('Engage')
         menuFile.addAction(exitAction)
+        menuFile.addAction(debugAction)
 
         " Server connexion and socket related "
         self.supercast = Supercast.Link(self)
@@ -56,6 +63,11 @@ class TkorderClient(QMainWindow):
         self.setCentralWidget(
             TkorderCentralWidget(self))
         self.updateStatusBar("Started!")
+
+    def logTargets(self):
+        pp  = pprint.PrettyPrinter(indent=4)
+        d   = ModTracker.TrackerMain.singleton.targets
+        print pp.pprint(d)
 
     def updateStatusBar(self, msg):
         self.statusBar.showMessage(msg)
@@ -87,10 +99,10 @@ class TkorderCentralWidget(QFrame):
 
 def main(arguments):
     tkorderApp    = QApplication(arguments)
-    fo = open('dib.stylesheet')
-    styleSheet = fo.read()
-    fo.close()
-    tkorderApp.setStyleSheet(styleSheet)
+    #fo = open('style/dib.stylesheet')
+    #styleSheet = fo.read()
+    #fo.close()
+    #tkorderApp.setStyleSheet(styleSheet)
     tkorderUi     = TkorderClient()
     tkorderApp.setWindowIcon(
         TkorderIcons.get('applications-development')
