@@ -164,9 +164,6 @@ class ProbeView(QFrame):
         time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
         string  = value['originalRep'].rstrip()
         printable = string.replace('\n', ' ').replace('  ', ' ')
-
-        doc = self.logArea.document()
-        print "line count is ", doc.blockCount()
         self.logArea.append(time + "-> " + printable)
         #self.logArea.append(str(tstamp) + ">>>" + string)
 
