@@ -61,6 +61,7 @@ class TreeContainer(QtGui.QFrame):
         grid.addWidget(self.configureButton,   0, 3)
         grid.addWidget(self.treeview,       1, 0, 1, 4)
         self.setLayout(grid)
+        self.setMaximumWidth(400)
 
     def updateEvent(self, event):
         self.trackerMain.updateEvent(event)
