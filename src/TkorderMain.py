@@ -40,6 +40,7 @@ class TkorderClient(QMainWindow):
         self.setStatusBar(self.statusBar)
 
         " Menu bar "
+        "File"
         exitAction  = QAction(
             TkorderIcons.get('system-log-out'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -48,11 +49,19 @@ class TkorderClient(QMainWindow):
             TkorderIcons.get('applications-development'), '&Debug', self)
         debugAction.setShortcut('Ctrl+D')
         debugAction.triggered.connect(self.logTargets)
-
         menu        = self.menuBar()
         menuFile    = menu.addMenu('Engage')
         menuFile.addAction(exitAction)
         menuFile.addAction(debugAction)
+
+        "Win"
+        fullScreenAction  = QAction(
+            TkorderIcons.get('video-display'), '&Full screen', self)
+        fullScreenAction.setShortcut('Ctrl+F')
+        fullScreenAction.triggered.connect(self.toggleFullScreen)
+        menuWin     = menu.addMenu('Views')
+        menuWin.addAction(fullScreenAction)
+
 
         " Server connexion and socket related "
         self.supercast = Supercast.Link(self)
@@ -64,6 +73,12 @@ class TkorderClient(QMainWindow):
             TkorderCentralWidget(self))
         self.updateStatusBar("Started!")
 
+    def toggleFullScreen(self):
+        if self.isFullScreen() == False:
+            self.showFullScreen()
+        else:
+            self.showNormal()
+        
     def logTargets(self):
         pp  = pprint.PrettyPrinter(indent=4)
         d   = ModTracker.TrackerMain.singleton.targets
