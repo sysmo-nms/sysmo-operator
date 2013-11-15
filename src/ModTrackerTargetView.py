@@ -122,40 +122,68 @@ class ElementViewBody(QFrame):
 class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
+
+        loggers = probeDict['loggers']
+        if 'btracker_logger_text' in loggers and \
+           'btracker_logger_rrd' in loggers:
+            viewType = 'full'
+        elif 'btracker_logger_text' in loggers:
+            viewType = 'text'
+        elif 'btracker_logger_rrd'  in loggers:
+            viewType = 'rrd'
+
         self.setFrameStyle(1)
-        self.setFixedHeight(350)
         self.setFrameShadow(QFrame.Sunken)
-
         self.infoLabel  = ProbeInfos(self, targetName, probeId, probeDict)
-        self.rrdButtons = ProbeButtons(self, probeDict)
-        self.rrdGraphs  = ProbeGraphs(self, probeDict)
 
-        self.logArea    = QTextEdit(self)
-        dtext   = QTextDocument()
-        dtext.setMaximumBlockCount(500)
-        tformat = QTextCharFormat()
-        tformat.setFontPointSize(8.2)
-        self.logArea.setDocument(dtext)
-        self.logArea.setCurrentCharFormat(tformat)
-        self.logArea.setReadOnly(True)
-        self.logArea.setLineWrapMode(QTextEdit.NoWrap)
-        self.logArea.setFixedHeight(90)
-
-
-
-        grid = QGridLayout()
-        grid.addWidget(self.infoLabel,   0,0,1,1)
-        grid.addWidget(self.rrdButtons,  0,1,1,1)
-        grid.addWidget(self.rrdGraphs,   0,2,1,1)
-        grid.addWidget(self.logArea,     1,0,1,3)
-
-        grid.setRowStretch(0,1)
-        grid.setRowStretch(1,0)
-
-        grid.setColumnStretch(0,0)
-        grid.setColumnStretch(1,0)
-        grid.setColumnStretch(2,1)
-
+        if viewType == 'full' or viewType == 'text':
+    
+            self.logArea    = QTextEdit(self)
+            dtext   = QTextDocument()
+            dtext.setMaximumBlockCount(500)
+            tformat = QTextCharFormat()
+            tformat.setFontPointSize(8.2)
+            self.logArea.setDocument(dtext)
+            self.logArea.setCurrentCharFormat(tformat)
+            self.logArea.setReadOnly(True)
+            self.logArea.setLineWrapMode(QTextEdit.NoWrap)
+            if viewType == 'full':
+                self.setFixedHeight(350)
+                self.logArea.setFixedHeight(90)
+                self.rrdButtons = ProbeButtons(self, probeDict)
+                self.rrdGraphs  = ProbeGraphs(self, probeDict)
+                grid = QGridLayout()
+                grid.addWidget(self.infoLabel,   0,0,1,1)
+                grid.addWidget(self.rrdButtons,  0,1,1,1)
+                grid.addWidget(self.rrdGraphs,   0,2,1,1)
+                grid.addWidget(self.logArea,     1,0,1,3)
+                grid.setRowStretch(0,1)
+                grid.setRowStretch(1,0)
+                grid.setColumnStretch(0,0)
+                grid.setColumnStretch(1,0)
+                grid.setColumnStretch(2,1)
+            else:
+                "text only"
+                self.setFixedHeight(200)
+                grid = QGridLayout()
+                grid.addWidget(self.infoLabel,   0,0,1,1)
+                grid.addWidget(self.logArea,     0,1,1,1)
+                grid.setRowStretch(0,1)
+                grid.setColumnStretch(0,0)
+                grid.setColumnStretch(1,1)
+        else:
+            "rrd only"
+            self.setFixedHeight(260)
+            self.rrdButtons = ProbeButtons(self, probeDict)
+            self.rrdGraphs  = ProbeGraphs(self, probeDict)
+            grid = QGridLayout()
+            grid.addWidget(self.infoLabel,   0,0,1,1)
+            grid.addWidget(self.rrdButtons,  0,1,1,1)
+            grid.addWidget(self.rrdGraphs,   0,2,1,1)
+            grid.setColumnStretch(0,0)
+            grid.setColumnStretch(1,0)
+            grid.setColumnStretch(2,1)
+    
         self.setLayout(grid)
 
     def handleProbeReturn(self,msg):
@@ -190,15 +218,42 @@ class ProbeView(QFrame):
 class ProbeInfos(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeInfos, self).__init__(parent)
+        self.setFixedWidth(200)
+        status      = probeDict['status']
+        inspectors  = probeDict['inspectors']
+        loggers     = probeDict['loggers']
+        active      = probeDict['active']
+        step        = probeDict['step']
+        timeout     = probeDict['timeout']
+        probeId     = probeDict['id']
+        probeMod    = probeDict['probeMod']
+        infoType    = probeDict['infoType']
+        name        = probeDict['name']
+        perm        = probeDict['perm']
+        properties  = probeDict['properties']
+
         grid = QGridLayout()
-        grid.addWidget(QLabel(targetName + '-' + str(probeId), self), 0,0,1,1)
+        grid.addWidget(QLabel('status: ' + status,  self),  0,0,1,1)
+        grid.addWidget(QLabel('active: ' + str(active),  self),  1,0,1,1)
+        grid.addWidget(QLabel('step: ' + str(step),  self),      2,0,1,1)
+        grid.addWidget(QLabel('timeout: ' + str(timeout),  self), 3,0,1,1)
+        grid.addWidget(QLabel('name: ' + name,  self),      4,0,1,1)
+        grid.addWidget(QLabel('perm: ' + str(perm),  self),      5,0,1,1)
+        grid.setRowStretch(50, 1)
         self.setLayout(grid)
 
 class ProbeButtons(QFrame):
     def __init__(self, parent, probeDict):
         super(ProbeButtons, self).__init__(parent)
+        self.setFrameShadow(QFrame.Sunken)
+        self.setFrameStyle(1)
         grid = QGridLayout()
-        grid.addWidget(QLabel('buttons!', self), 0,0,1,1)
+        grid.addWidget(QCheckBox('hour', self), 0,0,1,1)
+        grid.addWidget(QCheckBox('day', self), 1,0,1,1)
+        grid.addWidget(QCheckBox('month', self), 2,0,1,1)
+        grid.addWidget(QCheckBox('year', self), 3,0,1,1)
+        grid.addWidget(QCheckBox('5-year', self), 4,0,1,1)
+        grid.setRowStretch(5,1)
         self.setLayout(grid)
 
 class ProbeGraphs(QFrame):
