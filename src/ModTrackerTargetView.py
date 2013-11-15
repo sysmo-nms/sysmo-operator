@@ -123,16 +123,36 @@ class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
         self.setFrameStyle(1)
-        self.setFixedHeight(400)
+        self.setFixedHeight(350)
         self.setFrameShadow(QFrame.Sunken)
 
-        self.label      = QLabel("probe id: "+ `probeId`, self)
+        self.infoLabel  = ProbeInfos(self, targetName, probeId, probeDict)
+        self.rrdButtons = ProbeButtons(self, probeDict)
+        self.rrdGraphs  = ProbeGraphs(self, probeDict)
+
         self.logArea    = QTextEdit(self)
+        tformat = QTextCharFormat()
+        tformat.setFontPointSize(8.2)
+        self.logArea.setCurrentCharFormat(tformat)
         self.logArea.setReadOnly(True)
         self.logArea.setLineWrapMode(QTextEdit.NoWrap)
+        self.logArea.setFixedHeight(90)
+
+
+
         grid = QGridLayout()
-        grid.addWidget(self.label,   0,0)
-        grid.addWidget(self.logArea, 1,0)
+        grid.addWidget(self.infoLabel,   0,0,1,1)
+        grid.addWidget(self.rrdButtons,  0,1,1,1)
+        grid.addWidget(self.rrdGraphs,   0,2,1,1)
+        grid.addWidget(self.logArea,     1,0,1,3)
+
+        grid.setRowStretch(0,1)
+        grid.setRowStretch(1,0)
+
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,0)
+        grid.setColumnStretch(2,1)
+
         self.setLayout(grid)
 
     def handleProbeReturn(self,msg):
@@ -140,7 +160,8 @@ class ProbeView(QFrame):
         tstamp  = value['timestamp']
         time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
         string  = value['originalRep'].rstrip()
-        self.logArea.append(time + "-> " + string)
+        printable = string.replace('\n', ' ').replace('  ', ' ')
+        self.logArea.append(time + "-> " + printable)
         #self.logArea.append(str(tstamp) + ">>>" + string)
 
     def handleProbeDump(self, msg):
@@ -162,3 +183,24 @@ class ProbeView(QFrame):
         f       = open(rrdFile, 'wb')
         f.write(data)
         f.close()
+
+class ProbeInfos(QFrame):
+    def __init__(self, parent, targetName, probeId, probeDict):
+        super(ProbeInfos, self).__init__(parent)
+        grid = QGridLayout()
+        grid.addWidget(QLabel(targetName + '-' + str(probeId), self), 0,0,1,1)
+        self.setLayout(grid)
+
+class ProbeButtons(QFrame):
+    def __init__(self, parent, probeDict):
+        super(ProbeButtons, self).__init__(parent)
+        grid = QGridLayout()
+        grid.addWidget(QLabel('buttons!', self), 0,0,1,1)
+        self.setLayout(grid)
+
+class ProbeGraphs(QFrame):
+    def __init__(self, parent, probeDict):
+        super(ProbeGraphs, self).__init__(parent)
+        grid = QGridLayout()
+        grid.addWidget(QLabel('graphs!', self), 0,0,1,1)
+        self.setLayout(grid)
