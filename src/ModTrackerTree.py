@@ -86,6 +86,7 @@ class TrackerTView(QtGui.QTreeView):
         #self.header = QtGui.QHeaderView(QtCore.Qt.Horizontal, self)
         #self.header.setClickable(True)
         #self.header.setSortIndicatorShown(True)
+        self.setHeaderHidden(True)
 
         # QTreeview
         self.setAnimated(True)
