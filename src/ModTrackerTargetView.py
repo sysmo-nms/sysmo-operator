@@ -131,8 +131,11 @@ class ProbeView(QFrame):
         self.rrdGraphs  = ProbeGraphs(self, probeDict)
 
         self.logArea    = QTextEdit(self)
+        dtext   = QTextDocument()
+        dtext.setMaximumBlockCount(500)
         tformat = QTextCharFormat()
         tformat.setFontPointSize(8.2)
+        self.logArea.setDocument(dtext)
         self.logArea.setCurrentCharFormat(tformat)
         self.logArea.setReadOnly(True)
         self.logArea.setLineWrapMode(QTextEdit.NoWrap)
@@ -161,6 +164,9 @@ class ProbeView(QFrame):
         time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
         string  = value['originalRep'].rstrip()
         printable = string.replace('\n', ' ').replace('  ', ' ')
+
+        doc = self.logArea.document()
+        print "line count is ", doc.blockCount()
         self.logArea.append(time + "-> " + printable)
         #self.logArea.append(str(tstamp) + ">>>" + string)
 
