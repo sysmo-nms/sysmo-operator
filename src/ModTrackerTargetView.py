@@ -61,17 +61,17 @@ class ElementView(QFrame):
     def __init__(self, parent, targetName):
         super(ElementView, self).__init__(parent)
         self.head = ElementViewHead(self, targetName)
-        self.body = ElementViewBody(self, targetName)
+        self.scroll = ElementViewScroll(self, targetName)
         grid = QGridLayout()
         grid.addWidget(self.head, 0, 0)
-        grid.addWidget(self.body, 1, 0)
+        grid.addWidget(self.scroll, 1, 0)
         self.setLayout(grid)
 
     def handleProbeReturn(self, msg):
-        self.body.handleProbeReturn(msg)
+        self.scroll.handleProbeReturn(msg)
 
     def handleProbeDump(self, msg):
-        self.body.handleProbeDump(msg)
+        self.scroll.handleProbeDump(msg)
         
 class ElementViewHead(QFrame):
     def __init__(self, parent, targetName):
@@ -83,7 +83,20 @@ class ElementViewHead(QFrame):
         grid.addWidget(self.headLabel, 0, 0)
         self.setLayout(grid)
 
-class ElementViewBody(QScrollArea):
+class ElementViewScroll(QScrollArea):
+    def __init__(self, parent, targetName):
+        super(ElementViewScroll, self).__init__(parent)
+        self.content = ElementViewBody(self, targetName)
+        self.setWidget(self.content)
+        self.setWidgetResizable(True)
+
+    def handleProbeReturn(self, msg):
+        self.content.handleProbeReturn(msg)
+
+    def handleProbeDump(self, msg):
+        self.content.handleProbeDump(msg)
+
+class ElementViewBody(QFrame):
     def __init__(self, parent, targetName):
         super(ElementViewBody, self).__init__(parent)
         targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
@@ -110,6 +123,7 @@ class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
         self.setFrameStyle(1)
+        self.setFixedHeight(400)
         self.setFrameShadow(QFrame.Sunken)
 
         self.label      = QLabel("probe id: "+ `probeId`, self)
