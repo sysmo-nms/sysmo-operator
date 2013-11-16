@@ -1,5 +1,11 @@
 - add unit test,
 - setup.py,
+- right clic on targets should open a menu with user defined commands using
+probe and targets properties as arguments. Possibly right clic on multiple
+selected items.
+- events time plots (inspector_events)
+- treeivew must be searchable, filterable, and custom parent/childs must be
+implemented.
 
 BUG
 - tko do not take consideration of messages comming from a probe_status_move
