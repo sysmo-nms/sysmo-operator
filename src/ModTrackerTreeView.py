@@ -101,7 +101,7 @@ class TrackerTView(QtGui.QTreeView):
         self.setDragEnabled(False)
         self.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-        self.setIconSize(QtCore.QSize(30, 30)) 
+        self.setIconSize(QtCore.QSize(25, 25)) 
         self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.setModel(TrackerTViewModel(self))
 
@@ -160,7 +160,7 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         properties  = val['properties']
         itemType    = 'target'
         icon        = TkorderIcons.get('weather-clear-night')
-        i2  = icon.pixmap(5,5)
+        #i2  = icon.pixmap(5,5)
         if infoType == 'create':
             newItem = QtGui.QStandardItem()
             newItem.setData(channel,    QtCore.Qt.DisplayRole)
