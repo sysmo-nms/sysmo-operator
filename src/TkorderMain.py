@@ -37,7 +37,14 @@ class TkorderClient(QMainWindow):
 
         " Status bar "
         self.statusBar = QStatusBar(self)
+        self.statusBar.setStyleSheet(
+            "QStatusBar { \
+                border: 1px solid black;\
+                border-radius: 50px;\
+                background: #B0C2D9 \
+            }")
         self.setStatusBar(self.statusBar)
+
 
         " Menu bar "
         "File"

@@ -61,12 +61,25 @@ class TreeContainer(QFrame):
         # grid.addWidget(self.filterButton,   0, 2)
         # grid.addWidget(self.configureButton,   0, 3)
         # grid.addWidget(self.treeview,       1, 0, 1, 4)
-        grid.addWidget(self.treeview,       0, 0)
+        self.info = TrackerTreeAreaInfo(self)
+        grid.addWidget(self.treeview,           0, 0)
+        grid.addWidget(self.info,               1, 0)
         self.setLayout(grid)
         self.setMaximumWidth(400)
 
     def updateEvent(self, event):
         self.trackerMain.updateEvent(event)
+
+class TrackerTreeAreaInfo(QTextEdit):
+    def __init__(self, parent):
+        super(TrackerTreeAreaInfo, self).__init__(parent)
+        self.setStyleSheet(
+            "QTextEdit { \
+                border: 1px solid black;\
+                border-radius: 20px;\
+                background: #FAF5CB \
+            }")
+        self.setFixedHeight(100)
 
 class TrackerTView(QTreeView):
     @classmethod
