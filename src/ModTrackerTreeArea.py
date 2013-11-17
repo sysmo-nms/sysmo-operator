@@ -1,4 +1,5 @@
-from    PySide import QtGui, QtCore
+from    PySide.QtCore   import *
+from    PySide.QtGui    import *
 import  TkorderIcons
 
 
@@ -17,7 +18,7 @@ def handle(msg):
     else:
         print "what", msgType
 
-class TreeContainer(QtGui.QFrame):
+class TreeContainer(QFrame):
     @classmethod
     def toggle(cls):
         if (cls.singleton.isHidden() == True):
@@ -32,28 +33,28 @@ class TreeContainer(QtGui.QFrame):
         self.trackerMain  = parent
 
         self.treeview   =  TrackerTView(self)
-        self.treeview.clicked[QtCore.QModelIndex].connect(TrackerTView.clic)
+        self.treeview.clicked[QModelIndex].connect(TrackerTView.clic)
 
-        # self.filterMenu = QtGui.QMenu(self)
-        # self.filterButton    = QtGui.QToolButton(self)
+        # self.filterMenu = QMenu(self)
+        # self.filterButton    = QToolButton(self)
         # self.filterButton.setIcon(TkorderIcons.get('Filter'))
         # self.filterButton.setMenu(self.filterMenu)
 
-        # self.configureMenu = QtGui.QMenu(self)
-        # self.configureButton    = QtGui.QToolButton(self)
+        # self.configureMenu = QMenu(self)
+        # self.configureButton    = QToolButton(self)
         # self.configureButton.setIcon(TkorderIcons.get('preferences-system-session'))
         # self.configureButton.setMenu(self.configureMenu)
 
-        # self.clearButton    = QtGui.QToolButton(self)
+        # self.clearButton    = QToolButton(self)
         # self.clearButton.setIcon(TkorderIcons.get('edit-clear'))
-        # self.clearButton.setIconSize(QtCore.QSize(20,20))
+        # self.clearButton.setIconSize(QSize(20,20))
         # self.clearButton.setStyleSheet("QToolButton {border: none; padding: 0px; }")
 
-        # self.lineEdit   =   QtGui.QLineEdit(self)
+        # self.lineEdit   =   QLineEdit(self)
         # self.lineEdit.setPlaceholderText("Filtrer les sondes")
 
 
-        grid = QtGui.QGridLayout()
+        grid = QGridLayout()
         grid.setHorizontalSpacing(0)
         # grid.addWidget(self.lineEdit,       0, 0)
         # grid.addWidget(self.clearButton,    0, 1)
@@ -67,7 +68,7 @@ class TreeContainer(QtGui.QFrame):
     def updateEvent(self, event):
         self.trackerMain.updateEvent(event)
 
-class TrackerTView(QtGui.QTreeView):
+class TrackerTView(QTreeView):
     @classmethod
     def set(cls, i):
         cls.tv = i
@@ -83,7 +84,7 @@ class TrackerTView(QtGui.QTreeView):
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
         TrackerTView.set(self)
-        #self.header = QtGui.QHeaderView(QtCore.Qt.Horizontal, self)
+        #self.header = QHeaderView(Qt.Horizontal, self)
         #self.header.setClickable(True)
         #self.header.setSortIndicatorShown(True)
         self.setHeaderHidden(True)
@@ -99,24 +100,24 @@ class TrackerTView(QtGui.QTreeView):
         # <- QAbasctractItemView 
         self.setAlternatingRowColors(True)
         self.setDragEnabled(False)
-        self.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-        self.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-        self.setIconSize(QtCore.QSize(25, 25)) 
-        self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.setIconSize(QSize(25, 25)) 
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setModel(TrackerTViewModel(self))
 
         # <- QAbstractScrollArea
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         # <- QFrame
-        #self.setFrameShadow(QtGui.QFrame.Sunken)
-        #self.setFrameShape(QtGui.QFrame.StyledPanel)
+        #self.setFrameShadow(QFrame.Sunken)
+        #self.setFrameShape(QFrame.StyledPanel)
 
         # from QTreeView
         self.expandAll()
 
-class TrackerTViewModel(QtGui.QStandardItemModel):
+class TrackerTViewModel(QStandardItemModel):
     @classmethod
     def setTVM(cls, i):
         cls.tvm  = i
@@ -138,7 +139,7 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         tv = cls.tvm
         parentItemList = tv.findItems(
             targetName,
-            flags=QtCore.Qt.MatchRecursive,
+            flags=Qt.MatchRecursive,
             column=0
         )
         parentItem = parentItemList.pop()
@@ -162,14 +163,14 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         icon        = TkorderIcons.get('weather-clear-night')
         #i2  = icon.pixmap(5,5)
         if infoType == 'create':
-            newItem = QtGui.QStandardItem()
-            newItem.setData(channel,    QtCore.Qt.DisplayRole)
-            newItem.setData(icon,       QtCore.Qt.DecorationRole)
-            newItem.setData(itemType,   QtCore.Qt.UserRole)
-            newItem.setData(channel,    QtCore.Qt.UserRole + 1)
-            newItem.setData(properties, QtCore.Qt.UserRole + 2)
-            newItem.setFlags(QtCore.Qt.ItemIsSelectable)
-            newItem.setFlags(QtCore.Qt.ItemIsEnabled)
+            newItem = QStandardItem()
+            newItem.setData(channel,    Qt.DisplayRole)
+            newItem.setData(icon,       Qt.DecorationRole)
+            newItem.setData(itemType,   Qt.UserRole)
+            newItem.setData(channel,    Qt.UserRole + 1)
+            newItem.setData(properties, Qt.UserRole + 2)
+            newItem.setFlags(Qt.ItemIsSelectable)
+            newItem.setFlags(Qt.ItemIsEnabled)
             self.appendRow(newItem)
             #self.elements.sortChildren(0)
 
@@ -199,27 +200,27 @@ class TrackerTViewModel(QtGui.QStandardItemModel):
         i = parentItem.rowCount()
         while (i != 0):
             child = parentItem.child(i - 1)
-            childId = child.data(QtCore.Qt.UserRole + 1)
+            childId = child.data(Qt.UserRole + 1)
             if (childId == probeId):
                 parentItem.removeRow(i - 1)
                 break
             i -= 1
-        newItem = QtGui.QStandardItem()
-        newItem.setData(name,   QtCore.Qt.DisplayRole)
-        newItem.setData(icon,   QtCore.Qt.DecorationRole)
-        newItem.setData(itemType, QtCore.Qt.UserRole)
-        newItem.setData(pid,    QtCore.Qt.UserRole + 1)
-        newItem.setData(parent, QtCore.Qt.UserRole + 2)
-        newItem.setData(timeout,QtCore.Qt.UserRole + 3)
-        newItem.setData(step,   QtCore.Qt.UserRole + 4)
-        newItem.setData(name,   QtCore.Qt.UserRole + 5)
-        newItem.setData(status, QtCore.Qt.UserRole + 6)
-        newItem.setFlags(QtCore.Qt.ItemIsSelectable)
-        newItem.setFlags(QtCore.Qt.ItemIsEnabled)
+        newItem = QStandardItem()
+        newItem.setData(name,   Qt.DisplayRole)
+        newItem.setData(icon,   Qt.DecorationRole)
+        newItem.setData(itemType, Qt.UserRole)
+        newItem.setData(pid,    Qt.UserRole + 1)
+        newItem.setData(parent, Qt.UserRole + 2)
+        newItem.setData(timeout,Qt.UserRole + 3)
+        newItem.setData(step,   Qt.UserRole + 4)
+        newItem.setData(name,   Qt.UserRole + 5)
+        newItem.setData(status, Qt.UserRole + 6)
+        newItem.setFlags(Qt.ItemIsSelectable)
+        newItem.setFlags(Qt.ItemIsEnabled)
 
         # temporaire toutes les probes id == 1 propagent leur status
         # au parent
         if (pid == 1):
-            parentItem.setData(icon, QtCore.Qt.DecorationRole)
+            parentItem.setData(icon, Qt.DecorationRole)
 
         parentItem.appendRow(newItem)
