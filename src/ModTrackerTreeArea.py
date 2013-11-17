@@ -55,15 +55,17 @@ class TreeContainer(QFrame):
 
 
         grid = QGridLayout()
+        grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
+        grid.setVerticalSpacing(0)
         # grid.addWidget(self.lineEdit,       0, 0)
         # grid.addWidget(self.clearButton,    0, 1)
         # grid.addWidget(self.filterButton,   0, 2)
         # grid.addWidget(self.configureButton,   0, 3)
         # grid.addWidget(self.treeview,       1, 0, 1, 4)
-        # self.info = TrackerTreeAreaInfo(self)
+        self.info = TrackerTreeAreaInfo(self)
         grid.addWidget(self.treeview,           0, 0)
-        # grid.addWidget(self.info,               1, 0)
+        grid.addWidget(self.info,               1, 0)
         self.setLayout(grid)
         self.setMaximumWidth(400)
 

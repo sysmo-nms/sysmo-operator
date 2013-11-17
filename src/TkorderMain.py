@@ -114,6 +114,7 @@ class TkorderCentralWidget(QFrame):
         super(TkorderCentralWidget, self).__init__(parent)
 
         layout      = QGridLayout()
+        #layout.setContentsMargins(5,5,5,5)
         modTracker  = ModTracker.TrackerMain(self)
         layout.addWidget(modTracker, 0, 0)
 

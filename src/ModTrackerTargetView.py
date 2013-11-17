@@ -63,6 +63,7 @@ class ElementView(QFrame):
         self.head = ElementViewHead(self, targetName)
         self.scroll = ElementViewScroll(self, targetName)
         grid = QGridLayout()
+        grid.setContentsMargins(0,0,0,0)
         grid.addWidget(self.head, 0, 0)
         grid.addWidget(self.scroll, 1, 0)
         self.setLayout(grid)
