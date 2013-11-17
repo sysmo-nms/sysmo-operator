@@ -1,7 +1,7 @@
 from    PySide      import QtGui, QtCore
 import  TkorderIcons
 import  Supercast
-import  ModTrackerTreeView
+import  ModTrackerTreeArea
 import  ModTrackerWideView
 import  ModTrackerTargetView
 
@@ -17,7 +17,7 @@ class TrackerMain(QtGui.QSplitter):
             target  = item
             probeId = None 
         elif item.data(QtCore.Qt.UserRole) == 'probe':
-            target = ModTrackerTreeView.TrackerTViewModel.findTargetByName(
+            target = ModTrackerTreeArea.TrackerTViewModel.findTargetByName(
                 item.data(QtCore.Qt.UserRole + 2))
             probeId = item.data(QtCore.Qt.UserRole + 1)
 
@@ -35,7 +35,7 @@ class TrackerMain(QtGui.QSplitter):
         " splitter test "
         self.splitterMoved.connect(self.splitterMoving)
 
-        self.leftTree   = ModTrackerTreeView.TreeContainer(self)
+        self.leftTree   = ModTrackerTreeArea.TreeContainer(self)
         self.rightStack = ModTrackerTargetView.Stack(self)
 
         self.addWidget(self.leftTree)
@@ -46,7 +46,7 @@ class TrackerMain(QtGui.QSplitter):
         TrackerMain.initView()
 
     def handleProbeInfo(self, msg):
-        # TODO integrade the targets dict() with ModTrackerTreeView
+        # TODO integrade the targets dict() with ModTrackerTreeArea
         probeInfo   = msg['value']
         channel     = probeInfo['channel']
         probeId     = probeInfo['id']
@@ -56,7 +56,7 @@ class TrackerMain(QtGui.QSplitter):
             self.targets[channel]           = dict()
             self.targets[channel][probeId]  = probeInfo
 
-        ModTrackerTreeView.handle(msg)
+        ModTrackerTreeArea.handle(msg)
 
     def handleMsg(self, msg):
         mType = msg['msgType']
@@ -66,10 +66,10 @@ class TrackerMain(QtGui.QSplitter):
             self.handleProbeInfo(msg)
         elif (mType == 'targetInfo'):
             #print "received targetInfo"
-            ModTrackerTreeView.handle(msg)
+            ModTrackerTreeArea.handle(msg)
         elif (mType == 'probeModInfo'):
             #print "received probeModInfo"
-            ModTrackerTreeView.handle(msg)
+            ModTrackerTreeArea.handle(msg)
         elif (mType == 'probeActivity'): pass
             #print "received probeActivity"
         elif (mType == 'subscribeOk'): pass
