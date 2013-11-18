@@ -10,4 +10,4 @@ implemented.
 BUGS
 - tko do not take consideration of messages comming from a probe_status_move
 - tko do not have updated property list. Not sure if the server update it 
-correctly.
+correctly or if tkorder dit not take them in consideration.
