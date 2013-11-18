@@ -5,15 +5,22 @@ import  datetime
 import  TkorderIcons
 import  ModTracker
 import  rrdtool
+import  re
+import  tempfile
+
 
 class Stack(QStackedWidget):
+
     def __init__(self, parent):
         super(Stack, self).__init__(parent)
         self.stackDict       = dict()
         Stack.vardir = os.path.join(os.getcwd(), 'var')
+        Stack.singleton = self
 
     def setView(self, targetItem, probeId):
+        print "Stack.setView begin"
         targetName      = targetItem.data(Qt.UserRole + 1)
+
         # target is allready set? do nothing.
         if targetName in self.stackDict.keys():
             self.setCurrentWidget(self.stackDict[targetName])
@@ -26,13 +33,9 @@ class Stack(QStackedWidget):
 
         # set it current:
         self.setCurrentWidget(stackWidget)
+
+        print "Stack.setView end"
         return
-
-    def dumpMsg(self, msg):
-        print "dump"
-
-    def returnMsg(self, msg):
-        print "return"
 
     def unsubscribeOkMsg(self, msg):
         " these messages unstack the target specified in the msg"
@@ -48,7 +51,7 @@ class Stack(QStackedWidget):
         return
 
     def handleProbeReturn(self, msg):
-        chan = msg['value']['channel'] 
+        chan = msg['value']['channel']
         if chan in self.stackDict:
             self.stackDict[chan].handleProbeReturn(msg)
 
@@ -61,6 +64,7 @@ class ElementView(QFrame):
 
     def __init__(self, parent, targetName):
         super(ElementView, self).__init__(parent)
+        print "ElementView begin init"
         self.head = ElementViewHead(self, targetName)
         self.scroll = ElementViewScroll(self, targetName)
         grid = QGridLayout()
@@ -68,6 +72,7 @@ class ElementView(QFrame):
         grid.addWidget(self.head, 0, 0)
         grid.addWidget(self.scroll, 1, 0)
         self.setLayout(grid)
+        print "ElementView end init"
 
     def handleProbeReturn(self, msg):
         self.scroll.handleProbeReturn(msg)
@@ -88,9 +93,11 @@ class ElementViewHead(QFrame):
 class ElementViewScroll(QScrollArea):
     def __init__(self, parent, targetName):
         super(ElementViewScroll, self).__init__(parent)
+        print "ElementViewScroll begin init"
         self.content = ElementViewBody(self, targetName)
         self.setWidget(self.content)
         self.setWidgetResizable(True)
+        print "ElementViewScroll end init"
 
     def handleProbeReturn(self, msg):
         self.content.handleProbeReturn(msg)
@@ -102,12 +109,14 @@ class ElementViewBody(QFrame):
 
     def __init__(self, parent, targetName):
         super(ElementViewBody, self).__init__(parent)
+        print "ElementViewBody begin init"
         targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
         self.grid = QGridLayout()
         for probeId in targetDict:
             self.grid.addWidget(ProbeView(self, 
                 targetName, probeId, targetDict[probeId]), probeId, 0)
         self.setLayout(self.grid)
+        print "ElementViewBody end init"
 
     def handleProbeReturn(self, msg):
         probeId     = msg['value']['id']
@@ -125,6 +134,7 @@ class ElementViewBody(QFrame):
 class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
+        print "ProbeView begin init"
 
         self.probeConf = probeDict
         loggers = probeDict['loggers']
@@ -189,6 +199,7 @@ class ProbeView(QFrame):
             grid.setColumnStretch(2,1)
     
         self.setLayout(grid)
+        print "ProbeView end init"
 
     def handleProbeReturn(self,msg):
         value   = msg['value']
@@ -235,22 +246,89 @@ class ProbeView(QFrame):
         if 'none' in rrd_graphs:
             print "will not graph!!!!"
             return
-        graphCount = len(rrd_graphs)
-        graphWidget.setGraphs(rrd_graphs)
+        graphWidget.setGraphs(rrd_graphs, rrdFile)
 
 class ProbeGraphs(QFrame):
     def __init__(self, parent, probeDict):
         super(ProbeGraphs, self).__init__(parent)
 
-    def setGraphs(self, graphs):
+    def setGraphs(self, graphs, rrdDbPath):
+        self.graphD     = dict()
         grid        = QGridLayout()
         graphCount  = len(graphs)
         for i in range(graphCount):
-            grid.addWidget(QFrame(self), 0,i,1,1)
+            self.graphD[i] = RrdGraph(self, graphs[i], rrdDbPath)
+            grid.addWidget(self.graphD[i], 0,i,1,1)
 
-        for i in range(graphCount):
-            print "lkj ", graphs[i]
+
         self.setLayout(grid)
+        self.updateGeometry()
+        for i in self.graphD.keys():
+            self.graphD[i].updateRrd()
+
+
+class RrdGraph(QFrame):
+    def __init__(self, parent, config, rrdDbPath):
+        super(RrdGraph, self).__init__(parent)
+        print "RRdGraph begin init"
+        graphConf = dict()
+
+        fd, path = tempfile.mkstemp('.png')
+        graphConf['path'] = path
+
+        opts    = re.findall(r'--[^\s]+\s+[^\s]+',  config)
+        defsTmp = re.findall(r'DEF[^\s]+',          config)
+        lines   = re.findall(r'LINE[^\s]+',         config)
+        defs  = [s.replace('<FILE>', rrdDbPath) for s in defsTmp]
+
+
+        for i in range(len(opts)):
+            [a, b] = opts[i].split(' ')
+            graphConf[a] = b
+
+        graphConf['defs'] = list()
+        for i in range(len(defs)):
+            graphConf['defs'].append(defs[i])
+
+        graphConf['lines'] = list()
+        for i in range(len(lines)):
+            graphConf['lines'].append(lines[i])
+
+        self.rrdGraphConf = graphConf
+        self.grid = QGridLayout()
+        self.grid.setContentsMargins(0,0,0,0)
+        self.grid.setHorizontalSpacing(0)
+        self.grid.setVerticalSpacing(0)
+        self.setLayout(self.grid)
+        print "RRdGraph end init"
+
+
+    def mousePressEvent(self,event):
+        print self.size()
+
+    def updateRrd(self):
+        label = QLabel("ici graph", self)
+        self.grid.addWidget(label, 0,0)
+        
+    def resizeEvent(self, event):
+        c = self.rrdGraphConf
+        print "size is ", self.size()
+        rrdtool.graph(c['path'],
+            '--start',      c['--start'],
+            '--end',        c['--end'],
+            '--imgformat',  'PNG',
+            '--width',      str(self.width() / 3),
+            '--height',     str(self.height() / 3),
+            c['defs'],
+            c['lines'])
+
+        label = QLabel(self)
+        label.setPixmap(QPixmap(QImage(c['path'])))
+        label.setStyleSheet("QLabel { background: #FF0000 }")
+        self.grid.addWidget(label, 0,0)
+        QFrame.resizeEvent(self, event)
+
+
 
 class ProbeInfos(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
