@@ -266,6 +266,10 @@ class ProbeGraphs(QFrame):
         for i in self.graphD.keys():
             self.graphD[i].updateRrd()
 
+    def resizeEvent(self, event):
+        print "resize llllllllllllllll"
+        QFrame.resizeEvent(self, event)
+
 
 class RrdGraph(QFrame):
     def __init__(self, parent, config, rrdDbPath):
@@ -308,6 +312,7 @@ class RrdGraph(QFrame):
 
     def updateRrd(self):
         label = QLabel("ici graph", self)
+        label.setScaledContents(True)
         self.grid.addWidget(label, 0,0)
         
     def resizeEvent(self, event):
@@ -318,11 +323,12 @@ class RrdGraph(QFrame):
             '--end',        c['--end'],
             '--imgformat',  'PNG',
             '--width',      str(self.width() / 3),
-            '--height',     str(self.height() / 3),
+            '--height',     str(self.height()),
             c['defs'],
             c['lines'])
 
         label = QLabel(self)
+        label.setScaledContents(False)
         label.setPixmap(QPixmap(QImage(c['path'])))
         label.setStyleSheet("QLabel { background: #FF0000 }")
         self.grid.addWidget(label, 0,0)
