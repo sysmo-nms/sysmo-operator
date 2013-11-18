@@ -14,12 +14,12 @@ class Stack(QStackedWidget):
 
     def setView(self, targetItem, probeId):
         targetName      = targetItem.data(Qt.UserRole + 1)
-        # target is allready set?
+        # target is allready set? do nothing.
         if targetName in self.stackDict.keys():
             self.setCurrentWidget(self.stackDict[targetName])
             return
 
-        # and create the widget
+        # then create the widget
         stackWidget = ElementView(self, targetName)
         self.addWidget(stackWidget)
         self.stackDict[str(targetName)] = stackWidget
@@ -58,6 +58,7 @@ class Stack(QStackedWidget):
             self.stackDict[chan].handleProbeDump(msg)
 
 class ElementView(QFrame):
+
     def __init__(self, parent, targetName):
         super(ElementView, self).__init__(parent)
         self.head = ElementViewHead(self, targetName)
@@ -98,6 +99,7 @@ class ElementViewScroll(QScrollArea):
         self.content.handleProbeDump(msg)
 
 class ElementViewBody(QFrame):
+
     def __init__(self, parent, targetName):
         super(ElementViewBody, self).__init__(parent)
         targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
@@ -124,6 +126,7 @@ class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
 
+        self.probeConf = probeDict
         loggers = probeDict['loggers']
         if 'btracker_logger_text' in loggers and \
            'btracker_logger_rrd' in loggers:
@@ -197,13 +200,13 @@ class ProbeView(QFrame):
         #self.logArea.append(str(tstamp) + ">>>" + string)
 
     def handleProbeDump(self, msg):
-        # TODO format each timestamp to match the handleProbeReturn print
         if msg['value']['logger'] == 'btracker_logger_text':
             self.btrackerLoggerTextDump(msg)
         else:
             self.btrackerLoggerRrdDump(msg)
 
     def btrackerLoggerTextDump(self, msg):
+        # TODO format each timestamp to match the handleProbeReturn print
         self.logArea.append(str(msg['value']['data']).rstrip())
 
     def btrackerLoggerRrdDump(self, msg):
@@ -215,6 +218,39 @@ class ProbeView(QFrame):
         f       = open(rrdFile, 'wb')
         f.write(data)
         f.close()
+        self.rrdFile = rrdFile
+        self.graphRrds()
+
+    def graphRrds(self):
+        rrdFile     = self.rrdFile
+        graphWidget = self.rrdGraphs
+        confDict    = self.probeConf
+        if 'btracker_logger_rrd' in confDict['loggers']:
+            rrd_conf = confDict['loggers']['btracker_logger_rrd']
+            rrd_graphs = rrd_conf['graphs']
+        else: 
+            print "will not graph!!!!"
+            return
+
+        if 'none' in rrd_graphs:
+            print "will not graph!!!!"
+            return
+        graphCount = len(rrd_graphs)
+        graphWidget.setGraphs(rrd_graphs)
+
+class ProbeGraphs(QFrame):
+    def __init__(self, parent, probeDict):
+        super(ProbeGraphs, self).__init__(parent)
+
+    def setGraphs(self, graphs):
+        grid        = QGridLayout()
+        graphCount  = len(graphs)
+        for i in range(graphCount):
+            grid.addWidget(QFrame(self), 0,i,1,1)
+
+        for i in range(graphCount):
+            print "lkj ", graphs[i]
+        self.setLayout(grid)
 
 class ProbeInfos(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
@@ -257,9 +293,3 @@ class ProbeButtons(QFrame):
         grid.setRowStretch(5,1)
         self.setLayout(grid)
 
-class ProbeGraphs(QFrame):
-    def __init__(self, parent, probeDict):
-        super(ProbeGraphs, self).__init__(parent)
-        grid = QGridLayout()
-        grid.addWidget(QLabel('graphs!', self), 0,0,1,1)
-        self.setLayout(grid)
