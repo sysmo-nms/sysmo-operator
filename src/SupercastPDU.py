@@ -38,12 +38,15 @@ class Bind(univ.Sequence):
 class Binds(univ.SequenceOf):
     componentType = Bind()
 
+class Graphs(univ.SequenceOf):
+    componentType = char.PrintableString()
+
 class LoggerRrd(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('create',   char.PrintableString()),
         namedtype.NamedType('update',   char.PrintableString()),
-        namedtype.NamedType('graph',    char.PrintableString()),
+        namedtype.NamedType('graphs',   Graphs()),
         namedtype.NamedType('binds',    Binds())
     )
 
@@ -715,18 +718,25 @@ def decode(pdu):
 
                         create  = logger2.getComponentByName('create')
                         update  = logger2.getComponentByName('update')
-                        graph   = logger2.getComponentByName('graph')
+
                         binds   = logger2.getComponentByName('binds')
                         bindsD = dict()
-                        for j in range(len(binds)):
-                            bind = binds.getComponentByPosition(j)
+                        for b in range(len(binds)):
+                            bind = binds.getComponentByPosition(b)
                             rep  = bind.getComponentByName('replacement')
                             mac  = bind.getComponentByName('macro')
                             bindsD[str(rep)] = str(mac)
+
+                        graphs  = logger2.getComponentByName('graphs')
+                        graphsL = list()
+                        for g in range(len(graphs)):
+                            graphItem = graphs.getComponentByPosition(g)
+                            graphsL.append(str(graphItem))
+
                         conf   = dict()
                         conf['create'] = str(create)
                         conf['update'] = str(update)
-                        conf['graph']  = str(graph)
+                        conf['graphs'] = graphsL
                         conf['binds']  = str(bindsD)
                         loggersDict[str(mod)] = conf
 
