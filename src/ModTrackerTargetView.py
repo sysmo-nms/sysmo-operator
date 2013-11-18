@@ -248,9 +248,23 @@ class ProbeView(QFrame):
             return
         graphWidget.setGraphs(rrd_graphs, rrdFile)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 class ProbeGraphs(QFrame):
     def __init__(self, parent, probeDict):
         super(ProbeGraphs, self).__init__(parent)
+        self.lay = QGridLayout()
 
     def setGraphs(self, graphs, rrdDbPath):
         self.graphD     = dict()
@@ -260,9 +274,9 @@ class ProbeGraphs(QFrame):
             self.graphD[i] = RrdGraph(self, graphs[i], rrdDbPath)
             grid.addWidget(self.graphD[i], 0,i,1,1)
 
-
         self.setLayout(grid)
         self.updateGeometry()
+
         for i in self.graphD.keys():
             self.graphD[i].updateRrd()
 
@@ -336,6 +350,18 @@ class RrdGraph(QFrame):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 class ProbeInfos(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeInfos, self).__init__(parent)
@@ -376,4 +402,3 @@ class ProbeButtons(QFrame):
         grid.addWidget(QCheckBox('5-year', self), 4,0,1,1)
         grid.setRowStretch(5,1)
         self.setLayout(grid)
-
