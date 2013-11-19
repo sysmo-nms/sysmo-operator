@@ -1,5 +1,6 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
+from    ModTrackerEvents    import TrackerEvents
 import  TkorderIcons
 
 
@@ -7,19 +8,9 @@ import  TkorderIcons
 ###### LEFT PANNEL VIEW #############################################
 #####################################################################
 #####################################################################
-def handle(msg):
-    msgType = msg['msgType']
-    if (msgType == 'targetInfo'):
-        TrackerTViewModel.handleTargetInfo(msg)
-    elif (msgType == 'probeInfo'):
-        TrackerTViewModel.handleProbeInfo(msg)
-    elif (msgType == 'probeModInfo'):
-        TrackerTViewModel.handleProbeModInfo(msg)
-    else:
-        print "what", msgType
-
 class TreeContainer(QFrame):
-
+    
+    " the left tree area. Emit user clics events"
 
     def __init__(self, parent):
         super(TreeContainer, self).__init__(parent)
@@ -27,7 +18,7 @@ class TreeContainer(QFrame):
         self.trackerMain  = parent
 
         self.treeview   =  TrackerTView(self)
-        self.treeview.clicked[QModelIndex].connect(TrackerTView.clic)
+        #self.treeview.clicked[QModelIndex].connect(TrackerTView.singleton.clic)
 
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
@@ -38,40 +29,71 @@ class TreeContainer(QFrame):
         grid.addWidget(self.treeview,           0, 0)
         grid.addWidget(self.info,               1, 0)
         self.setLayout(grid)
-        self.setMaximumWidth(400)
+        self.setMaximumWidth(500)
 
     def updateEvent(self, event):
         self.trackerMain.updateEvent(event)
 
 
-
-
 class TrackerTreeAreaInfo(QTextEdit):
     def __init__(self, parent):
         super(TrackerTreeAreaInfo, self).__init__(parent)
+        dtext   = QTextDocument()
+        dtext.setMaximumBlockCount(500)
+        tformat = QTextCharFormat()
+        tformat.setFontPointSize(8.2)
+        self.setDocument(dtext)
+        self.setCurrentCharFormat(tformat)
+        self.setReadOnly(True)
         self.setStyleSheet(
             "QTextEdit { \
                 border: none;\
-                border-radius: 20px;\
+                border-radius: 0px;\
                 background: #F9EE75 \
             }")
         self.setFixedHeight(100)
+        TrackerEvents.singleton.probeInfo.connect(self.probeInfoMsg)
+        TrackerEvents.singleton.targetInfo.connect(self.targetInfoMsg)
+        TrackerEvents.singleton.probeDump.connect(self.probeDumpMsg)
+        TrackerEvents.singleton.probeModInfo.connect(self.probeModInfo)
+        TrackerEvents.singleton.probeReturn.connect(self.probeModInfo)
+        TrackerEvents.singleton.probeActivity.connect(self.probeModInfo)
+        TrackerEvents.singleton.subscribeOk.connect(self.probeModInfo)
+        TrackerEvents.singleton.unsubscribeOk.connect(self.probeModInfo)
 
+    def probeDumpMsg(self, msg):
+        self.append("probe dump")
+
+    def probeInfoMsg(self, msg):
+        self.append(str(msg))
+
+    def targetInfoMsg(self, msg):
+        self.append(str(msg))
+
+    def probeModInfo(self, msg):
+        self.append(str(msg))
+
+    def subscribeOk(self, msg):
+        self.append(str(msg))
+
+    def unsubscribeOk(self, msg):
+        self.append(str(msg))
+
+    def probeReturn(self, msg):
+        self.append(str(msg))
+
+    def probeActivity(self, msg):
+        self.append(str(msg))
+
+
+
+############
+# Treeview #
+############
 class TrackerTView(QTreeView):
-    @classmethod
-    def set(cls, i):
-        cls.tv = i
-
-    @classmethod
-    def clic(cls, i):
-        model = cls.tv.model()
-        item  = model.itemFromIndex(i)
-        TreeContainer.singleton.updateEvent(item)
-       
-
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
-        TrackerTView.set(self)
+        TrackerTView.singleton = self
         self.setHeaderHidden(True)
 
         self.setAnimated(True)
@@ -94,33 +116,14 @@ class TrackerTView(QTreeView):
         # from QTreeView
         self.expandAll()
 
+    #def clic(self, i):
+        #print "clic"
+        #model = self.model()
+        #item  = model.itemFromIndex(i)
+        #TreeContainer.singleton.updateEvent(item)
+
+
 class TrackerTViewModel(QStandardItemModel):
-    @classmethod
-    def setTVM(cls, i):
-        cls.tvm  = i
-
-    @classmethod
-    def handleTargetInfo(cls, msg):
-        cls.tvm.tInfo(msg)
-
-    @classmethod
-    def handleProbeInfo(cls, msg):
-        cls.tvm.pInfo(msg)
-
-    @classmethod
-    def handleProbeModInfo(cls, msg):
-        return
-
-    @classmethod
-    def findTargetByName(cls, targetName):
-        tv = cls.tvm
-        parentItemList = tv.findItems(
-            targetName,
-            flags=Qt.MatchRecursive,
-            column=0
-        )
-        parentItem = parentItemList.pop()
-        return parentItem
 
     def __init__(self, parent):
         super(TrackerTViewModel, self).__init__(parent)
@@ -129,9 +132,24 @@ class TrackerTViewModel(QStandardItemModel):
         # QStandardItemModel
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels([''])
-        TrackerTViewModel.setTVM(self)
+        TrackerTViewModel.singleton = self
 
-    def tInfo(self, msg):
+        TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
+        TrackerEvents.singleton.probeInfo.connect(self.handleProbeInfo)
+        TrackerEvents.singleton.targetInfo.connect(self.handleTargetInfo)
+
+    def findTargetByName(self, targetName):
+        parentItemList = self.findItems(
+            targetName,
+            flags=Qt.MatchRecursive,
+            column=0
+        )
+        parentItem = parentItemList.pop()
+        return parentItem
+
+    def handleProbeModInfo(self, msg): pass
+
+    def handleTargetInfo(self, msg):
         val         = msg['value']
         channel     = val['channel']
         infoType    = val['infoType']
@@ -151,7 +169,7 @@ class TrackerTViewModel(QStandardItemModel):
             self.appendRow(newItem)
             #self.elements.sortChildren(0)
 
-    def pInfo(self, msg):
+    def handleProbeInfo(self, msg):
         val         = msg['value']
         parent      = val['channel']
         name        = val['name']
@@ -173,7 +191,7 @@ class TrackerTViewModel(QStandardItemModel):
             print "status is ", status
             icon        = TkorderIcons.get('weather-clear-night')
 
-        parentItem = TrackerTViewModel.findTargetByName(parent)
+        parentItem = self.findTargetByName(parent)
         i = parentItem.rowCount()
         while (i != 0):
             child = parentItem.child(i - 1)

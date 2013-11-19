@@ -2,18 +2,15 @@ from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 import  TkorderIcons
 import  Supercast
-import  ModTrackerTreeArea
+
+from    ModTrackerEvents import TrackerEvents
 import  ModTrackerWideView
 import  ModTrackerTargetView
+import  ModTrackerTreeArea
 
 class TrackerMain(QSplitter):
-    " Them main window. Emit tracker server events, and forward childs "
-    " events to other childs."
 
-    @classmethod
-    def initView(cls):
-        stack = cls.singleton.rightStack
-        stack.addWidget(ModTrackerWideView.View(cls.singleton))
+    " Them main window. Emit tracker server events "
 
     @classmethod
     def setView(cls, item):
@@ -33,6 +30,9 @@ class TrackerMain(QSplitter):
     def __init__(self, parent):
         super(TrackerMain, self).__init__(parent)
 
+        TrackerMain.singleton = self
+        self.signals = TrackerEvents(self)
+
         " forward 'modTrackerPDU to me "
         Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
 
@@ -45,9 +45,16 @@ class TrackerMain(QSplitter):
         self.addWidget(self.leftTree)
         self.addWidget(self.rightStack)
         
+        TrackerEvents.singleton.probeInfo.connect(self.handleProbeInfo)
+        TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
+        
         self.targets    = dict()
-        TrackerMain.singleton = self
-        TrackerMain.initView()
+        self.initView()
+
+    def initView(self):
+        self.rightStack.addWidget(ModTrackerWideView.View(self))
+
+    def handleProbeModInfo(self, msg): pass
 
     def handleProbeInfo(self, msg):
         # TODO integrade the targets dict() with ModTrackerTreeArea
@@ -60,32 +67,22 @@ class TrackerMain(QSplitter):
             self.targets[channel]           = dict()
             self.targets[channel][probeId]  = probeInfo
 
-        ModTrackerTreeArea.handle(msg)
-
     def handleMsg(self, msg):
         mType = msg['msgType']
 
-        if   (mType == 'probeInfo'):
-            #print "received probeInfo"
-            self.handleProbeInfo(msg)
-        elif (mType == 'targetInfo'):
-            #print "received targetInfo"
-            ModTrackerTreeArea.handle(msg)
-        elif (mType == 'probeModInfo'):
-            #print "received probeModInfo"
-            ModTrackerTreeArea.handle(msg)
-        elif (mType == 'probeActivity'):
-            pass
-            #print "received probeActivity"
-        elif (mType == 'subscribeOk'):
-            pass
-        elif (mType == 'probeDump'):
-            self.probeDumpSignal.emit()
-            #print "dump from ", msg['value']['logger']
+        if   (mType == 'probeInfo'):        self.signals.probeInfo.emit(msg)
+        elif (mType == 'probeModInfo'):     self.signals.probeModInfo.emit(msg)
+        elif (mType == 'targetInfo'):       self.signals.targetInfo.emit(msg)
+        elif (mType == 'probeActivity'):    self.signals.probeActivity.emit(msg)
+        elif (mType == 'subscribeOk'):      self.signals.subscribeOk.emit(msg)
+        elif (mType == 'probeDump'):        
+            self.signals.probeDump.emit(msg)
             self.rightStack.handleProbeDump(msg)
         elif (mType == 'probeReturn'):
+            self.signals.probeReturn.emit(msg)
             self.rightStack.handleProbeReturn(msg)
         elif (mType == 'unsubscribeOk'):
+            self.signals.unsubscribeOk.emit(msg)
             self.rightStack.unsubscribeOkMsg(msg)
         else:
             print "unknown message type: ", mType
