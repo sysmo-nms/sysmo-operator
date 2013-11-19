@@ -8,76 +8,6 @@ import  rrdtool
 import  re
 import  tempfile
 
-
-class ElementView(QFrame):
-    probeDumpSignal     = Signal(dict)
-    probeReturnSignal   = Signal(dict)
-
-    def __init__(self, parent, targetName):
-        super(ElementView, self).__init__(parent)
-        self.head   = ElementViewHead(self, targetName)
-        self.scroll = ElementViewScroll(self, targetName)
-        grid = QGridLayout()
-        grid.setContentsMargins(0,0,0,0)
-        grid.addWidget(self.head, 0, 0)
-        grid.addWidget(self.scroll, 1, 0)
-        self.setLayout(grid)
-
-    def handleProbeReturn(self, msg):
-        self.probeReturnSignal.emit(msg)
-        self.scroll.handleProbeReturn(msg)
-
-    def handleProbeDump(self, msg):
-        self.probeReturnSignal.emit(msg)
-        self.scroll.handleProbeDump(msg)
-
-class ElementViewHead(QFrame):
-    def __init__(self, parent, targetName):
-        super(ElementViewHead, self).__init__(parent)
-        self.headLabel = QLabel(targetName)
-        self.headLabel.setFrameStyle(1),
-        self.headLabel.setFrameShadow(QFrame.Raised)
-        grid = QGridLayout()
-        grid.addWidget(self.headLabel, 0, 0)
-        self.setLayout(grid)
-
-class ElementViewScroll(QScrollArea):
-    def __init__(self, parent, targetName):
-        super(ElementViewScroll, self).__init__(parent)
-        self.content = ElementViewBody(self, targetName)
-        self.setWidget(self.content)
-        self.setWidgetResizable(True)
-
-    def handleProbeReturn(self, msg):
-        self.content.handleProbeReturn(msg)
-
-    def handleProbeDump(self, msg):
-        self.content.handleProbeDump(msg)
-
-class ElementViewBody(QFrame):
-
-    def __init__(self, parent, targetName):
-        super(ElementViewBody, self).__init__(parent)
-        targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
-        self.grid = QGridLayout()
-        for probeId in targetDict:
-            self.grid.addWidget(ProbeView(self, 
-                targetName, probeId, targetDict[probeId]), probeId, 0)
-        self.setLayout(self.grid)
-
-    def handleProbeReturn(self, msg):
-        probeId     = msg['value']['id']
-        probeLayout = self.grid.itemAtPosition(probeId, 0)
-        probeView   = probeLayout.widget()
-        probeView.handleProbeReturn(msg)
-
-    def handleProbeDump(self, msg):
-        probeId     = msg['value']['id']
-        probeLayout = self.grid.itemAtPosition(probeId, 0)
-        probeView   = probeLayout.widget()
-        probeView.handleProbeDump(msg)
-
-
 class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
@@ -190,19 +120,6 @@ class ProbeView(QFrame):
 
         graphWidget.setGraphs(rrd_graphs, rrdFile)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 class ProbeGraphs(QFrame):
     def __init__(self, parent, probeDict):
         super(ProbeGraphs, self).__init__(parent)
@@ -225,7 +142,6 @@ class ProbeGraphs(QFrame):
     def resizeEvent(self, event):
         QFrame.resizeEvent(self, event)
 
-
 class RrdGraph(QFrame):
     def __init__(self, parent, config, rrdDbPath):
         super(RrdGraph, self).__init__(parent)
@@ -238,7 +154,6 @@ class RrdGraph(QFrame):
         defsTmp = re.findall(r'DEF[^\s]+',          config)
         lines   = re.findall(r'LINE[^\s]+',         config)
         defs  = [s.replace('<FILE>', rrdDbPath) for s in defsTmp]
-
 
         for i in range(len(opts)):
             [a, b] = opts[i].split(' ')
@@ -258,7 +173,6 @@ class RrdGraph(QFrame):
         self.grid.setHorizontalSpacing(0)
         self.grid.setVerticalSpacing(0)
         self.setLayout(self.grid)
-
 
     def mousePressEvent(self,event): pass
 
@@ -284,20 +198,6 @@ class RrdGraph(QFrame):
         label.setStyleSheet("QLabel { background: #FF0000 }")
         self.grid.addWidget(label, 0,0)
         QFrame.resizeEvent(self, event)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class ProbeInfos(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):

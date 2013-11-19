@@ -1,7 +1,7 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    ModTrackerEvents    import TrackerEvents
-from    TargetBody      import ElementView
+from    TargetBodyView      import TargetView
 import  Supercast
 import  os
 import  datetime
@@ -35,7 +35,7 @@ class Stack(QStackedWidget):
         Supercast.Link.subscribe(targetName)
 
         # then create the widget
-        stackWidget = ElementView(self, targetName)
+        stackWidget = TargetView(self, targetName)
         self.addWidget(stackWidget)
         self.stackDict[str(targetName)] = stackWidget
 
