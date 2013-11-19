@@ -8,5 +8,4 @@ sys.path.insert(0, lDir)
 
 import TkorderMain
 
-print sys.argv
 TkorderMain.main(sys.argv)
