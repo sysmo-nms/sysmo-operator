@@ -7,6 +7,7 @@ class TrackerEvents(QObject):
     " A module wishing to receiv such events have to: "
     " TrackerEvents.singleton.probeDump.connect(function)"
 
+    # emited from ModTracker.TrackerMain:
     probeDump       = Signal(dict)
     probeInfo       = Signal(dict)
     targetInfo      = Signal(dict)
@@ -15,6 +16,9 @@ class TrackerEvents(QObject):
     probeActivity   = Signal(dict)
     subscribeOk     = Signal(dict)
     unsubscribeOk   = Signal(dict)
+
+    # emited from ModTrackerTreeView.TrackerTView:
+    treeviewClicked = Signal(dict)
 
     def __init__(self, parent):
         super(TrackerEvents, self).__init__(parent)

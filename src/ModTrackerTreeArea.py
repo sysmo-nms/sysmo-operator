@@ -17,31 +17,29 @@ class TreeContainer(QFrame):
         TreeContainer.singleton = self
         self.trackerMain  = parent
 
-        self.treeview   =  TrackerTView(self)
-        #self.treeview.clicked[QModelIndex].connect(TrackerTView.singleton.clic)
+        self.treeview   = TrackerTView(self)
+        self.info       = TrackerTreeAreaInfo(self)
 
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
-
-        self.info = TrackerTreeAreaInfo(self)
         grid.addWidget(self.treeview,           0, 0)
         grid.addWidget(self.info,               1, 0)
         self.setLayout(grid)
         self.setMaximumWidth(500)
 
-    def updateEvent(self, event):
-        self.trackerMain.updateEvent(event)
-
 
 class TrackerTreeAreaInfo(QTextEdit):
     def __init__(self, parent):
         super(TrackerTreeAreaInfo, self).__init__(parent)
+        # text document
         dtext   = QTextDocument()
         dtext.setMaximumBlockCount(500)
         tformat = QTextCharFormat()
         tformat.setFontPointSize(8.2)
+
+        # QTextEdit config
         self.setDocument(dtext)
         self.setCurrentCharFormat(tformat)
         self.setReadOnly(True)
@@ -52,6 +50,8 @@ class TrackerTreeAreaInfo(QTextEdit):
                 background: #F9EE75 \
             }")
         self.setFixedHeight(100)
+
+        # signals to receive
         TrackerEvents.singleton.probeInfo.connect(self.probeInfoMsg)
         TrackerEvents.singleton.targetInfo.connect(self.targetInfoMsg)
         TrackerEvents.singleton.probeDump.connect(self.probeDumpMsg)
@@ -94,8 +94,8 @@ class TrackerTView(QTreeView):
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
         TrackerTView.singleton = self
-        self.setHeaderHidden(True)
 
+        self.setHeaderHidden(True)
         self.setAnimated(True)
         self.setIndentation(15)
         self.setUniformRowHeights(True)
@@ -107,7 +107,8 @@ class TrackerTView(QTreeView):
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setIconSize(QSize(25, 25)) 
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setModel(TrackerTViewModel(self))
+        self.targetModel = TrackerTViewModel(self)
+        self.setModel(self.targetModel)
 
         # <- QAbstractScrollArea
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -116,23 +117,33 @@ class TrackerTView(QTreeView):
         # from QTreeView
         self.expandAll()
 
-    #def clic(self, i):
-        #print "clic"
-        #model = self.model()
-        #item  = model.itemFromIndex(i)
-        #TreeContainer.singleton.updateEvent(item)
+        # slots
+        self.clicked.connect(self.userClic)
+
+    def userClic(self, index):
+        item    = self.targetModel.itemFromIndex(index)
+        parent  = item.parent()
+        emitDict = dict()
+
+        if isinstance(parent, QStandardItem):
+            emitDict['target']  = parent.data(Qt.DisplayRole)
+            emitDict['probeId'] = item.data(Qt.DisplayRole)
+        else:
+            emitDict['target']  = item.data(Qt.DisplayRole)
+            emitDict['probeId'] = None
+        TrackerEvents.singleton.treeviewClicked.emit(emitDict)
 
 
 class TrackerTViewModel(QStandardItemModel):
 
     def __init__(self, parent):
         super(TrackerTViewModel, self).__init__(parent)
+        TrackerTViewModel.singleton = self
         parentItem      = self.invisibleRootItem()
 
         # QStandardItemModel
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels([''])
-        TrackerTViewModel.singleton = self
 
         TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
         TrackerEvents.singleton.probeInfo.connect(self.handleProbeInfo)
