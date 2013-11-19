@@ -130,6 +130,9 @@ def main(arguments):
     tkorderApp.setWindowIcon(
         TkorderIcons.get('applications-development')
     )
+
+    #print QStyleFactory.keys()
+    #tkorderApp.setStyle('Motif')
     loginUi         = Supercast.LogInDialog2()
     loginUi.supercastClient = tkorderUi
     loginUi.show()
