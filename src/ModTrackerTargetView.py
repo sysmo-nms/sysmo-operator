@@ -1,5 +1,7 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
+from    ModTrackerEvents    import TrackerEvents
+import  Supercast
 import  os
 import  datetime
 import  TkorderIcons
@@ -15,14 +17,21 @@ class Stack(QStackedWidget):
         self.stackDict  = dict()
         Stack.vardir    = os.path.join(os.getcwd(), 'var')
         Stack.singleton = self
+        TrackerEvents.singleton.treeviewClicked.connect(self.setView)
+        TrackerEvents.singleton.unsubscribeOk.connect(self.unsubscribeOk)
+        TrackerEvents.singleton.probeReturn.connect(self.handleProbeReturn)
+        TrackerEvents.singleton.probeDump.connect(self.handleProbeDump)
 
-    def setView(self, targetItem, probeId):
-        targetName      = targetItem.data(Qt.UserRole + 1)
-
+    def setView(self, clickDict):
         # target is allready set? do nothing.
+        targetName = clickDict['target']
+
         if targetName in self.stackDict.keys():
             self.setCurrentWidget(self.stackDict[targetName])
             return
+
+        # should not be subscribed:
+        Supercast.Link.subscribe(targetName)
 
         # then create the widget
         stackWidget = ElementView(self, targetName)
@@ -31,10 +40,9 @@ class Stack(QStackedWidget):
 
         # set it current:
         self.setCurrentWidget(stackWidget)
-
         return
 
-    def unsubscribeOkMsg(self, msg):
+    def unsubscribeOk(self, msg):
         " these messages unstack the target specified in the msg"
         key = msg['value']
         if key in self.stackDict.keys():
@@ -58,10 +66,12 @@ class Stack(QStackedWidget):
             self.stackDict[chan].handleProbeDump(msg)
 
 class ElementView(QFrame):
+    probeDumpSignal     = Signal(dict)
+    probeReturnSignal   = Signal(dict)
 
     def __init__(self, parent, targetName):
         super(ElementView, self).__init__(parent)
-        self.head = ElementViewHead(self, targetName)
+        self.head   = ElementViewHead(self, targetName)
         self.scroll = ElementViewScroll(self, targetName)
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
@@ -70,11 +80,13 @@ class ElementView(QFrame):
         self.setLayout(grid)
 
     def handleProbeReturn(self, msg):
+        self.probeReturnSignal.emit(msg)
         self.scroll.handleProbeReturn(msg)
 
     def handleProbeDump(self, msg):
+        self.probeReturnSignal.emit(msg)
         self.scroll.handleProbeDump(msg)
-        
+
 class ElementViewHead(QFrame):
     def __init__(self, parent, targetName):
         super(ElementViewHead, self).__init__(parent)
