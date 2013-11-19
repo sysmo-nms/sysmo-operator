@@ -18,14 +18,14 @@ class TargetView(QFrame):
         super(TargetView, self).__init__(parent)
         head            = QLabel(targetName, self)
         (scrollFrame,)  = self.generateProbesFrame(targetName),
-        bodyScroll  = QScrollArea(self)
-        bodyScroll.setWidget(scrollFrame)
         
+        bodyScroll  = QScrollArea(self)
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
         grid.addWidget(head,        0, 0)
         grid.addWidget(bodyScroll,  1, 0)
         self.setLayout(grid)
+        bodyScroll.setWidget(scrollFrame)
 
     def setSignal(self, signalObj):
         signalObj.signal.connect(self.handleEvent)
