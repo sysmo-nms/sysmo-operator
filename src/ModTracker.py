@@ -80,7 +80,8 @@ class TrackerMain(QSplitter):
         elif (mType == 'subscribeOk'):
             pass
         elif (mType == 'probeDump'):
-            print "dump from ", msg['value']['logger']
+            self.probeDumpSignal.emit()
+            #print "dump from ", msg['value']['logger']
             self.rightStack.handleProbeDump(msg)
         elif (mType == 'probeReturn'):
             self.rightStack.handleProbeReturn(msg)

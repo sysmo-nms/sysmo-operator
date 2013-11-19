@@ -17,7 +17,6 @@ class Stack(QStackedWidget):
         Stack.singleton = self
 
     def setView(self, targetItem, probeId):
-        print "Stack.setView begin"
         targetName      = targetItem.data(Qt.UserRole + 1)
 
         # target is allready set? do nothing.
@@ -33,7 +32,6 @@ class Stack(QStackedWidget):
         # set it current:
         self.setCurrentWidget(stackWidget)
 
-        print "Stack.setView end"
         return
 
     def unsubscribeOkMsg(self, msg):
@@ -63,7 +61,6 @@ class ElementView(QFrame):
 
     def __init__(self, parent, targetName):
         super(ElementView, self).__init__(parent)
-        print "ElementView begin init"
         self.head = ElementViewHead(self, targetName)
         self.scroll = ElementViewScroll(self, targetName)
         grid = QGridLayout()
@@ -71,7 +68,6 @@ class ElementView(QFrame):
         grid.addWidget(self.head, 0, 0)
         grid.addWidget(self.scroll, 1, 0)
         self.setLayout(grid)
-        print "ElementView end init"
 
     def handleProbeReturn(self, msg):
         self.scroll.handleProbeReturn(msg)
@@ -92,11 +88,9 @@ class ElementViewHead(QFrame):
 class ElementViewScroll(QScrollArea):
     def __init__(self, parent, targetName):
         super(ElementViewScroll, self).__init__(parent)
-        print "ElementViewScroll begin init"
         self.content = ElementViewBody(self, targetName)
         self.setWidget(self.content)
         self.setWidgetResizable(True)
-        print "ElementViewScroll end init"
 
     def handleProbeReturn(self, msg):
         self.content.handleProbeReturn(msg)
@@ -108,14 +102,12 @@ class ElementViewBody(QFrame):
 
     def __init__(self, parent, targetName):
         super(ElementViewBody, self).__init__(parent)
-        print "ElementViewBody begin init"
         targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
         self.grid = QGridLayout()
         for probeId in targetDict:
             self.grid.addWidget(ProbeView(self, 
                 targetName, probeId, targetDict[probeId]), probeId, 0)
         self.setLayout(self.grid)
-        print "ElementViewBody end init"
 
     def handleProbeReturn(self, msg):
         probeId     = msg['value']['id']
@@ -133,7 +125,6 @@ class ElementViewBody(QFrame):
 class ProbeView(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeView, self).__init__(parent)
-        print "ProbeView begin init"
 
         self.probeConf = probeDict
         loggers = probeDict['loggers']
@@ -198,7 +189,6 @@ class ProbeView(QFrame):
             grid.setColumnStretch(2,1)
     
         self.setLayout(grid)
-        print "ProbeView end init"
 
     def handleProbeReturn(self,msg):
         value   = msg['value']
@@ -238,13 +228,9 @@ class ProbeView(QFrame):
         if 'btracker_logger_rrd' in confDict['loggers']:
             rrd_conf = confDict['loggers']['btracker_logger_rrd']
             rrd_graphs = rrd_conf['graphs']
-        else: 
-            print "will not graph!!!!"
-            return
+        else: return
+        if 'none' in rrd_graphs: return
 
-        if 'none' in rrd_graphs:
-            print "will not graph!!!!"
-            return
         graphWidget.setGraphs(rrd_graphs, rrdFile)
 
 
@@ -280,14 +266,12 @@ class ProbeGraphs(QFrame):
             self.graphD[i].updateRrd()
 
     def resizeEvent(self, event):
-        print "resize llllllllllllllll"
         QFrame.resizeEvent(self, event)
 
 
 class RrdGraph(QFrame):
     def __init__(self, parent, config, rrdDbPath):
         super(RrdGraph, self).__init__(parent)
-        print "RRdGraph begin init"
         graphConf = dict()
 
         fd, path = tempfile.mkstemp('.png')
@@ -317,11 +301,9 @@ class RrdGraph(QFrame):
         self.grid.setHorizontalSpacing(0)
         self.grid.setVerticalSpacing(0)
         self.setLayout(self.grid)
-        print "RRdGraph end init"
 
 
-    def mousePressEvent(self,event):
-        print self.size()
+    def mousePressEvent(self,event): pass
 
     def updateRrd(self):
         label = QLabel("ici graph", self)
@@ -330,7 +312,6 @@ class RrdGraph(QFrame):
         
     def resizeEvent(self, event):
         c = self.rrdGraphConf
-        print "size is ", self.size()
         rrdtool.graph(c['path'],
             '--start',      c['--start'],
             '--end',        c['--end'],
