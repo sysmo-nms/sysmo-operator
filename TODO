@@ -4,7 +4,7 @@
 probe and targets properties as arguments. Possibly right clic on multiple
 selected items.
 - events time plots (inspector_events)
-- treevew must be searchable, filterable, and custom parent/childs must be
+- treeview must be searchable, filterable, and custom parent/childs must be
 implemented.
 
 BUGS
