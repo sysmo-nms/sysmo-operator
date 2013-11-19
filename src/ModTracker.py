@@ -2,6 +2,7 @@ from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 import  TkorderIcons
 import  Supercast
+import  os
 
 from    ModTrackerEvents import TrackerEvents
 import  ModTrackerWideView
@@ -16,7 +17,8 @@ class TrackerMain(QSplitter):
         super(TrackerMain, self).__init__(parent)
 
         TrackerMain.singleton = self
-        self.signals = TrackerEvents(self)
+        self.signals    = TrackerEvents(self)
+        self.vardir     = os.path.join(os.getcwd(), 'var')
 
         " forward 'modTrackerPDU to me "
         Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
