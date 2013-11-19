@@ -19,12 +19,6 @@ def handle(msg):
         print "what", msgType
 
 class TreeContainer(QFrame):
-    @classmethod
-    def toggle(cls):
-        if (cls.singleton.isHidden() == True):
-            cls.singleton.show()
-        else:
-            cls.singleton.hide()
 
 
     def __init__(self, parent):
@@ -48,6 +42,9 @@ class TreeContainer(QFrame):
 
     def updateEvent(self, event):
         self.trackerMain.updateEvent(event)
+
+
+
 
 class TrackerTreeAreaInfo(QTextEdit):
     def __init__(self, parent):
