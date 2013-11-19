@@ -1,11 +1,12 @@
-from    PySide      import QtGui, QtCore
+from    PySide.QtGui    import *
+from    PySide.QtCore   import *
 import  TkorderIcons
 import  Supercast
 import  ModTrackerTreeArea
 import  ModTrackerWideView
 import  ModTrackerTargetView
 
-class TrackerMain(QtGui.QSplitter):
+class TrackerMain(QSplitter):
     " Them main window. Emit tracker server events, and forward childs "
     " events to other childs."
 
@@ -16,15 +17,15 @@ class TrackerMain(QtGui.QSplitter):
 
     @classmethod
     def setView(cls, item):
-        if   item.data(QtCore.Qt.UserRole) == 'target':
+        if   item.data(Qt.UserRole) == 'target':
             target  = item
             probeId = None 
-        elif item.data(QtCore.Qt.UserRole) == 'probe':
+        elif item.data(Qt.UserRole) == 'probe':
             target = ModTrackerTreeArea.TrackerTViewModel.findTargetByName(
-                item.data(QtCore.Qt.UserRole + 2))
-            probeId = item.data(QtCore.Qt.UserRole + 1)
+                item.data(Qt.UserRole + 2))
+            probeId = item.data(Qt.UserRole + 1)
 
-        targetName      = target.data(QtCore.Qt.UserRole + 1)
+        targetName      = target.data(Qt.UserRole + 1)
         Supercast.Link.subscribe(targetName)
         rightStack = cls.singleton.rightStack
         rightStack.setView(target, probeId)
@@ -66,7 +67,6 @@ class TrackerMain(QtGui.QSplitter):
 
         if   (mType == 'probeInfo'):
             #print "received probeInfo"
-            self.probeInfoSignal.emit()
             self.handleProbeInfo(msg)
         elif (mType == 'targetInfo'):
             #print "received targetInfo"
