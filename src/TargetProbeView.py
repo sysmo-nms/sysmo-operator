@@ -15,67 +15,46 @@ class ProbeView(QFrame):
         self.vardir  = ModTracker.TrackerMain.singleton.vardir
         self.probeConf = probeDict
         loggers = probeDict['loggers']
+
         if 'btracker_logger_text' in loggers and \
            'btracker_logger_rrd' in loggers:
             viewType = 'full'
-        elif 'btracker_logger_text' in loggers:
-            viewType = 'text'
-        elif 'btracker_logger_rrd'  in loggers:
-            viewType = 'rrd'
+        else: viewType = 'text'
 
         self.setFrameStyle(1)
         self.setFrameShadow(QFrame.Sunken)
         self.infoLabel  = ProbeInfos(self, targetName, probeId, probeDict)
-
-        if viewType == 'full' or viewType == 'text':
-    
-            self.logArea    = QTextEdit(self)
-            dtext   = QTextDocument()
-            dtext.setMaximumBlockCount(500)
-            tformat = QTextCharFormat()
-            tformat.setFontPointSize(8.2)
-            self.logArea.setDocument(dtext)
-            self.logArea.setCurrentCharFormat(tformat)
-            self.logArea.setReadOnly(True)
-            self.logArea.setLineWrapMode(QTextEdit.NoWrap)
-            if viewType == 'full':
-                self.setFixedHeight(350)
-                self.logArea.setFixedHeight(90)
-                self.rrdButtons = ProbeButtons(self, probeDict)
-                self.rrdGraphs  = ProbeGraphs(self, probeDict)
-                grid = QGridLayout()
-                grid.addWidget(self.infoLabel,   0,0,1,1)
-                grid.addWidget(self.rrdButtons,  0,1,1,1)
-                grid.addWidget(self.rrdGraphs,   0,2,1,1)
-                grid.addWidget(self.logArea,     1,0,1,3)
-                grid.setRowStretch(0,1)
-                grid.setRowStretch(1,0)
-                grid.setColumnStretch(0,0)
-                grid.setColumnStretch(1,0)
-                grid.setColumnStretch(2,1)
-            else:
-                "text only"
-                self.setFixedHeight(200)
-                grid = QGridLayout()
-                grid.addWidget(self.infoLabel,   0,0,1,1)
-                grid.addWidget(self.logArea,     0,1,1,1)
-                grid.setRowStretch(0,1)
-                grid.setColumnStretch(0,0)
-                grid.setColumnStretch(1,1)
-        else:
-            "rrd only"
-            self.setFixedHeight(260)
-            self.rrdButtons = ProbeButtons(self, probeDict)
-            self.rrdGraphs  = ProbeGraphs(self, probeDict)
-            grid = QGridLayout()
-            grid.addWidget(self.infoLabel,   0,0,1,1)
-            grid.addWidget(self.rrdButtons,  0,1,1,1)
-            grid.addWidget(self.rrdGraphs,   0,2,1,1)
-            grid.setColumnStretch(0,0)
-            grid.setColumnStretch(1,0)
-            grid.setColumnStretch(2,1)
+        self.logArea = QTextEdit(self)
+        dtext = QTextDocument()
+        dtext.setMaximumBlockCount(500)
+        tformat = QTextCharFormat()
+        tformat.setFontPointSize(8.2)
+        self.logArea.setDocument(dtext)
+        self.logArea.setCurrentCharFormat(tformat)
+        self.logArea.setReadOnly(True)
+        self.logArea.setLineWrapMode(QTextEdit.NoWrap)
+        self.setFixedHeight(350)
+        self.logArea.setFixedHeight(90)
+        self.rrdButtons = ProbeButtons(self, probeDict)
+        self.rrdGraphs  = ProbeGraphs(self, probeDict)
+        grid = QGridLayout()
+        grid.addWidget(self.infoLabel,   0,0,1,1)
+        grid.addWidget(self.rrdButtons,  0,1,1,1)
+        grid.addWidget(self.rrdGraphs,   0,2,1,1)
+        grid.addWidget(self.logArea,     1,0,1,3)
+        grid.setRowStretch(0,1)
+        grid.setRowStretch(1,0)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,0)
+        grid.setColumnStretch(2,1)
     
         self.setLayout(grid)
+
+    def setSignal(self, signalObj):
+        signalObj.signal.connect(self.handleEvent)
+
+    def handleEvent(self, msg):
+        print "probe view mesg " 
 
     def handleProbeReturn(self,msg):
         value   = msg['value']

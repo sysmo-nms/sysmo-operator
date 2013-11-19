@@ -6,7 +6,7 @@ import  os
 
 from    ModTrackerEvents import TrackerEvents
 import  ModTrackerWideView
-import  ModTrackerTargetView
+import  ModTrackerTarget
 import  ModTrackerTreeArea
 
 class TrackerMain(QSplitter):
@@ -24,7 +24,7 @@ class TrackerMain(QSplitter):
         Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
 
         self.leftTree   = ModTrackerTreeArea.TreeContainer(self)
-        self.rightStack = ModTrackerTargetView.Stack(self)
+        self.rightStack = ModTrackerTarget.Stack(self)
 
         self.addWidget(self.leftTree)
         self.addWidget(self.rightStack)

@@ -11,69 +11,52 @@ import  tempfile
 
 
 class TargetView(QFrame):
-    probeDumpSignal     = Signal(dict)
-    probeReturnSignal   = Signal(dict)
+    
+    " switch events from ModTrackerTarget based on the probe id "
 
     def __init__(self, parent, targetName):
         super(TargetView, self).__init__(parent)
-        self.head   = TargetViewHead(self, targetName)
-        self.scroll = TargetViewScroll(self, targetName)
+        head            = QLabel(targetName, self)
+        (scrollFrame,)  = self.generateProbesFrame(targetName),
+        bodyScroll  = QScrollArea(self)
+        bodyScroll.setWidget(scrollFrame)
+        
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
-        grid.addWidget(self.head, 0, 0)
-        grid.addWidget(self.scroll, 1, 0)
+        grid.addWidget(head,        0, 0)
+        grid.addWidget(bodyScroll,  1, 0)
         self.setLayout(grid)
 
-    def handleProbeReturn(self, msg):
-        self.probeReturnSignal.emit(msg)
-        self.scroll.handleProbeReturn(msg)
+    def setSignal(self, signalObj):
+        signalObj.signal.connect(self.handleEvent)
 
-    def handleProbeDump(self, msg):
-        self.probeReturnSignal.emit(msg)
-        self.scroll.handleProbeDump(msg)
+    def handleEvent(self, msg):
+        probeId = msg['value']['id']
+        self.probes[probeId].signal.emit(msg)
 
-class TargetViewHead(QFrame):
-    def __init__(self, parent, targetName):
-        super(TargetViewHead, self).__init__(parent)
-        self.headLabel = QLabel(targetName)
-        self.headLabel.setFrameStyle(1),
-        self.headLabel.setFrameShadow(QFrame.Raised)
+    def generateProbesFrame(self, targetName):
+        self.probes = dict()
         grid = QGridLayout()
-        grid.addWidget(self.headLabel, 0, 0)
-        self.setLayout(grid)
 
-class TargetViewScroll(QScrollArea):
-    def __init__(self, parent, targetName):
-        super(TargetViewScroll, self).__init__(parent)
-        self.content = TargetViewBody(self, targetName)
-        self.setWidget(self.content)
-        self.setWidgetResizable(True)
-
-    def handleProbeReturn(self, msg):
-        self.content.handleProbeReturn(msg)
-
-    def handleProbeDump(self, msg):
-        self.content.handleProbeDump(msg)
-
-class TargetViewBody(QFrame):
-
-    def __init__(self, parent, targetName):
-        super(TargetViewBody, self).__init__(parent)
         targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
-        self.grid = QGridLayout()
+
         for probeId in targetDict:
-            self.grid.addWidget(ProbeView(self, 
-                targetName, probeId, targetDict[probeId]), probeId, 0)
-        self.setLayout(self.grid)
+            # create the probe widget
+            pview  = ProbeView(self, targetName, probeId, targetDict[probeId]) 
+            # create the signal
+            signal = Communicate(self)
+            # link the view to the signal
+            pview.setSignal(signal)
+            # save all this in a dict used to switch messages
+            self.probes[probeId] = signal
+            # grid the widget
+            grid.addWidget(pview, probeId, 0)
 
-    def handleProbeReturn(self, msg):
-        probeId     = msg['value']['id']
-        probeLayout = self.grid.itemAtPosition(probeId, 0)
-        probeView   = probeLayout.widget()
-        probeView.handleProbeReturn(msg)
+        fr = QFrame(self)
+        fr.setLayout(grid)
+        return fr
 
-    def handleProbeDump(self, msg):
-        probeId     = msg['value']['id']
-        probeLayout = self.grid.itemAtPosition(probeId, 0)
-        probeView   = probeLayout.widget()
-        probeView.handleProbeDump(msg)
+class Communicate(QObject):
+    signal = Signal(dict)
+    def __init__(self, parent):
+        super(Communicate, self).__init__(parent)
