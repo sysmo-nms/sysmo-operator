@@ -35,34 +35,11 @@ class TreeContainer(QFrame):
         self.treeview   =  TrackerTView(self)
         self.treeview.clicked[QModelIndex].connect(TrackerTView.clic)
 
-        # self.filterMenu = QMenu(self)
-        # self.filterButton    = QToolButton(self)
-        # self.filterButton.setIcon(TkorderIcons.get('Filter'))
-        # self.filterButton.setMenu(self.filterMenu)
-
-        # self.configureMenu = QMenu(self)
-        # self.configureButton    = QToolButton(self)
-        # self.configureButton.setIcon(TkorderIcons.get('preferences-system-session'))
-        # self.configureButton.setMenu(self.configureMenu)
-
-        # self.clearButton    = QToolButton(self)
-        # self.clearButton.setIcon(TkorderIcons.get('edit-clear'))
-        # self.clearButton.setIconSize(QSize(20,20))
-        # self.clearButton.setStyleSheet("QToolButton {border: none; padding: 0px; }")
-
-        # self.lineEdit   =   QLineEdit(self)
-        # self.lineEdit.setPlaceholderText("Filtrer les sondes")
-
-
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
-        # grid.addWidget(self.lineEdit,       0, 0)
-        # grid.addWidget(self.clearButton,    0, 1)
-        # grid.addWidget(self.filterButton,   0, 2)
-        # grid.addWidget(self.configureButton,   0, 3)
-        # grid.addWidget(self.treeview,       1, 0, 1, 4)
+
         self.info = TrackerTreeAreaInfo(self)
         grid.addWidget(self.treeview,           0, 0)
         grid.addWidget(self.info,               1, 0)
@@ -92,25 +69,17 @@ class TrackerTView(QTreeView):
     def clic(cls, i):
         model = cls.tv.model()
         item  = model.itemFromIndex(i)
-        #TrackerMain.Main.setView(item)
         TreeContainer.singleton.updateEvent(item)
        
 
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
         TrackerTView.set(self)
-        #self.header = QHeaderView(Qt.Horizontal, self)
-        #self.header.setClickable(True)
-        #self.header.setSortIndicatorShown(True)
         self.setHeaderHidden(True)
 
-        # QTreeview
         self.setAnimated(True)
-        #self.setHeader(self.header)
-        #Clickabl.setHeaderHidden(True)
         self.setIndentation(15)
         self.setUniformRowHeights(True)
-        #self.setRootIsDecorated(False)
 
         # <- QAbasctractItemView 
         self.setAlternatingRowColors(True)
@@ -124,10 +93,6 @@ class TrackerTView(QTreeView):
         # <- QAbstractScrollArea
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-
-        # <- QFrame
-        #self.setFrameShadow(QFrame.Sunken)
-        #self.setFrameShape(QFrame.StyledPanel)
 
         # from QTreeView
         self.expandAll()
@@ -239,3 +204,4 @@ class TrackerTViewModel(QStandardItemModel):
             parentItem.setData(icon, Qt.DecorationRole)
 
         parentItem.appendRow(newItem)
+

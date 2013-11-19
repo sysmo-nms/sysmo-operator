@@ -1,6 +1,5 @@
 from    PySide      import QtGui, QtCore
 
-
 class View(QtGui.QFrame):
     def __init__(self, parent):
         super(View, self).__init__(parent)

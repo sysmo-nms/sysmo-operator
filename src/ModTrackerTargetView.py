@@ -10,11 +10,10 @@ import  tempfile
 
 
 class Stack(QStackedWidget):
-
     def __init__(self, parent):
         super(Stack, self).__init__(parent)
-        self.stackDict       = dict()
-        Stack.vardir = os.path.join(os.getcwd(), 'var')
+        self.stackDict  = dict()
+        Stack.vardir    = os.path.join(os.getcwd(), 'var')
         Stack.singleton = self
 
     def setView(self, targetItem, probeId):

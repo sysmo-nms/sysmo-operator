@@ -6,6 +6,9 @@ import  ModTrackerWideView
 import  ModTrackerTargetView
 
 class TrackerMain(QtGui.QSplitter):
+    " Them main window. Emit tracker server events, and forward childs "
+    " events to other childs."
+
     @classmethod
     def initView(cls):
         stack = cls.singleton.rightStack
@@ -63,6 +66,7 @@ class TrackerMain(QtGui.QSplitter):
 
         if   (mType == 'probeInfo'):
             #print "received probeInfo"
+            self.probeInfoSignal.emit()
             self.handleProbeInfo(msg)
         elif (mType == 'targetInfo'):
             #print "received targetInfo"
@@ -70,9 +74,11 @@ class TrackerMain(QtGui.QSplitter):
         elif (mType == 'probeModInfo'):
             #print "received probeModInfo"
             ModTrackerTreeArea.handle(msg)
-        elif (mType == 'probeActivity'): pass
+        elif (mType == 'probeActivity'):
+            pass
             #print "received probeActivity"
-        elif (mType == 'subscribeOk'): pass
+        elif (mType == 'subscribeOk'):
+            pass
         elif (mType == 'probeDump'):
             print "dump from ", msg['value']['logger']
             self.rightStack.handleProbeDump(msg)
