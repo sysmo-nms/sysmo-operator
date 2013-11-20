@@ -1,5 +1,6 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
+from    PySide.QtSvg    import *
 from    TargetRrdView   import RrdView
 import  os
 import  datetime
@@ -45,10 +46,21 @@ class ProbeView(QFrame):
         # left frame
         leftFrame   = QFrame(self)
         #leftFrame.setStyleSheet("QFrame { background: #FF00FF }")
+        statusLabel = QFrame(self)
+        statusLabel.setFixedHeight(100)
+        statusLabel.setFixedWidth(100)
+        self.statusLabelContent = QSvgWidget(
+            TkorderIcons.getImage('weather-few-clouds-night'), self)
+        statusGrid  = QGridLayout(self)
+        statusGrid.addWidget(self.statusLabelContent,   0,0)
+        statusLabel.setLayout(statusGrid)
+
+
         leftGrid    = QGridLayout(self)
-        leftGrid.addWidget(ProbeInfo(self,targetName,probeId,probeDict), 0,0)
-        leftGrid.addWidget(TextLog(self),                                2,0)
-        leftGrid.addWidget(progressFrame,                                0,1,3,1)
+        leftGrid.addWidget(ProbeInfo(self,targetName,probeId,probeDict), 0,0,1,1)
+        leftGrid.addWidget(statusLabel,                                  0,4,1,1)
+        leftGrid.addWidget(progressFrame,                                0,2,3,1)
+        leftGrid.addWidget(TextLog(self),                                2,0,1,2)
         leftGrid.setContentsMargins(0,0,0,0)
         leftGrid.setVerticalSpacing(0)
         leftGrid.setHorizontalSpacing(0)
@@ -69,6 +81,22 @@ class ProbeView(QFrame):
         grid.setColumnStretch(1,1)
     
         self.setLayout(grid)
+        self.updateStatus(probeDict['status'])
+
+
+    def updateStatus(self, status):
+        if (status == 'OK'):
+            svgR    = TkorderIcons.getImage('weather-clear')
+        elif (status == 'WARNING'):
+            icon = TkorderIcons.get('weather-showers')
+        elif (status == 'CRITICAL'):
+            icon = TkorderIcons.get('weather-severe-alert')
+        elif (status == 'UNKNOWN'):
+            icon = TkorderIcons.get('weather-few-clouds-night')
+        else:
+            print "unknown status is ", status
+            icon = TkorderIcons.get('weather-clear-night')
+
 
 
     def setSignal(self, signalObj):
@@ -168,16 +196,6 @@ class ProbeInfo(QFrame):
 
         grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
-
-#         timeoutProgress = TimeoutProgressBar(
-#             self, timeout * 1000, 'Timeout: %p%')
-#         stepProgress    = StepProgressBar(
-#             self, step * 1000, 'Step: %p%', timeoutProgress)
-# 
-#         grid.addWidget(stepProgress,                1,2,7,1)
-#         grid.addWidget(timeoutProgress,             1,3,7,1)
-#         
-#         parent.signal.connect(stepProgress.handleEvent)
 
         self.setLayout(grid)
 

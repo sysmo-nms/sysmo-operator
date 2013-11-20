@@ -1,5 +1,12 @@
 from PySide import QtGui
+from PySide import QtSvg
 
+
+def get(iconSet):
+    return TkorderIcons.get(iconSet)
+
+def getImage(imageSet):
+    return TkorderImages.get(imageSet)
 
 class TkorderIcons(object):
     @classmethod
@@ -60,5 +67,61 @@ class TkorderIcons(object):
     def get(cls, iconName):
         return cls.iconSet[iconName]
 
-def get(iconSet):
-    return TkorderIcons.get(iconSet)
+class TkorderImages(object):
+    @classmethod
+    def init(cls):
+        cls.imageSet = {
+            'system-log-out': "icons/system-log-out.svg",
+            'applications-development': "icons/applications-development.svg",
+            'applications-multimedia': "icons/applications-multimedia.svg",
+            'applications-system': "icons/applications-system.svg",
+            'computer': "icons/computer.svg",
+            'dialog-error': "icons/dialog-error.svg",
+            'dialog-information': "icons/dialog-information.svg",
+            'dialog-warning': "icons/dialog-warning.svg",
+            'drive-harddisk': "icons/drive-harddisk.svg",
+            'edit-clear': "icons/edit-clear.svg",
+            'emblem-important': "icons/emblem-important.svg",
+            'emblem-readonly': "icons/emblem-readonly.svg",
+            'emblem-system': "icons/emblem-system.svg",
+            'emblem-unreadable': "icons/emblem-unreadable.svg",
+            'help-browser': "icons/help-browser.svg",
+            'internet-news-reader': "icons/internet-news-reader.svg",
+            'mail-attachment': "icons/mail-attachment.svg",
+            'media-floppy': "icons/media-floppy.svg",
+            'network-server': "icons/network-server.svg",
+            'network-wired': "icons/network-wired.svg",
+            'network-wireless': "icons/network-wireless.svg",
+            'network-workgroup': "icons/network-workgroup.svg",
+            'preferences-desktop-keyboard-shortcuts': "icons/preferences-desktop-keyboard-shortcuts.svg",
+            'preferences-desktop-locale': "icons/preferences-desktop-locale.svg",
+            'preferences-desktop-peripherals': "icons/preferences-desktop-peripherals.svg",
+            'preferences-desktop-screensaver': "icons/preferences-desktop-screensaver.svg",
+            'preferences-desktop': "icons/preferences-desktop.svg",
+            'preferences-desktop-theme': "icons/preferences-desktop-theme.svg",
+            'preferences-desktop-wallpaper': "icons/preferences-desktop-wallpaper.svg",
+            'preferences-system-session': "icons/preferences-system-session.svg",
+            'preferences-system': "icons/preferences-system.svg",
+            'start-here': "icons/start-here.svg",
+            'system-installer': "icons/system-installer.svg",
+            'system-log-out': "icons/system-log-out.svg",
+            'system-shutdown': "icons/system-shutdown.svg",
+            'utilities-system-monitor': "icons/utilities-system-monitor.svg",
+            'utilities-terminal': "icons/utilities-terminal.svg",
+            'video-display': "icons/video-display.svg",
+            'weather-clear-night': "icons/weather-clear-night.svg",
+            'weather-clear': "icons/weather-clear.svg",
+            'weather-few-clouds-night': "icons/weather-few-clouds-night.svg",
+            'weather-few-clouds': "icons/weather-few-clouds.svg",
+            'weather-overcast': "icons/weather-overcast.svg",
+            'weather-severe-alert': "icons/weather-severe-alert.svg",
+            'weather-showers-scattered': "icons/weather-showers-scattered.svg",
+            'weather-showers': "icons/weather-showers.svg",
+            'weather-snow': "icons/weather-snow.svg",
+            'weather-storm': "icons/weather-storm.svg",
+            'Filter': "icons/Filter.svg"
+        }
+
+    @classmethod
+    def get(cls, iconName):
+        return cls.imageSet[iconName]

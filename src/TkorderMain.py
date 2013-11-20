@@ -7,7 +7,7 @@ import  pprint
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    PySide.QtNetwork    import *
-from    TkorderIcons        import TkorderIcons
+from    TkorderIcons        import TkorderIcons,TkorderImages
 import  Supercast
 import  ModTracker
 
@@ -18,6 +18,7 @@ class TkorderClient(QMainWindow):
     def __init__(self, parent=None):
         super(TkorderClient, self).__init__(parent)
         TkorderIcons.init()
+        TkorderImages.init()
         TkorderClient.singleton = self
 
 
@@ -132,7 +133,7 @@ def main(arguments):
     )
 
     #print QStyleFactory.keys()
-    #tkorderApp.setStyle('Motif')
+    #tkorderApp.setStyle('Plastique')
     loginUi         = Supercast.LogInDialog2()
     loginUi.supercastClient = tkorderUi
     loginUi.show()
