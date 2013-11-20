@@ -9,6 +9,8 @@ implemented.
 - keep an average packet time travel from server to client and add this in
 the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
+- customize the probe step and timeout probressbar. Timeout: gradiant from
+yellow to red, step: green.
 
 BUGS
 - tko do not take consideration of messages comming from a probe_status_move
