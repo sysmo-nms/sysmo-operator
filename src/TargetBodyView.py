@@ -1,13 +1,8 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    TargetProbeView import ProbeView
-import  os
-import  datetime
 import  TkorderIcons
 import  ModTracker
-import  rrdtool
-import  re
-import  tempfile
 
 
 class TargetView(QFrame):
