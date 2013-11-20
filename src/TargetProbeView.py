@@ -45,20 +45,10 @@ class ProbeView(QFrame):
 
         # left frame
         leftFrame   = QFrame(self)
-        #leftFrame.setStyleSheet("QFrame { background: #FF00FF }")
-        statusLabel = QFrame(self)
-        statusLabel.setFixedHeight(100)
-        statusLabel.setFixedWidth(100)
-        self.statusLabelContent = QSvgWidget(
-            TkorderIcons.getImage('weather-few-clouds-night'), self)
-        statusGrid  = QGridLayout(self)
-        statusGrid.addWidget(self.statusLabelContent,   0,0)
-        statusLabel.setLayout(statusGrid)
 
 
         leftGrid    = QGridLayout(self)
         leftGrid.addWidget(ProbeInfo(self,targetName,probeId,probeDict), 0,0,1,1)
-        leftGrid.addWidget(statusLabel,                                  0,4,1,1)
         leftGrid.addWidget(progressFrame,                                0,2,3,1)
         leftGrid.addWidget(TextLog(self),                                2,0,1,2)
         leftGrid.setContentsMargins(0,0,0,0)
@@ -81,21 +71,9 @@ class ProbeView(QFrame):
         grid.setColumnStretch(1,1)
     
         self.setLayout(grid)
-        self.updateStatus(probeDict['status'])
+        #self.updateStatus(probeDict['status'])
 
 
-    def updateStatus(self, status):
-        if (status == 'OK'):
-            svgR    = TkorderIcons.getImage('weather-clear')
-        elif (status == 'WARNING'):
-            icon = TkorderIcons.get('weather-showers')
-        elif (status == 'CRITICAL'):
-            icon = TkorderIcons.get('weather-severe-alert')
-        elif (status == 'UNKNOWN'):
-            icon = TkorderIcons.get('weather-few-clouds-night')
-        else:
-            print "unknown status is ", status
-            icon = TkorderIcons.get('weather-clear-night')
 
 
 
@@ -170,6 +148,30 @@ class ProbeInfo(QFrame):
         perm        = probeDict['perm']
         properties  = probeDict['properties']
 
+        if (status == 'OK'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-clear'), self)
+        elif (status == 'WARNING'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-showers'), self)
+        elif (status == 'CRITICAL'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-severe-alert'), self)
+        elif (status == 'UNKNOWN'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-few-clouds-night'), self)
+        else:
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-clear-night'), self)
+
+        statusLabel = QFrame(self)
+        statusLabel.setFixedHeight(80)
+        statusLabel.setFixedWidth(80)
+        self.statusLabelContent = image
+        statusGrid  = QGridLayout(self)
+        statusGrid.addWidget(self.statusLabelContent,   0,0)
+        statusLabel.setLayout(statusGrid)
+
         grid = QGridLayout()
 
         grid.addWidget(QLabel('Name:',  self),      1,0,1,1)
@@ -187,17 +189,37 @@ class ProbeInfo(QFrame):
         grid.addWidget(QLabel('Timeout: ',  self),  5,0,1,1)
         grid.addWidget(QLabel(str(timeout),  self), 5,1,1,1)
 
+
         hLine = QFrame(self)
         hLine.setFrameShape(QFrame.HLine)
         hLine.setLineWidth(1)
         hLine.setMidLineWidth(1)
         hLine.setFrameShadow(QFrame.Sunken)
-        grid.addWidget(hLine,                       6,0,1,2)
+        grid.addWidget(hLine,                       6,0,1,3)
 
         grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
 
+        grid.addWidget(statusLabel,                 0,2,5,1)
+
         self.setLayout(grid)
+
+    def updateStatus(self, status):
+        if (status == 'OK'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-clear'), self)
+        elif (status == 'WARNING'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-showers'), self)
+        elif (status == 'CRITICAL'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-severe-alert'), self)
+        elif (status == 'UNKNOWN'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-few-clouds-night'), self)
+        else:
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-clear-night'), self)
 
 class StepProgressBar(QProgressBar):
     
