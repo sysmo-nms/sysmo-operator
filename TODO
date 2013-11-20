@@ -6,6 +6,9 @@ selected items.
 - events time plots (inspector_events)
 - treeview must be searchable, filterable, and custom parent/childs must be
 implemented.
+- keep an average packet time travel from server to client and add this in
+the status bar. Move it red when the latency it to high. Use this value
+to calculate the probes QProgressBars (step and timeout)
 
 BUGS
 - tko do not take consideration of messages comming from a probe_status_move
