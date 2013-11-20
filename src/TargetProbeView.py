@@ -22,13 +22,48 @@ class ProbeView(QFrame):
         else: viewType = 'text'
 
         self.setFrameShape(QFrame.StyledPanel)
+
         #self.setStyleSheet("QFrame { background: #0000FF }")
-        self.setFixedHeight(300)
+        #self.setFixedHeight(300)
+
+        # Progress bar frame
+        progressFrame   = QFrame(self)
+        progressGrid    = QGridLayout(self)
+        timeoutProgress = TimeoutProgressBar(
+            self, probeDict['timeout'] * 1000, 'Timeout: %p%')
+        stepProgress    = StepProgressBar(
+            self, probeDict['step'] * 1000, 'Step: %p%', timeoutProgress)
+        progressGrid.addWidget(timeoutProgress,             0,0,1,1)
+        progressGrid.addWidget(stepProgress,                1,0,2,1)
+        progressGrid.setRowStretch(0,0)
+        progressGrid.setRowStretch(1,1)
+        progressGrid.setRowStretch(1,1)
+        #progressGrid.setContentsMargins(3,3,3,3)
+        progressFrame.setLayout(progressGrid)
+        self.signal.connect(stepProgress.handleEvent)
+
+        # left frame
+        leftFrame   = QFrame(self)
+        #leftFrame.setStyleSheet("QFrame { background: #FF00FF }")
+        leftGrid    = QGridLayout(self)
+        leftGrid.addWidget(ProbeInfo(self,targetName,probeId,probeDict), 0,0)
+        leftGrid.addWidget(TextLog(self),                                2,0)
+        leftGrid.addWidget(progressFrame,                                0,1,3,1)
+        leftGrid.setContentsMargins(0,0,0,0)
+        leftGrid.setVerticalSpacing(0)
+        leftGrid.setHorizontalSpacing(0)
+        leftGrid.setRowStretch(0,0)
+        leftGrid.setRowStretch(1,1)
+        leftGrid.setRowStretch(2,0)
+        leftFrame.setLayout(leftGrid)
+
+
+
         grid = QGridLayout()
         grid.setContentsMargins(3,3,3,3)
-        grid.addWidget(ProbeInfo(self,targetName,probeId,probeDict),    0,0)
-        grid.addWidget(TextLog(self),                                   1,0)
-        grid.addWidget(RrdView(self, probeDict),    0,1,2,1)
+        grid.setVerticalSpacing(0)
+        grid.addWidget(leftFrame,                   0,0,1,1)
+        grid.addWidget(RrdView(self, probeDict),    0,1,1,1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
@@ -91,6 +126,7 @@ class TextLog(QTextEdit):
 class ProbeInfo(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeInfo, self).__init__(parent)
+        #self.setStyleSheet("QFrame { background: #00FF00 }")
         self.setFixedWidth(300)
 
         status      = probeDict['status']
@@ -110,8 +146,6 @@ class ProbeInfo(QFrame):
 
         grid.addWidget(QLabel('Name:',  self),      1,0,1,1)
         grid.addWidget(QLabel(name,  self),         1,1,1,1)
-
-
         
         grid.addWidget(QLabel('Status:',    self),  2,0,1,1)
         grid.addWidget(QLabel(status, self),        2,1,1,1)
@@ -135,15 +169,15 @@ class ProbeInfo(QFrame):
         grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
 
-        timeoutProgress = TimeoutProgressBar(
-            self, timeout * 1000, 'Timeout: %p%')
-        stepProgress    = StepProgressBar(
-            self, step * 1000, 'Step: %p%', timeoutProgress)
-
-        grid.addWidget(stepProgress,                1,2,7,1)
-        grid.addWidget(timeoutProgress,             1,3,7,1)
-        
-        parent.signal.connect(stepProgress.handleEvent)
+#         timeoutProgress = TimeoutProgressBar(
+#             self, timeout * 1000, 'Timeout: %p%')
+#         stepProgress    = StepProgressBar(
+#             self, step * 1000, 'Step: %p%', timeoutProgress)
+# 
+#         grid.addWidget(stepProgress,                1,2,7,1)
+#         grid.addWidget(timeoutProgress,             1,3,7,1)
+#         
+#         parent.signal.connect(stepProgress.handleEvent)
 
         self.setLayout(grid)
 

@@ -11,7 +11,7 @@ import  tempfile
 class RrdView(QFrame):
     def __init__(self, parent, probeDict):
         super(RrdView, self).__init__(parent)
-        #self.setStyleSheet("QFrame { background: #999999 }")
+        self.setStyleSheet("QFrame { background: #999999 }")
         self.setMinimumWidth(600)
         self.knownHeight    = 0
         self.knownWidth     = 0
