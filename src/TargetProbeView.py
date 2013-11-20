@@ -70,7 +70,6 @@ class TextLog(QTextEdit):
         parent.signal.connect(self.handleEvent)
 
     def handleEvent(self, msg):
-        print msg['msgType']
         if   msg['msgType'] == 'probeDump':
             if msg['value']['logger'] == 'btracker_logger_text':
                 self.textDump(msg['value']['data'])
@@ -136,7 +135,6 @@ class ProbeInfo(QFrame):
         grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
 
-        # progress bars
         timeoutProgress = TimeoutProgressBar(
             self, timeout * 1000, 'Timeout: %p%')
         stepProgress    = StepProgressBar(
@@ -147,10 +145,6 @@ class ProbeInfo(QFrame):
         
         parent.signal.connect(stepProgress.handleEvent)
 
-        #self.stepCounter    = stepProgress
-        #self.timeoutCounter = timeoutProgress
-        #self.step       = step
-        #self.timeout    = timeout
         self.setLayout(grid)
 
 class StepProgressBar(QProgressBar):
@@ -214,6 +208,6 @@ class TimeoutProgressBar(QProgressBar):
         self.timer.start()
 
     def handleValueChanged(self, i):
-        if self.timeMax == i:
-            print "timeout reached", str(i)
+        if self.timeMax == i: pass # do something
+            
 
