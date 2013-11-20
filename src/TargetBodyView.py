@@ -16,29 +16,40 @@ class TargetView(QFrame):
 
     def __init__(self, parent, targetName):
         super(TargetView, self).__init__(parent)
-        head            = QLabel(targetName, self)
-        (scrollFrame,)  = self.generateProbesFrame(targetName),
+        head        = QLabel(targetName, self)
         
-        bodyScroll  = QScrollArea(self)
+        signalReceiver = self
+        bodyScroll  = BodyScroll(self, targetName, signalReceiver)
         grid = QGridLayout()
         grid.setContentsMargins(0,0,0,0)
         grid.addWidget(head,        0, 0)
         grid.addWidget(bodyScroll,  1, 0)
         self.setLayout(grid)
-        bodyScroll.setWidget(scrollFrame)
 
     def setSignal(self, signalObj):
         signalObj.signal.connect(self.handleEvent)
+
+    def setEmiters(self, emiters):
+        self.probes = emiters
 
     def handleEvent(self, msg):
         probeId = msg['value']['id']
         self.probes[probeId].signal.emit(msg)
 
-    def generateProbesFrame(self, targetName):
-        self.probes = dict()
-        grid = QGridLayout()
+class BodyScroll(QScrollArea):
+    def __init__(self, parent, targetName, signalReceiver):
+        super(BodyScroll, self).__init__(parent)
+        #self.setStyleSheet("QScrollArea { background: #FF0000 }")
+        self.setWidgetResizable(True)
+        lab = BodyFrame(self, targetName, signalReceiver)
+        self.setWidget(lab)
 
-        targetDict = ModTracker.TrackerMain.singleton.targets[targetName]
+class BodyFrame(QFrame):
+    def __init__(self, parent, targetName, ancestor):
+        super(BodyFrame, self).__init__(parent)
+        probes      = dict()
+        grid        = QGridLayout()
+        targetDict  = ModTracker.TrackerMain.singleton.targets[targetName]
 
         for probeId in targetDict:
             # create the probe widget
@@ -48,13 +59,14 @@ class TargetView(QFrame):
             # link the view to the signal
             pview.setSignal(signal)
             # save all this in a dict used to switch messages
-            self.probes[probeId] = signal
+            probes[probeId] = signal
             # grid the widget
             grid.addWidget(pview, probeId, 0)
 
-        fr = QFrame(self)
-        fr.setLayout(grid)
-        return fr
+        ancestor.setEmiters(probes)
+        self.setLayout(grid)
+
+
 
 class Communicate(QObject):
     signal = Signal(dict)

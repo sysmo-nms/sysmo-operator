@@ -24,16 +24,14 @@ class ProbeView(QFrame):
         else: viewType = 'text'
 
         self.setFrameShape(QFrame.StyledPanel)
-        #self.setStyleSheet("QFrame { background: #FF0000 }")
-        self.setFixedHeight(350)
+        #self.setStyleSheet("QFrame { background: #0000FF }")
+        self.setFixedHeight(300)
         grid = QGridLayout()
         grid.setContentsMargins(3,3,3,3)
         grid.addWidget(ProbeInfo(self,targetName,probeId,probeDict),    0,0)
         grid.addWidget(TextLog(self),                                   1,0)
         grid.addWidget(QLabel("hell", self),    0,1,1,2)
 
-        #grid.setRowStretch(0,1)
-        #grid.setRowStretch(1,0)
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
     
@@ -43,6 +41,7 @@ class ProbeView(QFrame):
         signalObj.signal.connect(self.handleEvent)
 
     def handleEvent(self, msg):
+        print "event!"
         self.signal.emit(msg)
 
     def btrackerLoggerRrdDump(self, msg):
