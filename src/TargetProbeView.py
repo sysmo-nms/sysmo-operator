@@ -136,25 +136,84 @@ class ProbeInfo(QFrame):
         grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
 
-        stepProgress    = QProgressBar(self)
-        stepProgress.setOrientation(Qt.Vertical)
-        stepProgress.setFormat('Step: %p%')
-        stepProgress.setValue(40)
-        stepProgress.setTextDirection(QProgressBar.TopToBottom)
+        # progress bars
+        timeoutProgress = TimeoutProgressBar(
+            self, timeout * 1000, 'Timeout: %p%')
+        stepProgress    = StepProgressBar(
+            self, step * 1000, 'Step: %p%', timeoutProgress)
 
         grid.addWidget(stepProgress,                1,2,7,1)
-
-        timeoutProgress = QProgressBar(self)
-        timeoutProgress.setOrientation(Qt.Vertical)
-        timeoutProgress.setFormat('Timeout: %p%')
-        timeoutProgress.setValue(70)
-        timeoutProgress.setTextDirection(QProgressBar.BottomToTop)
         grid.addWidget(timeoutProgress,             1,3,7,1)
+        
+        parent.signal.connect(stepProgress.handleEvent)
 
-
-
-
-        #grid.setRowStretch(50, 1)
+        #self.stepCounter    = stepProgress
+        #self.timeoutCounter = timeoutProgress
+        #self.step       = step
+        #self.timeout    = timeout
         self.setLayout(grid)
 
+class StepProgressBar(QProgressBar):
+    
+    " this progress bar control the TimeoutProbressBar start and stop "
+
+    def __init__(self, parent, timerRange, textValue, timeoutProgress):
+        super(StepProgressBar, self).__init__(parent)
+        self.timeMax    = timerRange
+        self.timeoutProgress    = timeoutProgress
+
+        self.setOrientation(Qt.Vertical)
+        self.setRange(0, timerRange)
+        self.setFormat(textValue)
+        self.setValue(40)
+        self.setTextDirection(QProgressBar.TopToBottom)
+        self.valueChanged.connect(self.handleValueChanged)
+
+        self.timer = QTimeLine(timerRange, self)
+        self.timer.setFrameRange(0, timerRange)
+        self.timer.frameChanged[int].connect(self.setValue)
+
+    def handleEvent(self, msg):
+        if msg['msgType'] == 'probeReturn': self.resetProgress()
+
+    def stopProgress(self):
+        self.timer.stop()
+
+    def startProgress(self):
+        self.timer.start()
+
+    def resetProgress(self):
+        self.timeoutProgress.stopProgress()
+        self.timeoutProgress.reset()
+        self.stopProgress()
+        self.startProgress()
+
+    def handleValueChanged(self, i):
+        if self.timeMax == i:
+            self.timeoutProgress.startProgress()
+
+class TimeoutProgressBar(QProgressBar):
+    def __init__(self, parent, timerRange, textValue):
+        super(TimeoutProgressBar, self).__init__(parent)
+        self.timeMax = timerRange
+        self.setOrientation(Qt.Vertical)
+        self.setRange(0, timerRange)
+        self.setFormat(textValue)
+        self.setValue(40)
+        self.setTextDirection(QProgressBar.TopToBottom)
+        self.valueChanged.connect(self.handleValueChanged)
+
+        self.timer = QTimeLine(timerRange, self)
+        self.timer.setFrameRange(0, timerRange)
+        self.timer.frameChanged[int].connect(self.setValue)
+
+    def stopProgress(self):
+        self.timer.stop()
+
+    def startProgress(self):
+        self.timer.start()
+
+    def handleValueChanged(self, i):
+        if self.timeMax == i:
+            print "timeout reached", str(i)
 
