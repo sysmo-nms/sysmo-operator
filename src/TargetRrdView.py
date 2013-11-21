@@ -18,12 +18,12 @@ class RrdView(QFrame):
 
     def resizeEvent(self, event):
         "from doc: No drawing need be (or should be) done inside this handler"
-        print "new size", event.size()
-        print "old size", event.oldSize()
+        #print "new size", event.size()
+        #print "old size", event.oldSize()
         QFrame.resizeEvent(self, event)
 
     def paintEvent(self, event):
-        print "paint event"
+        #print "paint event"
         QFrame.paintEvent(self, event)
 
 #     def setGraphs(self, graphs, rrdDbPath):
