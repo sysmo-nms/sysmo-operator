@@ -45,6 +45,14 @@ class BodyFrame(QFrame):
         probes      = dict()
         grid        = QGridLayout()
         targetDict  = ModTracker.TrackerMain.singleton.targets[targetName]
+        pal = self.palette()
+        col = pal.color(QPalette.Base)
+        (r,g,b,s)   = col.toTuple()
+
+        # TODO look how to apply stylesheet only to one element,
+        # TODO look how to include palette() color return to a stylesheet
+        #style = 'background: white'
+        #self.setStyleSheet(style)
 
         for probeId in targetDict:
             # create the probe widget
