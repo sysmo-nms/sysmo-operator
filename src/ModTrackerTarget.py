@@ -17,6 +17,7 @@ class Stack(QStackedWidget):
         TrackerEvents.singleton.unsubscribeOk.connect(self.unsubscribeOk)
         TrackerEvents.singleton.probeReturn.connect(self.handleProbeEvent)
         TrackerEvents.singleton.probeDump.connect(self.handleProbeEvent)
+        TrackerEvents.singleton.probeInfo.connect(self.handleProbeEvent)
 
     def setView(self, clickDict):
         targetName = clickDict['target']

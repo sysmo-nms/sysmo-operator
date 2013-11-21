@@ -41,16 +41,17 @@ class ProbeView(QFrame):
         progressGrid.setRowStretch(1,1)
         #progressGrid.setContentsMargins(3,3,3,3)
         progressFrame.setLayout(progressGrid)
-        self.signal.connect(stepProgress.handleEvent)
 
         # left frame
         leftFrame   = QFrame(self)
 
+        probeInfo   = ProbeInfo(self,targetName,probeId,probeDict)
+        textLog     = TextLog(self)
 
         leftGrid    = QGridLayout(self)
-        leftGrid.addWidget(ProbeInfo(self,targetName,probeId,probeDict), 0,0,1,1)
-        leftGrid.addWidget(progressFrame,                                0,2,3,1)
-        leftGrid.addWidget(TextLog(self),                                2,0,1,2)
+        leftGrid.addWidget(probeInfo,       0,0,1,1)
+        leftGrid.addWidget(progressFrame,   0,2,3,1)
+        leftGrid.addWidget(textLog,         2,0,1,2)
         leftGrid.setContentsMargins(0,0,0,0)
         leftGrid.setVerticalSpacing(0)
         leftGrid.setHorizontalSpacing(0)
@@ -72,6 +73,9 @@ class ProbeView(QFrame):
     
         self.setLayout(grid)
         #self.updateStatus(probeDict['status'])
+        self.signal.connect(stepProgress.handleEvent)
+        self.signal.connect(textLog.handleEvent)
+        self.signal.connect(probeInfo.handleEvent)
 
 
 
@@ -108,7 +112,6 @@ class TextLog(QTextEdit):
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setFixedWidth(300)
         self.setFixedHeight(90)
-        parent.signal.connect(self.handleEvent)
 
     def handleEvent(self, msg):
         if   msg['msgType'] == 'probeDump':
@@ -117,6 +120,7 @@ class TextLog(QTextEdit):
             return
         elif msg['msgType'] == 'probeReturn':
             self.textAppend(msg['value'])
+        elif msg['msgType'] == 'probeInfo': pass
 
     def textDump(self, data):
         self.append(str(data).rstrip())
@@ -200,26 +204,25 @@ class ProbeInfo(QFrame):
         grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
 
-        grid.addWidget(statusLabel,                 0,2,5,1)
+        grid.addWidget(statusLabel,            0,2,5,1)
 
         self.setLayout(grid)
 
+    def handleEvent(self, msg):
+        if   msg['msgType'] == 'probeInfo':
+            self.updateStatus(msg['value']['status'])
+
     def updateStatus(self, status):
         if (status == 'OK'):
-            image = QSvgWidget(
-                TkorderIcons.getImage('weather-clear'), self)
+            self.statusLabelContent.load(TkorderIcons.getImage('weather-clear'))
         elif (status == 'WARNING'):
-            image = QSvgWidget(
-                TkorderIcons.getImage('weather-showers'), self)
+            self.statusLabelContent.load(TkorderIcons.getImage('weather-showers'))
         elif (status == 'CRITICAL'):
-            image = QSvgWidget(
-                TkorderIcons.getImage('weather-severe-alert'), self)
+            self.statusLabelContent.load(TkorderIcons.getImage('weather-severe-alert'))
         elif (status == 'UNKNOWN'):
-            image = QSvgWidget(
-                TkorderIcons.getImage('weather-few-clouds-night'), self)
+            self.statusLabelContent.load(TkorderIcons.getImage('weather-few-clouds-night'))
         else:
-            image = QSvgWidget(
-                TkorderIcons.getImage('weather-clear-night'), self)
+            self.statusLabelContent.load(TkorderIcons.getImage('weather-clear-night'))
 
 class StepProgressBar(QProgressBar):
     
