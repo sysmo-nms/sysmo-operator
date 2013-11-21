@@ -11,8 +11,16 @@ the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
 - customize the probe step and timeout probressbar. Timeout: gradiant from
 yellow to red, step: green. Modify QTimeLine curve.
+- custom target view with probes from diferents targets with tree views:
+. standard target view, look like a target view,
+. MDI view, when the user create his own rrd graphs view,
+. Map view, when links betwin nodes represent a probe rrd.
+- rrd time range slider for individual probes, or the entire set of probes
+for targets and custom targets.
+
 
 BUGS
 - tko do not take consideration of messages comming from a probe_status_move
+no probeReturn is send whent a probeInf is send.
 - tko do not have updated property list. Not sure if the server update it 
 correctly or if tkorder dit not take them in consideration.
