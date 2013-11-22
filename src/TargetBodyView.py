@@ -50,9 +50,10 @@ class BodyFrame(QFrame):
         #col = pal.color(QPalette.Base)
         #(r,g,b,s)   = col.toTuple()
 
+        print type(self)
         # TODO look how to apply stylesheet only to one element,
         #self.setObjectName('bodyFrame')
-        #self.setStyleSheet('BodyFrame > QLabel {background:white;}')
+        #self.setStyleSheet('BodyFrame#bodyFrame {background:white;}')
 
         for probeId in targetDict:
             # create the probe widget
