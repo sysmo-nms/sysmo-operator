@@ -1,5 +1,7 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
+from    PySide.QtSvg    import *
+from    PySide.QtWebKit import *
 import  os
 import  datetime
 import  TkorderIcons
@@ -8,7 +10,7 @@ import  rrdtool
 import  re
 import  tempfile
 
-class RrdView(QFrame):
+class RrdView(QLabel):
     def __init__(self, parent, probeDict):
         super(RrdView, self).__init__(parent)
         self.setStyleSheet("QFrame { background: #999999 }")
@@ -39,11 +41,11 @@ class RrdView(QFrame):
         "from doc: No drawing need be (or should be) done inside this handler"
         #print "new size", event.size()
         #print "old size", event.oldSize()
-        QFrame.resizeEvent(self, event)
+        QLabel.resizeEvent(self, event)
 
     def paintEvent(self, event):
         #print "paint event"
-        QFrame.paintEvent(self, event)
+        QLabel.paintEvent(self, event)
 
     def handleEvent(self, msg):
         if   msg['msgType'] == 'probeReturn': 
@@ -93,8 +95,9 @@ class RrdView(QFrame):
         defs    = re.findall(r'DEF:[^\s]+', self.rrdGraphConf)
         lines   = re.findall(r'LINE[^\s]+', self.rrdGraphConf)
 
-        rrdWidth  = 540
-        rrdHeight = 100
+        size = self.size()
+        rrdWidth  = size.width()
+        rrdHeight = size.height()
         rrdStart  = 3600 
 
         # python rrdtool did not support list of DEFs or LINEs in the module
@@ -104,6 +107,22 @@ class RrdView(QFrame):
             '--imgformat', 'PNG', \
             '--width', str(rrdWidth), \
             '--height', str(rrdHeight), \
+            '--full-size-mode', \
+            '--border', '0', \
+            '--dynamic-labels', \
+            '--slope-mode', \
+            '--tabwidth', '40', \
+            '--watermark', 'Watermark', \
+            '--color', 'BACK#000000', \
+            '--color', 'CANVAS#0000ff', \
+            '--color', 'SHADEA#0000ff', \
+            '--color', 'SHADEB#0000ff', \
+            '--color', 'GRID#0000ff', \
+            '--color', 'MGRID#0000ff', \
+            '--color', 'FONT#0000ff', \
+            '--color', 'AXIS#0000ff', \
+            '--color', 'FRAME#0000ff', \
+            '--color', 'ARROW#0000ff', \
             '--start', '-%i' % rrdStart, \
             '--end', 'now',"
         for i in range(len(defs)):
@@ -112,6 +131,22 @@ class RrdView(QFrame):
             cmd += "'%s'," % lines[i]
         cmd = re.sub(r',$', ')\n', cmd)
         eval(cmd)
+        picture = QPixmap(self.rrdGraphFileName)
+        print "pict = ", picture.size()
+        print "area = ", self.size()
+        self.setPixmap(picture)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #     def setGraphs(self, graphs, rrdDbPath):
