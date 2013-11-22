@@ -34,7 +34,7 @@ class TrackerMain(QSplitter):
         TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
         
         self.targets    = dict()
-        self.initHexaPalette()
+        self.initHexaPalettes()
         self.initView()
 
     def initView(self):
@@ -66,7 +66,7 @@ class TrackerMain(QSplitter):
         elif (mType == 'unsubscribeOk'):  self.signals.unsubscribeOk.emit(msg)
         else:   print "unknown message type: ", mType
 
-    def initHexaPalette(self):
+    def initHexaPalettes(self):
 
         " For widgets who need hexadecimal version of the colors actualy used "
         " by the application "
@@ -75,9 +75,7 @@ class TrackerMain(QSplitter):
         pal     = self.palette()
         constDict = {
             'Window':       QPalette.Window,
-            'Background':   QPalette.Background,
             'WindowText':   QPalette.WindowText,
-            'ForeGround':   QPalette.Foreground,
             'Base':         QPalette.Base,
             'AlternateBase':    QPalette.AlternateBase,
             'ToolTipBase':  QPalette.ToolTipBase,
@@ -85,7 +83,12 @@ class TrackerMain(QSplitter):
             'Text':         QPalette.Text,
             'Button':       QPalette.Button,
             'ButtonText':   QPalette.ButtonText,
-            'BrightText':   QPalette.BrightText
+            'BrightText':   QPalette.BrightText,
+            'Light':        QPalette.Light,
+            'MidLight':     QPalette.Midlight,
+            'Dark':         QPalette.Dark,
+            'Mid':          QPalette.Mid,
+            'Shadow':       QPalette.Shadow
         }
 
         for key in constDict.keys():
