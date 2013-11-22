@@ -15,6 +15,8 @@ class RrdView(QFrame):
         self.setMinimumWidth(600)
         self.knownHeight    = 0
         self.knownWidth     = 0
+        self.probeDict      = probeDict
+        self.rrdDbFile      = QTemporaryFile()
 
     def resizeEvent(self, event):
         "from doc: No drawing need be (or should be) done inside this handler"
@@ -25,6 +27,17 @@ class RrdView(QFrame):
     def paintEvent(self, event):
         #print "paint event"
         QFrame.paintEvent(self, event)
+
+    def handleEvent(self, msg):
+        probeId = self.probeDict['id']
+        if   msg['msgType'] == 'probeReturn': 
+            return
+        elif msg['msgType'] == 'probeDump':
+            if msg['value']['logger'] == 'btracker_logger_rrd':
+                if msg['value']['id'] == probeId:
+                    self.rrdDbFile.open()
+                    self.rrdDbFile.write(msg['value']['data'])
+                    self.rrdDbFile.close()
 
 #     def setGraphs(self, graphs, rrdDbPath):
 #         self.graphD     = dict()

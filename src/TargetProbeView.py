@@ -24,9 +24,6 @@ class ProbeView(QFrame):
 
         self.setFrameShape(QFrame.StyledPanel)
 
-        #self.setStyleSheet("QFrame { background: #0000FF }")
-        #self.setFixedHeight(300)
-
         # Progress bar frame
         progressFrame   = QFrame(self)
         progressGrid    = QGridLayout(self)
@@ -39,7 +36,6 @@ class ProbeView(QFrame):
         progressGrid.setRowStretch(0,0)
         progressGrid.setRowStretch(1,1)
         progressGrid.setRowStretch(1,1)
-        #progressGrid.setContentsMargins(3,3,3,3)
         progressFrame.setLayout(progressGrid)
 
         # left frame
@@ -62,24 +58,21 @@ class ProbeView(QFrame):
 
 
 
+        rrdView = RrdView(self, probeDict)
         grid = QGridLayout()
         grid.setContentsMargins(3,3,3,3)
         grid.setVerticalSpacing(0)
-        grid.addWidget(leftFrame,                   0,0,1,1)
-        grid.addWidget(RrdView(self, probeDict),    0,1,1,1)
+        grid.addWidget(leftFrame,   0,0,1,1)
+        grid.addWidget(rrdView,     0,1,1,1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
     
         self.setLayout(grid)
-        #self.updateStatus(probeDict['status'])
         self.signal.connect(stepProgress.handleEvent)
         self.signal.connect(textLog.handleEvent)
         self.signal.connect(probeInfo.handleEvent)
-
-
-
-
+        self.signal.connect(rrdView.handleEvent)
 
     def setSignal(self, signalObj):
         signalObj.signal.connect(self.handleEvent)
