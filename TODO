@@ -17,6 +17,7 @@ yellow to red, step: green. Modify QTimeLine curve.
 . Map view, when links betwin nodes represent a probe rrd.
 - rrd time range slider for individual probes, or the entire set of probes
 for targets and custom targets.
+- higlight selection in treeview
 
 
 BUGS
