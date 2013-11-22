@@ -16,9 +16,24 @@ class RrdView(QFrame):
         self.knownHeight    = 0
         self.knownWidth     = 0
         self.probeDict      = probeDict
+
+        # tmp rrd file
+        self.rrdDbFile      = QTemporaryFile()
+        self.rrdDbFile.open()
+        self.rrdDbFile.close()
+        self.rrdDbFileName  = self.rrdDbFile.fileName()
+
+        # tmp png file
+        self.rrdGraphFile       = QTemporaryFile()
+        self.rrdGraphFile.open()
+        self.rrdGraphFile.close()
+        self.rrdGraphFileName   = self.rrdGraphFile.fileName()
+
+        # rrd conf
         self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
         self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
-        self.rrdDbFile      = QTemporaryFile()
+        rrdGraphConf         = self.probeDict['loggers']['btracker_logger_rrd']['graphs']
+        self.rrdGraphConf    = re.sub('<FILE>', self.rrdDbFileName, rrdGraphConf[0])
 
     def resizeEvent(self, event):
         "from doc: No drawing need be (or should be) done inside this handler"
@@ -31,15 +46,19 @@ class RrdView(QFrame):
         QFrame.paintEvent(self, event)
 
     def handleEvent(self, msg):
-        probeId = self.probeDict['id']
         if   msg['msgType'] == 'probeReturn': 
             self.updateRrdDb(msg)
         elif msg['msgType'] == 'probeDump':
-            if msg['value']['logger'] == 'btracker_logger_rrd':
-                if msg['value']['id'] == probeId:
-                    self.rrdDbFile.open()
-                    self.rrdDbFile.write(msg['value']['data'])
-                    self.rrdDbFile.close()
+            self.dumpRrdDb(msg)
+
+    def dumpRrdDb(self, msg):
+        probeId = self.probeDict['id']
+        if msg['value']['logger'] == 'btracker_logger_rrd':
+            if msg['value']['id'] == probeId:
+                self.rrdDbFile.open()
+                self.rrdDbFile.write(msg['value']['data'])
+                self.rrdDbFile.close()
+                self.updateGraph()
 
     def updateRrdDb(self, msg):
         cmLine  = self.rrdUpdateString
@@ -50,11 +69,50 @@ class RrdView(QFrame):
             if key in keyVals:
                 macro = macroB[key]
                 value = keyVals[key]
-                cmLine = cmLine.replace(macro, value)
+                try:
+                    fvalue = float(value)
+                    ivalue = int(fvalue)
+                except ValueError:
+                    try: 
+                        ivalue = int(value)
+                    except ValueError: return
+                    
+                cmLine = cmLine.replace(macro, str(ivalue))
             else:
                 print "Missing key. I will not update the rrd database."
                 return
-        print cmLine
+        template    = re.findall(r'--template\s+[^\s]+',  cmLine)
+        template    = re.sub(r'--template\s+', r'', template[0])
+        rrdvalues   = re.findall(r'N:[^\s]+', cmLine)
+        rrdvalues   = rrdvalues[0]
+        ret = rrdtool.update(str(self.rrdDbFileName), 
+            '--template', template, rrdvalues)
+        self.updateGraph()
+
+    def updateGraph(self):
+        defs    = re.findall(r'DEF:[^\s]+', self.rrdGraphConf)
+        lines   = re.findall(r'LINE[^\s]+', self.rrdGraphConf)
+
+        rrdWidth  = 540
+        rrdHeight = 100
+        rrdStart  = 3600 
+
+        # python rrdtool did not support list of DEFs or LINEs in the module
+        # args. This lead to generate the function as string and evaluate
+        # it with eval().
+        cmd = "rrdtool.graph(str(self.rrdGraphFileName), \
+            '--imgformat', 'PNG', \
+            '--width', str(rrdWidth), \
+            '--height', str(rrdHeight), \
+            '--start', '-%i' % rrdStart, \
+            '--end', 'now',"
+        for i in range(len(defs)):
+            cmd += "'%s'," % defs[i]
+        for i in range(len(lines)):
+            cmd += "'%s'," % lines[i]
+        cmd = re.sub(r',$', ')\n', cmd)
+        eval(cmd)
+
 
 #     def setGraphs(self, graphs, rrdDbPath):
 #         self.graphD     = dict()
