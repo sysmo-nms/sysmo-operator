@@ -16,6 +16,8 @@ class RrdView(QFrame):
         self.knownHeight    = 0
         self.knownWidth     = 0
         self.probeDict      = probeDict
+        self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
+        self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
         self.rrdDbFile      = QTemporaryFile()
 
     def resizeEvent(self, event):
@@ -31,13 +33,28 @@ class RrdView(QFrame):
     def handleEvent(self, msg):
         probeId = self.probeDict['id']
         if   msg['msgType'] == 'probeReturn': 
-            return
+            self.updateRrdDb(msg)
         elif msg['msgType'] == 'probeDump':
             if msg['value']['logger'] == 'btracker_logger_rrd':
                 if msg['value']['id'] == probeId:
                     self.rrdDbFile.open()
                     self.rrdDbFile.write(msg['value']['data'])
                     self.rrdDbFile.close()
+
+    def updateRrdDb(self, msg):
+        cmLine  = self.rrdUpdateString
+        keyVals = msg['value']['keyVals']
+        macroB  = self.rrdMacroBinds
+
+        for key in macroB.keys():
+            if key in keyVals:
+                macro = macroB[key]
+                value = keyVals[key]
+                cmLine = cmLine.replace(macro, value)
+            else:
+                print "Missing key. I will not update the rrd database."
+                return
+        print cmLine
 
 #     def setGraphs(self, graphs, rrdDbPath):
 #         self.graphD     = dict()
