@@ -19,8 +19,8 @@ class ProbeView(QFrame):
 
         if 'btracker_logger_text' in loggers and \
            'btracker_logger_rrd' in loggers:
-            viewType = 'full'
-        else: viewType = 'text'
+            viewType = 'text_and_rrdgraph'
+        else: viewType = 'text_only'
 
         self.setFrameShape(QFrame.StyledPanel)
 
@@ -58,21 +58,25 @@ class ProbeView(QFrame):
 
 
 
-        rrdView = RrdView(self, probeDict)
+        if   viewType == 'text_only':
+            rightPaneView   = QLabel('no graphs', self)
+        elif viewType == 'text_and_rrdgraph':
+            rightPaneView   = RrdView(self, probeDict)
+            self.signal.connect(rightPaneView.handleEvent)
+        self.signal.connect(stepProgress.handleEvent)
+        self.signal.connect(textLog.handleEvent)
+        self.signal.connect(probeInfo.handleEvent)
+
         grid = QGridLayout()
         grid.setContentsMargins(3,3,3,3)
         grid.setVerticalSpacing(0)
-        grid.addWidget(leftFrame,   0,0,1,1)
-        grid.addWidget(rrdView,     0,1,1,1)
+        grid.addWidget(leftFrame,       0,0,1,1)
+        grid.addWidget(rightPaneView,   0,1,1,1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
     
         self.setLayout(grid)
-        self.signal.connect(stepProgress.handleEvent)
-        self.signal.connect(textLog.handleEvent)
-        self.signal.connect(probeInfo.handleEvent)
-        self.signal.connect(rrdView.handleEvent)
 
     def setSignal(self, signalObj):
         signalObj.signal.connect(self.handleEvent)
