@@ -3,6 +3,7 @@ from    PySide.QtCore   import *
 import  TkorderIcons
 import  Supercast
 import  os
+import  re
 
 from    ModTrackerEvents import TrackerEvents
 import  ModTrackerWideView
@@ -33,6 +34,7 @@ class TrackerMain(QSplitter):
         TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
         
         self.targets    = dict()
+        self.initHexaPalette()
         self.initView()
 
     def initView(self):
@@ -63,3 +65,30 @@ class TrackerMain(QSplitter):
         elif (mType == 'probeReturn'):    self.signals.probeReturn.emit(msg)
         elif (mType == 'unsubscribeOk'):  self.signals.unsubscribeOk.emit(msg)
         else:   print "unknown message type: ", mType
+
+    def initHexaPalette(self):
+
+        " For widgets who need hexadecimal version of the colors actualy used "
+        " by the application "
+
+        self.colorDict = dict()
+        pal     = self.palette()
+        constDict = {
+            'Window':       QPalette.Window,
+            'Background':   QPalette.Background,
+            'WindowText':   QPalette.WindowText,
+            'ForeGround':   QPalette.Foreground,
+            'Base':         QPalette.Base,
+            'AlternateBase':    QPalette.AlternateBase,
+            'ToolTipBase':  QPalette.ToolTipBase,
+            'ToolTipText':  QPalette.ToolTipText,
+            'Text':         QPalette.Text,
+            'Button':       QPalette.Button,
+            'ButtonText':   QPalette.ButtonText,
+            'BrightText':   QPalette.BrightText
+        }
+
+        for key in constDict.keys():
+            col         = pal.color(constDict[key])
+            (r,g,b,a)   = col.getRgb()
+            self.colorDict[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
