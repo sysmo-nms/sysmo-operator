@@ -108,8 +108,8 @@ class TargetProperties(univ.SequenceOf):
 
 class TargetProbeReturnKeyVal(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('name',     char.PrintableString()),
-        namedtype.NamedType('value',    univ.Integer())
+        namedtype.NamedType('key',      char.PrintableString()),
+        namedtype.NamedType('value',    char.PrintableString())
     )
 
 class TargetProbeReturnKeyVals(univ.SequenceOf):
@@ -809,7 +809,15 @@ def decode(pdu):
                 status      = str(msg3.getComponentByName('status'))
                 original_rep = str(msg3.getComponentByName('originalReply'))
                 timestamp   = msg3.getComponentByName('timestamp')
-                keyVals    = msg3.getComponentByName('keyVals')
+                keyVals     = msg3.getComponentByName('keyVals')
+
+                keyValsDict = dict()
+                for i in range(len(keyVals)):
+                    keyVal  = keyVals.getComponentByPosition(i)
+                    key     = keyVal.getComponentByName('key')
+                    value   = keyVal.getComponentByName('value')
+                    keyValsDict[str(key)] = str(value)
+
                 return {
                     'from': msg1_type,
                     'msgType':  msg3_type,
@@ -819,7 +827,7 @@ def decode(pdu):
                         'status':       status,
                         'originalRep':  original_rep,
                         'timestamp':    int(timestamp),
-                        'keyVals':      keyVals
+                        'keyVals':      keyValsDict
                     }
                 }
             else:
