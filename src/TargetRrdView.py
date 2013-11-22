@@ -1,7 +1,6 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    PySide.QtSvg    import *
-from    PySide.QtWebKit import *
 import  os
 import  datetime
 import  TkorderIcons
@@ -18,6 +17,7 @@ class RrdView(QLabel):
         self.knownHeight    = 0
         self.knownWidth     = 0
         self.probeDict      = probeDict
+        self.hexaPalette    = ModTracker.TrackerMain.singleton.colorDict
 
         # tmp rrd file
         self.rrdDbFile      = QTemporaryFile()
@@ -99,6 +99,8 @@ class RrdView(QLabel):
         rrdWidth  = size.width()
         rrdHeight = size.height()
         rrdStart  = 3600 
+        print self.hexaPalette
+
 
         # python rrdtool did not support list of DEFs or LINEs in the module
         # args. This lead to generate the function as string and evaluate
@@ -113,18 +115,17 @@ class RrdView(QLabel):
             '--slope-mode', \
             '--tabwidth', '40', \
             '--watermark', 'Watermark', \
-            '--color', 'BACK#000000', \
-            '--color', 'CANVAS#0000ff', \
-            '--color', 'SHADEA#0000ff', \
-            '--color', 'SHADEB#0000ff', \
-            '--color', 'GRID#0000ff', \
-            '--color', 'MGRID#0000ff', \
-            '--color', 'FONT#0000ff', \
-            '--color', 'AXIS#0000ff', \
-            '--color', 'FRAME#0000ff', \
-            '--color', 'ARROW#0000ff', \
+            '--color', 'BACK%s'     % self.hexaPalette['Window'], \
+            '--color', 'CANVAS%s'   % self.hexaPalette['Base'], \
+            '--color', 'GRID%s'     % self.hexaPalette['Dark'], \
+            '--color', 'MGRID%s'    % self.hexaPalette['Shadow'], \
+            '--color', 'FONT%s'     % self.hexaPalette['WindowText'], \
+            '--color', 'AXIS%s'     % self.hexaPalette['Dark'], \
+            '--color', 'FRAME%s'    % self.hexaPalette['Window'], \
+            '--color', 'ARROW%s'    % self.hexaPalette['Shadow'], \
             '--start', '-%i' % rrdStart, \
             '--end', 'now',"
+
         for i in range(len(defs)):
             cmd += "'%s'," % defs[i]
         for i in range(len(lines)):
@@ -132,8 +133,6 @@ class RrdView(QLabel):
         cmd = re.sub(r',$', ')\n', cmd)
         eval(cmd)
         picture = QPixmap(self.rrdGraphFileName)
-        print "pict = ", picture.size()
-        print "area = ", self.size()
         self.setPixmap(picture)
 
 
