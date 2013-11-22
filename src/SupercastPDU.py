@@ -737,7 +737,7 @@ def decode(pdu):
                         conf['create'] = str(create)
                         conf['update'] = str(update)
                         conf['graphs'] = graphsL
-                        conf['binds']  = str(bindsD)
+                        conf['binds']  = bindsD
                         loggersDict[str(mod)] = conf
 
                 propertiesDict = {}
