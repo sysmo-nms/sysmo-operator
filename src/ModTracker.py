@@ -71,7 +71,8 @@ class TrackerMain(QSplitter):
         " For widgets who need hexadecimal version of the colors actualy used "
         " by the application "
 
-        self.colorDict = dict()
+        self.colorDict  = dict()
+        self.colorDict2 = dict()
         pal     = self.palette()
         constDict = {
             'Window':       QPalette.Window,
@@ -95,3 +96,4 @@ class TrackerMain(QSplitter):
             col         = pal.color(constDict[key])
             (r,g,b,a)   = col.getRgb()
             self.colorDict[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
+            self.colorDict2[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)

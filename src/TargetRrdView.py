@@ -94,6 +94,7 @@ class RrdView(QLabel):
     def updateGraph(self):
         defs    = re.findall(r'DEF:[^\s]+', self.rrdGraphConf)
         lines   = re.findall(r'LINE[^\s]+', self.rrdGraphConf)
+        areas   = re.findall(r'AREA[^\s]+', self.rrdGraphConf)
 
         size = self.size()
         rrdWidth  = size.width()
@@ -130,6 +131,9 @@ class RrdView(QLabel):
             cmd += "'%s'," % defs[i]
         for i in range(len(lines)):
             cmd += "'%s'," % lines[i]
+        for i in range(len(areas)):
+            cmd += "'%s'," % areas[i]
+
         cmd = re.sub(r',$', ')\n', cmd)
         eval(cmd)
         picture = QPixmap(self.rrdGraphFileName)
@@ -150,7 +154,7 @@ class RrdView(QLabel):
 
 #     def setGraphs(self, graphs, rrdDbPath):
 #         self.graphD     = dict()
-#         grid        = QGridLayout()
+#         grid        = QGridLayout(self)
 #         graphCount  = len(graphs)
 #         for i in range(graphCount):
 #             self.graphD[i] = RrdGraph(self, graphs[i], rrdDbPath)
@@ -191,7 +195,7 @@ class RrdView(QLabel):
 #             graphConf['lines'].append(lines[i])
 # 
 #         self.rrdGraphConf = graphConf
-#         self.grid = QGridLayout()
+#         self.grid = QGridLayout(self)
 #         self.grid.setContentsMargins(0,0,0,0)
 #         self.grid.setHorizontalSpacing(0)
 #         self.grid.setVerticalSpacing(0)

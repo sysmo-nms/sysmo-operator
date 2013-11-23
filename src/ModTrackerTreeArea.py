@@ -20,7 +20,7 @@ class TreeContainer(QFrame):
         self.treeview   = TrackerTView(self)
         #self.info       = TrackerTreeAreaInfo(self)
 
-        grid = QGridLayout()
+        grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         #grid.setVerticalSpacing(0)

@@ -67,7 +67,7 @@ class ProbeView(QFrame):
         self.signal.connect(textLog.handleEvent)
         self.signal.connect(probeInfo.handleEvent)
 
-        grid = QGridLayout()
+        grid = QGridLayout(self)
         grid.setContentsMargins(3,3,3,3)
         grid.setVerticalSpacing(0)
         grid.addWidget(leftFrame,       0,0,1,1)
@@ -173,7 +173,7 @@ class ProbeInfo(QFrame):
         statusGrid.addWidget(self.statusLabelContent,   0,0)
         statusLabel.setLayout(statusGrid)
 
-        grid = QGridLayout()
+        grid = QGridLayout(self)
 
         grid.addWidget(QLabel('Name:',  self),      1,0,1,1)
         grid.addWidget(QLabel(name,  self),         1,1,1,1)
