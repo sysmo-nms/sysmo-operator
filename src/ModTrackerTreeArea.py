@@ -44,8 +44,10 @@ class TrackerTreeSearch(QFrame):
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(5)
         grid.setVerticalSpacing(0)
-        clear   = QPushButton('Clear', self)
+        clear   = QPushButton(self)
         line    = QLineEdit(self)
+        clear.setIcon(TkorderIcons.get('edit-clear'))
+        line.setPlaceholderText('Filter')
         grid.addWidget(clear,   0,0)
         grid.addWidget(line,    0,1)
 
@@ -128,6 +130,7 @@ class TrackerTView(QTreeView):
     def __init__(self, parent):
         super(TrackerTView, self).__init__(parent)
         TrackerTView.singleton = self
+        self.targetModel = TrackerTViewModel(self)
 
         self.setHeaderHidden(True)
         self.setAnimated(True)
@@ -141,7 +144,7 @@ class TrackerTView(QTreeView):
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setIconSize(QSize(25, 25)) 
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.targetModel = TrackerTViewModel(self)
+        self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.setModel(self.targetModel)
 
         # <- QAbstractScrollArea
