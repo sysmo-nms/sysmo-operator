@@ -17,6 +17,8 @@ class TrackerMain(QSplitter):
     def __init__(self, parent):
         super(TrackerMain, self).__init__(parent)
 
+        self.collapsed = False
+
         TrackerMain.singleton = self
         self.signals    = TrackerEvents(self)
         self.vardir     = os.path.join(os.getcwd(), 'var')
@@ -36,6 +38,16 @@ class TrackerMain(QSplitter):
         self.targets    = dict()
         self.initHexaPalettes()
         self.initView()
+
+    def leftClicked(self):
+        if self.collapsed == False:
+            [a,_] = self.sizes()
+            self.oldSize = a
+            self.moveSplitter(0,1)
+            self.collapsed = True
+        elif self.collapsed == True:
+            self.moveSplitter(self.oldSize, 1)
+            self.collapsed = False
 
     def initView(self):
         self.rightStack.addWidget(ModTrackerWideView.View(self))

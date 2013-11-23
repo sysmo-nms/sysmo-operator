@@ -114,8 +114,11 @@ class TkorderCentralWidget(QFrame):
         grid.setContentsMargins(5,9,9,9)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
-        grid.addWidget(LeftModSelector(self), 0,0,0,1)
-        grid.addWidget(ModView(self),         0,1,1,1)
+        self.leftSelector   = LeftModSelector(self)
+        self.modView        = ModView(self)
+        grid.addWidget(self.leftSelector,     0,0,0,1)
+        grid.addWidget(self.modView,          0,1,1,1)
+        self.leftSelector.connectAll()
         self.setLayout(grid)
 
 class LeftModSelector(QFrame):
@@ -126,14 +129,24 @@ class LeftModSelector(QFrame):
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(5)
-        mod1 = QLabel(self)
-        mod2 = QLabel(self)
-        mod1.setFrameShape(QFrame.StyledPanel)
-        mod2.setFrameShape(QFrame.StyledPanel)
-        grid.addWidget(mod1, 0,0)
-        grid.addWidget(mod2, 1,0)
+        self.mod1 = QPushButton(self)
+        #self.mod2 = QPushButton(self)
+        mod1Pol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        #mod2Pol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.mod1.setSizePolicy(mod1Pol)
+        self.mod1.setCheckable(True)
+        #self.mod2.setSizePolicy(mod2Pol)
+        #self.mod1.setCheckable(True)
+        grid.addWidget(self.mod1, 0,0)
+        #grid.addWidget(self.mod2, 1,0)
         self.setLayout(grid)
-        #self.setFrameShape(QFrame.StyledPanel)
+
+    def connectAll(self):
+        self.mod1.clicked.connect(ModTracker.TrackerMain.singleton.leftClicked)
+
+    def hello(self):
+        print "hello click"
+
 
 class ModView(QFrame):
     def __init__(self, parent):

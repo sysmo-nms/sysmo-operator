@@ -18,74 +18,106 @@ class TreeContainer(QFrame):
         self.trackerMain  = parent
 
         self.treeview   = TrackerTView(self)
-        #self.info       = TrackerTreeAreaInfo(self)
+        self.searchBar  = TrackerTreeSearch(self)
+        self.info       = TrackerTreeAreaInfo(self)
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
-        #grid.setVerticalSpacing(0)
-        grid.addWidget(self.treeview,           0, 0)
-        #grid.addWidget(self.info,               1, 0)
+        grid.setVerticalSpacing(5)
+        grid.addWidget(self.searchBar,          1, 0)
+        grid.addWidget(self.treeview,           2, 0)
+        grid.addWidget(self.info,               3, 0)
+
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,0)
+        grid.setRowStretch(2,1)
+        grid.setRowStretch(3,0)
+
         self.setLayout(grid)
         self.setMaximumWidth(500)
 
+class TrackerTreeSearch(QFrame):
+    def __init__(self, parent):
+        super(TrackerTreeSearch, self).__init__(parent)
+        grid = QGridLayout(self)
+        grid.setContentsMargins(0,0,0,0)
+        grid.setHorizontalSpacing(5)
+        grid.setVerticalSpacing(0)
+        clear   = QPushButton('Clear', self)
+        line    = QLineEdit(self)
+        grid.addWidget(clear,   0,0)
+        grid.addWidget(line,    0,1)
 
-# class TrackerTreeAreaInfo(QTextEdit):
-#     def __init__(self, parent):
-#         super(TrackerTreeAreaInfo, self).__init__(parent)
-#         # text document
-#         dtext   = QTextDocument()
-#         dtext.setMaximumBlockCount(500)
-#         tformat = QTextCharFormat()
-#         tformat.setFontPointSize(8.2)
-# 
-#         # QTextEdit config
-#         self.setDocument(dtext)
-#         self.setCurrentCharFormat(tformat)
-#         self.setReadOnly(True)
-#         #self.setStyleSheet(
-#             #"QTextEdit { \
-#                 #border-radius: 10px;\
-#                 #background: #F9EE75 \
-#             #}")
-#         self.setFixedHeight(100)
-#         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-#         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-#         self.setFrameShadow(QFrame.Raised)
-# 
-#         # signals to receive
-#         TrackerEvents.singleton.probeInfo.connect(self.probeInfoMsg)
-#         TrackerEvents.singleton.targetInfo.connect(self.targetInfoMsg)
-#         TrackerEvents.singleton.probeDump.connect(self.probeDumpMsg)
-#         TrackerEvents.singleton.probeModInfo.connect(self.probeModInfo)
-#         TrackerEvents.singleton.probeReturn.connect(self.probeModInfo)
-#         TrackerEvents.singleton.probeActivity.connect(self.probeModInfo)
-#         TrackerEvents.singleton.subscribeOk.connect(self.probeModInfo)
-#         TrackerEvents.singleton.unsubscribeOk.connect(self.probeModInfo)
-# 
-#     def probeDumpMsg(self, msg):
-#         self.append("probe dump")
-# 
-#     def probeInfoMsg(self, msg):
-#         self.append(str(msg))
-# 
-#     def targetInfoMsg(self, msg):
-#         self.append(str(msg))
-# 
-#     def probeModInfo(self, msg):
-#         self.append(str(msg))
-# 
-#     def subscribeOk(self, msg):
-#         self.append(str(msg))
-# 
-#     def unsubscribeOk(self, msg):
-#         self.append(str(msg))
-# 
-#     def probeReturn(self, msg):
-#         self.append(str(msg))
-# 
-#     def probeActivity(self, msg):
-#         self.append(str(msg))
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+        grid.setColumnStretch(2,0)
+        self.setLayout(grid)
+
+
+class TrackerTreeButtons(QToolBar):
+    def __init__(self, parent):
+        super(TrackerTreeButtons, self).__init__(parent)
+        self.addAction(TkorderIcons.get('applications-development'), 'Debug', self.hello())
+
+    def hello(self): pass
+
+class TrackerTreeAreaInfo(QTextEdit):
+    def __init__(self, parent):
+        super(TrackerTreeAreaInfo, self).__init__(parent)
+        # text document
+        dtext   = QTextDocument()
+        dtext.setMaximumBlockCount(500)
+        tformat = QTextCharFormat()
+        tformat.setFontPointSize(8.2)
+
+        # QTextEdit config
+        self.setDocument(dtext)
+        self.setCurrentCharFormat(tformat)
+        self.setReadOnly(True)
+        #self.setStyleSheet(
+            #"QTextEdit { \
+                #border-radius: 10px;\
+                #background: #F9EE75 \
+            #}")
+        self.setFixedHeight(100)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setFrameShadow(QFrame.Raised)
+
+        # signals to receive
+        TrackerEvents.singleton.probeInfo.connect(self.probeInfoMsg)
+        TrackerEvents.singleton.targetInfo.connect(self.targetInfoMsg)
+        TrackerEvents.singleton.probeDump.connect(self.probeDumpMsg)
+        TrackerEvents.singleton.probeModInfo.connect(self.probeModInfo)
+        TrackerEvents.singleton.probeReturn.connect(self.probeModInfo)
+        TrackerEvents.singleton.probeActivity.connect(self.probeModInfo)
+        TrackerEvents.singleton.subscribeOk.connect(self.probeModInfo)
+        TrackerEvents.singleton.unsubscribeOk.connect(self.probeModInfo)
+
+    def probeDumpMsg(self, msg):
+        self.append("probe dump")
+
+    def probeInfoMsg(self, msg):
+        self.append(str(msg))
+
+    def targetInfoMsg(self, msg):
+        self.append(str(msg))
+
+    def probeModInfo(self, msg):
+        self.append(str(msg))
+
+    def subscribeOk(self, msg):
+        self.append(str(msg))
+
+    def unsubscribeOk(self, msg):
+        self.append(str(msg))
+
+    def probeReturn(self, msg):
+        self.append(str(msg))
+
+    def probeActivity(self, msg):
+        self.append(str(msg))
 
 
 
