@@ -129,8 +129,8 @@ class LeftModSelector(QFrame):
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(5)
-        self.mod1 = QPushButton(self)
-        self.mod2 = QPushButton(self)
+        self.mod1 = RotatedButton(self, 'Monitor', 'est')
+        self.mod2 = RotatedButton(self, 'Manage',  'est')
         mod1Pol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         mod2Pol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.mod1.setSizePolicy(mod1Pol)
@@ -145,9 +145,54 @@ class LeftModSelector(QFrame):
     def connectAll(self):
         self.mod1.clicked.connect(ModTracker.TrackerMain.singleton.leftClicked)
 
-    def hello(self):
-        print "hello click"
+class RotatedButton(QPushButton):
+    # XXX rotate the icon but dit not print the text 
+    def __init__(self, text, parent, orientation = "west"):
+        super(RotatedButton,self).__init__(text, parent)
+        self.orientation = orientation
 
+    def paintEvent(self, event):
+        painter = QStylePainter(self)
+        painter.rotate(90)
+        painter.translate(0, -1 * self.width());
+        painter.drawControl(QStyle.CE_PushButton, self.getSyleOptions())
+
+    def minimumSizeHint(self):
+        size = super(RotatedButton, self).minimumSizeHint()
+        size.transpose()
+        return size
+
+    def sizeHint(self):
+        size = super(RotatedButton, self).sizeHint()
+        size.transpose()
+        return size
+
+    def getSyleOptions(self):
+        options = QStyleOptionButton()
+        options.initFrom(self)
+        size = options.rect.size()
+        size.transpose()
+        options.rect.setSize(size)
+        options.features = QStyleOptionButton.None
+        if self.isFlat():
+            options.features |= QStyleOptionButton.Flat
+        if self.menu():
+            options.features |= QStyleOptionButton.HasMenu
+        if self.autoDefault() or self.isDefault():
+            options.features |= QStyleOptionButton.AutoDefaultButton
+        if self.isDefault():
+            options.features |= QStyleOptionButton.DefaultButton
+        if self.isDown() or (self.menu() and self.menu().isVisible()):
+            options.state |= QStyle.State_Sunken
+        if self.isChecked():
+            options.state |= QStyle.State_On
+        if not self.isFlat() and not self.isDown():
+            options.state |= QStyle.State_Raised
+
+        options.text = self.text()
+        options.icon = self.icon()
+        options.iconSize = self.iconSize()
+        return options
 
 class ModView(QFrame):
     def __init__(self, parent):
