@@ -21,13 +21,10 @@ class TkorderClient(QMainWindow):
         TkorderImages.init()
         TkorderClient.singleton = self
 
-
         self.readSettings()
 
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
-        #self.resize(1200, 600)
-        #self.setMinimumSize(1000,500)
 
         " Tray icon "
         self.trayMenu = QMenu(self)
@@ -113,13 +110,41 @@ class TkorderClient(QMainWindow):
 class TkorderCentralWidget(QFrame):
     def __init__(self, parent):
         super(TkorderCentralWidget, self).__init__(parent)
+        grid        = QGridLayout(self)
+        grid.setContentsMargins(5,9,9,9)
+        grid.setHorizontalSpacing(0)
+        grid.setVerticalSpacing(0)
+        grid.addWidget(LeftModSelector(self), 0,0,0,1)
+        grid.addWidget(ModView(self),         0,1,1,1)
+        self.setLayout(grid)
 
-        layout      = QGridLayout(self)
-        #layout.setContentsMargins(5,5,5,5)
+class LeftModSelector(QFrame):
+    def __init__(self, parent):
+        super(LeftModSelector, self).__init__(parent)
+        self.setFixedWidth(30)
+        grid        = QGridLayout(self)
+        grid.setContentsMargins(0,0,0,0)
+        grid.setHorizontalSpacing(0)
+        grid.setVerticalSpacing(5)
+        mod1 = QLabel(self)
+        mod2 = QLabel(self)
+        mod1.setFrameShape(QFrame.StyledPanel)
+        mod2.setFrameShape(QFrame.StyledPanel)
+        grid.addWidget(mod1, 0,0)
+        grid.addWidget(mod2, 1,0)
+        self.setLayout(grid)
+        #self.setFrameShape(QFrame.StyledPanel)
+
+class ModView(QFrame):
+    def __init__(self, parent):
+        super(ModView, self).__init__(parent)
+        grid        = QGridLayout(self)
+        grid.setContentsMargins(5,0,0,0)
+        grid.setHorizontalSpacing(0)
+        grid.setVerticalSpacing(0)
         modTracker  = ModTracker.TrackerMain(self)
-        layout.addWidget(modTracker, 0, 0)
-
-        self.setLayout(layout)
+        grid.addWidget(modTracker, 0, 0)
+        self.setLayout(grid)
 
 def main(arguments):
     tkorderApp    = QApplication(arguments)

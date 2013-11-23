@@ -50,6 +50,10 @@ class BodyFrame(QFrame):
         super(BodyFrame, self).__init__(parent)
         probes      = dict()
         grid        = QGridLayout(self)
+        grid.setContentsMargins(5,5,5,5)
+        grid.setHorizontalSpacing(5)
+        grid.setVerticalSpacing(5)
+
         targetDict  = ModTracker.TrackerMain.singleton.targets[targetName]
 
         backg = ModTracker.TrackerMain.singleton.colorDict2['Base']
