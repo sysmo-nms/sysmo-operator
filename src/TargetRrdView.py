@@ -100,8 +100,6 @@ class RrdView(QLabel):
         rrdWidth  = size.width()
         rrdHeight = size.height()
         rrdStart  = 3600 
-        print self.hexaPalette
-
 
         # python rrdtool did not support list of DEFs or LINEs in the module
         # args. This lead to generate the function as string and evaluate
