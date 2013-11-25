@@ -21,7 +21,6 @@ for targets and custom targets.
 
 
 BUGS
-- tko do not take consideration of messages comming from a probe_status_move
-no probeReturn is send whent a probeInf is send.
-- tko do not have updated property list. Not sure if the server update it 
-correctly or if tkorder dit not take them in consideration.
+- tko do not have updated property list. The problem dit not come 
+from the server.
+
