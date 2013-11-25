@@ -123,11 +123,12 @@ class TextLog(QTextEdit):
         self.append(str(data).rstrip())
 
     def textAppend(self, value):
-        tstamp  = value['timestamp']
-        time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
+        #tstamp  = value['timestamp']
+        #time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
         string  = value['originalRep'].rstrip()
         printable = string.replace('\n', ' ').replace('  ', ' ')
-        self.append(time + "-> " + printable)
+        #self.append(time + "-> " + printable)
+        self.append(printable)
 
  
 class ProbeInfo(QFrame):
