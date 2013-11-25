@@ -28,7 +28,8 @@ class Stack(QStackedWidget):
             return
 
         # should not be subscribed then subscribe
-        Supercast.Link.subscribe(targetName)
+        Supercast.Link.subscribe(clickDict['probeId'])
+        print clickDict['probeId']
 
         # then create the widget
         stackWidget = TargetView(self, targetName)
