@@ -11,7 +11,21 @@ from    collections         import deque
 class Link(QTcpSocket):
     @classmethod
     def subscribe(cls, channel):
+        " Subscribe to a single channel. Add a channel to the top of the queue"
+        " If 'max number of chan' is reached the last element of the chanqueue"
+        " is removed. The last element can be a chan or a chan group."
         cls.singleton._subscribeToChannel(channel)
+
+    def subscribeGroup(cls, groupName, channelList):
+        " Subscribe to a grou of channel. Add a channel group to the top of "
+        " the queue. If 'max number of chan' is reached the last element of "
+        " the chanqueue is removed."
+        " The last element can be a chan or a chan group."
+        cls.singleton._subscribeToChannelGroup(groupName, channelList)
+
+    def subscribeGroupAddChan(cls, groupName, channel):
+        " add a chan to the channel group groupName"
+        cls.singleton._subscribeToChannelGroupAddChan(groupName, channel)
 
     @classmethod
     def unsubscribe(cls, channel):
@@ -115,10 +129,17 @@ class Link(QTcpSocket):
             if (self.autoSubscribe == True):
                 Link.subscribe(msg['channelId'])
 
+# subscribe and groups logic
     def _subscribeToChannel(self, channel):
         pdu = encode('subscribe', channel)
         self.sendToServer(pdu)
 
+    def _subscribeToChannelGroup(self, groupName, channelList):
+        pass
+
+    def _subscribeToChannelGroupAddChan(self, groupName, channelList):
+        pass
+        
     def _subscribeSuccess(self, chan):
         # is a special chan?
         if chan in self.specialChans: pass
@@ -153,8 +174,7 @@ class Link(QTcpSocket):
 
     def sendToServer(self, pdu):
         request = QByteArray()
-        stream = QDataStream(request,
-            QIODevice.WriteOnly)
+        stream = QDataStream(request, QIODevice.WriteOnly)
         stream.writeUInt32(0)
         stream.writeRawData(pdu)
         stream.device().seek(0)
@@ -200,6 +220,9 @@ class Link(QTcpSocket):
 
 
 
+########################################################################
+## UI ##################################################################
+########################################################################
 # TODO
 class LogInDialog(QDialog):
     def __init__(self, parent=None):
