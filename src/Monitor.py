@@ -1,39 +1,35 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 import  TkorderIcons
-import  Supercast
 import  os
 import  re
 
-from    ModTrackerEvents import TrackerEvents
-import  ModTrackerWideView
-import  ModTrackerTarget
-import  ModTrackerTreeArea
+from    MonitorEvents   import ChannelHandler
+import  MonitorDashboardArea
+import  MonitorTreeArea
 
-class TrackerMain(QSplitter):
+class MonitorMain(QSplitter):
 
     " The main window. Emit tracker server events "
 
     def __init__(self, parent):
-        super(TrackerMain, self).__init__(parent)
+        super(MonitorMain, self).__init__(parent)
 
-        self.collapsed = False
-
-        TrackerMain.singleton = self
-        self.signals    = TrackerEvents(self)
-        self.vardir     = os.path.join(os.getcwd(), 'var')
+        MonitorMain.singleton   = self
+        self.eventHandler       = ChannelHandler(self, 5)
+        self.collapsed  = False
 
         " forward 'modTrackerPDU to me "
-        Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
+        #Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
 
-        self.leftTree   = ModTrackerTreeArea.TreeContainer(self)
-        self.rightStack = ModTrackerTarget.Stack(self)
+        self.leftTree   = MonitorTreeArea.TreeContainer(self)
+        self.rightDash  = MonitorDashboardArea.Dash(self)
 
         self.addWidget(self.leftTree)
-        self.addWidget(self.rightStack)
+        self.addWidget(self.rightDash)
         
-        TrackerEvents.singleton.probeInfo.connect(self.handleProbeInfo)
-        TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
+        #MonitorEvents.singleton.probeInfo.connect(self.handleProbeInfo)
+        #MonitorEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
         
         self.targets    = dict()
         self.initHexaPalettes()
@@ -49,8 +45,8 @@ class TrackerMain(QSplitter):
             self.moveSplitter(self.oldSize, 1)
             self.collapsed = False
 
-    def initView(self):
-        self.rightStack.addWidget(ModTrackerWideView.View(self))
+    def initView(self): pass
+        #self.rightStack.addWidget(ModTrackerWideView.View(self))
 
     def handleProbeModInfo(self, msg): pass
 
@@ -81,11 +77,11 @@ class TrackerMain(QSplitter):
     def initHexaPalettes(self):
 
         " For widgets who need hexadecimal version of the colors actualy used "
-        " by the application "
+        " by the application (rrdtool)"
 
-        self.colorDict  = dict()
-        self.colorDict2 = dict()
-        pal     = self.palette()
+        self.rgbDict    = dict()
+        self.rgbaDict   = dict()
+        pal             = self.palette()
         constDict = {
             'Window':       QPalette.Window,
             'WindowText':   QPalette.WindowText,
@@ -107,5 +103,6 @@ class TrackerMain(QSplitter):
         for key in constDict.keys():
             col         = pal.color(constDict[key])
             (r,g,b,a)   = col.getRgb()
-            self.colorDict[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
-            self.colorDict2[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
+            self.rgbDict[key]  = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
+            self.rgbaDict[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
+

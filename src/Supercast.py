@@ -6,170 +6,50 @@ from    PySide.QtNetwork    import *
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    SupercastPDU        import decode, encode
-from    collections         import deque
 
 class Link(QTcpSocket):
-    @classmethod
-    def subscribe(cls, channel):
-        " Subscribe to a single channel. Add a channel to the top of the queue"
-        " If 'max number of chan' is reached the last element of the chanqueue"
-        " is removed. The last element can be a chan or a chan group."
-        cls.singleton._subscribeToChannel(channel)
-
-    def subscribeGroup(cls, groupName, channelList):
-        " Subscribe to a grou of channel. Add a channel group to the top of "
-        " the queue. If 'max number of chan' is reached the last element of "
-        " the chanqueue is removed."
-        " The last element can be a chan or a chan group."
-        cls.singleton._subscribeToChannelGroup(groupName, channelList)
-
-    def subscribeGroupAddChan(cls, groupName, channel):
-        " add a chan to the channel group groupName"
-        cls.singleton._subscribeToChannelGroupAddChan(groupName, channel)
-
-    @classmethod
-    def unsubscribe(cls, channel):
-        cls.singleton._unsubscribeFromChannel(channel)
-
-    @classmethod
-    def setMaxChannels(cls, maxChans):
-        cls.singleton.maxChans = maxChans
-
-    @classmethod
-    def getMaxChannels(cls): 
-        return cls.singleton.maxChans
-
-
-    @classmethod
-    def setMessageProcessor(cls, a, b,):
-        cls.singleton._setMessageProcessor(a, b)
-
-
     def __init__(self, parent=None):
-        super(Link,self).__init__(parent)
+        super(Link, self).__init__(parent)
+
         Link.singleton = self
 
-        self.nextBlockSize  = 0
-        self.headerLen      = 4
-
-        # default
-        self.setSocketServer('localhost')
-        self.setSocketPort(8888)
-        self.maxChans = 3
-        self.subscribedChans = deque([])
-        self.specialChans   = ['target-MasterChan']
-
-        self.connected.connect(self.socketConnected)
-        self.readyRead.connect(self.socketReadyRead)
-        self.disconnected.connect(self.socketDisconnected)
-        self.error.connect(self.socketErrorEvent)
-
-        self.autoSubscribe = True
+        # public  variables access
         self.userName   = ''
         self.userPass   = ''
-        self.groupList = list()
-        self.mpd = dict()
-        self._setMessageProcessor('modSupercastPDU', self._handleSupercastPDU)
-        self.chanDb = dict()
+        self.groups     = []
+        self.server     = ''
+        self.port       = 8888
+        self.activeChannels     = []
+        self.serverAuthProto    = ''
+        self.staticChans        = dict()
 
-    def setSocketAuthUser(self, userName):
-        self.userName = userName
+        # private variables
+        self._mpd           = dict()
+        self._nextBlockSize = 0
+        self._headerLen     = 4
 
-    def setSocketAuthPass(self, password):
-        self.userPass = password
+        self.connected.connect(self._socketConnected)
+        self.readyRead.connect(self._socketReadyRead)
+        self.disconnected.connect(self._socketDisconnected)
+        self.error.connect(self._socketErrorEvent)
+        self.setMessageProcessor('modSupercastPDU', self._handleSupercastPDU)
 
-    def setGroups(self, msg):
-        self.groupList = msg
+    ###################
+    # PUBLIC  METHODS #
+    ###################
+    def setMessageProcessor(self, fromKey, function):
+        self._mpd.update({fromKey: function})
 
-    def setSocketServer(self, server):
-        self.server = server
-
-    def setSocketPort(self, port):
-        self.port   = port
-
-    def connectServer(self):
+    def tryConnect(self):
         self.connectToHost(self.server, self.port)
 
-    def _handleServerMessage(self, msg):
-        message = decode(msg)
-        handler = self.mpd.get(message['from'])
-        if (handler == None):
-            print "pdu to unknown destination", message['from']
-        else:
-            handler(message)
-
-    def _handleSupercastPDU(self, msg):
-        msgType = msg['msgType']
-        if (msgType == 'authReq'):
-            self.serverAuthProto = msg['value']
-            pdu = encode(
-                'authResp',
-                userId=self.userName,
-                password=self.userPass
-            )
-            self.sendToServer(pdu)
-        elif (msgType == 'authAck'):
-            self.setGroups(msg['value']['groups'])
-            for item in msg['value']['chans']:
-                self._handleChanInfo(item)
-        elif (msgType == 'subscribeOk'):
-            self._subscribeSuccess(msg['value'])
-            self._broadcast(msg)
-        elif (msgType == 'unsubscribeOk'):
-            self._broadcast(msg)
-        else:
-            print "handle other", msgType
-
-    def _setMessageProcessor(self, fromKey, function):
-        self.mpd.update({fromKey: function})
-
-    def _handleChanInfo(self, msg):
-        if (msg['eventType'] == 'create'):
-            self.chanDb.update({msg['channelId']: None})
-            if (self.autoSubscribe == True):
-                Link.subscribe(msg['channelId'])
-
-# subscribe and groups logic
-    def _subscribeToChannel(self, channel):
+    def subscribe(self, channel):
         pdu = encode('subscribe', channel)
         self.sendToServer(pdu)
 
-    def _subscribeToChannelGroup(self, groupName, channelList):
-        pass
-
-    def _subscribeToChannelGroupAddChan(self, groupName, channelList):
-        pass
-        
-    def _subscribeSuccess(self, chan):
-        # is a special chan?
-        if chan in self.specialChans: pass
-        else:
-            q = self.subscribedChans
-            m = self.maxChans
-            # is allready registered?
-            if chan in q:
-                # do nothing but put the clicked element on the head
-                q.remove(chan)
-                q.append(chan)
-            else:
-                if len(q) == m:
-                    unsub = q.popleft()
-                    self.sendToServer(encode('unsubscribe', unsub))
-                    q.append(chan)
-                else:
-                    q.append(chan)
-
-
-    def _unsubscribeFromChannel(self, channel):
+    def unsubscribe(self, channel):
         pdu = encode('unsubscribe', channel)
         self.sendToServer(pdu)
-
-    def _broadcast(self, msg):
-        for key in self.mpd:
-            if key == 'modSupercastPDU': pass
-            else:
-                handler = self.mpd.get(key)
-                handler(msg)
 
 
     def sendToServer(self, pdu):
@@ -181,210 +61,77 @@ class Link(QTcpSocket):
         stream.writeUInt32(request.size() - 4)
         self.write(request)
 
-    def socketReadyRead(self):
+    ###################
+    # PRIVATE METHODS #
+    ###################
+    def _socketReadyRead(self):
         stream  = QDataStream(self)
 
         while stream.atEnd() != True:
-            if self.nextBlockSize == 0:
-                if self.bytesAvailable() < self.headerLen:
+            if self._nextBlockSize == 0:
+                if self.bytesAvailable() < self._headerLen:
                     return
-                self.nextBlockSize = stream.readUInt32()
-            if self.bytesAvailable() < self.nextBlockSize:
+                self._nextBlockSize = stream.readUInt32()
+            if self.bytesAvailable() < self._nextBlockSize:
                 return
     
-            payload = stream.readRawData(self.nextBlockSize)
-            self.nextBlockSize = 0
+            payload = stream.readRawData(self._nextBlockSize)
+            self._nextBlockSize = 0
             self._handleServerMessage(payload)
 
-    def socketConnected(self): pass
+    def _socketConnected(self): pass
 
-    def socketDisconnected(self):
+    def _socketDisconnected(self):
         print "socket is disconnected"
 
-    def socketErrorEvent(self, event):
+    def _socketErrorEvent(self, event):
         print "error event is: ", event
 
+    # MESSAGES HANDLING
+    def _handleServerMessage(self, msg):
+        message = decode(msg)
+        handler = self._mpd.get(message['from'])
+        if (handler == None):
+            print "pdu to unknown destination", message['from']
+        else:
+            handler(message)
 
+    def _handleSupercastPDU(self, msg):
+        msgType = msg['msgType']
+        if (msgType == 'authReq'):
+            self.serverAuthProto = msg['value']
+            pdu = encode(
+                'authResp',
+                userId      = self.userName,
+                password    = self.userPass
+            )
+            self.sendToServer(pdu)
+        elif (msgType == 'authAck'):
+            self.groups = msg['value']['groups']
+            for item in msg['value']['chans']:
+                self._handleChanInfo(msg, item)
+        elif (msgType == 'subscribeOk'):
+            self._subscribeSuccess(msg['value'])
+            self._broadcast(msg)
+        elif (msgType == 'unsubscribeOk'):
+            self._broadcast(msg)
+        else:
+            print "handle other", msgType
 
+    def _unsubscribeSuccess(self, chan):
+        self.activeChannels.remove(chan)
 
+    def _subscribeSuccess(self, chan):
+        self.activeChannels.append(chan)
 
+    def _handleChanInfo(self, msg, item):
+        if (item['eventType'] == 'create'):
+            self.staticChans.update({item['channelId']: None})
+            self._broadcast(msg)
 
-
-
-
-
-
-
-
-
-
-
-
-########################################################################
-## UI ##################################################################
-########################################################################
-# TODO
-class LogInDialog(QDialog):
-    def __init__(self, parent=None):
-        super(LogInDialog, self).__init__(parent)
-        self.passLineEdit = QLineEdit(self)
-        self.nameLineEdit = QLineEdit(self)
-        self.serverLineEdit = QLineEdit(self)
-        self.serverPortEdit = QSpinBox(self)
-        self.setMinimumWidth(500)
-
-        buttons = QDialogButtonBox(self)
-        buttons.addButton(QDialogButtonBox.Abort)
-        buttons.addButton(QDialogButtonBox.Open)
-        buttons.addButton(QDialogButtonBox.Help)
-
-        formLayout = QFormLayout()
-        formLayout.addRow(self.tr("&Name:"), self.nameLineEdit)
-        formLayout.addRow(self.tr("&Password:"), self.passLineEdit)
-        formLayout.addRow(self.tr("&Server:"), self.serverLineEdit)
-        formLayout.addRow(self.tr("&Port:"), self.serverPortEdit)
-        formLayout.addRow(buttons)
-        self.formLayout = formLayout
-
-        self.setLayout(self.formLayout)
-
-
-class LogInDialog2(QDialog):
-    def __init__(self, parent=None):
-        super(LogInDialog2, self).__init__(parent)
-
-        self.setWindowTitle("Log in to Supercast/ENMS server")
-
-        # self.progress = QProgressDialog("Connexion.", "Cancel", 0, 100)
-        # self.progress.setWindowModality(Qt.WindowModal)
-        # self.progress.show()
-
-        myGrid  = QGridLayout(self)
-
-        self.serverLabel   = QLabel("Server:", self)
-        self.serverName     = QLineEdit(self)
-        self.serverPort     = QSpinBox(self)
-        self.serverPort.setMinimum(1)
-        self.serverPort.setMaximum(65535)
-
-        self.userNameLabel = QLabel("User name:", self)
-        self.passWordLabel = QLabel("Password:", self)
-        self.userName   = QLineEdit(self)
-
-        self.passWord   = QLineEdit(self)
-        self.passWord.setEchoMode(QLineEdit.Password)
-
-        self.saveCredentials = QCheckBox("Remember me", self)
-
-        #self.logInButton    = QPushButton("LogIn")
-        self.cancelButton   = QPushButton("Cancel")
-
-        self.logAsAdmin     = QPushButton("admuser")
-        self.logAsUser      = QPushButton("simple user")
-
-        self.buttonBox      = QDialogButtonBox(Qt.Horizontal)
-        self.buttonBox.addButton(self.logAsAdmin,
-            QDialogButtonBox.AcceptRole)
-        self.buttonBox.addButton(self.logAsUser,
-            QDialogButtonBox.AcceptRole)
-        self.buttonBox.addButton(self.cancelButton,
-            QDialogButtonBox.DestructiveRole)
-
-        myGrid.addWidget(self.serverLabel,      0, 0)
-        myGrid.addWidget(self.serverName,       0, 1)
-        myGrid.addWidget(self.serverPort,       0, 2)
-        myGrid.addWidget(self.userNameLabel,    1, 0)
-        myGrid.addWidget(self.userName,         1, 1, 1, 2)
-        myGrid.addWidget(self.passWordLabel,    2, 0)
-        myGrid.addWidget(self.passWord,         2, 1, 1, 2)
-        myGrid.addWidget(self.saveCredentials,  3, 0, 1, 3)
-        myGrid.addWidget(self.buttonBox,        4, 0, 1, 3)
-        myGrid.setColumnMinimumWidth(1, 250)
-
-        #self.connect(
-        #    self.logInButton,
-        #    SIGNAL("clicked()"), 
-        #    self.logInPushed
-        #)
-
-        self.connect(
-            self.logAsAdmin,
-            SIGNAL("clicked()"), 
-            self.logAsAdminAction
-        )
-        self.connect(
-            self.logAsUser,
-            SIGNAL("clicked()"), 
-            self.logAsUserAction
-        )
-        self.connect(
-            self.cancelButton,
-            SIGNAL("clicked()"), 
-            self.cancelPushed
-        )
-
-        self.setLayout(myGrid)
-
-    def logInPushed(self):
-        host    = self.serverName.text()
-        port    = self.serverPort.value()
-        user    = self.userName.text()
-        passwd  = self.passWord.text()
-
-        #self.supercastClient.setSocketAuthUser(user)
-        #self.supercastClient.setSocketAuthPass(passwd)
-        #self.supercastClient.setSocketServer(host)
-        #self.supercastClient.setSocketPort(port)
-
-        Link.singleton.setSocketAuthUser('admuser')
-        Link.singleton.setSocketAuthPass('passwd')
-        Link.singleton.setSocketServer('192.168.0.9')
-        Link.singleton.setSocketPort(8888)
-
-        Link.singleton.connectServer()
-        self.supercastClient.show()
-        self.close()
-        
-    def logAsAdminAction(self):
-        host    = self.serverName.text()
-        port    = self.serverPort.value()
-        user    = self.userName.text()
-        passwd  = self.passWord.text()
-
-        #self.supercastClient.setSocketAuthUser(user)
-        #self.supercastClient.setSocketAuthPass(passwd)
-        #self.supercastClient.setSocketServer(host)
-        #self.supercastClient.setSocketPort(port)
-
-        Link.singleton.setSocketAuthUser('admuser')
-        Link.singleton.setSocketAuthPass('passwd')
-        Link.singleton.setSocketServer('192.168.0.9')
-        Link.singleton.setSocketPort(8888)
-
-        Link.singleton.connectServer()
-        self.supercastClient.show()
-        self.close()
-
-    def logAsUserAction(self):
-        host    = self.serverName.text()
-        port    = self.serverPort.value()
-        user    = self.userName.text()
-        passwd  = self.passWord.text()
-
-        #self.supercastClient.setSocketAuthUser(user)
-        #self.supercastClient.setSocketAuthPass(passwd)
-        #self.supercastClient.setSocketServer(host)
-        #self.supercastClient.setSocketPort(port)
-
-        Link.singleton.setSocketAuthUser('simpleuser')
-        Link.singleton.setSocketAuthPass('passwd')
-        Link.singleton.setSocketServer('192.168.0.9')
-        Link.singleton.setSocketPort(8888)
-
-        Link.singleton.connectServer()
-        self.supercastClient.show()
-        self.close()
-
-    def cancelPushed(self):
-        self.close()
-
+    def _broadcast(self, msg):
+        for key in self._mpd:
+            if key == 'modSupercastPDU': pass
+            else:
+                handler = self._mpd.get(key)
+                handler(msg)
