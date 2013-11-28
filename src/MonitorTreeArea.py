@@ -98,6 +98,66 @@ class MonitorTreeAreaInfo(QTextEdit):
         self.append(str(msg))
 
 
+###############################################################################
+#### PROTOTYPE POUR TREEVIEW ##################################################
+###############################################################################
+class TreeNode(object):
+    def __init__(self, parent, row):
+        self.parent = parent
+        self.row = row
+        self.subnodes = self._getChildren()
+
+    def _getChildren(self):
+        raise NotImplementedError()        
+
+# Nous allons creer une classe mere de nos futurs modeles
+# pour limiter la complexite et gerer ce que l'on peut gerer en amont :
+class TreeModel(QAbstractItemModel):
+    def __init__(self):
+        QAbstractItemModel.__init__(self)
+        self.rootNodes = self._getRootNodes()
+
+    # a implementer par la future classe fille
+    def _getRootNodes(self):
+        raise NotImplementedError()
+    
+    # cette methode heritee de QAbstractItemModel doit retourner
+    # l'indice de l'enregistrement en entree moyennant le parent (un QModelIndex)
+    # c.f. paragraph suivant pour plus d'explications.
+    def index(self, row, column, parent):
+        # si l'indice du parent est invalide
+        if not parent.isValid():
+            return self.createIndex(row, column, self.rootNodes[row])
+        parentNode = parent.internalPointer()
+        return self.createIndex(row, column, parentNode.subnodes[row])
+
+    # cette methode heritee de QAbstractItemModel doit retourner
+    # l'indice du parent de l'indice donne en parametre
+    # ou un indice invalide (QModelIndex()) si le noeud n'a pas de parent
+    # ou si la requete est incorrecte
+    # c.f. paragraph suivant pour plus d'explications.
+    def parent(self, index):
+        if not index.isValid():
+            return QModelIndex()
+        # on recupere l'objet sous-jacent avec la methode internalPointer de l'indice
+        node = index.internalPointer()
+        if node.parent is None:
+            return QModelIndex()
+        else:
+            # si tout est valide alors on cree l'indice associe pointant vers le parent
+            return self.createIndex(node.parent.row, 0, node.parent)
+
+    def reset(self):
+        self.rootNodes = self._getRootNodes()
+        QAbstractItemModel.reset(self)
+
+    def rowCount(self, parent):
+        if not parent.isValid():
+            return len(self.rootNodes)
+        node = parent.internalPointer()
+        return len(node.subnodes)
+
+
 
 ##############################################################################
 ### TREEVIEW #################################################################
@@ -105,156 +165,55 @@ class MonitorTreeAreaInfo(QTextEdit):
 class MonitorTView(QTreeView):
     def __init__(self, parent):
         super(MonitorTView, self).__init__(parent)
-        f = QFile('./default.txt')
-        f.open(QIODevice.ReadOnly)
-        model = TreeModel(str(f.readAll()))
+        model = NamesModel()
         self.setModel(model)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setModel(model)
+            
+class NamedElement(object): # notre structure interne pour gerer les objets
+    def __init__(self, name, subelements):
+        self.name = name
+        self.subelements = subelements
 
-class TreeItem(object):
-    def __init__(self, name, parent=None):
-        self.parentItem = parent
-        self.itemName = name
-        self.childItems = []
+# notre noeud concret implementant getChildren
+class NamedNode(TreeNode):
+    def __init__(self, ref, parent, row):
+        self.ref = ref
+        TreeNode.__init__(self, parent, row)
 
-    def appendChild(self, item):
-        self.childItems.append(item)
+    # renvoie la liste des noeuds fils en utilisant la liste subelements de 
+    # notre objet (interne) NamedElement
+    def _getChildren(self):
+        return [NamedNode(elem, self, index)
+            for index, elem in enumerate(self.ref.subelements)]
+        
+# et enfin notre modele avec 
+class NamesModel(TreeModel):
+    def __init__(self, rootElements):
+        self.rootElements = rootElements
+        TreeModel.__init__(self)
 
-    def child(self, row):
-        return self.childItems[row]
-
-    def childCount(self):
-        return len(self.childItems)
-
-    def columnCount(self):
-        #return len(self.itemData)
-        return 1
-
-    def data(self):
-        try:
-            return self.itemName[0]
-        except IndexError:
-            return None
-
-    def parent(self):
-        return self.parentItem
-
-    def row(self):
-        if self.parentItem:
-            return self.parentItem.childItems.index(self)
-        return 0
-
-
-class TreeModel(QAbstractItemModel):
-    def __init__(self, data, parent=None):
-        super(TreeModel, self).__init__(parent)
-
-        self.rootItem = TreeItem("root")
-        self.setupModelData(data.split('\n'), self.rootItem)
-       
-        self.targets = dict()
-        self.probes  = dict()
+    def _getRootNodes(self):
+        return [NamedNode(elem, None, index)
+            for index, elem in enumerate(self.rootElements)]
 
     def columnCount(self, parent):
-        if parent.isValid():
-            return parent.internalPointer().columnCount()
-        else:
-            return self.rootItem.columnCount()
+        return 1
 
+    # permet de recuperer les donnees liees a un indice et un role.
+    # ces donnees peuvent ainsi varier selon le role.
     def data(self, index, role):
         if not index.isValid():
             return None
-
-        if role != Qt.DisplayRole:
-            return None
-
-        item = index.internalPointer()
-        return item.data()
-
-    def flags(self, index):
-        if not index.isValid():
-            return Qt.NoItemFlags
-
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-
-    def headerData(self, section, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return "Targets/Probes"
+        node = index.internalPointer()
+        if role == Qt.DisplayRole and index.column() == 0:
+            return node.ref.name
         return None
 
-    def index(self, row, column, parent):
-        if not self.hasIndex(row, column, parent):
-            return QModelIndex()
+    def headerData(self, section, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole \
+            and section == 0:
+            return 'Name'
+        return None
+            
 
-        if not parent.isValid():
-            parentItem = self.rootItem
-        else:
-            parentItem = parent.internalPointer()
-
-        childItem = parentItem.child(row)
-        if childItem:
-            return self.createIndex(row, column, childItem)
-        else:
-            return QModelIndex()
-
-    def parent(self, index):
-        if not index.isValid():
-            return QModelIndex()
-
-        childItem   = index.internalPointer()
-        parentItem  = childItem.parent()
-
-        if parentItem == self.rootItem:
-            return QModelIndex()
-
-        print parentItem
-        #return self.createIndex(parentItem.row(), 0, parentItem)
-
-    def rowCount(self, parent):
-        if parent.column() > 0:
-            return 0
-
-        if not parent.isValid():
-            parentItem = self.rootItem
-        else:
-            parentItem = parent.internalPointer()
-
-        return parentItem.childCount()
-
-    def setupModelData(self, lines, parent):
-        parents = [parent]
-        indentations = [0]
-
-        number = 0
-
-        while number < len(lines):
-            position = 0
-
-            while position < len(lines[number]):
-                if lines[number][position] != ' ':
-                    break
-                position += 1
-
-            lineData = lines[number][position:].strip()
-            if lineData:
-                # Read the column data from the rest of the line.
-                columnData = [s for s in lineData.split('\t') if s]
-
-                if position > indentations[-1]:
-                    # The last child of the current parent is now the new
-                    # parent unless the current parent has no children.
-
-                    if parents[-1].childCount() > 0:
-                        parents.append(parents[-1].child(parents[-1].childCount() - 1))
-                        indentations.append(position)
-
-                else:
-                    while position < indentations[-1] and len(parents) > 0:
-                        parents.pop()
-                        indentations.pop()
-
-                # Append a new item to the current parent's list of children.
-                parents[-1].appendChild(TreeItem(columnData, parents[-1]))
-
-            number += 1
