@@ -138,8 +138,9 @@ class LeftModSelector(QFrame):
 
         self.mod1 = QPushButton(self)
         self.mod1.setSizePolicy(buttonPol)
+        self.mod1.setIconSize(QSize(30,100))
         self.mod1.setCheckable(True)
-        self.mod1.setIcon(TkorderIcons.get('utilities-system-monitor'))
+        self.mod1.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
         grid.addWidget(self.mod1, 0,0)
 
         #self.mod2 = QPushButton(self)

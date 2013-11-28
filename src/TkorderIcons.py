@@ -48,6 +48,7 @@ class TkorderIcons(object):
             'system-log-out': QtGui.QIcon("icons/system-log-out.svg"),
             'system-shutdown': QtGui.QIcon("icons/system-shutdown.svg"),
             'utilities-system-monitor': QtGui.QIcon("icons/utilities-system-monitor.svg"),
+            'utilities-system-monitor-black': QtGui.QIcon("icons/utilities-system-monitor-black.svg"),
             'utilities-terminal': QtGui.QIcon("icons/utilities-terminal.svg"),
             'video-display': QtGui.QIcon("icons/video-display.svg"),
             'weather-clear-night': QtGui.QIcon("icons/weather-clear-night.svg"),
