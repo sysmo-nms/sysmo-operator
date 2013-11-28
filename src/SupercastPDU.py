@@ -661,7 +661,7 @@ def decode(pdu):
                     'from':     msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':      targetId,
+                        'name':         targetId,
                         'properties':   infoProp,
                         'infoType':     infoT
                     }
@@ -751,7 +751,7 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':  channel,
+                        'target':   channel,
                         'id':       int(probeId),
                         'name':     name,
                         'perm':     permDict,
@@ -777,7 +777,7 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel': channel,
+                        'target': channel,
                         'id': int(probeId),
                         'logger': module,
                         'data': str(binaryData)
