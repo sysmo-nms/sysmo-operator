@@ -106,16 +106,58 @@ class MonitorTView(QTableView):
 class MyModel(QAbstractTableModel):
     def __init__(self, parent):
         super(MyModel, self).__init__(parent)
+        self.time = QTime()
+        timer = QTimer(self)
+        timer.setInterval(1000)
+        timer.timeout.connect(self.timerHit)
+        timer.start()
+        
+    def timerHit(self):
+        print "timer hit"
+        index = self.createIndex(2,0)
+        self.dataChanged.emit(index, index)
         
     def rowCount(self, parent = QModelIndex()):
-        return 2
+        return 3
 
     def columnCount(self, parent = QModelIndex()):
         return 3
 
-    def data(self, index, role):
+    def headerData(self, section, orient, role):
         if role == Qt.DisplayRole:
-            return  "row %i, column %i" % (index.row(), index.column())
+            if orient == Qt.Horizontal:
+                if section == 0:
+                    return u'un'
+                elif section == 1:
+                    return u'deux'
+                elif section == 2:
+                    return u'trois'
+
+    def data(self, index, role):
+        row = index.row()
+        col = index.column()
+        print "."
+        if role == Qt.DisplayRole:
+            if row == 2 and col == 0:
+                t = self.time.currentTime()
+                return t.toString()
+            else:
+                return  "row %i, column %i" % (index.row(), index.column())
+        elif role == Qt.FontRole:
+            if row == 0 and col == 0:
+                f = QFont()
+                f.setBold(True)
+                return f
+        elif role == Qt.BackgroundRole:
+            if row == 1 and col == 1:
+                c = QColor(255,0,0)
+                return c
+        elif role == Qt.TextAlignmentRole:
+            if row == 1 and col == 0:
+                return Qt.AlignRight
+        elif role == Qt.CheckStateRole:
+            if row == 0 and col == 1:
+                return Qt.Checked
 
 
 ############
