@@ -5,6 +5,7 @@ import  TkorderIcons
 
 
 #####################################################################
+#####################################################################
 ###### LEFT PANNEL VIEW #############################################
 #####################################################################
 #####################################################################
@@ -98,216 +99,161 @@ class MonitorTreeAreaInfo(QTextEdit):
 
 
 
-class MonitorTView(QTableView):
+##############################################################################
+### TREEVIEW #################################################################
+##############################################################################
+class MonitorTView(QTreeView):
     def __init__(self, parent):
         super(MonitorTView, self).__init__(parent)
-        self.setModel(MyModel(self))
+        f = QFile('./default.txt')
+        f.open(QIODevice.ReadOnly)
+        model = TreeModel(str(f.readAll()))
+        self.setModel(model)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setModel(model)
 
-class MyModel(QAbstractTableModel):
-    def __init__(self, parent):
-        super(MyModel, self).__init__(parent)
-        self.time = QTime()
-        timer = QTimer(self)
-        timer.setInterval(1000)
-        timer.timeout.connect(self.timerHit)
-        timer.start()
-        
-    def timerHit(self):
-        print "timer hit"
-        index = self.createIndex(2,0)
-        self.dataChanged.emit(index, index)
-        
-    def rowCount(self, parent = QModelIndex()):
-        return 3
+class TreeItem(object):
+    def __init__(self, data, parent=None):
+        self.parentItem = parent
+        self.itemData = data
+        self.childItems = []
 
-    def columnCount(self, parent = QModelIndex()):
-        return 3
+    def appendChild(self, item):
+        self.childItems.append(item)
 
-    def headerData(self, section, orient, role):
-        if role == Qt.DisplayRole:
-            if orient == Qt.Horizontal:
-                if section == 0:
-                    return u'un'
-                elif section == 1:
-                    return u'deux'
-                elif section == 2:
-                    return u'trois'
+    def child(self, row):
+        return self.childItems[row]
+
+    def childCount(self):
+        return len(self.childItems)
+
+    def columnCount(self):
+        #return len(self.itemData)
+        return 1
+
+    def data(self, column):
+        try:
+            return self.itemData[column]
+        except IndexError:
+            return None
+
+    def parent(self):
+        return self.parentItem
+
+    def row(self):
+        if self.parentItem:
+            return self.parentItem.childItems.index(self)
+        return 0
+
+
+class TreeModel(QAbstractItemModel):
+    def __init__(self, data, parent=None):
+        super(TreeModel, self).__init__(parent)
+
+        self.rootItem = TreeItem(("Title", "Summary"))
+        self.setupModelData(data.split('\n'), self.rootItem)
+
+    def columnCount(self, parent):
+        if parent.isValid():
+            return parent.internalPointer().columnCount()
+        else:
+            return self.rootItem.columnCount()
 
     def data(self, index, role):
-        row = index.row()
-        col = index.column()
-        print "."
-        if role == Qt.DisplayRole:
-            if row == 2 and col == 0:
-                t = self.time.currentTime()
-                return t.toString()
-            else:
-                return  "row %i, column %i" % (index.row(), index.column())
-        elif role == Qt.FontRole:
-            if row == 0 and col == 0:
-                f = QFont()
-                f.setBold(True)
-                return f
-        elif role == Qt.BackgroundRole:
-            if row == 1 and col == 1:
-                c = QColor(255,0,0)
-                return c
-        elif role == Qt.TextAlignmentRole:
-            if row == 1 and col == 0:
-                return Qt.AlignRight
-        elif role == Qt.CheckStateRole:
-            if row == 0 and col == 1:
-                return Qt.Checked
+        if not index.isValid():
+            return None
 
+        if role != Qt.DisplayRole:
+            return None
 
-############
-# Treeview #
-############
-# class MonitorTView(QTreeView):
-#     def __init__(self, parent):
-#         super(MonitorTView, self).__init__(parent)
-#         MonitorTView.singleton = self
-#         self.targetModel = MonitorTViewModel(self)
-# 
-#         self.setHeaderHidden(True)
-#         self.setAnimated(True)
-#         self.setIndentation(15)
-#         self.setUniformRowHeights(True)
-# 
-#         # <- QAbasctractItemView 
-#         self.setModel(self.targetModel)
-#         self.setAlternatingRowColors(True)
-#         self.setDragEnabled(False)
-#         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-#         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-#         self.setIconSize(QSize(25, 25)) 
-#         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-#         self.setSelectionBehavior(QAbstractItemView.SelectItems)
-# 
-#         # <- QAbstractScrollArea
-#         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-#         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-# 
-#         # from QTreeView
-#         self.expandAll()
-# 
-#         # slots
-#         # self.selectionChanged.connect(self._userSelection)
-# 
-#     def selectionChanged(self, selected, deselected):
-#         print selected, deselected
-#         QTreeView.selectionChanged(self, selected, deselected)
-# 
-#     #def userClic(self, index):
-#         #item    = self.targetModel.itemFromIndex(index)
-#         #parent  = item.parent()
-#         #emitDict = dict()
-# 
-#         #if isinstance(parent, QStandardItem):
-#             #emitDict['target']  = parent.data(Qt.DisplayRole)
-#             #emitDict['probeId'] = item.data(Qt.DisplayRole)
-#         #else:
-#             #emitDict['target']  = item.data(Qt.DisplayRole)
-#             #emitDict['probeId'] = None
-#         #MonitorEvents.singleton.treeviewClicked.emit(emitDict)
-# 
-# 
-# class MonitorTViewModel(QStandardItemModel):
-# 
-#     def __init__(self, parent):
-#         super(MonitorTViewModel, self).__init__(parent)
-#         MonitorTViewModel.singleton = self
-#         parentItem      = self.invisibleRootItem()
-# 
-#         # QStandardItemModel
-#         self.setColumnCount(1)
-#         self.setHorizontalHeaderLabels([''])
-# 
-#         # signals to receive
-#         sigDict = ChannelHandler.singleton.masterSignalsDict
-#         sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
-#         sigDict['targetInfo'].signal.connect(self._handleTargetInfo)
-#         sigDict['probeModInfo'].signal.connect(self._handleProbeModInfo)
-# 
-#     def findTargetByName(self, targetName):
-#         parentItemList = self.findItems(
-#             targetName,
-#             flags=Qt.MatchRecursive,
-#             column=0
-#         )
-#         parentItem = parentItemList.pop()
-#         return parentItem
-# 
-#     def _handleProbeModInfo(self, msg): pass
-# 
-#     def _handleTargetInfo(self, msg):
-#         val         = msg['value']
-#         channel     = val['channel']
-#         infoType    = val['infoType']
-#         properties  = val['properties']
-#         itemType    = 'target'
-#         icon        = TkorderIcons.get('weather-clear-night')
-#         #i2  = icon.pixmap(5,5)
-#         if infoType == 'create':
-#             newItem = QStandardItem()
-#             newItem.setData(channel,    Qt.DisplayRole)
-#             newItem.setData(icon,       Qt.DecorationRole)
-#             newItem.setData(itemType,   Qt.UserRole)
-#             newItem.setData(channel,    Qt.UserRole + 1)
-#             newItem.setData(properties, Qt.UserRole + 2)
-#             newItem.setFlags(Qt.ItemIsSelectable)
-#             newItem.setFlags(Qt.ItemIsEnabled)
-#             self.appendRow(newItem)
-#             #self.elements.sortChildren(0)
-# 
-#     def _handleProbeInfo(self, msg):
-#         val         = msg['value']
-#         parent      = val['channel']
-#         name        = val['name']
-#         probeId     = val['id']
-#         status      = val['status']
-#         timeout     = val['timeout']
-#         step        = val['step']
-#         pid         = val['id']
-#         itemType    = 'probe'
-#         if (status == 'OK'):
-#             icon = TkorderIcons.get('weather-clear')
-#         elif (status == 'WARNING'):
-#             icon = TkorderIcons.get('weather-showers')
-#         elif (status == 'CRITICAL'):
-#             icon = TkorderIcons.get('weather-severe-alert')
-#         elif (status == 'UNKNOWN'):
-#             icon = TkorderIcons.get('weather-few-clouds-night')
-#         else:
-#             print "status is ", status
-#             icon        = TkorderIcons.get('weather-clear-night')
-# 
-#         parentItem = self.findTargetByName(parent)
-#         i = parentItem.rowCount()
-#         while (i != 0):
-#             child = parentItem.child(i - 1)
-#             childId = child.data(Qt.UserRole + 1)
-#             if (childId == probeId):
-#                 parentItem.removeRow(i - 1)
-#                 break
-#             i -= 1
-#         newItem = QStandardItem()
-#         newItem.setData(name,   Qt.DisplayRole)
-#         newItem.setData(icon,   Qt.DecorationRole)
-#         newItem.setData(itemType, Qt.UserRole)
-#         newItem.setData(pid,    Qt.UserRole + 1)
-#         newItem.setData(parent, Qt.UserRole + 2)
-#         newItem.setData(timeout,Qt.UserRole + 3)
-#         newItem.setData(step,   Qt.UserRole + 4)
-#         newItem.setData(name,   Qt.UserRole + 5)
-#         newItem.setData(status, Qt.UserRole + 6)
-#         newItem.setFlags(Qt.ItemIsSelectable)
-#         newItem.setFlags(Qt.ItemIsEnabled)
-# 
-#         # temporaire toutes les probes id == 1 propagent leur status
-#         # au parent
-#         if (pid == 1):
-#             parentItem.setData(icon, Qt.DecorationRole)
-# 
-#         parentItem.appendRow(newItem)
-# 
+        item = index.internalPointer()
+
+        return item.data(index.column())
+
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.NoItemFlags
+
+        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+    def headerData(self, section, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            #return self.rootItem.data(section)
+            return "hello"
+
+        return None
+
+    def index(self, row, column, parent):
+        if not self.hasIndex(row, column, parent):
+            return QModelIndex()
+
+        if not parent.isValid():
+            parentItem = self.rootItem
+        else:
+            parentItem = parent.internalPointer()
+
+        childItem = parentItem.child(row)
+        if childItem:
+            return self.createIndex(row, column, childItem)
+        else:
+            return QModelIndex()
+
+    def parent(self, index):
+        if not index.isValid():
+            return QModelIndex()
+
+        childItem = index.internalPointer()
+        parentItem = childItem.parent()
+
+        if parentItem == self.rootItem:
+            return QModelIndex()
+
+        return self.createIndex(parentItem.row(), 0, parentItem)
+
+    def rowCount(self, parent):
+        if parent.column() > 0:
+            return 0
+
+        if not parent.isValid():
+            parentItem = self.rootItem
+        else:
+            parentItem = parent.internalPointer()
+
+        return parentItem.childCount()
+
+    def setupModelData(self, lines, parent):
+        parents = [parent]
+        indentations = [0]
+
+        number = 0
+
+        while number < len(lines):
+            position = 0
+            while position < len(lines[number]):
+                if lines[number][position] != ' ':
+                    break
+                position += 1
+
+            lineData = lines[number][position:].strip()
+
+            if lineData:
+                # Read the column data from the rest of the line.
+                columnData = [s for s in lineData.split('\t') if s]
+
+                if position > indentations[-1]:
+                    # The last child of the current parent is now the new
+                    # parent unless the current parent has no children.
+
+                    if parents[-1].childCount() > 0:
+                        parents.append(parents[-1].child(parents[-1].childCount() - 1))
+                        indentations.append(position)
+
+                else:
+                    while position < indentations[-1] and len(parents) > 0:
+                        parents.pop()
+                        indentations.pop()
+
+                # Append a new item to the current parent's list of children.
+                parents[-1].appendChild(TreeItem(columnData, parents[-1]))
+
+            number += 1
