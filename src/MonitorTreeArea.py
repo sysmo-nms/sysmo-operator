@@ -45,17 +45,26 @@ class MonitorTreeSearch(QFrame):
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(5)
         grid.setVerticalSpacing(0)
+
+        self.line = QLineEdit(self)
+        self.line.setPlaceholderText('Filter')
+        self.line.textChanged.connect(self.lineTextUpdate)
+
         clear   = QPushButton(self)
-        line    = QLineEdit(self)
         clear.setIcon(TkorderIcons.get('edit-clear'))
-        line.setPlaceholderText('Filter')
+        clear.clicked.connect(self.line.clear)
+
         grid.addWidget(clear,   0,0)
-        grid.addWidget(line,    0,1)
+        grid.addWidget(self.line,    0,1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
         grid.setColumnStretch(2,0)
         self.setLayout(grid)
+
+    def lineTextUpdate(self):
+        text = self.line.text()
+        MonitorTreeView.singleton.filterThis(text)
 
 
 class MonitorTreeButtons(QToolBar):
@@ -105,16 +114,27 @@ class MonitorTreeAreaInfo(QTextEdit):
 class MonitorTreeView(QTreeView):
     def __init__(self, parent):
         super(MonitorTreeView, self).__init__(parent)
-        std     = MonitorTreeModel(self)
-        self.setModel(std)
+        MonitorTreeView.singleton = self
+        self.model   = MonitorTreeModel(self)
+        self.proxy   = QSortFilterProxyModel(self)
+        self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxy.setDynamicSortFilter(True)
+        self.proxy.setSourceModel(self.model)
+        self.setModel(self.proxy)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setIconSize(QSize(25, 25)) 
-        self.setHeaderHidden(True)
+        #self.setHeaderHidden(True)
+
+        self.setSortingEnabled(True)
         self.setAlternatingRowColors(True)
 
+    def filterThis(self, text):
+        self.proxy.setFilterFixedString(text)
+        
 class MonitorTreeModel(QStandardItemModel):
     def __init__(self, parent):
         super(MonitorTreeModel, self).__init__(parent)
+        self.setHorizontalHeaderLabels(["Targets/Probes"])
         sigDict = ChannelHandler.singleton.masterSignalsDict
         sigDict['targetInfo'].signal.connect(self._handleTargetInfo)
         sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
