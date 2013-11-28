@@ -222,7 +222,6 @@ class ProbeItem(QStandardItem):
         self.target = data['value']['target']
         self.status = data['value']['status']
         self.probeDict = data
-        print self.flags()
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
 
     def data(self, role):
