@@ -113,9 +113,9 @@ class MonitorTView(QTreeView):
         self.setModel(model)
 
 class TreeItem(object):
-    def __init__(self, data, parent=None):
+    def __init__(self, name, parent=None):
         self.parentItem = parent
-        self.itemData = data
+        self.itemName = name
         self.childItems = []
 
     def appendChild(self, item):
@@ -131,9 +131,9 @@ class TreeItem(object):
         #return len(self.itemData)
         return 1
 
-    def data(self, column):
+    def data(self):
         try:
-            return self.itemData[column]
+            return self.itemName[0]
         except IndexError:
             return None
 
@@ -150,8 +150,11 @@ class TreeModel(QAbstractItemModel):
     def __init__(self, data, parent=None):
         super(TreeModel, self).__init__(parent)
 
-        self.rootItem = TreeItem(("Title", "Summary"))
+        self.rootItem = TreeItem("root")
         self.setupModelData(data.split('\n'), self.rootItem)
+       
+        self.targets = dict()
+        self.probes  = dict()
 
     def columnCount(self, parent):
         if parent.isValid():
@@ -167,8 +170,7 @@ class TreeModel(QAbstractItemModel):
             return None
 
         item = index.internalPointer()
-
-        return item.data(index.column())
+        return item.data()
 
     def flags(self, index):
         if not index.isValid():
@@ -178,9 +180,7 @@ class TreeModel(QAbstractItemModel):
 
     def headerData(self, section, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            #return self.rootItem.data(section)
-            return "hello"
-
+            return "Targets/Probes"
         return None
 
     def index(self, row, column, parent):
@@ -202,13 +202,14 @@ class TreeModel(QAbstractItemModel):
         if not index.isValid():
             return QModelIndex()
 
-        childItem = index.internalPointer()
-        parentItem = childItem.parent()
+        childItem   = index.internalPointer()
+        parentItem  = childItem.parent()
 
         if parentItem == self.rootItem:
             return QModelIndex()
 
-        return self.createIndex(parentItem.row(), 0, parentItem)
+        print parentItem
+        #return self.createIndex(parentItem.row(), 0, parentItem)
 
     def rowCount(self, parent):
         if parent.column() > 0:
@@ -229,13 +230,13 @@ class TreeModel(QAbstractItemModel):
 
         while number < len(lines):
             position = 0
+
             while position < len(lines[number]):
                 if lines[number][position] != ' ':
                     break
                 position += 1
 
             lineData = lines[number][position:].strip()
-
             if lineData:
                 # Read the column data from the rest of the line.
                 columnData = [s for s in lineData.split('\t') if s]
