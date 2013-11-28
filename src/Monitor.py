@@ -35,7 +35,7 @@ class MonitorMain(QSplitter):
         self.initHexaPalettes()
         self.initView()
 
-    def leftClicked(self):
+    def toggleButtonClicked(self):
         if self.collapsed == False:
             [a,_] = self.sizes()
             self.oldSize = a

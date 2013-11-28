@@ -149,8 +149,9 @@ class LeftModSelector(QFrame):
 
         self.setLayout(grid)
 
-    def connectAll(self): pass
-        #self.mod1.clicked.connect(ModTracker.TrackerMain.singleton.leftClicked)
+    def connectAll(self):
+        mod1Toggle = Monitor.MonitorMain.singleton.toggleButtonClicked
+        self.mod1.clicked.connect(mod1Toggle)
 
 class ModView(QFrame):
     def __init__(self, parent):
