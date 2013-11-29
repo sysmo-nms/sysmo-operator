@@ -138,43 +138,13 @@ class MonitorTreeView(QTreeView):
         self.proxy.setFilterFixedString(text)
 
     def selectionChanged(self, selected, deselected):
-        #modelSelected   = self.proxy.mapSelectionToSource(selected)
-        #modelDeselected = self.proxy.mapSelectionToSource(deselected)
-
-        #modelSelectedIndexes    = modelSelected.indexes()
-        #modelDeselectedIndexes  = modelDeselected.indexes()
-
         proxyIndexes = self.selectedIndexes()
         selectionList = list()
         for i in range(len(proxyIndexes)):
             modelIndex = self.proxy.mapToSource(proxyIndexes[i])
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
-
-        print selectionList
-
-        # when a target is selected include all his probes
-        #for i in range(len(modelSelectedIndexes)):
-        #    print type(modelSelectedIndexes[i])
-        #    print type(modelSelected)
-        #    item = self.model.itemFromIndex(modelSelectedIndexes[i])
-        #    if item.nodeType == 'target':
-        #        "include all childs in the selection"
-        #        childCount = item.rowCount()
-        #        print "count:", childCount
-        #        modelChildSel = list()
-        #        for j in range(childCount):
-        #            child = item.child(j)
-        #            childIndex = QItemSelectionRange(child.index())
-        #            print child
-        #            " the child is allready in the index?"
-        #            #if modelSelectedIndexes.contains(child.index()) == True:
-        #                #print "allready selected"
-        #            #modelSelectedIndexes.append(childSelect)
-
-        #finalSelectedIndexes = self.proxy.mapSelectionFromSource(modelSelected)
-        #finalDeselectedIndexes = self.proxy.mapSelectionFromSource(modelDeselected)
-
+        ChannelHandler.singleton.userSelection(selectionList)
         QTreeView.selectionChanged(self, selected, deselected)
         
 class MonitorTreeModel(QStandardItemModel):
