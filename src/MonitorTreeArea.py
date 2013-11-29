@@ -120,9 +120,11 @@ class MonitorTreeView(QTreeView):
         self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.proxy.setDynamicSortFilter(True)
         self.proxy.setSourceModel(self.model)
+        self.proxy.setFilterRole(Qt.UserRole)
         self.setModel(self.proxy)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setIconSize(QSize(25, 25)) 
+        self.setAnimated(True)
         #self.setHeaderHidden(True)
 
         self.setSortingEnabled(True)
@@ -171,6 +173,7 @@ class TargetItem(QStandardItem):
         super(TargetItem, self).__init__()
         self.name       = data['value']['name']
         self.status     = 'UNKNOWN'
+        self.searchString   = self.name
         self.targetDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
 
@@ -179,6 +182,8 @@ class TargetItem(QStandardItem):
             return self._getIconStatus()
         elif role == Qt.DisplayRole:
             return self.name
+        elif role == Qt.UserRole:
+            return self.searchString
         else:
             return QStandardItem.data(self, role)
 
@@ -188,14 +193,19 @@ class TargetItem(QStandardItem):
         probeExist = False
         for i in range(count):
             if self.child(i).name == probe:
-                probeExist  = True
                 child       = self.child(i)
+                probeExist  = True
                 break
 
         if probeExist == False:
             self.appendRow(ProbeItem(msg))
         else:
             child.updateState(msg)
+
+        self.searchString = self.name
+        for i in range(self.rowCount()):
+            self.searchString += self.child(i).name
+
         self._setWorstStatus()
         self.emitDataChanged()
 
@@ -241,6 +251,7 @@ class ProbeItem(QStandardItem):
         self.name   = data['value']['name']
         self.target = data['value']['target']
         self.status = data['value']['status']
+        self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
 
@@ -249,8 +260,8 @@ class ProbeItem(QStandardItem):
             return self._getIconStatus()
         elif role == Qt.DisplayRole:
             return self.name
-        elif role == Qt.EditRole:
-            return None
+        elif role == Qt.UserRole:
+            return self.searchString
         else:
             return QStandardItem.data(self, role)
 
