@@ -132,6 +132,14 @@ class MonitorTreeView(QTreeView):
 
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)
+
+    def selectionChanged(self, selected, deselected):
+        sel     = selected.indexes()
+        dsel    = deselected.indexes()
+        for i in range(len(sel)):
+            #print self.model.itemFromIndex(sel[i])
+            print self.itemFromIndex(sel[i])
+        QTreeView.selectionChanged(self, selected, deselected)
         
 class MonitorTreeModel(QStandardItemModel):
     def __init__(self, parent):
@@ -237,11 +245,11 @@ class TargetItem(QStandardItem):
         elif 'WARNING' in status:
             self.status = 'WARNING'
             return
-        elif 'UNKNOWN' in status:
-            self.status = 'UNKNOWN'
-            return
         elif 'OK' in status:
             self.status = 'OK'
+            return
+        elif 'UNKNOWN' in status:
+            self.status = 'UNKNOWN'
             return
 
 
