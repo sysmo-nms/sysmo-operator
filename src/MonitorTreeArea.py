@@ -129,16 +129,52 @@ class MonitorTreeView(QTreeView):
 
         self.setSortingEnabled(True)
         self.setAlternatingRowColors(True)
+        #self.clicked.connect(self.userActivity)
+
+    def userActivity(self, index):
+        print "clicked!", self.selectedIndexes()
 
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)
 
     def selectionChanged(self, selected, deselected):
-        sel     = selected.indexes()
-        dsel    = deselected.indexes()
-        for i in range(len(sel)):
-            #print self.model.itemFromIndex(sel[i])
-            print self.itemFromIndex(sel[i])
+        #modelSelected   = self.proxy.mapSelectionToSource(selected)
+        #modelDeselected = self.proxy.mapSelectionToSource(deselected)
+
+        #modelSelectedIndexes    = modelSelected.indexes()
+        #modelDeselectedIndexes  = modelDeselected.indexes()
+
+        proxyIndexes = self.selectedIndexes()
+        selectionList = list()
+        for i in range(len(proxyIndexes)):
+            modelIndex = self.proxy.mapToSource(proxyIndexes[i])
+            modelItem  = self.model.itemFromIndex(modelIndex)
+            selectionList.append(modelItem.name)
+
+        print selectionList
+
+        # when a target is selected include all his probes
+        #for i in range(len(modelSelectedIndexes)):
+        #    print type(modelSelectedIndexes[i])
+        #    print type(modelSelected)
+        #    item = self.model.itemFromIndex(modelSelectedIndexes[i])
+        #    if item.nodeType == 'target':
+        #        "include all childs in the selection"
+        #        childCount = item.rowCount()
+        #        print "count:", childCount
+        #        modelChildSel = list()
+        #        for j in range(childCount):
+        #            child = item.child(j)
+        #            childIndex = QItemSelectionRange(child.index())
+        #            print child
+        #            " the child is allready in the index?"
+        #            #if modelSelectedIndexes.contains(child.index()) == True:
+        #                #print "allready selected"
+        #            #modelSelectedIndexes.append(childSelect)
+
+        #finalSelectedIndexes = self.proxy.mapSelectionFromSource(modelSelected)
+        #finalDeselectedIndexes = self.proxy.mapSelectionFromSource(modelDeselected)
+
         QTreeView.selectionChanged(self, selected, deselected)
         
 class MonitorTreeModel(QStandardItemModel):
@@ -180,10 +216,11 @@ class TargetItem(QStandardItem):
     def __init__(self, data):
         super(TargetItem, self).__init__()
         self.name       = data['value']['name']
+        self.nodeType   = 'target'
         self.status     = 'UNKNOWN'
         self.searchString   = self.name
         self.targetDict = data
-        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemIsEnabled)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -256,9 +293,10 @@ class TargetItem(QStandardItem):
 class ProbeItem(QStandardItem):
     def __init__(self, data):
         super(ProbeItem, self).__init__()
-        self.name   = data['value']['name']
-        self.target = data['value']['target']
-        self.status = data['value']['status']
+        self.name       = data['value']['name']
+        self.nodeType   = 'probe'
+        self.target     = data['value']['target']
+        self.status     = data['value']['status']
         self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
