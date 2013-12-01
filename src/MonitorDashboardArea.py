@@ -4,28 +4,11 @@ from    PySide.QtCore       import *
 class Dash(QFrame):
     def __init__(self, parent):
         super(Dash, self).__init__(parent)
-        self.toolbar = QToolBar(self)
-        de = QAction('Detach', self)
-        fs = QAction('Full screen', self)
-        fs.triggered.connect(self.fullScreen)
-        de.triggered.connect(self.detach)
-        self.toolbar.addAction(de)
-        self.toolbar.addAction(fs)
-
         self.dash   = DashTab(self)
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
-        grid.addWidget(self.toolbar,        0,0)
-        grid.addWidget(self.dash,           1,0)
+        grid.addWidget(self.dash,           0,0)
         self.setLayout(grid)
-
-    def detach(self):
-        detach = Detached(self)
-        detach.show()
-
-    def fullScreen(self):
-        print "frame fullscreen"
-
 
 class DashTab(QTabWidget):
     def __init__(self, parent):
