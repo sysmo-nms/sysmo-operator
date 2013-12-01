@@ -50,6 +50,7 @@ class TkorderIcons(object):
             'utilities-system-monitor': QtGui.QIcon("icons/utilities-system-monitor.svg"),
             'utilities-system-monitor-black': QtGui.QIcon("icons/utilities-system-monitor-black.svg"),
             'utilities-terminal': QtGui.QIcon("icons/utilities-terminal.svg"),
+            'process-stop': QtGui.QIcon("icons/process-stop.svg"),
             'video-display': QtGui.QIcon("icons/video-display.svg"),
             'weather-clear-night': QtGui.QIcon("icons/weather-clear-night.svg"),
             'weather-clear': QtGui.QIcon("icons/weather-clear.svg"),

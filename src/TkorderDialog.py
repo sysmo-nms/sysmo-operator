@@ -30,10 +30,15 @@ class LogIn(QDialog):
         self.setMinimumWidth(500)
 
         buttons = QDialogButtonBox(self)
-        buttons.addButton(QDialogButtonBox.Abort)
-        buttons.addButton(QDialogButtonBox.Open)
-        buttons.rejected.connect(self.close)
-        buttons.accepted.connect(self.tryValidate)
+        ok = QPushButton(TkorderIcons.get('applications-development'), self.tr("&Engage"), self)
+        ko = QPushButton(TkorderIcons.get('process-stop'), self.tr("&Abort"), self)
+        helpB = QPushButton(TkorderIcons.get('dialog-information'), self.tr("&Help"), self)
+        ok.setDefault(True)
+        buttons.addButton(ok, QDialogButtonBox.RejectRole)
+        buttons.addButton(ko, QDialogButtonBox.ApplyRole)
+        buttons.addButton(helpB, QDialogButtonBox.HelpRole)
+        ok.clicked.connect(self.tryValidate)
+        ko.clicked.connect(self.close)
 
         formFrame   = QFrame(self)
         formLayout  = QFormLayout(formFrame)
@@ -41,7 +46,6 @@ class LogIn(QDialog):
         formLayout.addRow(self.tr("&Password:"),    self.passLineEdit)
         formLayout.addRow(self.tr("&Server:"),      self.serverLineEdit)
         formLayout.addRow(self.tr("&Port:"),        self.serverPortEdit)
-        formLayout.addRow(buttons)
         formFrame.setLayout(formLayout)
 
         svgImage = QSvgWidget(TkorderIcons.getImage('weather-showers'), self)
@@ -49,6 +53,7 @@ class LogIn(QDialog):
         grid = QGridLayout(self)
         grid.addWidget(formFrame,   0,1)
         grid.addWidget(svgImage,    0,0)
+        grid.addWidget(buttons,     1,0,1,2)
         self.setLayout(grid)
 
     def tryValidate(self):
