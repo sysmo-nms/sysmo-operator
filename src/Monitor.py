@@ -34,6 +34,7 @@ class MonitorMain(QSplitter):
         self.targets    = dict()
         self.initHexaPalettes()
         self.initView()
+        self.readLayoutState()
 
     def toggleButtonClicked(self):
         if self.collapsed == False:
@@ -105,4 +106,13 @@ class MonitorMain(QSplitter):
             (r,g,b,a)   = col.getRgb()
             self.rgbDict[key]  = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
             self.rgbaDict[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
+    
+    def readLayoutState(self):
+        settings = QSettings("Kmars", "monitor")
+        self.restoreGeometry(settings.value("Monitor/geometry"))
+        self.restoreState(settings.value("Monitor/state"))
 
+    def saveLayoutState(self):
+        settings = QSettings("Kmars", "monitor")
+        settings.setValue("Monitor/geometry",   self.saveGeometry())
+        settings.setValue("Monitor/state",      self.saveState())

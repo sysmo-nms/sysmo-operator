@@ -67,7 +67,8 @@ class TkorderClient(QMainWindow):
         self.supercast = Supercast.Link(self)
 
         " End init "
-        self.setCentralWidget(TkorderCentralWidget(self))
+        self.central = TkorderCentralWidget(self)
+        self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
 
     def toggleFullScreen(self):
@@ -102,8 +103,9 @@ class TkorderClient(QMainWindow):
 
     def closeEvent(self, event):
         settings = QSettings("Kmars", "tkorder")
-        settings.setValue("TkorderMain/geometry", self.saveGeometry())
-        settings.setValue("TkorderMain/windowState", self.saveState())
+        settings.setValue("TkorderMain/geometry",       self.saveGeometry())
+        settings.setValue("TkorderMain/windowState",    self.saveState())
+        self.central.modView.monitor.saveLayoutState()
         QMainWindow.closeEvent(self, event)
 
 
@@ -161,8 +163,8 @@ class ModView(QFrame):
         grid.setContentsMargins(5,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
-        monitor = Monitor.MonitorMain(self)
-        grid.addWidget(monitor, 0, 0)
+        self.monitor = Monitor.MonitorMain(self)
+        grid.addWidget(self.monitor, 0, 0)
         self.setLayout(grid)
 
 def main(arguments):
