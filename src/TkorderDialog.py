@@ -33,6 +33,7 @@ class LogIn(QDialog):
         ok = QPushButton(TkorderIcons.get('applications-development'), self.tr("&Engage"), self)
         ko = QPushButton(TkorderIcons.get('process-stop'), self.tr("&Abort"), self)
         helpB = QPushButton(TkorderIcons.get('dialog-information'), self.tr("&Help"), self)
+        helpB.setEnabled(False)
         ok.setDefault(True)
         buttons.addButton(ok, QDialogButtonBox.RejectRole)
         buttons.addButton(ko, QDialogButtonBox.ApplyRole)
