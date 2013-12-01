@@ -15,7 +15,11 @@ import  Monitor
 _fromUtf8 = lambda s: s
 
 class TkorderClient(QMainWindow):
+
     " The main tkorder window "
+
+    closeSignal = Signal()
+
     def __init__(self, parent=None):
         super(TkorderClient, self).__init__(parent)
         TkorderClient.singleton = self
@@ -102,6 +106,7 @@ class TkorderClient(QMainWindow):
         self.restoreState(settings.value("TkorderMain/windowState"))
 
     def closeEvent(self, event):
+        self.closeSignal.emit()
         settings = QSettings("Kmars", "tkorder")
         settings.setValue("TkorderMain/geometry",       self.saveGeometry())
         settings.setValue("TkorderMain/windowState",    self.saveState())

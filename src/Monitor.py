@@ -7,6 +7,7 @@ import  re
 from    MonitorEvents   import ChannelHandler
 import  MonitorDashboardArea
 import  MonitorTreeArea
+import  TkorderMain
 
 class MonitorMain(QSplitter):
 
@@ -15,8 +16,11 @@ class MonitorMain(QSplitter):
     def __init__(self, parent):
         super(MonitorMain, self).__init__(parent)
 
+        Tko = TkorderMain.TkorderClient.singleton
+        Tko.closeSignal.connect(self.saveLayoutState)
         MonitorMain.singleton   = self
         self.eventHandler       = ChannelHandler(self, 5)
+
         self.collapsed  = False
 
         " forward 'modTrackerPDU to me "
