@@ -18,8 +18,8 @@ class Dashboard(QFrame):
         self.selection = set([])
 
     def userNewSelection(self, chanSelection):
-        targetSelection = set([])
-        probeSelection   = set([])
+        targetSelection     = set([])
+        probeSelection      = set([])
 
         # filter targets and probes
         for chan in chanSelection:
@@ -50,12 +50,12 @@ class Dashboard(QFrame):
     def destroyProbeView(self, probe):
         self.selection.remove(probe)
         for view in self.dash.views:
-            view.destroyProbe(probe)
+            view.deleteProbeView(probe)
 
     def createProbeView(self, probe):
         self.selection.add(probe)
         for view in self.dash.views:
-            view.createProbe(probe)
+            view.createProbeView(probe)
 
 class DashTab(QTabWidget):
     def __init__(self, parent):

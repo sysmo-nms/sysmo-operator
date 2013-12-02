@@ -8,7 +8,7 @@ class Controls(QToolBar):
         de = QAction('Other', self)
         self.addAction(de)
 
-class WorkView(AbstractProbeView):
+class WorkView(QFrame):
     def __init__(self, parent):
         super(WorkView, self).__init__(parent)
         grid = QGridLayout(self)
@@ -16,6 +16,12 @@ class WorkView(AbstractProbeView):
         grid.addWidget(Controls(self), 0,0)
         grid.addWidget(WorkViewScroll(self), 1,0)
         self.setLayout(grid)
+
+    def deleteProbeView(self, probe):
+        print "delete working"
+
+    def createProbeView(self, probe):
+        print "create working"
 
 class WorkViewScroll(QScrollArea):
     def __init__(self, parent):
@@ -30,3 +36,15 @@ class WorkViewList(QFrame):
         grid = QGridLayout(self)
         grid.addWidget(QLabel('scroll area', self), 0,0)
         self.setLayout(grid)
+
+class WorkProbeView(AbstractProbeView):
+    def __init__(self, parent, probe):
+        super(WorkProbeView, self).__init__(parent)
+        self.probeName  = probe
+
+    def handleProbeEvent(self, msg):
+        print "workview probe event"
+
+    def destroy(self):
+        self.disconnectProbe(self.probeName)
+        AbstractProbeView.destroy(self)

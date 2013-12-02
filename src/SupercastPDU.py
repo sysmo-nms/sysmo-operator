@@ -167,8 +167,8 @@ class TrackerProbeActivity(univ.Sequence):
 
 class TrackerProbeReturn(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('target',  char.PrintableString()),
+        namedtype.NamedType('id',      char.PrintableString()),
         namedtype.NamedType('status',   char.PrintableString()),
         namedtype.NamedType('originalReply',    char.PrintableString()),
         namedtype.NamedType('timestamp',        univ.Integer()),
@@ -804,8 +804,8 @@ def decode(pdu):
                     }
                 }
             elif msg3_type == 'probeReturn':
-                channel     = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
+                target      = str(msg3.getComponentByName('target'))
+                probeId     = str(msg3.getComponentByName('id'))
                 status      = str(msg3.getComponentByName('status'))
                 original_rep = str(msg3.getComponentByName('originalReply'))
                 timestamp   = msg3.getComponentByName('timestamp')
@@ -822,8 +822,8 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':      channel,
-                        'id':           int(probeId),
+                        'target':       target,
+                        'id':           probeId,
                         'status':       status,
                         'originalRep':  original_rep,
                         'timestamp':    int(timestamp),

@@ -6,16 +6,11 @@ class AbstractProbeView(QFrame):
     def __init__(self, parent):
         super(AbstractProbeView, self).__init__(parent)
 
-    def destroyProbe(self, probe):
-        print "destroy probe"
+    def disconnectProbe(self, probe):
+        ChannelHandler.singleton.unsubscribe(self, probe)
 
-    def createProbe(self, probe):
-        print "create probe"
+    def connectProbe(self, probe):
+        ChannelHandler.singleton.subscribe(self, probe)
 
-    def handleDump(self, msg): 
-        "must be implemented by a derived class to do something"
-        pass
-
-    def handleReturn(self, msg):
-        "must be implemented by a derived class to do something"
-        pass
+    def handleProbeEvent(self, msg): 
+        print self, ":you should handle this message: ", msg['msgType']
