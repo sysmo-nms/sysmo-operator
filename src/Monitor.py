@@ -1,45 +1,39 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 import  TkorderIcons
-import  Supercast
 import  os
 import  re
 
-from    ModTrackerEvents import TrackerEvents
-import  ModTrackerWideView
-import  ModTrackerTarget
-import  ModTrackerTreeArea
+from    MonitorProxyEvents   import ChannelHandler
+import  MonitorDashboardArea
+import  MonitorTreeArea
+import  TkorderMain
 
-class TrackerMain(QSplitter):
+class MonitorMain(QSplitter):
 
     " The main window. Emit tracker server events "
 
     def __init__(self, parent):
-        super(TrackerMain, self).__init__(parent)
+        super(MonitorMain, self).__init__(parent)
 
-        self.collapsed = False
+        Tko = TkorderMain.TkorderClient.singleton
+        Tko.closeSignal.connect(self.saveLayoutState)
+        MonitorMain.singleton   = self
+        self.eventHandler       = ChannelHandler(self, 5)
 
-        TrackerMain.singleton = self
-        self.signals    = TrackerEvents(self)
-        self.vardir     = os.path.join(os.getcwd(), 'var')
+        self.collapsed  = False
 
-        " forward 'modTrackerPDU to me "
-        Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
-
-        self.leftTree   = ModTrackerTreeArea.TreeContainer(self)
-        self.rightStack = ModTrackerTarget.Stack(self)
+        self.leftTree   = MonitorTreeArea.TreeContainer(self)
+        self.rightDash  = MonitorDashboardArea.Dashboard(self)
 
         self.addWidget(self.leftTree)
-        self.addWidget(self.rightStack)
-        
-        TrackerEvents.singleton.probeInfo.connect(self.handleProbeInfo)
-        TrackerEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
+        self.addWidget(self.rightDash)
         
         self.targets    = dict()
         self.initHexaPalettes()
-        self.initView()
+        self.readLayoutState()
 
-    def leftClicked(self):
+    def toggleButtonClicked(self):
         if self.collapsed == False:
             [a,_] = self.sizes()
             self.oldSize = a
@@ -48,22 +42,6 @@ class TrackerMain(QSplitter):
         elif self.collapsed == True:
             self.moveSplitter(self.oldSize, 1)
             self.collapsed = False
-
-    def initView(self):
-        self.rightStack.addWidget(ModTrackerWideView.View(self))
-
-    def handleProbeModInfo(self, msg): pass
-
-    def handleProbeInfo(self, msg):
-        # TODO integrade the targets dict() with ModTrackerTreeArea
-        probeInfo   = msg['value']
-        channel     = probeInfo['channel']
-        probeId     = probeInfo['id']
-        if channel in self.targets:
-            self.targets[channel][probeId]  = probeInfo
-        else:
-            self.targets[channel]           = dict()
-            self.targets[channel][probeId]  = probeInfo
 
     def handleMsg(self, msg):
         mType = msg['msgType']
@@ -81,11 +59,11 @@ class TrackerMain(QSplitter):
     def initHexaPalettes(self):
 
         " For widgets who need hexadecimal version of the colors actualy used "
-        " by the application "
+        " by the application (rrdtool)"
 
-        self.colorDict  = dict()
-        self.colorDict2 = dict()
-        pal     = self.palette()
+        self.rgbDict    = dict()
+        self.rgbaDict   = dict()
+        pal             = self.palette()
         constDict = {
             'Window':       QPalette.Window,
             'WindowText':   QPalette.WindowText,
@@ -107,5 +85,15 @@ class TrackerMain(QSplitter):
         for key in constDict.keys():
             col         = pal.color(constDict[key])
             (r,g,b,a)   = col.getRgb()
-            self.colorDict[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
-            self.colorDict2[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
+            self.rgbDict[key]  = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
+            self.rgbaDict[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
+    
+    def readLayoutState(self):
+        settings = QSettings("Kmars", "monitor")
+        self.restoreGeometry(settings.value("Monitor/geometry"))
+        self.restoreState(settings.value("Monitor/state"))
+
+    def saveLayoutState(self):
+        settings = QSettings("Kmars", "monitor")
+        settings.setValue("Monitor/geometry",   self.saveGeometry())
+        settings.setValue("Monitor/state",      self.saveState())

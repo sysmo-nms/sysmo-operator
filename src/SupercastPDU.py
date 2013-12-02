@@ -132,7 +132,7 @@ class TargetInfoType(univ.Enumerated):
 class TrackerProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('name',     char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('data',     univ.OctetString()),
     )
@@ -167,8 +167,8 @@ class TrackerProbeActivity(univ.Sequence):
 
 class TrackerProbeReturn(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('target',  char.PrintableString()),
+        namedtype.NamedType('id',      char.PrintableString()),
         namedtype.NamedType('status',   char.PrintableString()),
         namedtype.NamedType('originalReply',    char.PrintableString()),
         namedtype.NamedType('timestamp',        univ.Integer()),
@@ -661,13 +661,13 @@ def decode(pdu):
                     'from':     msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':      targetId,
+                        'name':         targetId,
                         'properties':   infoProp,
                         'infoType':     infoT
                     }
                 }
             elif msg3_type == 'probeInfo':
-                channel     = str(msg3.getComponentByName('channel'))
+                target      = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
                 perm        = msg3.getComponentByName('perm')
@@ -751,7 +751,7 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':  channel,
+                        'target':   target,
                         'id':       int(probeId),
                         'name':     name,
                         'perm':     permDict,
@@ -769,7 +769,7 @@ def decode(pdu):
                 }
             elif msg3_type == 'probeDump':
                 channel     = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
+                probeId     = str(msg3.getComponentByName('name'))
                 module      = msg3.getComponentByName('module')
                 binaryData  = msg3.getComponentByName('data')
 
@@ -777,10 +777,10 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel': channel,
-                        'id': int(probeId),
+                        'target': channel,
+                        'id':     probeId,
                         'logger': module,
-                        'data': str(binaryData)
+                        'data':   str(binaryData)
                     }
                 }
             elif msg3_type == 'probeActivity':
@@ -804,8 +804,8 @@ def decode(pdu):
                     }
                 }
             elif msg3_type == 'probeReturn':
-                channel     = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
+                target      = str(msg3.getComponentByName('target'))
+                probeId     = str(msg3.getComponentByName('id'))
                 status      = str(msg3.getComponentByName('status'))
                 original_rep = str(msg3.getComponentByName('originalReply'))
                 timestamp   = msg3.getComponentByName('timestamp')
@@ -822,8 +822,8 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':      channel,
-                        'id':           int(probeId),
+                        'target':       target,
+                        'id':           probeId,
                         'status':       status,
                         'originalRep':  original_rep,
                         'timestamp':    int(timestamp),

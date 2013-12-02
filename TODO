@@ -1,4 +1,8 @@
 - add unit test,
+- Advanced channel handling. Subscribe, subscribe groups, keep state of
+loggers. If multiple widgets require a channel, no need to subscribe two time
+but a protocol must exist to give widgets enougth info to read the file for 
+example.
 - setup.py,
 - right clic on targets should open a menu with user defined commands using
 probe and targets properties as arguments. Possibly right clic on multiple
@@ -21,7 +25,5 @@ for targets and custom targets.
 
 
 BUGS
-- tko do not take consideration of messages comming from a probe_status_move
-no probeReturn is send whent a probeInf is send.
-- tko do not have updated property list. Not sure if the server update it 
-correctly or if tkorder dit not take them in consideration.
+- tko do not have updated property list. The problem dit not come 
+from the server.

@@ -8,18 +8,25 @@ from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    PySide.QtNetwork    import *
 from    TkorderIcons        import TkorderIcons,TkorderImages
+from    TkorderDialog       import LogIn
 import  Supercast
-import  ModTracker
+import  Monitor
+import  MonitorProxyEvents
 
 _fromUtf8 = lambda s: s
 
 class TkorderClient(QMainWindow):
+
     " The main tkorder window "
+
+    closeSignal = Signal()
+
     def __init__(self, parent=None):
         super(TkorderClient, self).__init__(parent)
+        TkorderClient.singleton = self
+
         TkorderIcons.init()
         TkorderImages.init()
-        TkorderClient.singleton = self
 
         self.readSettings()
 
@@ -35,14 +42,7 @@ class TkorderClient(QMainWindow):
 
         " Status bar "
         self.statusBar = QStatusBar(self)
-        #self.statusBar.setStyleSheet(
-        #    "QStatusBar { \
-        #        border: 1px solid black;\
-        #        border-radius: 50px;\
-        #        background: #B0C2D9 \
-        #    }")
         self.setStatusBar(self.statusBar)
-
 
         " Menu bar "
         "File"
@@ -70,12 +70,10 @@ class TkorderClient(QMainWindow):
 
         " Server connexion and socket related "
         self.supercast = Supercast.Link(self)
-        self.supercast.setSocketServer('localhost')
-        self.supercast.setSocketPort(8888)
 
         " End init "
-        self.setCentralWidget(
-            TkorderCentralWidget(self))
+        self.central = TkorderCentralWidget(self)
+        self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
 
     def toggleFullScreen(self):
@@ -86,14 +84,21 @@ class TkorderClient(QMainWindow):
         
     def logTargets(self):
         pp  = pprint.PrettyPrinter(indent=4)
-        d   = ModTracker.TrackerMain.singleton.targets
+        d   = MonitorProxyEvents.ChannelHandler.singleton.targets
         print pp.pprint(d)
+
+    def tryConnect(self, cred):
+        self.supercast.userName = cred['name']
+        self.supercast.userPass = cred['pass']
+        self.supercast.server   = cred['server']
+        self.supercast.port     = cred['port']
+        self.supercast.tryConnect()
+
+        self.show()
+        return True
 
     def updateStatusBar(self, msg):
         self.statusBar.showMessage(msg)
-
-    def getSettings(self):
-        return self.config
 
     def readSettings(self):
         settings = QSettings("Kmars", "tkorder")
@@ -102,10 +107,15 @@ class TkorderClient(QMainWindow):
         self.restoreState(settings.value("TkorderMain/windowState"))
 
     def closeEvent(self, event):
+        self.closeSignal.emit()
         settings = QSettings("Kmars", "tkorder")
-        settings.setValue("TkorderMain/geometry", self.saveGeometry())
-        settings.setValue("TkorderMain/windowState", self.saveState())
+        settings.setValue("TkorderMain/geometry",       self.saveGeometry())
+        settings.setValue("TkorderMain/windowState",    self.saveState())
+        self.central.modView.monitor.saveLayoutState()
         QMainWindow.closeEvent(self, event)
+
+
+
 
 class TkorderCentralWidget(QFrame):
     def __init__(self, parent):
@@ -118,6 +128,8 @@ class TkorderCentralWidget(QFrame):
         self.modView        = ModView(self)
         grid.addWidget(self.leftSelector,     0,0,0,1)
         grid.addWidget(self.modView,          0,1,1,1)
+        grid.setColumnStretch(0, 0)
+        grid.setColumnStretch(1, 1)
         self.leftSelector.connectAll()
         self.setLayout(grid)
 
@@ -129,70 +141,26 @@ class LeftModSelector(QFrame):
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(5)
-        self.mod1 = RotatedButton(self, 'Monitor', 'est')
-        self.mod2 = RotatedButton(self, 'Manage',  'est')
-        mod1Pol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        mod2Pol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.mod1.setSizePolicy(mod1Pol)
+
+        buttonPol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self.mod1 = QPushButton(self)
+        self.mod1.setSizePolicy(buttonPol)
+        self.mod1.setIconSize(QSize(30,100))
         self.mod1.setCheckable(True)
-        self.mod1.setIcon(TkorderIcons.get('utilities-system-monitor'))
-        self.mod2.setSizePolicy(mod2Pol)
-        self.mod2.setIcon(TkorderIcons.get('emblem-system'))
+        self.mod1.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
         grid.addWidget(self.mod1, 0,0)
-        grid.addWidget(self.mod2, 1,0)
+
+        #self.mod2 = QPushButton(self)
+        #self.mod2.setSizePolicy(buttonPol)
+        #self.mod2.setIcon(TkorderIcons.get('emblem-system'))
+        #grid.addWidget(self.mod2, 1,0)
+
         self.setLayout(grid)
 
     def connectAll(self):
-        self.mod1.clicked.connect(ModTracker.TrackerMain.singleton.leftClicked)
-
-class RotatedButton(QPushButton):
-    # XXX rotate the icon but dit not print the text 
-    def __init__(self, text, parent, orientation = "west"):
-        super(RotatedButton,self).__init__(text, parent)
-        self.orientation = orientation
-
-    def paintEvent(self, event):
-        painter = QStylePainter(self)
-        painter.rotate(90)
-        painter.translate(0, -1 * self.width());
-        painter.drawControl(QStyle.CE_PushButton, self.getSyleOptions())
-
-    def minimumSizeHint(self):
-        size = super(RotatedButton, self).minimumSizeHint()
-        size.transpose()
-        return size
-
-    def sizeHint(self):
-        size = super(RotatedButton, self).sizeHint()
-        size.transpose()
-        return size
-
-    def getSyleOptions(self):
-        options = QStyleOptionButton()
-        options.initFrom(self)
-        size = options.rect.size()
-        size.transpose()
-        options.rect.setSize(size)
-        options.features = QStyleOptionButton.None
-        if self.isFlat():
-            options.features |= QStyleOptionButton.Flat
-        if self.menu():
-            options.features |= QStyleOptionButton.HasMenu
-        if self.autoDefault() or self.isDefault():
-            options.features |= QStyleOptionButton.AutoDefaultButton
-        if self.isDefault():
-            options.features |= QStyleOptionButton.DefaultButton
-        if self.isDown() or (self.menu() and self.menu().isVisible()):
-            options.state |= QStyle.State_Sunken
-        if self.isChecked():
-            options.state |= QStyle.State_On
-        if not self.isFlat() and not self.isDown():
-            options.state |= QStyle.State_Raised
-
-        options.text = self.text()
-        options.icon = self.icon()
-        options.iconSize = self.iconSize()
-        return options
+        mod1Toggle = Monitor.MonitorMain.singleton.toggleButtonClicked
+        self.mod1.clicked.connect(mod1Toggle)
 
 class ModView(QFrame):
     def __init__(self, parent):
@@ -201,25 +169,15 @@ class ModView(QFrame):
         grid.setContentsMargins(5,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
-        modTracker  = ModTracker.TrackerMain(self)
-        grid.addWidget(modTracker, 0, 0)
+        self.monitor = Monitor.MonitorMain(self)
+        grid.addWidget(self.monitor, 0, 0)
         self.setLayout(grid)
 
 def main(arguments):
-    tkorderApp    = QApplication(arguments)
-    #fo = open('style/dib.stylesheet')
-    #styleSheet = fo.read()
-    #fo.close()
-    #tkorderApp.setStyleSheet(styleSheet)
-    tkorderUi     = TkorderClient()
-    tkorderApp.setWindowIcon(
-        TkorderIcons.get('applications-development')
-    )
-
-    #print QStyleFactory.keys()
-    #tkorderApp.setStyle('Plastique')
-    loginUi         = Supercast.LogInDialog2()
+    tkorderApp  = QApplication(arguments)
+    tkorderUi   = TkorderClient()
+    tkorderApp.setWindowIcon(TkorderIcons.get('applications-development'))
+    loginUi     = LogIn()
     loginUi.supercastClient = tkorderUi
     loginUi.show()
-
     sys.exit(tkorderApp.exec_())
