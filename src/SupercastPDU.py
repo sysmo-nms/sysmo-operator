@@ -132,7 +132,7 @@ class TargetInfoType(univ.Enumerated):
 class TrackerProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('name',     char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('data',     univ.OctetString()),
     )
@@ -769,7 +769,7 @@ def decode(pdu):
                 }
             elif msg3_type == 'probeDump':
                 channel     = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
+                probeId     = str(msg3.getComponentByName('name'))
                 module      = msg3.getComponentByName('module')
                 binaryData  = msg3.getComponentByName('data')
 
@@ -778,9 +778,9 @@ def decode(pdu):
                     'msgType':  msg3_type,
                     'value':    {
                         'target': channel,
-                        'id': int(probeId),
+                        'id':     probeId,
                         'logger': module,
-                        'data': str(binaryData)
+                        'data':   str(binaryData)
                     }
                 }
             elif msg3_type == 'probeActivity':
