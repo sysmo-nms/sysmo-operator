@@ -34,7 +34,6 @@ class ChannelHandler(QObject):
         self.treeSignalsDict = dict()
         self.treeSignalsDict['select'] = ChannelSignal(self)
 
-
     def userSelection(self, chanSelection):
         unsubSelection = self._filterUserSelection(chanSelection)
         if unsubSelection != []: self._trySubscribe(unsubSelection)
@@ -51,7 +50,6 @@ class ChannelHandler(QObject):
             else: unsubList.append(chan)
         
         return unsubList
-        
 
     def handleMsg(self, msg):
         if      msg['msgType'] == 'authAck':
@@ -67,7 +65,6 @@ class ChannelHandler(QObject):
         elif    msg['msgType'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
         else: print "msg received", msg['msgType']
-            
 
     def _handleSubscribeOk(self, msg):
         if msg['value'] == self.masterChan: return

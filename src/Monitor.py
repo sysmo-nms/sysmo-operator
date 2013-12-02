@@ -4,7 +4,7 @@ import  TkorderIcons
 import  os
 import  re
 
-from    MonitorEvents   import ChannelHandler
+from    MonitorProxyEvents   import ChannelHandler
 import  MonitorDashboardArea
 import  MonitorTreeArea
 import  TkorderMain
@@ -32,8 +32,8 @@ class MonitorMain(QSplitter):
         self.addWidget(self.leftTree)
         self.addWidget(self.rightDash)
         
-        #MonitorEvents.singleton.probeInfo.connect(self.handleProbeInfo)
-        #MonitorEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
+        #MonitorProxyEvents.singleton.probeInfo.connect(self.handleProbeInfo)
+        #MonitorProxyEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
         
         self.targets    = dict()
         self.initHexaPalettes()

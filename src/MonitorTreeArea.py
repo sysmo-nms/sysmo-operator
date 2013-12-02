@@ -1,6 +1,6 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
-from    MonitorEvents   import ChannelHandler
+from    MonitorProxyEvents   import ChannelHandler
 import  TkorderIcons
 
 
@@ -19,15 +19,19 @@ class TreeContainer(QFrame):
         self.trackerMain  = parent
 
         self.treeview   = MonitorTreeView(self)
+        self.compositeList = MonitorCompositeList(self)
         self.searchBar  = MonitorTreeSearch(self)
         self.info       = MonitorTreeAreaInfo(self)
+        self.tabs       = QTabWidget(self)
+        self.tabs.addTab(self.treeview, 'Probes')
+        self.tabs.addTab(self.compositeList, 'Compositions')
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(5)
         grid.addWidget(self.searchBar,          1, 0)
-        grid.addWidget(self.treeview,           2, 0)
+        grid.addWidget(self.tabs,               2, 0)
         grid.addWidget(self.info,               3, 0)
 
         grid.setRowStretch(0,0)
@@ -109,7 +113,16 @@ class MonitorTreeAreaInfo(QTextEdit):
 
 
 ##############################################################################
-### TREEVIEW #################################################################
+### COMPOSITE LISTVIEW #######################################################
+##############################################################################
+class MonitorCompositeList(QTreeView):
+    def __init__(self, parent):
+        super(MonitorCompositeList, self).__init__(parent)
+        MonitorCompositeList.singleton = self
+
+
+##############################################################################
+### PROBES TREEVIEW ##########################################################
 ##############################################################################
 class MonitorTreeView(QTreeView):
     def __init__(self, parent):
