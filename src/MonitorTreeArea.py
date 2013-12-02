@@ -1,6 +1,7 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
 from    MonitorProxyEvents   import ChannelHandler
+from    MonitorDashboardArea import Dashboard
 import  TkorderIcons
 
 
@@ -24,7 +25,7 @@ class TreeContainer(QFrame):
         self.info       = MonitorTreeAreaInfo(self)
         self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview, 'Probes')
-        self.tabs.addTab(self.compositeList, 'Compositions')
+        self.tabs.addTab(self.compositeList, 'Composite')
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
@@ -157,7 +158,7 @@ class MonitorTreeView(QTreeView):
             modelIndex = self.proxy.mapToSource(proxyIndexes[i])
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
-        ChannelHandler.singleton.userSelection(selectionList)
+        Dashboard.singleton.userNewSelection(selectionList)
         QTreeView.selectionChanged(self, selected, deselected)
         
 class MonitorTreeModel(QStandardItemModel):
@@ -203,7 +204,8 @@ class TargetItem(QStandardItem):
         self.status     = 'UNKNOWN'
         self.searchString   = self.name
         self.targetDict = data
-        self.setFlags(Qt.ItemIsEnabled)
+        #self.setFlags(Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
 
     def data(self, role):
         if   role == Qt.DecorationRole:

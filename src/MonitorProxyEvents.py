@@ -1,5 +1,5 @@
 from    PySide.QtCore   import *
-from    Supercast       import Link
+import  Supercast
 
 
 class ChannelHandler(QObject):
@@ -14,13 +14,14 @@ class ChannelHandler(QObject):
         super(ChannelHandler, self).__init__(parent)
         # simple init
         ChannelHandler.singleton = self
-        self.sc         = Link.singleton
+        self.sc         = Supercast.Link.singleton
         self.sc.setMessageProcessor('modTrackerPDU', self.handleMsg)
         self.masterChan = 'target-MasterChan'
+        self.targets    = dict()
+        self.probes     = dict()
 
         # handling subscribe max count
         self.subscribedList     = list()
-
         # handling channels subscribed
         self.subscribedChans    = list()
 
@@ -30,11 +31,11 @@ class ChannelHandler(QObject):
         self.masterSignalsDict['targetInfo']    = ChannelSignal(self)
         self.masterSignalsDict['probeModInfo']  = ChannelSignal(self)
 
-        # common signals from treeview
-        self.treeSignalsDict = dict()
-        self.treeSignalsDict['select'] = ChannelSignal(self)
+        # connect myself
+        self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
+        self.masterSignalsDict['targetInfo'].signal.connect(self._handleTargetInfo)
 
-    def userSelection(self, chanSelection):
+    def subscribe(self, chanSelection):
         unsubSelection = self._filterUserSelection(chanSelection)
         if unsubSelection != []: self._trySubscribe(unsubSelection)
 
@@ -48,7 +49,6 @@ class ChannelHandler(QObject):
         for chan in chanSelection:
             if chan in self.subscribedList: pass
             else: unsubList.append(chan)
-        
         return unsubList
 
     def handleMsg(self, msg):
@@ -65,6 +65,16 @@ class ChannelHandler(QObject):
         elif    msg['msgType'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
         else: print "msg received", msg['msgType']
+
+    def _handleProbeInfo(self, msg):
+        probeInfo   = msg['value']
+        probeName   = probeInfo['name']
+        self.probes[probeName] = probeInfo
+
+    def _handleTargetInfo(self, msg):
+        targetInfo  = msg['value']
+        targetName  = targetInfo['name']
+        self.targets[targetName] = targetInfo
 
     def _handleSubscribeOk(self, msg):
         if msg['value'] == self.masterChan: return

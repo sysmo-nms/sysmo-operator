@@ -11,6 +11,7 @@ from    TkorderIcons        import TkorderIcons,TkorderImages
 from    TkorderDialog       import LogIn
 import  Supercast
 import  Monitor
+import  MonitorProxyEvents
 
 _fromUtf8 = lambda s: s
 
@@ -52,7 +53,7 @@ class TkorderClient(QMainWindow):
         debugAction  = QAction(
             TkorderIcons.get('applications-development'), '&Debug', self)
         debugAction.setShortcut('Ctrl+D')
-        #debugAction.triggered.connect(self.logTargets)
+        debugAction.triggered.connect(self.logTargets)
         menu        = self.menuBar()
         menuFile    = menu.addMenu('Engage')
         menuFile.addAction(exitAction)
@@ -81,10 +82,10 @@ class TkorderClient(QMainWindow):
         else:
             self.showNormal()
         
-    #def logTargets(self):
-        #pp  = pprint.PrettyPrinter(indent=4)
-        #d   = ModTracker.TrackerMain.singleton.targets
-        #print pp.pprint(d)
+    def logTargets(self):
+        pp  = pprint.PrettyPrinter(indent=4)
+        d   = MonitorProxyEvents.ChannelHandler.singleton.targets
+        print pp.pprint(d)
 
     def tryConnect(self, cred):
         self.supercast.userName = cred['name']

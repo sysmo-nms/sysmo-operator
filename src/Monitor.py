@@ -23,21 +23,14 @@ class MonitorMain(QSplitter):
 
         self.collapsed  = False
 
-        " forward 'modTrackerPDU to me "
-        #Supercast.Link.setMessageProcessor('modTrackerPDU', self.handleMsg)
-
         self.leftTree   = MonitorTreeArea.TreeContainer(self)
-        self.rightDash  = MonitorDashboardArea.Dash(self)
+        self.rightDash  = MonitorDashboardArea.Dashboard(self)
 
         self.addWidget(self.leftTree)
         self.addWidget(self.rightDash)
         
-        #MonitorProxyEvents.singleton.probeInfo.connect(self.handleProbeInfo)
-        #MonitorProxyEvents.singleton.probeModInfo.connect(self.handleProbeModInfo)
-        
         self.targets    = dict()
         self.initHexaPalettes()
-        self.initView()
         self.readLayoutState()
 
     def toggleButtonClicked(self):
@@ -49,22 +42,6 @@ class MonitorMain(QSplitter):
         elif self.collapsed == True:
             self.moveSplitter(self.oldSize, 1)
             self.collapsed = False
-
-    def initView(self): pass
-        #self.rightStack.addWidget(ModTrackerWideView.View(self))
-
-    def handleProbeModInfo(self, msg): pass
-
-    def handleProbeInfo(self, msg):
-        # TODO integrade the targets dict() with ModTrackerTreeArea
-        probeInfo   = msg['value']
-        channel     = probeInfo['channel']
-        probeId     = probeInfo['id']
-        if channel in self.targets:
-            self.targets[channel][probeId]  = probeInfo
-        else:
-            self.targets[channel]           = dict()
-            self.targets[channel][probeId]  = probeInfo
 
     def handleMsg(self, msg):
         mType = msg['msgType']

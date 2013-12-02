@@ -667,7 +667,7 @@ def decode(pdu):
                     }
                 }
             elif msg3_type == 'probeInfo':
-                channel     = str(msg3.getComponentByName('channel'))
+                target      = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
                 perm        = msg3.getComponentByName('perm')
@@ -751,7 +751,7 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'target':   channel,
+                        'target':   target,
                         'id':       int(probeId),
                         'name':     name,
                         'perm':     permDict,
