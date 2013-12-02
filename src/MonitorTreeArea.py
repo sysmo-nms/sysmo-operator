@@ -120,6 +120,9 @@ class MonitorCompositeList(QTreeView):
     def __init__(self, parent):
         super(MonitorCompositeList, self).__init__(parent)
         MonitorCompositeList.singleton = self
+        self.setAnimated(True)
+        self.setFrameShape(QFrame.NoFrame)
+        self.setHeaderHidden(False)
 
 
 ##############################################################################
@@ -139,6 +142,7 @@ class MonitorTreeView(QTreeView):
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setIconSize(QSize(25, 25)) 
         self.setAnimated(True)
+        self.setFrameShape(QFrame.NoFrame)
         #self.setHeaderHidden(True)
 
         self.setSortingEnabled(True)
