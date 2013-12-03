@@ -62,16 +62,51 @@ class MDIProbeView(AbstractChannelQFrame):
         target = self.probeConfig['target']
         self.targetConfig   = self.chanHandler.targets[target]
 
+        # text view on all types of probes
+        self.textArea   = QTextEdit(self)
+        dtext           = QTextDocument()
+        dtext.setMaximumBlockCount(500)
+        tformat         = QTextCharFormat()
+        tformat.setFontPointSize(8.2)
+        self.textArea.setDocument(dtext)
+        self.textArea.setCurrentCharFormat(tformat)
+        self.textArea.setReadOnly(True)
+        self.textArea.setLineWrapMode(QTextEdit.NoWrap)
+        self.textArea.setFixedWidth(300)
+        self.textArea.setFixedHeight(90)
+
+        # cartouche
+        self.cartoucheArea = QLabel(probe, self)
         grid = QGridLayout(self)
-        lab = QLabel(probe, self)
-        grid.addWidget(lab, 0,0)
+
+        # if there is a rrd logger
+        if 'btracker_logger_rrd' in self.probeConfig['loggers'].keys():
+            self.rrdArea = QLabel('Graphs here', self)
+            grid.addWidget(self.cartoucheArea,  0,0,2,1)
+            grid.addWidget(self.textArea,       1,1,1,1)
+            grid.addWidget(self.rrdArea,        0,1,1,1)
+            grid.setRowStretch(1,0)
+            grid.setRowStretch(0,1)
+        else:
+            grid.addWidget(self.cartoucheArea,  0,0,1,1)
+            grid.addWidget(self.textArea,       0,1,1,1)
+
         self.setLayout(grid)
+            
+
+    def handleTextDump(self, data):
+        self.textArea.append(str(data).rstrip())
+
+    def handleReturn(self, value):
+        string          = value['originalRep']
+        stripedString   = string.replace('\n', ' ').replace('  ', ' ')
+        self.textArea.append(stripedString)
 
     def handleProbeEvent(self, msg):
         if msg['msgType'] == 'probeDump':
             if msg['logger'] == 'btracker_logger_text':
-                print "handle probeDump text", self.probeName
+                self.handleTextDump(msg['data'])
             elif msg['logger'] == 'btracker_logger_rrd':
                 print "handle probeDump rrd", self.probeName
         elif msg['msgType'] == 'probeReturn':
-            print "handle probeReturn", self.probeName
+            self.handleReturn(msg['value'])

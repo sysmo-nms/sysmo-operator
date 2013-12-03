@@ -8,14 +8,14 @@ class AbstractChannelQFrame(QFrame):
         self.__channel = channel
         self.__connectProbe()
 
-    def __disconnectProbe(self):
-        ChannelHandler.singleton.unsubscribe(self, self.__channel)
-
     def __connectProbe(self):
         ChannelHandler.singleton.subscribe(self, self.__channel)
 
     def handleProbeEvent(self, msg): 
         print self, ":you should handle this message: ", msg['msgType']
+
+    def __disconnectProbe(self):
+        ChannelHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
         self.__disconnectProbe()
