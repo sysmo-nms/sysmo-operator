@@ -1,6 +1,6 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
-from    MonitorViewAbstract import AbstractProbeView
+from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 import  TkorderIcons
 
@@ -53,16 +53,14 @@ class MDIArea(QMdiArea):
         return (mdiWidget, mdiWindow)
         
 
-class MDIProbeView(AbstractProbeView):
+class MDIProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
-        super(MDIProbeView, self).__init__(parent)
+        super(MDIProbeView, self).__init__(parent, probe)
         self.probeName      = probe
         self.chanHandler    = ChannelHandler.singleton
         self.probeConfig    = self.chanHandler.probes[probe]
         target = self.probeConfig['target']
         self.targetConfig   = self.chanHandler.targets[target]
-
-        self.connectProbe(probe)
 
         grid = QGridLayout(self)
         lab = QLabel(probe, self)
@@ -77,7 +75,3 @@ class MDIProbeView(AbstractProbeView):
                 print "handle probeDump rrd", self.probeName
         elif msg['msgType'] == 'probeReturn':
             print "handle probeReturn", self.probeName
-
-    def destroy(self):
-        self.disconnectProbe(self.probeName)
-        AbstractProbeView.destroy(self)

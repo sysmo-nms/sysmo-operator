@@ -1,6 +1,6 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
-from    MonitorViewAbstract import AbstractProbeView
+from    MonitorAbstract     import AbstractChannelQFrame
 
 class Controls(QToolBar):
     def __init__(self, parent):
@@ -37,9 +37,9 @@ class WorkViewList(QFrame):
         grid.addWidget(QLabel('scroll area', self), 0,0)
         self.setLayout(grid)
 
-class WorkProbeView(AbstractProbeView):
+class WorkProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
-        super(WorkProbeView, self).__init__(parent)
+        super(WorkProbeView, self).__init__(parent, probe)
         self.probeName  = probe
 
     def handleProbeEvent(self, msg):
