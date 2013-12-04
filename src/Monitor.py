@@ -85,8 +85,8 @@ class MonitorMain(QSplitter):
         for key in constDict.keys():
             col         = pal.color(constDict[key])
             (r,g,b,a)   = col.getRgb()
-            self.rgbDict[key]  = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
-            self.rgbaDict[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
+            self.rgbaDict[key]  = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
+            self.rgbDict[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
     
     def readLayoutState(self):
         settings = QSettings("Kmars", "monitor")
