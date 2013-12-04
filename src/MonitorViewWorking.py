@@ -1,8 +1,12 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
+from    PySide.QtSvg        import *
+from    MonitorRrd          import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 import  TkorderIcons
+import  os
+import  datetime
 
 class Controls(QToolBar):
     def __init__(self, parent):
@@ -14,7 +18,9 @@ class WorkView(QFrame):
     def __init__(self, parent):
         super(WorkView, self).__init__(parent)
 
-        self.targetViews = dict()
+        self.tmpMainGridCount = 0
+
+        self.probeViews = dict()
 
         self.mainGrid   = QGridLayout()
         self.mainFrame  = QFrame(self)
@@ -32,39 +38,269 @@ class WorkView(QFrame):
         self.setLayout(grid)
 
     def deleteProbeView(self, probe):
-        pass
+        print "delete probe"
         
 
     def createProbeView(self, probe):
-        target = ChannelHandler.singleton.probes[probe]['target']
-        if target not in self.targetViews.keys():
-            targetView = WorkTargetView(self, target)
-            self.mainGrid.addWidget(targetView, self.mainGrid.rowCount() + 1,0)
-            self.targetViews[target] = targetView
-        else:
-            targetView = self.targetViews[target]
-        targetView.addProbe(probe)
-
-class WorkTargetView(QFrame):
-    def __init__(self, parent, target):
-        super(WorkTargetView, self).__init__(parent)
-        self.head = QLabel(target, self)
-        self.head.setFixedHeight(40)
-        self.grid  = QGridLayout(self)
-        self.grid.addWidget(self.head, 0,0)
-        self.grid.setRowStretch(0,0)
-
-    def addProbe(self, probe):
-        print "passss"
+        pview = WorkProbeView(self, probe)
+        #pview = QLabel('hello', self)
+        #pview.setBackgroundRole(QPalette.Window)
+        self.probeViews[probe] = pview
+        self.mainGrid.addWidget(pview, self.tmpMainGridCount, 0)
+        self.tmpMainGridCount += 1
+        self.mainGrid.setRowStretch(self.tmpMainGridCount, 0)
+        self.mainGrid.setRowStretch(self.tmpMainGridCount + 1, 1)
 
 class WorkProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
         super(WorkProbeView, self).__init__(parent, probe)
+        self.probeDict   = ChannelHandler.singleton.probes[probe]
+        self.setBackgroundRole(QPalette.Window)
+        self.setAutoFillBackground(True)
+        self.setWindowOpacity(0.0)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.targetName = self.probeDict['target']
         self.probeName  = probe
+        self.setFixedHeight(300)
+
+        loggers = self.probeDict['loggers']
+
+        if 'btracker_logger_text' in loggers and \
+           'btracker_logger_rrd' in loggers:
+            viewType = 'text_and_rrdgraph'
+        else: viewType = 'text_only'
+
+        progressFrame   = QFrame(self)
+        progressGrid    = QGridLayout(self)
+        timeoutProgress = TimeoutProgressBar(
+            self, self.probeDict['timeout'] * 1000, 'Timeout: %p%')
+        stepProgress    = StepProgressBar(
+            self, self.probeDict['step'] * 1000, 'Step: %p%', timeoutProgress)
+        progressGrid.addWidget(timeoutProgress,             0,0,1,1)
+        progressGrid.addWidget(stepProgress,                1,0,2,1)
+        progressGrid.setRowStretch(0,0)
+        progressGrid.setRowStretch(1,1)
+        progressGrid.setRowStretch(1,1)
+        progressFrame.setLayout(progressGrid)
+
+        leftFrame   = QFrame(self)
+        probeInfo   = ProbeInfo(self,self.targetName,self.probeDict['id'],self.probeDict)
+        textLog     = TextLog(self)
+
+        leftGrid    = QGridLayout(self)
+        leftGrid.addWidget(probeInfo,       0,0,1,1)
+        leftGrid.addWidget(progressFrame,   0,2,3,1)
+        leftGrid.addWidget(textLog,         2,0,1,2)
+        leftGrid.setContentsMargins(0,0,0,0)
+        leftGrid.setVerticalSpacing(0)
+        leftGrid.setHorizontalSpacing(0)
+        leftGrid.setRowStretch(0,0)
+        leftGrid.setRowStretch(1,1)
+        leftGrid.setRowStretch(2,0)
+        leftFrame.setLayout(leftGrid)
+
+        if   viewType == 'text_only':
+            rightPaneView   = EventViewer(self)
+        elif viewType == 'text_and_rrdgraph':
+            rightPaneView   = RrdView(self, self.probeDict)
+            #self.signal.connect(rightPaneView.handleEvent)
+        #self.signal.connect(stepProgress.handleEvent)
+        #self.signal.connect(textLog.handleEvent)
+        #self.signal.connect(probeInfo.handleEvent)
+
+        grid = QGridLayout(self)
+        grid.setContentsMargins(3,3,3,3)
+        grid.setVerticalSpacing(0)
+        grid.addWidget(leftFrame,       0,0,1,1)
+        grid.addWidget(rightPaneView,   0,1,1,1)
+
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+    
+        self.setLayout(grid)
 
     def handleProbeEvent(self, msg):
         print "workview probe event"
 
-    def destroy(self):
-        self.disconnectProbe(self.probeName)
-        AbstractProbeView.destroy(self)
+class EventViewer(QFrame):
+    def __init__(self, parent):
+        super(EventViewer, self).__init__(parent)
+        toolTipBaseHexa = Monitor.MonitorMain.singleton.rgbDict['ToolTipBase']
+        self.setStyleSheet("QFrame { border-radius: 15px; background: %s}" % toolTipBaseHexa)
+        grid = QGridLayout(self)
+        lab = QLabel('hello', self)
+        grid.addWidget(lab, 0,0)
+        self.setLayout(grid)
+
+class TextLog(QTextEdit):
+    def __init__(self, parent):
+        super(TextLog, self).__init__(parent)
+        dtext   = QTextDocument()
+        dtext.setMaximumBlockCount(500)
+        tformat = QTextCharFormat()
+        tformat.setFontPointSize(8.2)
+        self.setDocument(dtext)
+        self.setCurrentCharFormat(tformat)
+        self.setReadOnly(True)
+        self.setLineWrapMode(QTextEdit.NoWrap)
+        self.setFixedWidth(300)
+        self.setFixedHeight(90)
+
+    def handleEvent(self, msg):
+        if   msg['msgType'] == 'probeDump':
+            if msg['value']['logger'] == 'btracker_logger_text':
+                self.textDump(msg['value']['data'])
+            return
+        elif msg['msgType'] == 'probeReturn':
+            self.textAppend(msg['value'])
+        elif msg['msgType'] == 'probeInfo': pass
+
+    def textDump(self, data):
+        self.append(str(data).rstrip())
+
+    def textAppend(self, value):
+        #tstamp  = value['timestamp']
+        #time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
+        string  = value['originalRep'].rstrip()
+        printable = string.replace('\n', ' ').replace('  ', ' ')
+        #self.append(time + "-> " + printable)
+        self.append(printable)
+
+class ProbeInfo(QFrame):
+    def __init__(self, parent, targetName, probeId, probeDict):
+        super(ProbeInfo, self).__init__(parent)
+        #self.setStyleSheet("QFrame { background: #00FF00 }")
+        self.setFixedWidth(300)
+
+        status      = probeDict['status']
+        inspectors  = probeDict['inspectors']
+        loggers     = probeDict['loggers']
+        active      = probeDict['active']
+        step        = probeDict['step']
+        timeout     = probeDict['timeout']
+        probeId     = probeDict['id']
+        probeMod    = probeDict['probeMod']
+        infoType    = probeDict['infoType']
+        name        = probeDict['name']
+        perm        = probeDict['perm']
+        properties  = probeDict['properties']
+
+        if (status == 'OK'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-clear'), self)
+        elif (status == 'WARNING'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-showers'), self)
+        elif (status == 'CRITICAL'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-severe-alert'), self)
+        elif (status == 'UNKNOWN'):
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-few-clouds-night'), self)
+        else:
+            image = QSvgWidget(
+                TkorderIcons.getImage('weather-clear-night'), self)
+        statusLabel = QFrame(self)
+        statusLabel.setFixedHeight(80)
+        statusLabel.setFixedWidth(80)
+        self.statusLabelContent = image
+        statusGrid  = QGridLayout(self)
+        statusGrid.addWidget(self.statusLabelContent,   0,0)
+        statusLabel.setLayout(statusGrid)
+
+        grid = QGridLayout(self)
+
+        grid.addWidget(QLabel('Name:',  self),      1,0,1,1)
+        grid.addWidget(QLabel(name,  self),         1,1,1,1)
+        
+        grid.addWidget(QLabel('Status:',    self),  2,0,1,1)
+        grid.addWidget(QLabel(status, self),        2,1,1,1)
+
+        grid.addWidget(QLabel('Active:', self),     3,0,1,1)
+        grid.addWidget(QLabel(str(active),  self),  3,1,1,1)
+
+        grid.addWidget(QLabel('Step:', self),       4,0,1,1)
+        grid.addWidget(QLabel(str(step),  self),    4,1,1,1)
+
+        grid.addWidget(QLabel('Timeout: ',  self),  5,0,1,1)
+        grid.addWidget(QLabel(str(timeout),  self), 5,1,1,1)
+
+
+        hLine = QFrame(self)
+        hLine.setFrameShape(QFrame.HLine)
+        hLine.setLineWidth(1)
+        hLine.setMidLineWidth(1)
+        hLine.setFrameShadow(QFrame.Sunken)
+        grid.addWidget(hLine,                       6,0,1,3)
+
+        grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
+        grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
+
+        grid.addWidget(statusLabel,            0,2,5,1)
+
+        self.setLayout(grid)
+
+class StepProgressBar(QProgressBar):
+    
+    " this progress bar control the TimeoutProbressBar start and stop "
+
+    def __init__(self, parent, timerRange, textValue, timeoutProgress):
+        super(StepProgressBar, self).__init__(parent)
+        self.timeMax    = timerRange
+        self.timeoutProgress    = timeoutProgress
+
+        self.setOrientation(Qt.Vertical)
+        self.setRange(0, timerRange)
+        self.setFormat(textValue)
+        self.setValue(40)
+        self.setTextDirection(QProgressBar.TopToBottom)
+        self.valueChanged.connect(self.handleValueChanged)
+
+        self.timer = QTimeLine(timerRange, self)
+        self.timer.setFrameRange(0, timerRange)
+        self.timer.frameChanged[int].connect(self.setValue)
+
+    def handleEvent(self, msg):
+        if msg['msgType'] == 'probeReturn': self.resetProgress()
+
+    def stopProgress(self):
+        self.timer.stop()
+
+    def startProgress(self):
+        self.timer.start()
+
+    def resetProgress(self):
+        self.timeoutProgress.stopProgress()
+        self.timeoutProgress.reset()
+        self.stopProgress()
+        self.startProgress()
+
+    def handleValueChanged(self, i):
+        if self.timeMax == i:
+            self.timeoutProgress.startProgress()
+
+class TimeoutProgressBar(QProgressBar):
+    def __init__(self, parent, timerRange, textValue):
+        super(TimeoutProgressBar, self).__init__(parent)
+        self.timeMax = timerRange
+        self.setOrientation(Qt.Vertical)
+        self.setRange(0, timerRange)
+        self.setFormat(textValue)
+        self.setValue(40)
+        self.setTextDirection(QProgressBar.TopToBottom)
+        self.valueChanged.connect(self.handleValueChanged)
+
+        self.timer = QTimeLine(timerRange, self)
+        self.timer.setFrameRange(0, timerRange)
+        self.timer.frameChanged[int].connect(self.setValue)
+
+    def stopProgress(self):
+        self.timer.stop()
+
+    def startProgress(self):
+        self.timer.start()
+
+    def handleValueChanged(self, i):
+        if self.timeMax == i: pass # do something
+            
+

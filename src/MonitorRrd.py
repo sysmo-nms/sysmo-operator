@@ -4,7 +4,7 @@ from    PySide.QtSvg    import *
 import  os
 import  datetime
 import  TkorderIcons
-import  ModTracker
+import  Monitor
 import  rrdtool
 import  re
 import  tempfile
@@ -17,7 +17,7 @@ class RrdView(QLabel):
         self.knownHeight    = 0
         self.knownWidth     = 0
         self.probeDict      = probeDict
-        self.hexaPalette    = ModTracker.TrackerMain.singleton.colorDict
+        self.hexaPalette    = Monitor.MonitorMain.singleton.rgbaDict
 
         # tmp rrd file
         self.rrdDbFile      = QTemporaryFile()
