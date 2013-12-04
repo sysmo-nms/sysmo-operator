@@ -67,4 +67,4 @@ class DashTab(QTabWidget):
         self.views.append(workView)
         self.views.append(mdiView)
         self.addTab(workView, 'Work view')
-        self.addTab(mdiView,  'MDI view')
+        self.addTab(mdiView,  'Dashboard')

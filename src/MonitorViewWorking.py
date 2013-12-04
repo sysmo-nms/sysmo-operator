@@ -1,6 +1,8 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    MonitorAbstract     import AbstractChannelQFrame
+from    MonitorProxyEvents  import ChannelHandler
+import  TkorderIcons
 
 class Controls(QToolBar):
     def __init__(self, parent):
@@ -11,31 +13,49 @@ class Controls(QToolBar):
 class WorkView(QFrame):
     def __init__(self, parent):
         super(WorkView, self).__init__(parent)
+
+        self.targetViews = dict()
+
+        self.mainGrid   = QGridLayout()
+        self.mainFrame  = QFrame(self)
+        self.mainFrame.setBackgroundRole(QPalette.Base)
+        self.mainFrame.setLayout(self.mainGrid)
+
+        self.scroll = QScrollArea(self)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.mainFrame)
+
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
         grid.addWidget(Controls(self), 0,0)
-        grid.addWidget(WorkViewScroll(self), 1,0)
+        grid.addWidget(self.scroll, 1,0)
         self.setLayout(grid)
 
     def deleteProbeView(self, probe):
-        print "delete working"
+        pass
+        
 
     def createProbeView(self, probe):
-        print "create working"
+        target = ChannelHandler.singleton.probes[probe]['target']
+        if target not in self.targetViews.keys():
+            targetView = WorkTargetView(self, target)
+            self.mainGrid.addWidget(targetView, self.mainGrid.rowCount() + 1,0)
+            self.targetViews[target] = targetView
+        else:
+            targetView = self.targetViews[target]
+        targetView.addProbe(probe)
 
-class WorkViewScroll(QScrollArea):
-    def __init__(self, parent):
-        super(WorkViewScroll, self).__init__(parent)
-        self.setWidgetResizable(True)
-        self.setWidget(WorkViewList(self))
+class WorkTargetView(QFrame):
+    def __init__(self, parent, target):
+        super(WorkTargetView, self).__init__(parent)
+        self.head = QLabel(target, self)
+        self.head.setFixedHeight(40)
+        self.grid  = QGridLayout(self)
+        self.grid.addWidget(self.head, 0,0)
+        self.grid.setRowStretch(0,0)
 
-class WorkViewList(QFrame):
-    def __init__(self, parent):
-        super(WorkViewList, self).__init__(parent)
-        self.setBackgroundRole(QPalette.Base)
-        grid = QGridLayout(self)
-        grid.addWidget(QLabel('scroll area', self), 0,0)
-        self.setLayout(grid)
+    def addProbe(self, probe):
+        print "passss"
 
 class WorkProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
