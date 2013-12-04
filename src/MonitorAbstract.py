@@ -17,6 +17,5 @@ class AbstractChannelQFrame(QFrame):
         ChannelHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
-        print "should be called?"
         self.__disconnectProbe()
         QFrame.destroy(self)

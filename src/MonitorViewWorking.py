@@ -108,7 +108,7 @@ class WorkProbeView(AbstractChannelQFrame):
             self.rrdView    = RrdView(self, self.probeDict)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
-            rightGrid.addWidget(EventViewer(self),  0,0)
+            #rightGrid.addWidget(EventViewer(self),  0,0)
             rightGrid.addWidget(self.rrdView,       1,0)
             self.rightPaneView.setLayout(rightGrid)
 
@@ -134,7 +134,7 @@ class WorkProbeView(AbstractChannelQFrame):
             self.rightPaneView   = QFrame(self)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
-            rightGrid.addWidget(EventViewer(self), 0,0)
+            #rightGrid.addWidget(EventViewer(self), 0,0)
             rightGrid.addWidget(self.textLog, 1,0)
             self.rightPaneView.setLayout(rightGrid)
             grid = QGridLayout(self)
@@ -159,7 +159,6 @@ class WorkProbeView(AbstractChannelQFrame):
             if msg['logger'] == 'btracker_logger_text':
                 self.textLog.textDump(msg['data'])
             if msg['logger'] == 'btracker_logger_rrd':
-                print "rrd dump"
                 self.rrdView.rrdDump(msg['data'])
         elif msgType == 'probeReturn':
             # log text
