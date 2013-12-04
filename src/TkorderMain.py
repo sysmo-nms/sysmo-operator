@@ -175,6 +175,7 @@ class ModView(QFrame):
 
 def main(arguments):
     tkorderApp  = QApplication(arguments)
+    #tkorderApp.setStyle('cde')
     tkorderUi   = TkorderClient()
     tkorderApp.setWindowIcon(TkorderIcons.get('applications-development'))
     loginUi     = LogIn()
