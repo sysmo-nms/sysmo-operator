@@ -27,12 +27,14 @@ class MDIView(QFrame):
     def deleteProbeView(self, probe):
         (mdiWidget, mdiWindow) = self.probeViews[probe]
         self.mdiArea.delProbeView(mdiWindow)
+        self.mdiArea.tileSubWindows()
         mdiWindow.destroy()
         mdiWidget.destroy()
         del self.probeViews[probe]
 
     def createProbeView(self, probe):
         mdiInfo = self.mdiArea.addProbeView(probe)
+        self.mdiArea.tileSubWindows()
         self.probeViews[probe] = mdiInfo
         
         

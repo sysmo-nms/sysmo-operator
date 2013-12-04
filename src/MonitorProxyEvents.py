@@ -1,4 +1,6 @@
 from    PySide.QtCore   import *
+import  re
+import  rrdtool
 import  Supercast
 
 
@@ -121,6 +123,7 @@ class Channel(QObject):
     signal = Signal(dict)
     def __init__(self, parent, probeName):
         super(Channel, self).__init__(parent)
+        self.probeDict = ChannelHandler.singleton.probes[probeName]
         self.name = probeName
         self.loggerTextState = None
         self.rrdFile = None
@@ -151,6 +154,8 @@ class Channel(QObject):
             dumpMsg['data']     = data
             self.signal.emit(dumpMsg)
         elif dumpType == 'btracker_logger_rrd':
+            self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
+            self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
             self.rrdFile = QTemporaryFile(self)
             self.rrdFile.open()
             self.rrdFile.write(data)
@@ -163,7 +168,37 @@ class Channel(QObject):
             self.signal.emit(dumpMsg)
 
     def handleReturn(self, msg):
+        if self.rrdFile != None:
+            self._updateRrdDb(msg)
         self.signal.emit(msg)
+
+    def _updateRrdDb(self, msg):
+        cmLine  = self.rrdUpdateString
+        keyVals = msg['value']['keyVals']
+        macroB  = self.rrdMacroBinds
+
+        for key in macroB.keys():
+            if key in keyVals:
+                macro = macroB[key]
+                value = keyVals[key]
+                try:
+                    fvalue = float(value)
+                    ivalue = int(fvalue)
+                except ValueError:
+                    try: 
+                        ivalue = int(value)
+                    except ValueError: return
+                    
+                cmLine = cmLine.replace(macro, str(ivalue))
+            else:
+                print "Missing key. I will not update the rrd database."
+                return
+        template    = re.findall(r'--template\s+[^\s]+',  cmLine)
+        template    = re.sub(r'--template\s+', r'', template[0])
+        rrdvalues   = re.findall(r'N:[^\s]+', cmLine)
+        rrdvalues   = rrdvalues[0]
+        ret = rrdtool.update(str(self.rrdFileName), 
+            '--template', template, rrdvalues)
 
 class TextDump(QObject):
     def __init__(self, parent):
