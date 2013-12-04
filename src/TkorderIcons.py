@@ -12,6 +12,11 @@ class TkorderIcons(object):
     @classmethod
     def init(cls):
         cls.iconSet = {
+            'go-next': QtGui.QIcon("icons/go-next.svg"),
+            'go-previous': QtGui.QIcon("icons/go-previous.svg"),
+            'go-first': QtGui.QIcon("icons/go-first.svg"),
+            'go-last': QtGui.QIcon("icons/go-last.svg"),
+            'document-save-as': QtGui.QIcon("icons/document-save-as.svg"),
             'system-log-out': QtGui.QIcon("icons/system-log-out.svg"),
             'applications-development': QtGui.QIcon("icons/applications-development.svg"),
             'applications-multimedia': QtGui.QIcon("icons/applications-multimedia.svg"),

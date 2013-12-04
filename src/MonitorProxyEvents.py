@@ -122,10 +122,23 @@ class Channel(QObject):
     def __init__(self, parent, probeName):
         super(Channel, self).__init__(parent)
         self.name = probeName
-        self.logs = None
+        self.loggerTextState = None
+        self.rrdFile = None
+        self.rrdFileName = None
 
     def synchronizeView(self, view):
-        print "should synchronize +++++++++++++++++++++++++++++++"
+        if self.loggerTextState != None:
+            dumpMsg = dict()
+            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['logger']   = 'btracker_logger_text'
+            dumpMsg['data']     = self.loggerTextState
+            view.handleProbeEvent(dumpMsg)
+        if self.rrdFile != None:
+            dumpMsg = dict()
+            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['logger']   = 'btracker_logger_rrd'
+            dumpMsg['data']     = self.rrdFileName
+            view.handleProbeEvent(dumpMsg)
         
     def handleDump(self, msg):
         dumpType = msg['value']['logger']
@@ -146,7 +159,7 @@ class Channel(QObject):
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = dumpType
-            dumpMsg['fileName'] = self.rrdFile.fileName()
+            dumpMsg['data']     = self.rrdFileName
             self.signal.emit(dumpMsg)
 
     def handleReturn(self, msg):

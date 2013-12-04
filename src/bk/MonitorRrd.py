@@ -34,7 +34,8 @@ class RrdView(QLabel):
         # rrd conf
         self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
         self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
-        self.rrdGraphConf    = self.probeDict['loggers']['btracker_logger_rrd']['graphs']
+        rrdGraphConf         = self.probeDict['loggers']['btracker_logger_rrd']['graphs']
+        self.rrdGraphConf    = re.sub('<FILE>', self.rrdDbFileName, rrdGraphConf[0])
 
     def resizeEvent(self, event):
         "from doc: No drawing need be (or should be) done inside this handler"
@@ -51,11 +52,6 @@ class RrdView(QLabel):
             self.updateRrdDb(msg)
         elif msg['msgType'] == 'probeDump':
             self.dumpRrdDb(msg)
-
-    def rrdDump(self, fileName):
-        self.rrdFileName  = fileName
-        self.rrdGraphConf = re.sub('<FILE>', self.rrdFileName, self.rrdGraphConf[0])
-        self.updateGraph()
 
     def dumpRrdDb(self, msg):
         probeId = self.probeDict['id']

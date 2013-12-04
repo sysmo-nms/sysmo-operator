@@ -2,6 +2,8 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
+from    MonitorRrd          import RrdView
+
 import  TkorderIcons
 
 class Controls(QToolBar):
@@ -63,36 +65,38 @@ class MDIProbeView(AbstractChannelQFrame):
         self.targetConfig   = self.chanHandler.targets[target]
 
         # text view on all types of probes
-        self.textArea   = QTextEdit(self)
-        dtext           = QTextDocument()
-        dtext.setMaximumBlockCount(500)
-        tformat         = QTextCharFormat()
-        tformat.setFontPointSize(8.2)
-        self.textArea.setDocument(dtext)
-        self.textArea.setCurrentCharFormat(tformat)
-        self.textArea.setReadOnly(True)
-        self.textArea.setLineWrapMode(QTextEdit.NoWrap)
-        self.textArea.setFixedWidth(300)
-        self.textArea.setFixedHeight(90)
 
         # cartouche
-        self.cartoucheArea = QLabel(probe, self)
+        #self.cartoucheArea = QLabel(probe, self)
         grid = QGridLayout(self)
 
+        self.textArea   = None
+        self.rrdArea    = None
         # if there is a rrd logger
         if 'btracker_logger_rrd' in self.probeConfig['loggers'].keys():
-            self.rrdArea = QLabel('Graphs here', self)
-            grid.addWidget(self.cartoucheArea,  0,0,2,1)
-            grid.addWidget(self.textArea,       1,1,1,1)
-            grid.addWidget(self.rrdArea,        0,1,1,1)
-            grid.setRowStretch(1,0)
-            grid.setRowStretch(0,1)
+            self.rrdArea = RrdView(self, self.probeConfig)
+            grid.addWidget(self.rrdArea,  0,0,2,1)
+            #grid.addWidget(self.cartoucheArea,  0,0,2,1)
+            #grid.addWidget(self.textArea,       1,1,1,1)
+            #grid.addWidget(self.rrdArea,        0,1,1,1)
+            #grid.setRowStretch(1,0)
+            #grid.setRowStretch(0,1)
         else:
-            grid.addWidget(self.cartoucheArea,  0,0,1,1)
-            grid.addWidget(self.textArea,       0,1,1,1)
+            self.textArea   = QTextEdit(self)
+            dtext           = QTextDocument()
+            dtext.setMaximumBlockCount(500)
+            tformat         = QTextCharFormat()
+            tformat.setFontPointSize(8.2)
+            self.textArea.setDocument(dtext)
+            self.textArea.setCurrentCharFormat(tformat)
+            self.textArea.setReadOnly(True)
+            self.textArea.setLineWrapMode(QTextEdit.NoWrap)
+            self.textArea.setFixedWidth(300)
+            self.textArea.setFixedHeight(90)
+            grid.addWidget(self.textArea,       0,0)
 
         self.setLayout(grid)
-            
+        self.connectProbe()
 
     def handleTextDump(self, data):
         self.textArea.append(str(data).rstrip())
@@ -105,8 +109,13 @@ class MDIProbeView(AbstractChannelQFrame):
     def handleProbeEvent(self, msg):
         if msg['msgType'] == 'probeDump':
             if msg['logger'] == 'btracker_logger_text':
-                self.handleTextDump(msg['data'])
+                if self.textArea != None:
+                    self.textArea.append(str(msg['data']).rstrip())
             elif msg['logger'] == 'btracker_logger_rrd':
-                print "handle probeDump rrd", self.probeName
+                if self.rrdArea != None: 
+                    self.rrdArea.rrdDump(msg['data'])
         elif msg['msgType'] == 'probeReturn':
-            self.handleReturn(msg['value'])
+            if self.textArea != None:
+                self.handleReturn(msg['value'])
+            if self.rrdArea != None:
+                self.rrdArea.updateGraph()
