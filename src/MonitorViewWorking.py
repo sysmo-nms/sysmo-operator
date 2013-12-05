@@ -272,8 +272,9 @@ class ProbeInfo(QFrame):
 
         #grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
         #grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
-        grid.addWidget(QPushButton('Force', self),   7,0,2,1)
+        grid.addWidget(QPushButton('Force', self),     7,0,2,1)
         grid.addWidget(QPushButton('Suspend', self),   7,1,2,1)
+        grid.addWidget(QPushButton('Gen Event', self),   7,2,2,1)
 
         grid.addWidget(statusLabel,            0,2,5,1)
 
