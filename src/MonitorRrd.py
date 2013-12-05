@@ -18,8 +18,8 @@ class RrdView(QLabel):
         self.knownWidth     = 0
         self.probeDict      = probeDict
         self.hexaPalette    = Monitor.MonitorMain.singleton.rgbaDict
-        self.needRedraw     = False
-        self.rrdfileReady   = False
+        self._needRedraw     = False
+        self._rrdfileReady   = False
 
         # tmp rrd file
         self.rrdDbFile      = QTemporaryFile()
@@ -39,17 +39,17 @@ class RrdView(QLabel):
         self.rrdGraphConf    = self.probeDict['loggers']['btracker_logger_rrd']['graphs']
 
     def resizeEvent(self, event):
-        if self.rrdfileReady == True: self.needRedraw = True
+        if self._rrdfileReady == True: self._needRedraw = True
         QLabel.resizeEvent(self, event)
 
     def paintEvent(self, event):
-        if self.needRedraw == True:
+        if self._needRedraw == True:
             self.updateGraph()
-            self.needRedraw = False
+            self._needRedraw = False
         QLabel.paintEvent(self, event)
 
     def rrdDump(self, fileName):
-        self.rrdfileReady = True
+        self._rrdfileReady = True
         self.rrdFileName  = fileName
         self.rrdGraphConf = re.sub('<FILE>', self.rrdFileName, self.rrdGraphConf[0])
         self.updateGraph()
