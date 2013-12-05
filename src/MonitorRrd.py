@@ -18,6 +18,8 @@ class RrdView(QLabel):
         self.knownWidth     = 0
         self.probeDict      = probeDict
         self.hexaPalette    = Monitor.MonitorMain.singleton.rgbaDict
+        self.needRedraw     = False
+        self.rrdfileReady   = False
 
         # tmp rrd file
         self.rrdDbFile      = QTemporaryFile()
@@ -37,62 +39,19 @@ class RrdView(QLabel):
         self.rrdGraphConf    = self.probeDict['loggers']['btracker_logger_rrd']['graphs']
 
     def resizeEvent(self, event):
-        "from doc: No drawing need be (or should be) done inside this handler"
-        #print "new size", event.size()
-        #print "old size", event.oldSize()
+        if self.rrdfileReady == True: self.needRedraw = True
         QLabel.resizeEvent(self, event)
 
     def paintEvent(self, event):
-        #print "paint event"
+        if self.needRedraw == True:
+            self.updateGraph()
+            self.needRedraw = False
         QLabel.paintEvent(self, event)
 
-    def handleEvent(self, msg):
-        if   msg['msgType'] == 'probeReturn': 
-            self.updateRrdDb(msg)
-        elif msg['msgType'] == 'probeDump':
-            self.dumpRrdDb(msg)
-
     def rrdDump(self, fileName):
+        self.rrdfileReady = True
         self.rrdFileName  = fileName
         self.rrdGraphConf = re.sub('<FILE>', self.rrdFileName, self.rrdGraphConf[0])
-        self.updateGraph()
-
-    def dumpRrdDb(self, msg):
-        probeId = self.probeDict['id']
-        if msg['value']['logger'] == 'btracker_logger_rrd':
-            if msg['value']['id'] == probeId:
-                self.rrdDbFile.open()
-                self.rrdDbFile.write(msg['value']['data'])
-                self.rrdDbFile.close()
-                self.updateGraph()
-
-    def updateRrdDb(self, msg):
-        cmLine  = self.rrdUpdateString
-        keyVals = msg['value']['keyVals']
-        macroB  = self.rrdMacroBinds
-
-        for key in macroB.keys():
-            if key in keyVals:
-                macro = macroB[key]
-                value = keyVals[key]
-                try:
-                    fvalue = float(value)
-                    ivalue = int(fvalue)
-                except ValueError:
-                    try: 
-                        ivalue = int(value)
-                    except ValueError: return
-                    
-                cmLine = cmLine.replace(macro, str(ivalue))
-            else:
-                print "Missing key. I will not update the rrd database."
-                return
-        template    = re.findall(r'--template\s+[^\s]+',  cmLine)
-        template    = re.sub(r'--template\s+', r'', template[0])
-        rrdvalues   = re.findall(r'N:[^\s]+', cmLine)
-        rrdvalues   = rrdvalues[0]
-        ret = rrdtool.update(str(self.rrdDbFileName), 
-            '--template', template, rrdvalues)
         self.updateGraph()
 
     def updateGraph(self):
@@ -140,91 +99,3 @@ class RrdView(QLabel):
         eval(cmd)
         picture = QPixmap(self.rrdGraphFileName)
         self.setPixmap(picture)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#     def setGraphs(self, graphs, rrdDbPath):
-#         self.graphD     = dict()
-#         grid        = QGridLayout(self)
-#         graphCount  = len(graphs)
-#         for i in range(graphCount):
-#             self.graphD[i] = RrdGraph(self, graphs[i], rrdDbPath)
-#             grid.addWidget(self.graphD[i], 0,i,1,1)
-#
-#         self.setLayout(grid)
-#         self.updateGeometry()
-# 
-#         for i in self.graphD.keys():
-#             self.graphD[i].updateRrd()
-# 
-#     def resizeEvent(self, event):
-#         QFrame.resizeEvent(self, event)
-# 
-# class RrdGraph(QFrame):
-#     def __init__(self, parent, config, rrdDbPath):
-#         super(RrdGraph, self).__init__(parent)
-#         graphConf = dict()
-# 
-#         fd, path = tempfile.mkstemp('.png')
-#         graphConf['path'] = path
-# 
-#         opts    = re.findall(r'--[^\s]+\s+[^\s]+',  config)
-#         defsTmp = re.findall(r'DEF[^\s]+',          config)
-#         lines   = re.findall(r'LINE[^\s]+',         config)
-#         defs  = [s.replace('<FILE>', rrdDbPath) for s in defsTmp]
-# 
-#         for i in range(len(opts)):
-#             [a, b] = opts[i].split(' ')
-#             graphConf[a] = b
-# 
-#         graphConf['defs'] = list()
-#         for i in range(len(defs)):
-#             graphConf['defs'].append(defs[i])
-# 
-#         graphConf['lines'] = list()
-#         for i in range(len(lines)):
-#             graphConf['lines'].append(lines[i])
-# 
-#         self.rrdGraphConf = graphConf
-#         self.grid = QGridLayout(self)
-#         self.grid.setContentsMargins(0,0,0,0)
-#         self.grid.setHorizontalSpacing(0)
-#         self.grid.setVerticalSpacing(0)
-#         self.setLayout(self.grid)
-# 
-#     def mousePressEvent(self,event): pass
-# 
-#     def updateRrd(self):
-#         label = QLabel("ici graph", self)
-#         label.setScaledContents(True)
-#         self.grid.addWidget(label, 0,0)
-#         
-#     def resizeEvent(self, event):
-#         c = self.rrdGraphConf
-#         rrdtool.graph(c['path'],
-#             '--start',      c['--start'],
-#             '--end',        c['--end'],
-#             '--imgformat',  'PNG',
-#             '--width',      str(self.width() / 3),
-#             '--height',     str(self.height()),
-#             c['defs'],
-#             c['lines'])
-# 
-#         label = QLabel(self)
-#         label.setScaledContents(False)
-#         label.setPixmap(QPixmap(QImage(c['path'])))
-#         label.setStyleSheet("QLabel { background: #FF0000 }")
-#         self.grid.addWidget(label, 0,0)
-#         QFrame.resizeEvent(self, event)
-# 
