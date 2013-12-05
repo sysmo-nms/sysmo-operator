@@ -1,15 +1,9 @@
 - add unit test,
-- Advanced channel handling. Subscribe, subscribe groups, keep state of
-loggers. If multiple widgets require a channel, no need to subscribe two time
-but a protocol must exist to give widgets enougth info to read the file for 
-example.
 - setup.py,
 - right clic on targets should open a menu with user defined commands using
 probe and targets properties as arguments. Possibly right clic on multiple
 selected items.
 - events time plots (inspector_events)
-- treeview must be searchable, filterable, and custom parent/childs must be
-implemented.
 - keep an average packet time travel from server to client and add this in
 the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
@@ -22,6 +16,8 @@ yellow to red, step: green. Modify QTimeLine curve.
 - rrd time range slider for individual probes, or the entire set of probes
 for targets and custom targets.
 - higlight selection in treeview
+- rrd editor
+- rrd time range slides
 
 
 BUGS

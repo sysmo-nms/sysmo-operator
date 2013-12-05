@@ -2,6 +2,7 @@ from    PySide.QtCore   import *
 import  re
 import  rrdtool
 import  Supercast
+from    collections import deque
 
 
 class ChannelHandler(QObject):
@@ -147,11 +148,11 @@ class Channel(QObject):
         dumpType = msg['value']['logger']
         data     = msg['value']['data']
         if   dumpType == 'btracker_logger_text':
-            self.loggerTextState = data
+            self.loggerTextState = deque(data.split('\n'))
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = dumpType
-            dumpMsg['data']     = data
+            dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
         elif dumpType == 'btracker_logger_rrd':
             self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
@@ -170,7 +171,13 @@ class Channel(QObject):
     def handleReturn(self, msg):
         if self.rrdFile != None:
             self._updateRrdDb(msg)
+            self._updateLoggerText(msg)
         self.signal.emit(msg)
+
+    def _updateLoggerText(self, msg):
+        self.loggerTextState.append(msg['value']['originalRep'])
+        if len(self.loggerTextState) > 50:
+            self.loggerTextState.popleft()
 
     def _updateRrdDb(self, msg):
         cmLine  = self.rrdUpdateString
@@ -199,14 +206,6 @@ class Channel(QObject):
         rrdvalues   = rrdvalues[0]
         ret = rrdtool.update(str(self.rrdFileName), 
             '--template', template, rrdvalues)
-
-class TextDump(QObject):
-    def __init__(self, parent):
-        super(TextDump, self).__init__(parent)
-
-class RrdDump(QObject):
-    def __init__(self, parent):
-        super(RrdDump, self).__init__(parent)
 
 
 class SimpleSignal(QObject):

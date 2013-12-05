@@ -108,7 +108,7 @@ class WorkProbeView(AbstractChannelQFrame):
             self.rrdView    = RrdView(self, self.probeDict)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
-            #rightGrid.addWidget(EventViewer(self),  0,0)
+            rightGrid.addWidget(EventViewer(self),  0,0)
             rightGrid.addWidget(self.rrdView,       1,0)
             self.rightPaneView.setLayout(rightGrid)
 
@@ -134,7 +134,7 @@ class WorkProbeView(AbstractChannelQFrame):
             self.rightPaneView   = QFrame(self)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
-            #rightGrid.addWidget(EventViewer(self), 0,0)
+            rightGrid.addWidget(EventViewer(self), 0,0)
             rightGrid.addWidget(self.textLog, 1,0)
             self.rightPaneView.setLayout(rightGrid)
             grid = QGridLayout(self)
@@ -193,15 +193,15 @@ class TextLog(QTextEdit):
         self.setLineWrapMode(QTextEdit.NoWrap)
 
     def textDump(self, data):
-        self.append(str(data).rstrip())
+        for line in data:
+            self.append(str(line).rstrip())
 
     def textAppend(self, value):
-        #tstamp  = value['timestamp']
-        #time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
+        tstamp  = value['timestamp'] / 1000000
+        time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
         string  = value['originalRep'].rstrip()
         printable = string.replace('\n', ' ').replace('  ', ' ')
-        #self.append(time + "-> " + printable)
-        self.append(printable)
+        self.append(time + "-> " + printable)
 
 class ProbeInfo(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
@@ -270,8 +270,10 @@ class ProbeInfo(QFrame):
         hLine.setFrameShadow(QFrame.Sunken)
         grid.addWidget(hLine,                       6,0,1,3)
 
-        grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
-        grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
+        #grid.addWidget(QLabel('Perm: ',  self),     7,0,1,1)
+        #grid.addWidget(QLabel(str(perm),  self),    7,1,1,1)
+        grid.addWidget(QPushButton('Force', self),   7,0,2,1)
+        grid.addWidget(QPushButton('Suspend', self),   7,1,2,1)
 
         grid.addWidget(statusLabel,            0,2,5,1)
 

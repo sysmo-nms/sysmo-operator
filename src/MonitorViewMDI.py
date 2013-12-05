@@ -3,7 +3,7 @@ from    PySide.QtCore       import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 from    MonitorRrd          import RrdView
-
+import  datetime
 import  TkorderIcons
 
 class Controls(QToolBar):
@@ -104,15 +104,18 @@ class MDIProbeView(AbstractChannelQFrame):
         self.textArea.append(str(data).rstrip())
 
     def handleReturn(self, value):
-        string          = value['originalRep']
-        stripedString   = string.replace('\n', ' ').replace('  ', ' ')
-        self.textArea.append(stripedString)
+        tstamp  = value['timestamp'] / 1000000
+        time    = datetime.datetime.fromtimestamp(tstamp).strftime('%H:%M:%S')
+        string  = value['originalRep'].rstrip()
+        printable = string.replace('\n', ' ').replace('  ', ' ')
+        self.textArea.append(time + "-> " + printable)
 
     def handleProbeEvent(self, msg):
         if msg['msgType'] == 'probeDump':
             if msg['logger'] == 'btracker_logger_text':
                 if self.textArea != None:
-                    self.textArea.append(str(msg['data']).rstrip())
+                    for line in msg['data']:
+                        self.textArea.append(str(line).rstrip())
             elif msg['logger'] == 'btracker_logger_rrd':
                 if self.rrdArea != None: 
                     self.rrdArea.rrdDump(msg['data'])
