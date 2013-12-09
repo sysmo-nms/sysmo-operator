@@ -21,6 +21,9 @@ class RrdArea(QFrame):
         self.rrdViews = dict()
 
         grid        = QGridLayout(self)
+        grid.setContentsMargins(0,0,0,0)
+        grid.setHorizontalSpacing(0)
+        grid.setVerticalSpacing(0)
         rowCount    = 0
         for key in self.rrdConf:
             self.rrdViews[key] = RrdView(self, key, self.rrdConf[key])
