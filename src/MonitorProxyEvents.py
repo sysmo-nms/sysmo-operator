@@ -45,6 +45,28 @@ class ChannelHandler(QObject):
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
         # END
 
+    def handleMsg(self, msg):
+        if      msg['msgType'] == 'probeReturn':
+            self.masterSignalsDict['probeReturn'].signal.emit(msg)
+        elif    msg['msgType'] == 'probeDump':
+            self.masterSignalsDict['probeDump'].signal.emit(msg)
+        elif    msg['msgType'] == 'rrdProbeDump':
+            self.masterSignalsDict['probeDump'].signal.emit(msg)
+        elif    msg['msgType'] == 'probeInfo':
+            self.masterSignalsDict['probeInfo'].signal.emit(msg)
+        elif    msg['msgType'] == 'targetInfo':
+            self.masterSignalsDict['targetInfo'].signal.emit(msg)
+        elif    msg['msgType'] == 'probeModInfo':
+            self.masterSignalsDict['probeModInfo'].signal.emit(msg)
+        elif    msg['msgType'] == 'authAck':
+            self._autoSubscribe()
+        elif    msg['msgType'] == 'subscribeOk':
+            self._handleSubscribeOk(msg)
+        elif    msg['msgType'] == 'unSubscribeOk':
+            self._handleUnsubscribeOk(msg)
+        else: 
+            print "unknown msg received", msg['msgType']
+
     def subscribe(self, viewObject, channel):
         if channel in self.subscribedChans:
             self.chanProxy[channel].synchronizeView(viewObject)
@@ -100,25 +122,6 @@ class ChannelHandler(QObject):
         targetName  = targetInfo['name']
         self.targets[targetName] = targetInfo
 
-    def handleMsg(self, msg):
-        if      msg['msgType'] == 'probeReturn':
-            self.masterSignalsDict['probeReturn'].signal.emit(msg)
-        elif    msg['msgType'] == 'probeDump':
-            self.masterSignalsDict['probeDump'].signal.emit(msg)
-        elif    msg['msgType'] == 'probeInfo':
-            self.masterSignalsDict['probeInfo'].signal.emit(msg)
-        elif    msg['msgType'] == 'targetInfo':
-            self.masterSignalsDict['targetInfo'].signal.emit(msg)
-        elif    msg['msgType'] == 'probeModInfo':
-            self.masterSignalsDict['probeModInfo'].signal.emit(msg)
-        elif    msg['msgType'] == 'authAck':
-            self._autoSubscribe()
-        elif    msg['msgType'] == 'subscribeOk':
-            self._handleSubscribeOk(msg)
-        elif    msg['msgType'] == 'unSubscribeOk':
-            self._handleUnsubscribeOk(msg)
-        else: 
-            print "unknown msg received", msg['msgType']
 
 class Channel(QObject):
     signal = Signal(dict)
@@ -127,8 +130,7 @@ class Channel(QObject):
         self.probeDict = ChannelHandler.singleton.probes[probeName]
         self.name = probeName
         self.loggerTextState = None
-        self.rrdFile = None
-        self.rrdFileName = None
+        self.rrdFiles = None
 
     def synchronizeView(self, view):
         if self.loggerTextState != None:
@@ -137,11 +139,11 @@ class Channel(QObject):
             dumpMsg['logger']   = 'btracker_logger_text'
             dumpMsg['data']     = self.loggerTextState
             view.handleProbeEvent(dumpMsg)
-        if self.rrdFile != None:
+        if self.rrdFiles != None:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = 'btracker_logger_rrd'
-            dumpMsg['data']     = self.rrdFileName
+            dumpMsg['data']     = self.rrdFiles
             view.handleProbeEvent(dumpMsg)
         
     def handleDump(self, msg):
@@ -155,22 +157,37 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
         elif dumpType == 'btracker_logger_rrd':
-            self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
-            self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
-            self.rrdFile = QTemporaryFile(self)
-            self.rrdFile.open()
-            self.rrdFile.write(data)
-            self.rrdFile.close()
-            self.rrdFileName = self.rrdFile.fileName()
+            print "dump rrd?----------------------------------------"
+            self.rrdFiles = dict()
+            for key in data:
+                rrdFile = QTemporaryFile(self)
+                rrdFile.open()
+                rrdFile.write(str(data[key]))
+                rrdFile.close()
+                fileName = rrdFile.fileName()
+                self.rrdFiles[key] = fileName 
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = dumpType
-            dumpMsg['data']     = self.rrdFileName
+            dumpMsg['data']     = self.rrdFiles
             self.signal.emit(dumpMsg)
+            
+            #self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
+            #self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
+            #self.rrdFile = QTemporaryFile(self)
+            #self.rrdFile.open()
+            #self.rrdFile.write(data)
+            #self.rrdFile.close()
+            #self.rrdFileName = self.rrdFile.fileName()
+            #dumpMsg = dict()
+            #dumpMsg['msgType']  = 'probeDump'
+            #dumpMsg['logger']   = dumpType
+            #dumpMsg['data']     = self.rrdFileName
 
     def handleReturn(self, msg):
-        if self.rrdFile != None:
-            self._updateRrdDb(msg)
+        if self.rrdFiles != None: pass
+            #self._updateRrdDb(msg)
+        if self.loggerTextState != None:
             self._updateLoggerText(msg)
         self.signal.emit(msg)
 

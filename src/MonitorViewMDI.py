@@ -2,7 +2,7 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
-from    MonitorRrd          import RrdView
+from    MonitorRrd          import RrdArea
 import  datetime
 import  TkorderIcons
 
@@ -76,7 +76,7 @@ class MDIProbeView(AbstractChannelQFrame):
         self.rrdArea    = None
         # if there is a rrd logger
         if 'btracker_logger_rrd' in self.probeConfig['loggers'].keys():
-            self.rrdArea = RrdView(self, self.probeConfig)
+            self.rrdArea = RrdArea(self, self.probeConfig)
             grid.addWidget(self.rrdArea,  0,0,2,1)
             #grid.addWidget(self.cartoucheArea,  0,0,2,1)
             #grid.addWidget(self.textArea,       1,1,1,1)

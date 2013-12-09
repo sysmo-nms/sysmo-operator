@@ -138,6 +138,24 @@ class TargetInfoType(univ.Enumerated):
         ('update', 2)
     )
 
+
+class TrackerRrdFile(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('fileId',   char.PrintableString()),
+        namedtype.NamedType('file',     univ.OctetString()),
+    )
+
+class TrackerRrdFiles(univ.SequenceOf):
+    componentType = TrackerRrdFile()
+
+class TrackerRrdProbeDump(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('channel',  char.PrintableString()),
+        namedtype.NamedType('name',     char.PrintableString()),
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('rrdFiles',     TrackerRrdFiles()),
+    )
+
 class TrackerProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
@@ -260,7 +278,17 @@ class TrackerPDU_fromServer(univ.Choice):
                     8
                 )
             )
-        )
+        ),
+        namedtype.NamedType(
+            'rrdProbeDump',
+            TrackerRrdProbeDump().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    9
+                )
+            )
+        ),
     )
 
 class TrackerPDU(univ.Choice):
@@ -751,8 +779,8 @@ def decode(pdu):
 
                             rrdKey = str(rrdFileId)
                             rrdConfigs[rrdKey] = dict()
-                            rrdConfigs[rrdKey]['create'] = rrdCreate
-                            rrdConfigs[rrdKey]['update'] = rrdUpdate
+                            rrdConfigs[rrdKey]['create'] = str(rrdCreate)
+                            rrdConfigs[rrdKey]['update'] = str(rrdUpdate)
                             rrdConfigs[rrdKey]['graphs'] = graphsL
                             rrdConfigs[rrdKey]['binds']  = bindsD
 
@@ -802,6 +830,28 @@ def decode(pdu):
                         'id':     probeId,
                         'logger': module,
                         'data':   str(binaryData)
+                    }
+                }
+            elif msg3_type == 'rrdProbeDump':
+                channel     = str(msg3.getComponentByName('channel'))
+                probeId     = str(msg3.getComponentByName('name'))
+                module      = msg3.getComponentByName('module')
+                files       = msg3.getComponentByName('rrdFiles')
+                rrdFiles = dict()
+                for i in range(len(files)):
+                    rrdFileRecord = files.getComponentByPosition(i)
+                    fileId  = rrdFileRecord.getComponentByName('fileId')
+                    binFile = rrdFileRecord.getComponentByName('file')
+                    rrdFiles[str(fileId)] = binFile
+
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'target': channel,
+                        'id':     probeId,
+                        'logger': module,
+                        'data':  rrdFiles
                     }
                 }
             elif msg3_type == 'probeActivity':

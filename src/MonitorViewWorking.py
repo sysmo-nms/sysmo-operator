@@ -89,7 +89,7 @@ class WorkProbeView(AbstractChannelQFrame):
         self.leftFrame   = QFrame(self)
         self.probeInfo   = ProbeInfo(self,self.targetName,self.probeDict['id'],self.probeDict)
         self.textLog     = TextLog(self)
-        self.rrdView     = None
+        self.rrdArea     = None
 
         leftGrid    = QGridLayout(self)
         if viewType == 'text_and_rrdgraph':
@@ -105,11 +105,11 @@ class WorkProbeView(AbstractChannelQFrame):
             leftGrid.setRowStretch(2,0)
             self.leftFrame.setLayout(leftGrid)
             self.rightPaneView   = QFrame(self)
-            self.rrdView    = RrdView(self, self.probeDict)
+            self.rrdArea    = RrdArea(self, self.probeDict)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
             rightGrid.addWidget(EventViewer(self),  0,0)
-            rightGrid.addWidget(self.rrdView,       1,0)
+            rightGrid.addWidget(self.rrdArea,       1,0)
             self.rightPaneView.setLayout(rightGrid)
 
             grid = QGridLayout(self)
@@ -159,15 +159,15 @@ class WorkProbeView(AbstractChannelQFrame):
             if msg['logger'] == 'btracker_logger_text':
                 self.textLog.textDump(msg['data'])
             if msg['logger'] == 'btracker_logger_rrd':
-                self.rrdView.rrdDump(msg['data'])
+                self.rrdArea.rrdDump(msg['data'])
         elif msgType == 'probeReturn':
             # log text
             self.textLog.textAppend(msg['value'])
             # progress
             self.stepProgress.resetProgress()
             # rrd
-            if self.rrdView != None: 
-                self.rrdView.updateGraph()
+            if self.rrdArea != None: 
+                self.rrdArea.updateGraph()
 
 class EventViewer(QFrame):
     def __init__(self, parent):
