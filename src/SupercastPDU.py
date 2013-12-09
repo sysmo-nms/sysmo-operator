@@ -41,13 +41,22 @@ class Binds(univ.SequenceOf):
 class Graphs(univ.SequenceOf):
     componentType = char.PrintableString()
 
-class LoggerRrd(univ.Sequence):
+class LoggerRrdConfig(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('file',     char.PrintableString()),
         namedtype.NamedType('create',   char.PrintableString()),
         namedtype.NamedType('update',   char.PrintableString()),
         namedtype.NamedType('graphs',   Graphs()),
         namedtype.NamedType('binds',    Binds())
+    )
+
+class LoggerRrdConfigs(univ.SequenceOf):
+    componentType = LoggerRrdConfig()
+
+class LoggerRrd(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('config',   LoggerRrdConfigs())
     )
 
 class LoggerText(univ.Sequence):
@@ -712,33 +721,45 @@ def decode(pdu):
                         mod  = logger2.getComponentByName('module')
                         conf = logger2.getComponentByName('conf')
                         loggersDict[str(mod)] = str(conf)
+                    ####################
+                    # IF LOGGER IS RRD #
+                    ####################
                     elif ltype == 'loggerRrd':
                         logger2 = logger.getComponent()
                         mod     = logger2.getComponentByName('module')
+                        rrdConfig = logger2.getComponentByName('config')
 
-                        create  = logger2.getComponentByName('create')
-                        update  = logger2.getComponentByName('update')
+                        rrdConfigs = dict()
+                        for confId in range(len(rrdConfig)):
+                            rrdConf = rrdConfig.getComponentByPosition(confId)
+                            rrdFileId = rrdConf.getComponentByName('file')
+                            rrdCreate = rrdConf.getComponentByName('create')
+                            rrdUpdate = rrdConf.getComponentByName('update')
+                            rrdGraphs = rrdConf.getComponentByName('graphs')
+                            rrdBinds  = rrdConf.getComponentByName('binds')
+                            bindsD = dict()
+                            for b in range(len(rrdBinds)):
+                                bind = rrdBinds.getComponentByPosition(b)
+                                rep  = bind.getComponentByName('replacement')
+                                mac  = bind.getComponentByName('macro')
+                                bindsD[str(rep)] = str(mac)
 
-                        binds   = logger2.getComponentByName('binds')
-                        bindsD = dict()
-                        for b in range(len(binds)):
-                            bind = binds.getComponentByPosition(b)
-                            rep  = bind.getComponentByName('replacement')
-                            mac  = bind.getComponentByName('macro')
-                            bindsD[str(rep)] = str(mac)
+                            graphsL = list()
+                            for g in range(len(rrdGraphs)):
+                                graphItem = rrdGraphs.getComponentByPosition(g)
+                                graphsL.append(str(graphItem))
 
-                        graphs  = logger2.getComponentByName('graphs')
-                        graphsL = list()
-                        for g in range(len(graphs)):
-                            graphItem = graphs.getComponentByPosition(g)
-                            graphsL.append(str(graphItem))
+                            rrdKey = str(rrdFileId)
+                            rrdConfigs[rrdKey] = dict()
+                            rrdConfigs[rrdKey]['create'] = rrdCreate
+                            rrdConfigs[rrdKey]['update'] = rrdUpdate
+                            rrdConfigs[rrdKey]['graphs'] = graphsL
+                            rrdConfigs[rrdKey]['binds']  = bindsD
 
-                        conf   = dict()
-                        conf['create'] = str(create)
-                        conf['update'] = str(update)
-                        conf['graphs'] = graphsL
-                        conf['binds']  = bindsD
-                        loggersDict[str(mod)] = conf
+                        loggersDict[str(mod)] = rrdConfigs
+                    ##########
+                    # END IF #
+                    ##########
 
                 propertiesDict = {}
                 for i in range(len(properties)):
@@ -751,20 +772,20 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'target':   target,
-                        'id':       int(probeId),
-                        'name':     name,
-                        'perm':     permDict,
-                        'probeMod': probeMod,
-                        'probeconf': probeConf,
-                        'status':   status,
-                        'timeout':  int(timeout),
-                        'step':     int(step),
+                        'target':       target,
+                        'id':           int(probeId),
+                        'name':         name,
+                        'perm':         permDict,
+                        'probeMod':     probeMod,
+                        'probeconf':    probeConf,
+                        'status':       status,
+                        'timeout':      int(timeout),
+                        'step':         int(step),
                         'inspectors':   inspectorsDict,
-                        'loggers':  loggersDict,
+                        'loggers':      loggersDict,
                         'properties':   propertiesDict,
-                        'active':   int(active),
-                        'infoType': infoType.prettyPrint()
+                        'active':       int(active),
+                        'infoType':     infoType.prettyPrint()
                     }
                 }
             elif msg3_type == 'probeDump':
