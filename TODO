@@ -18,7 +18,13 @@ for targets and custom targets.
 - higlight selection in treeview
 - rrd editor
 - rrd time range slides
-
+- threads (implementation order). Widget classes can not be threaded: 
+    one  Socket,
+    one  Supercast (encode, decode) (or many if it keep the order of arriving
+    messages using a buffer for example),
+    many MonitorProxyEvents.Channel (including rrdtool.update)
+    many rrdtool.graph
+    many QTimeLine (MonitorViewWorking.SetProgressBar and TimeoutProgressBar)
 
 BUGS
 - tko do not have updated property list. The problem dit not come 
