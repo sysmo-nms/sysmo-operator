@@ -158,8 +158,11 @@ class WorkProbeView(AbstractChannelQFrame):
         if msgType == 'probeDump':
             if msg['logger'] == 'btracker_logger_text':
                 self.textLog.textDump(msg['data'])
-            if msg['logger'] == 'btracker_logger_rrd':
+            elif msg['logger'] == 'btracker_logger_rrd':
                 self.rrdArea.rrdDump(msg['data'])
+            elif msg['logger'] == 'tracker_events':
+                print "logger tracker_events event"
+
         elif msgType == 'probeReturn':
             # log text
             self.textLog.textAppend(msg['value'])

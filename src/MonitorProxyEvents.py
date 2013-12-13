@@ -156,6 +156,8 @@ class Channel(QObject):
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
+        elif dumpType == 'tracker_events':
+            print "tracker_events dump received"
         elif dumpType == 'btracker_logger_rrd':
             print "dump rrd?----------------------------------------"
             self.rrdFiles = dict()

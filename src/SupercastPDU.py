@@ -65,6 +65,12 @@ class LoggerText(univ.Sequence):
         namedtype.NamedType('conf',     char.PrintableString())
     )
 
+class LoggerEvents(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('conf',     char.PrintableString())
+    )
+
 class Logger(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
@@ -84,6 +90,16 @@ class Logger(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'loggerEvents',
+            LoggerEvents().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    2
                 )
             )
         )
@@ -746,8 +762,14 @@ def decode(pdu):
                     ltype  = logger.getName()
                     if ltype == 'loggerText':
                         logger2 = logger.getComponent()
-                        mod  = logger2.getComponentByName('module')
-                        conf = logger2.getComponentByName('conf')
+                        mod     = logger2.getComponentByName('module')
+                        conf    = logger2.getComponentByName('conf')
+                        loggersDict[str(mod)] = str(conf)
+                    elif ltype == 'loggerEvents':
+                        logger2 = logger.getComponent()
+                        mod     = logger2.getComponentByName('module')
+                        conf    = logger2.getComponentByName('conf')
+                        print "mod is ", mod
                         loggersDict[str(mod)] = str(conf)
                     ####################
                     # IF LOGGER IS RRD #
