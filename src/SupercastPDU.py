@@ -769,7 +769,6 @@ def decode(pdu):
                         logger2 = logger.getComponent()
                         mod     = logger2.getComponentByName('module')
                         conf    = logger2.getComponentByName('conf')
-                        print "mod is ", mod
                         loggersDict[str(mod)] = str(conf)
                     ####################
                     # IF LOGGER IS RRD #
