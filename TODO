@@ -25,6 +25,8 @@ for targets and custom targets.
     many MonitorProxyEvents.Channel (including rrdtool.update)
     many rrdtool.graph
     many QTimeLine (MonitorViewWorking.SetProgressBar and TimeoutProgressBar)
+- perf: build the maximum number of view widget at startup (total of probe
+entries of the treeview).
 
 BUGS
 - tko do not have updated property list. The problem dit not come 
