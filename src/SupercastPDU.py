@@ -164,6 +164,30 @@ class TrackerRrdFile(univ.Sequence):
 class TrackerRrdFiles(univ.SequenceOf):
     componentType = TrackerRrdFile()
 
+class TrackerProbeEvent(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('eventId',      univ.Integer()),
+        namedtype.NamedType('insertTs',     univ.Integer()),
+        namedtype.NamedType('ackTs',        univ.Integer()),
+        namedtype.NamedType('status',       char.PrintableString()),
+        namedtype.NamedType('textual',      char.PrintableString()),
+        namedtype.NamedType('ackNeeded',    univ.Boolean()),
+        namedtype.NamedType('ackValue',     char.PrintableString()),
+        namedtype.NamedType('groupOwner',   char.PrintableString()),
+        namedtype.NamedType('userOwner',    char.PrintableString()),
+    )
+
+class TrackerProbeEvents(univ.SequenceOf):
+    componentType = TrackerProbeEvent()
+
+class TrackerEventProbeDump(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',   char.PrintableString()),
+        namedtype.NamedType('probe',    char.PrintableString()),
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('events',   TrackerProbeEvents()),
+    )
+
 class TrackerRrdProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
@@ -305,6 +329,26 @@ class TrackerPDU_fromServer(univ.Choice):
                 )
             )
         ),
+        namedtype.NamedType(
+            'eventProbeDump',
+            TrackerEventProbeDump().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    10 
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'probeEventMsg',
+            TrackerProbeEvent().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    11 
+                )
+            )
+        )
     )
 
 class TrackerPDU(univ.Choice):
@@ -851,6 +895,71 @@ def decode(pdu):
                         'id':     probeId,
                         'logger': module,
                         'data':   str(binaryData)
+                    }
+                }
+            elif msg3_type == 'probeEventMsg':
+                eventId     = msg3.getComponentByName('eventId')
+                insertTs    = msg3.getComponentByName('insertTs')
+                ackTs       = msg3.getComponentByName('ackTs')
+                status      = str(msg3.getComponentByName('status'))
+                textual     = str(msg3.getComponentByName('textual'))
+                ackNeeded   = msg3.getComponentByName('ackNeeded')
+                ackValue    = str(msg3.getComponentByName('ackValue'))
+                groupOwner  = str(msg3.getComponentByName('groupOwner'))
+                userOwner   = str(msg3.getComponentByName('userOwner'))
+
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'eventId':      eventId,
+                        'insertTs':     insertTs,
+                        'ackTs':        ackTs,
+                        'status':       status,
+                        'textual':      textual,
+                        'ackNeeded':    ackNeeded,
+                        'ackValue':     ackValue,
+                        'groupOwner':   groupOwner,
+                        'userOwner':    userOwner
+                    }
+                }
+            elif msg3_type == 'eventProbeDump':
+                target      = str(msg3.getComponentByName('target'))
+                probe       = str(msg3.getComponentByName('probe'))
+                module      = str(msg3.getComponentByName('module'))
+                events      = msg3.getComponentByName('events')
+                
+                eventsList = list()
+                for i in range(len(events)):
+                    anEvent     = events.getComponentByPosition(i)
+                    eventId     = anEvent.getComponentByName('eventId')
+                    insertTs    = anEvent.getComponentByName('insertTs')
+                    ackTs       = anEvent.getComponentByName('ackTs')
+                    status      = str(anEvent.getComponentByName('status'))
+                    textual     = str(anEvent.getComponentByName('textual'))
+                    ackNeeded   = anEvent.getComponentByName('ackNeeded')
+                    ackValue    = str(anEvent.getComponentByName('ackValue'))
+                    groupOwner  = str(anEvent.getComponentByName('groupOwner'))
+                    userOwner   = str(anEvent.getComponentByName('userOwner'))
+                    eventDict = {
+                        'eventId':      eventId,
+                        'insertTs':     insertTs,
+                        'ackTs':        ackTs,
+                        'status':       status,
+                        'textual':      textual,
+                        'ackNeeded':    ackNeeded,
+                        'ackValue':     ackValue,
+                        'groupOwner':   groupOwner,
+                        'userOwner':    userOwner}
+                    eventsList.append(eventDict)
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'target': target,
+                        'id':     probe,
+                        'logger': module,
+                        'data':   eventsList
                     }
                 }
             elif msg3_type == 'rrdProbeDump':
