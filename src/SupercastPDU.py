@@ -166,6 +166,7 @@ class TrackerRrdFiles(univ.SequenceOf):
 
 class TrackerProbeEvent(univ.Sequence):
     componentType = namedtype.NamedTypes(
+        namedtype.NamedType('probeName',    char.PrintableString()),
         namedtype.NamedType('eventId',      univ.Integer()),
         namedtype.NamedType('insertTs',     univ.Integer()),
         namedtype.NamedType('ackTs',        univ.Integer()),
@@ -898,6 +899,7 @@ def decode(pdu):
                     }
                 }
             elif msg3_type == 'probeEventMsg':
+                probeName   = msg3.getComponentByName('probeName')
                 eventId     = msg3.getComponentByName('eventId')
                 insertTs    = msg3.getComponentByName('insertTs')
                 ackTs       = msg3.getComponentByName('ackTs')
@@ -912,15 +914,18 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'eventId':      eventId,
-                        'insertTs':     insertTs,
-                        'ackTs':        ackTs,
-                        'status':       status,
-                        'textual':      textual,
-                        'ackNeeded':    ackNeeded,
-                        'ackValue':     ackValue,
-                        'groupOwner':   groupOwner,
-                        'userOwner':    userOwner
+                        'id':           probeName,
+                        'data': {
+                            'eventId':      eventId,
+                            'insertTs':     insertTs,
+                            'ackTs':        ackTs,
+                            'status':       status,
+                            'textual':      textual,
+                            'ackNeeded':    ackNeeded,
+                            'ackValue':     ackValue,
+                            'groupOwner':   groupOwner,
+                            'userOwner':    userOwner
+                        }
                     }
                 }
             elif msg3_type == 'eventProbeDump':

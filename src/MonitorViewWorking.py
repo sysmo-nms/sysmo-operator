@@ -4,6 +4,7 @@ from    PySide.QtSvg        import *
 from    MonitorRrd          import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
+from    EventsTimeLine      import EventsView
 import  TkorderIcons
 import  os
 import  datetime
@@ -108,7 +109,7 @@ class WorkProbeView(AbstractChannelQFrame):
             self.rrdArea    = RrdArea(self, self.probeDict)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
-            rightGrid.addWidget(EventViewer(self),  0,0)
+            rightGrid.addWidget(EventsView(self),  0,0)
             rightGrid.addWidget(self.rrdArea,       1,0)
             self.rightPaneView.setLayout(rightGrid)
 
@@ -134,7 +135,7 @@ class WorkProbeView(AbstractChannelQFrame):
             self.rightPaneView   = QFrame(self)
             rightGrid = QGridLayout(self)
             rightGrid.setContentsMargins(0,0,0,0)
-            rightGrid.addWidget(EventViewer(self), 0,0)
+            rightGrid.addWidget(EventsView(self), 0,0)
             rightGrid.addWidget(self.textLog, 1,0)
             self.rightPaneView.setLayout(rightGrid)
             grid = QGridLayout(self)
@@ -171,17 +172,6 @@ class WorkProbeView(AbstractChannelQFrame):
             # rrd
             if self.rrdArea != None: 
                 self.rrdArea.updateGraph()
-
-class EventViewer(QFrame):
-    def __init__(self, parent):
-        super(EventViewer, self).__init__(parent)
-        toolTipBaseHexa = Monitor.MonitorMain.singleton.rgbDict['ToolTipBase']
-        self.setStyleSheet("QFrame { border-radius: 15px; background: %s}" % toolTipBaseHexa)
-        self.setFixedHeight(100)
-        grid = QGridLayout(self)
-        lab = QLabel('TODO frise chronologique des evenements et des status', self)
-        grid.addWidget(lab, 0,0)
-        self.setLayout(grid)
 
 class TextLog(QTextEdit):
     def __init__(self, parent):

@@ -37,33 +37,51 @@ class ChannelHandler(QObject):
         self.masterSignalsDict['probeModInfo']  = SimpleSignal(self)
         self.masterSignalsDict['probeDump']     = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
+        self.masterSignalsDict['probeEventMsg'] = SimpleSignal(self)
 
         # connect myself
         self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
         self.masterSignalsDict['targetInfo'].signal.connect(self._handleTargetInfo)
         self.masterSignalsDict['probeDump'].signal.connect(self._handleProbeDump)
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
+        self.masterSignalsDict['probeEventMsg'].signal.connect(self._handleEventMsg)
         # END
 
     def handleMsg(self, msg):
         if      msg['msgType'] == 'probeReturn':
             self.masterSignalsDict['probeReturn'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'probeEventMsg':
+            self.masterSignalsDict['probeEventMsg'].signal.emit(msg)
+
         elif    msg['msgType'] == 'probeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
+
         elif    msg['msgType'] == 'rrdProbeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'eventProbeDump':
+            self.masterSignalsDict['probeDump'].signal.emit(msg)
+
         elif    msg['msgType'] == 'probeInfo':
             self.masterSignalsDict['probeInfo'].signal.emit(msg)
+
         elif    msg['msgType'] == 'targetInfo':
             self.masterSignalsDict['targetInfo'].signal.emit(msg)
+
         elif    msg['msgType'] == 'probeModInfo':
             self.masterSignalsDict['probeModInfo'].signal.emit(msg)
+
         elif    msg['msgType'] == 'authAck':
             self._autoSubscribe()
+
         elif    msg['msgType'] == 'subscribeOk':
             self._handleSubscribeOk(msg)
+
         elif    msg['msgType'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
+
+
         else: 
             print "unknown msg received", msg['msgType']
 
@@ -109,6 +127,10 @@ class ChannelHandler(QObject):
         channel = msg['value']['id']
         self.chanProxy[channel].handleReturn(msg)
 
+    def _handleEventMsg(self, msg):
+        channel = msg['value']['id']
+        self.chanProxy[channel].handleEvent(msg)
+
     def _autoSubscribe(self):
         self.sc.subscribe(self.masterChan)
 
@@ -129,8 +151,9 @@ class Channel(QObject):
         super(Channel, self).__init__(parent)
         self.probeDict = ChannelHandler.singleton.probes[probeName]
         self.name = probeName
-        self.loggerTextState = None
-        self.rrdFiles = None
+        self.loggerTextState    = None
+        self.loggerEventState   = None
+        self.rrdFiles           = None
 
     def synchronizeView(self, view):
         if self.loggerTextState != None:
@@ -157,7 +180,12 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
         elif dumpType == 'tracker_events':
-            print "tracker_events dump received"
+            self.loggerEventState = msg['value']['data']
+            dumpMsg = dict()
+            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['logger']   = dumpType
+            dumpMsg['data']     = self.loggerEventState
+            self.signal.emit(dumpMsg)
         elif dumpType == 'btracker_logger_rrd':
             print "dump rrd?----------------------------------------"
             self.rrdFiles = dict()
@@ -191,6 +219,10 @@ class Channel(QObject):
             #self._updateRrdDb(msg)
         if self.loggerTextState != None:
             self._updateLoggerText(msg)
+        self.signal.emit(msg)
+
+    def handleEvent(self, msg):
+        self.loggerEventState.append(msg['value']['data'])
         self.signal.emit(msg)
 
     def _updateLoggerText(self, msg):
