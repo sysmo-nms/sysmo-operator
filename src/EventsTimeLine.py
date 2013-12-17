@@ -1,5 +1,7 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
+from    PySide.QtSvg        import *
+import  TkorderIcons
 import  Monitor
 
 class EventsView(QFrame):
@@ -8,7 +10,7 @@ class EventsView(QFrame):
         #toolTipBaseHexa = Monitor.MonitorMain.singleton.rgbDict['Base']
         # self.setStyleSheet(
             #"QFrame { border-radius: 15px; background: %s}" % toolTipBaseHexa)
-        height = 112
+        height = 105
         self.setFixedHeight(height)
         grid = QGridLayout(self)
         self.graphicsView = EventsViewGraphicScene(self, height)
@@ -20,6 +22,7 @@ class EventsViewGraphicScene(QGraphicsView):
         super(EventsViewGraphicScene, self).__init__(parent)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        height = height - 7
 
         self._vertiSpace    = height  / 7
         self._vertiStart    = -height / 2
@@ -36,6 +39,17 @@ class EventsViewGraphicScene(QGraphicsView):
         self.unknownLine    = QGraphicsLineItem(QLine(0,0,0,0))
         self.stealthLine    = QGraphicsLineItem(QLine(0,0,0,0))
 
+        backPen = QPen(QColor(Qt.lightGray))
+
+        self.extLine.setPen(backPen)
+        self.okLine.setPen(backPen)
+        self.warningLine.setPen(backPen)
+        self.criticalLine.setPen(backPen)
+        self.unknownLine.setPen(backPen)
+        self.stealthLine.setPen(backPen)
+
+
+        self.scene.addItem(self.extLine)
         self.scene.addItem(self.okLine)
         self.scene.addItem(self.warningLine)
         self.scene.addItem(self.criticalLine)
