@@ -289,7 +289,9 @@ class StepProgressBar(QProgressBar):
         self.setTextDirection(QProgressBar.TopToBottom)
         self.valueChanged.connect(self.handleValueChanged)
 
+        # TODO move QTimeLine in a thread
         self.timer = QTimeLine(timerRange, self)
+        self.timer.setUpdateInterval(80)
         self.timer.setFrameRange(0, timerRange)
         self.timer.frameChanged[int].connect(self.setValue)
 
@@ -320,7 +322,9 @@ class TimeoutProgressBar(QProgressBar):
         self.setTextDirection(QProgressBar.TopToBottom)
         self.valueChanged.connect(self.handleValueChanged)
 
+        # TODO move QTimeLine in a thread
         self.timer = QTimeLine(timerRange, self)
+        self.timer.setUpdateInterval(80)
         self.timer.setFrameRange(0, timerRange)
         self.timer.frameChanged[int].connect(self.setValue)
 
