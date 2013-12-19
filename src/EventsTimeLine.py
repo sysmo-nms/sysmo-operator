@@ -33,24 +33,24 @@ class EventsViewGraphicScene(QGraphicsView):
         self.setScene(self.scene)
 
         self.extLine        = QGraphicsLineItem(QLine(0,0,0,0))
-        self.okLine         = QGraphicsLineItem(QLine(0,0,0,0))
-        self.warningLine    = QGraphicsLineItem(QLine(0,0,0,0))
+        #self.unknownLine    = QGraphicsLineItem(QLine(0,0,0,0))
         self.criticalLine   = QGraphicsLineItem(QLine(0,0,0,0))
-        self.unknownLine    = QGraphicsLineItem(QLine(0,0,0,0))
+        self.warningLine    = QGraphicsLineItem(QLine(0,0,0,0))
+        self.okLine         = QGraphicsLineItem(QLine(0,0,0,0))
 
         backPen = QPen(QColor(Qt.lightGray))
 
         self.extLine.setPen(backPen)
-        self.okLine.setPen(backPen)
-        self.warningLine.setPen(backPen)
+        #self.unknownLine.setPen(backPen)
         self.criticalLine.setPen(backPen)
-        self.unknownLine.setPen(backPen)
+        self.warningLine.setPen(backPen)
+        self.okLine.setPen(backPen)
 
         self.scene.addItem(self.extLine)
-        self.scene.addItem(self.okLine)
-        self.scene.addItem(self.warningLine)
+        #self.scene.addItem(self.unknownLine)
         self.scene.addItem(self.criticalLine)
-        self.scene.addItem(self.unknownLine)
+        self.scene.addItem(self.warningLine)
+        self.scene.addItem(self.okLine)
 
         self.extImage = QGraphicsSvgItem(TkorderIcons.getImage('dialog-information'))
         self.extImage.scale(0.37,0.37)
@@ -64,14 +64,14 @@ class EventsViewGraphicScene(QGraphicsView):
         self.criticalImage = QGraphicsSvgItem(TkorderIcons.getImage('weather-severe-alert'))
         self.criticalImage.scale(0.37,0.37)
 
-        self.unknownImage = QGraphicsSvgItem(TkorderIcons.getImage('weather-clear-night'))
-        self.unknownImage.scale(0.37,0.37)
+        #self.unknownImage = QGraphicsSvgItem(TkorderIcons.getImage('weather-clear-night'))
+        #self.unknownImage.scale(0.37,0.37)
 
         self.scene.addItem(self.extImage)
         self.scene.addItem(self.okImage)
         self.scene.addItem(self.warningImage)
         self.scene.addItem(self.criticalImage)
-        self.scene.addItem(self.unknownImage)
+        #self.scene.addItem(self.unknownImage)
 
 
     def _scale(self):
@@ -82,7 +82,7 @@ class EventsViewGraphicScene(QGraphicsView):
         vertiSpace  = self._vertiSpace
         vertiStart  = self._vertiStart
         vertIconPadding = 9
-        horiIconPadding = 20
+        horiIconPadding = 24
 
 
         # draw background grid
@@ -91,20 +91,20 @@ class EventsViewGraphicScene(QGraphicsView):
         self.extImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
 
         vert += vertiSpace
-        self.okLine.setLine(        QLine(-leftWidth, vert, rightWidth, vert))
-        self.okImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
-
-        vert += vertiSpace
-        self.warningLine.setLine(   QLine(-leftWidth, vert, rightWidth, vert))
-        self.warningImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
+        #self.unknownLine.setLine(   QLine(-leftWidth, vert, rightWidth, vert))
+        #self.unknownImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
 
         vert += vertiSpace
         self.criticalLine.setLine(  QLine(-leftWidth, vert, rightWidth, vert))
         self.criticalImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
 
         vert += vertiSpace
-        self.unknownLine.setLine(   QLine(-leftWidth, vert, rightWidth, vert))
-        self.unknownImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
+        self.warningLine.setLine(   QLine(-leftWidth, vert, rightWidth, vert))
+        self.warningImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
+
+        vert += vertiSpace
+        self.okLine.setLine(        QLine(-leftWidth, vert, rightWidth, vert))
+        self.okImage.setPos(QPointF(QPoint(-leftWidth -horiIconPadding, vert - vertIconPadding)))
 
         self.updateSceneRect(QRectF(0,0,width,112))
         self.centerOn(0,0)
