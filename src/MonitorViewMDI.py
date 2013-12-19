@@ -2,7 +2,7 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
-from    MonitorRrd          import RrdArea
+from    LoggerViewRrds          import RrdArea
 import  datetime
 import  TkorderIcons
 
