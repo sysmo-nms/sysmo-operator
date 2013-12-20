@@ -25,6 +25,8 @@ class RrdArea(QFrame):
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
         rowCount    = 0
+        self.setFixedHeight(len(self.rrdConf) * 200)
+
         for key in self.rrdConf:
             self.rrdViews[key] = RrdView(self, key, self.rrdConf[key])
             grid.addWidget(self.rrdViews[key], rowCount, 0)

@@ -7,7 +7,9 @@ from    LoggerViewEventsTimeLine    import EventsView
 from    LoggerViewText              import TextLog
 from    LoggerViewRrds              import *
 from    WorkingProbeView            import ProbeView
+from    WorkingTargetView           import TargetView
 
+import  MonitorProxyEvents
 import  TkorderIcons
 import  os
 import  datetime
@@ -24,7 +26,7 @@ class WorkView(QFrame):
 
         self.tmpMainGridCount = 0
 
-        self.probeViews = dict()
+        self.targetViews = dict()
 
         self.mainGrid   = QGridLayout()
         self.mainFrame  = QFrame(self)
@@ -42,18 +44,25 @@ class WorkView(QFrame):
         self.setLayout(grid)
 
     def deleteProbeView(self, probe):
-        probeView = self.probeViews[probe]
-        self.mainGrid.removeWidget(probeView)
-        probeView.deleteLater()
-        self.mainGrid.update()
-        
-        del self.probeViews[probe]
+        t = MonitorProxyEvents.ChannelHandler.singleton.probes[probe]['target']
+        r = self.targetViews[t].removeProbe(probe)
+        if r == 'empty':
+            self.mainGrid.removeWidget(self.targetViews[t])
+            self.targetViews[t].deleteLater()
+            self.mainGrid.update()
+            del self.targetViews[t]
 
     def createProbeView(self, probe):
-        pview = ProbeView(self, probe)
-        self.probeViews[probe] = pview
-        self.mainGrid.addWidget(pview, self.tmpMainGridCount, 0)
-        self.tmpMainGridCount += 1
-        self.mainGrid.setRowStretch(self.tmpMainGridCount, 0)
-        self.mainGrid.setRowStretch(self.tmpMainGridCount + 1, 1)
-        self.mainGrid.update()
+        # get the target from the probe
+        t = MonitorProxyEvents.ChannelHandler.singleton.probes[probe]['target']
+        # if not allready exist, create the target widget with probe as
+        # argument
+        if t in self.targetViews:
+            self.targetViews[t].newProbe(probe)
+        else:
+            self.targetViews[t] = TargetView(self, t, probe)
+            self.mainGrid.addWidget(self.targetViews[t], self.tmpMainGridCount, 0)
+            self.tmpMainGridCount += 1
+            self.mainGrid.setRowStretch(self.tmpMainGridCount, 0)
+            self.mainGrid.setRowStretch(self.tmpMainGridCount + 1, 1)
+            self.mainGrid.update()

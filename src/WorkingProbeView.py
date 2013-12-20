@@ -9,6 +9,7 @@ from    LoggerViewEventsTimeLine    import *
 
 import  TkorderIcons
 
+
 class ProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
         super(ProbeView, self).__init__(parent, probe)
@@ -27,81 +28,37 @@ class ProbeView(AbstractChannelQFrame):
         else: 
             viewType = 'text_only'
 
-        # progress area
-        progressFrame   = QFrame(self)
-        progressGrid    = QGridLayout(self)
-        self.timeoutProgress = TimeoutProgressBar(
-            self, self.probeDict['timeout'] * 1000, 'Timeout: %p%')
-        self.stepProgress    = StepProgressBar(
-            self, self.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
-        progressGrid.addWidget(self.timeoutProgress,             0,0,1,1)
-        progressGrid.addWidget(self.stepProgress,                1,0,2,1)
-        progressGrid.setRowStretch(0,0)
-        progressGrid.setRowStretch(1,1)
-        progressGrid.setRowStretch(1,1)
-        progressFrame.setLayout(progressGrid)
+        self.grid = QGridLayout(self)
+        self.grid.setColumnStretch(0,0)
+        self.grid.setColumnStretch(1,1)
 
-        self.leftFrame   = QFrame(self)
-        self.probeInfo   = ProbeInfo(self,self.targetName,self.probeDict['id'],self.probeDict)
-        self.textLog     = TextLog(self)
-        self.rrdArea     = None
+        # head
+        self.head = ProbeHead(self, probe)
+        self.grid.addWidget(self.head,  0, 0, 1, 2)
 
-        leftGrid    = QGridLayout(self)
+        # tabulation
+        tab = QFrame(self)
+        tab.setFixedWidth(20)
+        self.grid.addWidget(tab,        1, 0)
+
+        # EventViewer
+        self.eventsView = EventsView(self)
+        self.grid.addWidget(self.eventsView, 1, 1)
+
+        # rrd area
         if viewType == 'text_and_rrdgraph':
-            self.setMinimumHeight(300)
-            leftGrid.addWidget(self.probeInfo,       0,0,1,1)
-            leftGrid.addWidget(progressFrame,   0,2,3,1)
-            leftGrid.addWidget(self.textLog,         2,0,1,2)
-            leftGrid.setContentsMargins(0,0,0,0)
-            leftGrid.setVerticalSpacing(0)
-            leftGrid.setHorizontalSpacing(0)
-            leftGrid.setRowStretch(0,0)
-            leftGrid.setRowStretch(1,1)
-            leftGrid.setRowStretch(2,0)
-            self.leftFrame.setLayout(leftGrid)
-            self.rightPaneView   = QFrame(self)
             self.rrdArea    = RrdArea(self, self.probeDict)
-            rightGrid = QGridLayout(self)
-            rightGrid.setContentsMargins(0,0,0,0)
-            rightGrid.addWidget(EventsView(self),  0,0)
-            rightGrid.addWidget(self.rrdArea,       1,0)
-            self.rightPaneView.setLayout(rightGrid)
-
-            grid = QGridLayout(self)
-            grid.setContentsMargins(3,3,3,3)
-            grid.setVerticalSpacing(0)
-            grid.addWidget(self.leftFrame,       0,0,1,1)
-            grid.addWidget(self.rightPaneView,   0,1,1,1)
-            grid.setColumnStretch(0,0)
-            grid.setColumnStretch(1,1)
-            self.setLayout(grid)
+            self.grid.addWidget(self.rrdArea, 2,1)
         else:
-            self.setMinimumHeight(200)
-            leftGrid.addWidget(self.probeInfo,       0,0,1,1)
-            leftGrid.addWidget(progressFrame,   0,2,3,1)
-            leftGrid.setContentsMargins(0,0,0,0)
-            leftGrid.setVerticalSpacing(0)
-            leftGrid.setHorizontalSpacing(0)
-            leftGrid.setRowStretch(0,0)
-            leftGrid.setRowStretch(1,1)
-            leftGrid.setRowStretch(2,0)
-            self.leftFrame.setLayout(leftGrid)
-            self.rightPaneView   = QFrame(self)
-            rightGrid = QGridLayout(self)
-            rightGrid.setContentsMargins(0,0,0,0)
-            rightGrid.addWidget(EventsView(self), 0,0)
-            rightGrid.addWidget(self.textLog, 1,0)
-            self.rightPaneView.setLayout(rightGrid)
-            grid = QGridLayout(self)
-            grid.setContentsMargins(3,3,3,3)
-            grid.setVerticalSpacing(0)
-            grid.addWidget(self.leftFrame,       0,0,1,1)
-            grid.addWidget(self.rightPaneView,   0,1,1,1)
-            grid.setColumnStretch(0,0)
-            grid.setColumnStretch(1,1)
-            self.setLayout(grid)
+            self.rrdArea = None
+        
+        # TextLog
+        self.textLog    = TextLog(self)
+        self.grid.addWidget(self.textLog,   3, 1)
 
+        
 
+        self.setLayout(self.grid)
         self.connectProbe()
         #self.signal.connect(rightPaneView.handleEvent)
         #self.signal.connect(stepProgress.handleEvent)
@@ -122,10 +79,45 @@ class ProbeView(AbstractChannelQFrame):
             # log text
             self.textLog.textAppend(msg['value'])
             # progress
-            self.stepProgress.resetProgress()
+            self.head.resetProgress()
             # rrd
             if self.rrdArea != None: 
                 self.rrdArea.updateGraph()
+
+class ProbeHead(QFrame):
+    def __init__(self, parent, probe):
+        super(ProbeHead, self).__init__(parent)
+
+        self.setBackgroundRole(QPalette.Window)
+        self.setAutoFillBackground(True)
+
+        head            = QLabel(probe, self)
+        head.setFixedWidth(200)
+
+        progressFrame   = QFrame(self)
+        progressGrid    = QGridLayout(self)
+        self.timeoutProgress = TimeoutProgressBar(
+            self, parent.probeDict['timeout'] * 1000, 'Timeout: %p%')
+        self.stepProgress    = StepProgressBar(
+            self, parent.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
+        self.timeoutProgress.setFixedWidth(200)
+        self.stepProgress.setFixedWidth(400)
+        progressGrid.addWidget(self.stepProgress,                0,0,1,1)
+        progressGrid.addWidget(self.timeoutProgress,             0,1,1,1)
+        progressGrid.setColumnStretch(0,0)
+        progressGrid.setColumnStretch(1,0)
+        progressGrid.setColumnStretch(2,0)
+        progressGrid.setColumnStretch(3,1)
+        progressFrame.setLayout(progressGrid)
+
+        grid = QGridLayout(self)
+        grid.addWidget(head,                0,0)
+        grid.addWidget(progressFrame,       0,1)
+        self.setLayout(grid)
+
+    def resetProgress(self):
+        self.stepProgress.resetProgress()
+
 
 class ProbeInfo(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
@@ -213,7 +205,7 @@ class StepProgressBar(QProgressBar):
         self.timeMax    = timerRange
         self.timeoutProgress    = timeoutProgress
 
-        self.setOrientation(Qt.Vertical)
+        self.setOrientation(Qt.Horizontal)
         self.setRange(0, timerRange)
         self.setFormat(textValue)
         self.setValue(40)
@@ -246,7 +238,7 @@ class TimeoutProgressBar(QProgressBar):
     def __init__(self, parent, timerRange, textValue):
         super(TimeoutProgressBar, self).__init__(parent)
         self.timeMax = timerRange
-        self.setOrientation(Qt.Vertical)
+        self.setOrientation(Qt.Horizontal)
         self.setRange(0, timerRange)
         self.setFormat(textValue)
         self.setValue(40)
