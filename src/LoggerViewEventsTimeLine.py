@@ -113,14 +113,11 @@ class EventsViewGraphicScene(QGraphicsView):
 
 
     def resizeEvent(self, event):
-        print "resizeEvent"
         self._needRedraw = True
         QGraphicsView.resizeEvent(self, event)
 
     def paintEvent(self, event):
-        print "PainEvent"
         if self._needRedraw == True:
-            print "need redraw"
             self._scale()
             self._needRedraw = False
         QGraphicsView.paintEvent(self, event)
