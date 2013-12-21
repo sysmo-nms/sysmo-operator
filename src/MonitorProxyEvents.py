@@ -187,7 +187,6 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
         elif dumpType == 'btracker_logger_rrd':
-            print "dump rrd?----------------------------------------"
             self.rrdFiles = dict()
             for key in data:
                 rrdFile = QTemporaryFile(self)
@@ -215,8 +214,8 @@ class Channel(QObject):
             #dumpMsg['data']     = self.rrdFileName
 
     def handleReturn(self, msg):
-        if self.rrdFiles != None: pass
-            #self._updateRrdDb(msg)
+        if self.rrdFiles != None:
+            self._updateRrdDb(msg)
         if self.loggerTextState != None:
             self._updateLoggerText(msg)
         self.signal.emit(msg)
@@ -231,33 +230,25 @@ class Channel(QObject):
             self.loggerTextState.popleft()
 
     def _updateRrdDb(self, msg):
-        cmLine  = self.rrdUpdateString
-        keyVals = msg['value']['keyVals']
-        macroB  = self.rrdMacroBinds
-
-        for key in macroB.keys():
-            if key in keyVals:
-                macro = macroB[key]
-                value = keyVals[key]
+        rrdConf   = self.probeDict['loggers']['btracker_logger_rrd']
+        rrdFiles  = self.rrdFiles
+        keyVals   = msg['value']['keyVals']
+        for rrd in rrdFiles.keys():
+            updateString = rrdConf[rrd]['update']
+            for bind in rrdConf[rrd]['binds']:
+                macro   = rrdConf[rrd]['binds'][bind]
                 try:
-                    fvalue = float(value)
-                    ivalue = int(fvalue)
-                except ValueError:
-                    try: 
-                        ivalue = int(value)
-                    except ValueError: return
-                    
-                cmLine = cmLine.replace(macro, str(ivalue))
-            else:
-                print "Missing key. I will not update the rrd database."
-                return
-        template    = re.findall(r'--template\s+[^\s]+',  cmLine)
-        template    = re.sub(r'--template\s+', r'', template[0])
-        rrdvalues   = re.findall(r'N:[^\s]+', cmLine)
-        rrdvalues   = rrdvalues[0]
-        ret = rrdtool.update(str(self.rrdFileName), 
-            '--template', template, rrdvalues)
+                    value = keyVals[bind]
+                except KeyError:
+                    print "missing bind. I will not update the rrd"
+                    break
+                updateString = updateString.replace(macro, str(value))
 
+            template    = re.findall(r'--template\s+[^\s]+',  updateString)
+            template    = re.sub(r'--template\s+', r'', template[0])
+            rrdvalues   = re.findall(r'N:[^\s]+', updateString)
+            rrdvalues   = rrdvalues[0]
+            rrdtool.update(str(rrdFiles[rrd]), '--template', template, rrdvalues)
 
 class SimpleSignal(QObject):
     signal = Signal(dict)
