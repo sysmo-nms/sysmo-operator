@@ -21,11 +21,13 @@ class RrdArea(QFrame):
         self.rrdConf        = self.probeDict['loggers']['btracker_logger_rrd']
         self.rrdViews = dict()
 
-        timeline = MonitorDashboardArea.Dashboard.singleton.timelineSlide.value()
-        stop     = MonitorDashboardArea.Dashboard.singleton.stopSlide.value()
+        self.timelineSlider = MonitorDashboardArea.Dashboard.singleton.timelineSlide
+        self.stopSlider     = MonitorDashboardArea.Dashboard.singleton.stopSlide
+        timeline = self.timelineSlider.value()
+        stop     = self.stopSlider.value()
 
-        MonitorDashboardArea.Dashboard.singleton.timelineSlide.valueChanged.connect(self.timelineChanged)
-        MonitorDashboardArea.Dashboard.singleton.stopSlide.valueChanged.connect(self.stopChanged)
+        MonitorDashboardArea.Dashboard.singleton.timelineSlide.sliderReleased.connect(self.timelineChanged)
+        MonitorDashboardArea.Dashboard.singleton.stopSlide.sliderReleased.connect(self.stopChanged)
 
         grid        = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
@@ -39,13 +41,13 @@ class RrdArea(QFrame):
             grid.addWidget(self.rrdViews[key], rowCount, 0)
             rowCount += 1
 
-    def timelineChanged(self, value):
+    def timelineChanged(self):
         for key in self.rrdViews:
-            self.rrdViews[key].updateTimeline(value)
+            self.rrdViews[key].updateTimeline(self.timelineSlider.value())
 
-    def stopChanged(self, value):
+    def stopChanged(self):
         for key in self.rrdViews:
-            self.rrdViews[key].updateStop(value)
+            self.rrdViews[key].updateStop(self.stopSlider.value())
 
     def rrdDump(self, fileDict):
         self._rrdfileReady  = True
