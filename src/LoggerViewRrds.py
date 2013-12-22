@@ -1,6 +1,8 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    PySide.QtSvg    import *
+import  MonitorDashboardArea
+import  time
 import  os
 import  datetime
 import  TkorderIcons
@@ -12,13 +14,18 @@ import  tempfile
 class RrdArea(QFrame):
     def __init__(self, parent, probeDict):
         super(RrdArea, self).__init__(parent)
-        self.setStyleSheet("QFrame { background: #999999 }")
         self.setMinimumWidth(600)
         self.knownHeight    = 0
         self.knownWidth     = 0
         self.probeDict      = probeDict
         self.rrdConf        = self.probeDict['loggers']['btracker_logger_rrd']
         self.rrdViews = dict()
+
+        timeline = MonitorDashboardArea.Dashboard.singleton.timelineSlide.value()
+        stop     = MonitorDashboardArea.Dashboard.singleton.stopSlide.value()
+
+        MonitorDashboardArea.Dashboard.singleton.timelineSlide.valueChanged.connect(self.timelineChanged)
+        MonitorDashboardArea.Dashboard.singleton.stopSlide.valueChanged.connect(self.stopChanged)
 
         grid        = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
@@ -28,9 +35,17 @@ class RrdArea(QFrame):
         self.setFixedHeight(len(self.rrdConf) * 200)
 
         for key in self.rrdConf:
-            self.rrdViews[key] = RrdView(self, key, self.rrdConf[key])
+            self.rrdViews[key] = RrdView(self, key, self.rrdConf[key], timeline, stop)
             grid.addWidget(self.rrdViews[key], rowCount, 0)
             rowCount += 1
+
+    def timelineChanged(self, value):
+        for key in self.rrdViews:
+            self.rrdViews[key].updateTimeline(value)
+
+    def stopChanged(self, value):
+        for key in self.rrdViews:
+            self.rrdViews[key].updateStop(value)
 
     def rrdDump(self, fileDict):
         self._rrdfileReady  = True
@@ -44,10 +59,12 @@ class RrdArea(QFrame):
             self.rrdViews[key].updateGraph()
 
 class RrdView(QLabel):
-    def __init__(self, parent, key, confDict):
+    def __init__(self, parent, key, confDict, timeline, stop):
         super(RrdView, self).__init__(parent)
         self.fileId = key
         self.config = confDict
+        self.timeline = timeline
+        self.stop = stop
         self.rrdGraphConf = confDict['graphs'][0]
         self.hexaPalette    = Monitor.MonitorMain.singleton.rgbaDict
         self._needRedraw     = False
@@ -61,6 +78,14 @@ class RrdView(QLabel):
         self._rrdfileReady  = True
         self.rrdFile        = fileName
         self.rrdGraphConf = re.sub('<FILE>',self.rrdFile, self.rrdGraphConf)
+
+    def updateTimeline(self, value):
+        self.timeline = value
+        self.updateGraph()
+
+    def updateStop(self, value):
+        self.stop = value
+        self.updateGraph()
 
     def resizeEvent(self, event):
         if self._rrdfileReady == True:
@@ -83,7 +108,8 @@ class RrdView(QLabel):
         size = self.size()
         rrdWidth  = size.width()
         rrdHeight = size.height()
-        rrdStart  = 3600 
+        rrdStart  = self.timeline
+        rrdStop   = time.time() / 1 + self.stop
 
         # python rrdtool did not support list of DEFs or LINEs in the module
         # args. This lead to generate the function as string and evaluate
@@ -98,7 +124,7 @@ class RrdView(QLabel):
             '--slope-mode', \
             '--tabwidth', '40', \
             '--watermark', 'Watermark', \
-            '--color', 'BACK%s'     % self.hexaPalette['Window'], \
+            '--color', 'BACK#00000000',  \
             '--color', 'CANVAS%s'   % self.hexaPalette['Base'], \
             '--color', 'GRID%s'     % self.hexaPalette['Dark'], \
             '--color', 'MGRID%s'    % self.hexaPalette['Shadow'], \
@@ -106,8 +132,8 @@ class RrdView(QLabel):
             '--color', 'AXIS%s'     % self.hexaPalette['Dark'], \
             '--color', 'FRAME%s'    % self.hexaPalette['Window'], \
             '--color', 'ARROW%s'    % self.hexaPalette['Shadow'], \
-            '--start', '-%i' % rrdStart, \
-            '--end', 'now',"
+            '--start', 'end-%i'     % rrdStart, \
+            '--end',   '%i'         % rrdStop,"
 
         for i in range(len(defs)):
             cmd += "'%s'," % defs[i]

@@ -14,8 +14,6 @@ class ProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
         super(ProbeView, self).__init__(parent, probe)
         self.probeDict   = ChannelHandler.singleton.probes[probe]
-        self.setBackgroundRole(QPalette.Base)
-        self.setAutoFillBackground(True)
         self.setFrameShape(QFrame.StyledPanel)
         self.targetName = self.probeDict['target']
         self.probeName  = probe
@@ -94,13 +92,15 @@ class ProbeHead(QFrame):
     def __init__(self, parent, probe):
         super(ProbeHead, self).__init__(parent)
 
-        self.setBackgroundRole(QPalette.Window)
-        self.setAutoFillBackground(True)
+        #self.setBackgroundRole(QPalette.Window)
+        #self.setAutoFillBackground(True)
         self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Raised)
+        self.setFrameShadow(QFrame.Sunken)
 
         self.toggle = QPushButton('toggle', self)
         self.toggle.clicked.connect(parent.toggleBody)
+
+        self.promoteCheck = QCheckBox('include in Dashboard', self)
 
         head = QLabel(probe, self)
         head.setFixedWidth(200)
@@ -125,6 +125,7 @@ class ProbeHead(QFrame):
         grid.addWidget(self.toggle,         0,0)
         grid.addWidget(head,                0,1)
         grid.addWidget(progressFrame,       0,2)
+        grid.addWidget(self.promoteCheck,   0,3)
         self.setLayout(grid)
 
     def resetProgress(self):

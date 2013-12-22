@@ -20,12 +20,12 @@ class TreeContainer(QFrame):
         self.trackerMain  = parent
 
         self.treeview   = MonitorTreeView(self)
-        self.compositeList = MonitorCompositeList(self)
+        self.compositeList = MonitorDashboardList(self)
         self.searchBar  = MonitorTreeSearch(self)
         self.info       = MonitorTreeAreaInfo(self)
         self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview, 'Probes')
-        self.tabs.addTab(self.compositeList, 'Composite')
+        self.tabs.addTab(self.compositeList, 'Dashboards')
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
@@ -116,10 +116,10 @@ class MonitorTreeAreaInfo(QTextEdit):
 ##############################################################################
 ### COMPOSITE LISTVIEW #######################################################
 ##############################################################################
-class MonitorCompositeList(QTreeView):
+class MonitorDashboardList(QTreeView):
     def __init__(self, parent):
-        super(MonitorCompositeList, self).__init__(parent)
-        MonitorCompositeList.singleton = self
+        super(MonitorDashboardList, self).__init__(parent)
+        MonitorDashboardList.singleton = self
         self.setAnimated(True)
         self.setFrameShape(QFrame.NoFrame)
         self.setHeaderHidden(False)

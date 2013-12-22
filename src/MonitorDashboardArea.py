@@ -13,6 +13,10 @@ class Dashboard(QFrame):
         self.chanHandler = ChannelHandler.singleton
         self.dash       = DashTab(self)
         self.control    = DashControls(self)
+
+        self.timelineSlide = self.control.viewControls.timelineSlide
+        self.stopSlide     = self.control.viewControls.stopSlide
+
         grid            = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
         grid.addWidget(self.control, 0,0)
@@ -88,13 +92,14 @@ class DashControls(QFrame):
         #self.setFrameShape(QFrame.StyledPanel)
         self.setFixedHeight(35)
 
+        self.viewControls = ViewControls(self)
         grid = QGridLayout(self)
         grid.setVerticalSpacing(0)
         grid.setHorizontalSpacing(0)
         grid.setContentsMargins(0,0,0,0)
         grid.addWidget(toolbar,     0,0)
         grid.addWidget(verticalBar, 0,1)
-        grid.addWidget(ViewControls(self), 0,2)
+        grid.addWidget(self.viewControls, 0,2)
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,0)
         grid.setColumnStretch(2,1)
@@ -104,24 +109,52 @@ class DashControls(QFrame):
 class ViewControls(QFrame):
     def __init__(self, parent):
         super(ViewControls, self).__init__(parent)
-        start = QLabel('start:', self)
-        startSlide = QSlider(self)
-        startSlide.setOrientation(Qt.Horizontal)
+        timeline = QLabel('Timeline:', self)
+        self.timelineSlide = QSlider(self)
+        self.timelineSlide.setMinimum(30)
+        self.timelineSlide.setMaximum(604800)
+        self.timelineSlide.setValue(3600)
+        self.timelineInfo = QLabel(self)
+        self.timelineInfo.setText('hell')
+        self.timelineInfo.setBackgroundRole(QPalette.Base)
+        self.timelineInfo.setAutoFillBackground(True)
+        self.timelineSlide.valueChanged.connect(self.updateTimelineLabel)
+
+        self.timelineSlide.setOrientation(Qt.Horizontal)
+
         stop  = QLabel('stop:', self)
-        stopSlide = QSlider(self)
-        stopSlide.setOrientation(Qt.Horizontal)
+        self.stopSlide = QSlider(self)
+        self.stopSlide.setOrientation(Qt.Horizontal)
+        self.stopSlide.setMinimum(-604800)
+        self.stopSlide.setMaximum(0)
+        self.stopSlide.setValue(0)
+        self.stopInfo = QLabel(self)
+        self.stopInfo.setText('hell')
+        self.stopInfo.setBackgroundRole(QPalette.Base)
+        self.stopInfo.setAutoFillBackground(True)
+        self.stopSlide.valueChanged.connect(self.updateStopLabel)
 
         grid = QGridLayout(self)
-        grid.addWidget(start,       0,0)
-        grid.addWidget(startSlide,   0,1)
-        grid.addWidget(stop,        0,2)
-        grid.addWidget(stopSlide,    0,3)
+        grid.addWidget(timeline,        0,0)
+        grid.addWidget(self.timelineSlide,   0,1)
+        grid.addWidget(self.timelineInfo,    0,2)
+        grid.addWidget(stop,            0,3)
+        grid.addWidget(self.stopSlide,       0,4)
+        grid.addWidget(self.stopInfo,        0,5)
+
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
         grid.setColumnStretch(2,0)
-        grid.setColumnStretch(3,1)
+        grid.setColumnStretch(3,0)
+        grid.setColumnStretch(4,1)
+        grid.setColumnStretch(5,0)
         self.setLayout(grid)
 
+    def updateTimelineLabel(self, value):
+        self.timelineInfo.setText(str(value))
+
+    def updateStopLabel(self, value):
+        self.stopInfo.setText(str(value))
 
 class DashTab(QTabWidget):
     def __init__(self, parent):

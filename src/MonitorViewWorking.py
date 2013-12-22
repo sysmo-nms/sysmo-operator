@@ -30,7 +30,7 @@ class WorkView(QFrame):
 
         self.mainGrid   = QGridLayout()
         self.mainFrame  = QFrame(self)
-        self.mainFrame.setBackgroundRole(QPalette.Base)
+        #self.mainFrame.setBackgroundRole(QPalette.Dark)
         self.mainFrame.setLayout(self.mainGrid)
 
         self.scroll = QScrollArea(self)

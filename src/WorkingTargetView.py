@@ -50,19 +50,23 @@ class TargetView(QFrame):
 class TargetHead(QFrame):
     def __init__(self, parent, target):
         super(TargetHead, self).__init__(parent)
-        self.setBackgroundRole(QPalette.Window)
-        self.setAutoFillBackground(True)
+        #self.setBackgroundRole(QPalette.Window)
+        #self.setAutoFillBackground(True)
         self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Raised)
+        self.setFrameShadow(QFrame.Sunken)
 
         self.toggleButton = QPushButton('Toggle', self)
         self.toggleButton.clicked.connect(parent.toggleBody)
 
+        self.promoteCheck = QCheckBox('include in Dashboard', self)
         grid = QGridLayout(self)
         grid.addWidget(self.toggleButton,    0,0)
         grid.addWidget(QLabel(target, self), 0,1)
+        grid.addWidget(self.promoteCheck,    0,3)
         grid.setColumnStretch(0,0)
-        grid.setColumnStretch(1,1)
+        grid.setColumnStretch(1,0)
+        grid.setColumnStretch(2,1)
+        grid.setColumnStretch(3,0)
         self.setLayout(grid)
 
 class TargetBody(QFrame):
