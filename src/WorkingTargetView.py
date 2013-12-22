@@ -8,26 +8,39 @@ class TargetView(QFrame):
         super(TargetView, self).__init__(parent)
         self.probeViews = dict()
         self.rowCount   = 1
-        tab = QFrame(self)
+
+        self.targetHead  = TargetHead(self, target)
+        self.targetBody  = TargetBody(self)
+        self.targetBodyGrid = QGridLayout(self)
+        self.targetBody.setLayout(self.targetBodyGrid)
+
+        tab         = QFrame(self)
         tab.setFixedWidth(10)
 
         self.grid = QGridLayout(self)
-        self.grid.addWidget(TargetHead(self, target), 0,0,1,2)
+        self.grid.addWidget(self.targetHead, 0,0,1,2)
         self.grid.addWidget(tab,                      1,0)
+        self.grid.addWidget(self.targetBody, 1,1)
         self.grid.setColumnStretch(0,0)
         self.grid.setColumnStretch(1,1)
         self.setLayout(self.grid)
         self.newProbe(probe)
 
+    def toggleBody(self):
+        if self.grid.itemAtPosition(1,1) == None:
+            self.grid.addWidget(self.targetBody, 1, 1)
+        else:
+            self.grid.removeWidget(self.targetBody)
+
     def newProbe(self, probe):
         self.probeViews[probe] = ProbeView(self, probe)
-        self.grid.addWidget(self.probeViews[probe], self.rowCount, 1)
+        self.targetBodyGrid.addWidget(self.probeViews[probe], self.rowCount, 1)
         self.rowCount += 1
 
     def removeProbe(self, probe):
-        self.grid.removeWidget(self.probeViews[probe])
+        self.targetBodyGrid.removeWidget(self.probeViews[probe])
         self.probeViews[probe].deleteLater()
-        self.grid.update()
+        self.targetBodyGrid.update()
         del self.probeViews[probe]
         if len(self.probeViews) == 0:
             return 'empty'
@@ -40,6 +53,18 @@ class TargetHead(QFrame):
         self.setBackgroundRole(QPalette.Window)
         self.setAutoFillBackground(True)
         self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
+
+        self.toggleButton = QPushButton('Toggle', self)
+        self.toggleButton.clicked.connect(parent.toggleBody)
+
         grid = QGridLayout(self)
-        grid.addWidget(QLabel(target, self), 0,0)
+        grid.addWidget(self.toggleButton,    0,0)
+        grid.addWidget(QLabel(target, self), 0,1)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
         self.setLayout(grid)
+
+class TargetBody(QFrame):
+    def __init__(self, parent):
+        super(TargetBody, self).__init__(parent)

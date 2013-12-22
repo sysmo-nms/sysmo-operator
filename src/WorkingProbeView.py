@@ -14,7 +14,7 @@ class ProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
         super(ProbeView, self).__init__(parent, probe)
         self.probeDict   = ChannelHandler.singleton.probes[probe]
-        self.setBackgroundRole(QPalette.Window)
+        self.setBackgroundRole(QPalette.Base)
         self.setAutoFillBackground(True)
         self.setFrameShape(QFrame.StyledPanel)
         self.targetName = self.probeDict['target']
@@ -28,34 +28,34 @@ class ProbeView(AbstractChannelQFrame):
         else: 
             viewType = 'text_only'
 
-        self.grid = QGridLayout(self)
-        self.grid.setColumnStretch(0,0)
-        self.grid.setColumnStretch(1,1)
 
         # head
         self.head = ProbeHead(self, probe)
-        self.grid.addWidget(self.head,  0, 0, 1, 2)
+
+        # body 
+        self.body       = ProbeBody(self)
+        self.bodyGrid   = QGridLayout(self)
+        self.eventsView = EventsView(self)
+        self.textLog    = TextLog(self)
+        self.bodyGrid.addWidget(self.eventsView, 0, 0)
+        self.bodyGrid.addWidget(self.textLog,   1, 0)
+        if viewType == 'text_and_rrdgraph':
+            self.rrdArea    = RrdArea(self, self.probeDict)
+            self.bodyGrid.addWidget(self.rrdArea, 2,0)
+        else:
+            self.rrdArea = None
+        self.body.setLayout(self.bodyGrid)
 
         # tabulation
         tab = QFrame(self)
         tab.setFixedWidth(20)
+
+        self.grid = QGridLayout(self)
+        self.grid.setColumnStretch(0,0)
+        self.grid.setColumnStretch(1,1)
+        self.grid.addWidget(self.head,  0, 0, 1, 2)
         self.grid.addWidget(tab,        1, 0)
-
-        # EventViewer
-        self.eventsView = EventsView(self)
-        self.grid.addWidget(self.eventsView, 1, 1)
-
-        # rrd area
-        if viewType == 'text_and_rrdgraph':
-            self.rrdArea    = RrdArea(self, self.probeDict)
-            self.grid.addWidget(self.rrdArea, 2,1)
-        else:
-            self.rrdArea = None
-        
-        # TextLog
-        self.textLog    = TextLog(self)
-        self.grid.addWidget(self.textLog,   3, 1)
-
+        self.grid.addWidget(self.body,  1, 1)
         
 
         self.setLayout(self.grid)
@@ -64,6 +64,12 @@ class ProbeView(AbstractChannelQFrame):
         #self.signal.connect(stepProgress.handleEvent)
         #self.signal.connect(textLog.handleEvent)
         #self.signal.connect(probeInfo.handleEvent)
+
+    def toggleBody(self):
+        if self.grid.itemAtPosition(1,1) == None:
+            self.grid.addWidget(self.body, 1, 1)
+        else:
+            self.grid.removeWidget(self.body)
 
     def handleProbeEvent(self, msg):
         msgType = msg['msgType']
@@ -90,8 +96,13 @@ class ProbeHead(QFrame):
 
         self.setBackgroundRole(QPalette.Window)
         self.setAutoFillBackground(True)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
 
-        head            = QLabel(probe, self)
+        self.toggle = QPushButton('toggle', self)
+        self.toggle.clicked.connect(parent.toggleBody)
+
+        head = QLabel(probe, self)
         head.setFixedWidth(200)
 
         progressFrame   = QFrame(self)
@@ -111,12 +122,17 @@ class ProbeHead(QFrame):
         progressFrame.setLayout(progressGrid)
 
         grid = QGridLayout(self)
-        grid.addWidget(head,                0,0)
-        grid.addWidget(progressFrame,       0,1)
+        grid.addWidget(self.toggle,         0,0)
+        grid.addWidget(head,                0,1)
+        grid.addWidget(progressFrame,       0,2)
         self.setLayout(grid)
 
     def resetProgress(self):
         self.stepProgress.resetProgress()
+
+class ProbeBody(QFrame):
+    def __init__(self, parent):
+        super(ProbeBody, self).__init__(parent)
 
 
 class ProbeInfo(QFrame):
