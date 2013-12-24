@@ -114,7 +114,7 @@ class ProbeHead(QFrame):
         self.timeoutProgress.setFixedWidth(200)
         self.stepProgress.setFixedWidth(400)
         progressGrid.addWidget(self.stepProgress,                0,0,1,1)
-        progressGrid.addWidget(self.timeoutProgress,             0,1,1,1)
+        progressGrid.addWidget(self.timeoutProgress,             1,0,1,1)
         progressGrid.setColumnStretch(0,0)
         progressGrid.setColumnStretch(1,0)
         progressGrid.setColumnStretch(2,0)
@@ -220,7 +220,35 @@ class StepProgressBar(QProgressBar):
     def __init__(self, parent, timerRange, textValue, timeoutProgress):
         super(StepProgressBar, self).__init__(parent)
         self.timeMax    = timerRange
+        self.setTextVisible(False)
         self.timeoutProgress    = timeoutProgress
+        self.setStyleSheet('QProgressBar {  \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #555753,    \
+                stop: 1 #888a85);           \
+            height: 2px;            \
+            text-align: center;            \
+            border: 2px solid;      \
+            border-style: outset;       \
+            border-radius: 3px;         \
+            border-width: 1px;          \
+            max-height: 5px;            \
+            min-height: 5px;            \
+            border-color: #4e9a06;      \
+        } \
+        QProgressBar::chunk {      \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #8ae234,    \
+                stop: 1 #73d216);           \
+        }')
 
         self.setOrientation(Qt.Horizontal)
         self.setRange(0, timerRange)
@@ -255,12 +283,40 @@ class TimeoutProgressBar(QProgressBar):
     def __init__(self, parent, timerRange, textValue):
         super(TimeoutProgressBar, self).__init__(parent)
         self.timeMax = timerRange
+        self.setTextVisible(False)
         self.setOrientation(Qt.Horizontal)
         self.setRange(0, timerRange)
         self.setFormat(textValue)
         self.setValue(40)
         self.setTextDirection(QProgressBar.TopToBottom)
         self.valueChanged.connect(self.handleValueChanged)
+        self.setStyleSheet('QProgressBar {  \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #555753,    \
+                stop: 1 #888a85);           \
+            height: 2px;            \
+            text-align: center;            \
+            border: 2px solid;      \
+            border-style: outset;       \
+            border-radius: 3px;         \
+            border-width: 1px;          \
+            max-height: 5px;            \
+            min-height: 5px;            \
+            border-color: #4e9a06;      \
+        } \
+        QProgressBar::chunk {      \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #8ae234,    \
+                stop: 1 #73d216);           \
+        }')
 
         # TODO move QTimeLine in a thread
         self.timer = QTimeLine(timerRange, self)

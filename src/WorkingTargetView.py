@@ -108,12 +108,12 @@ class ProbeCriticalButton(QPushButton):
                 y1: 0,              \
                 x2: 0,              \
                 y2: 1,              \
-                stop: 0 #ef3b2c,    \
-                stop: 1 #cb181d);           \
-                border-style: outset;       \
-                border-radius: 3px;         \
-                border-width: 1px;          \
-                border-color: #99000d;      \
+                stop: 0 #ef2929,    \
+                stop: 1 #cc0000);           \
+            border-style: outset;       \
+            border-radius: 3px;         \
+            border-width: 1px;          \
+            border-color: #a40000;      \
         }')
 
 class ProbeWarningButton(QPushButton):
@@ -130,12 +130,12 @@ class ProbeWarningButton(QPushButton):
                 y1: 0,              \
                 x2: 0,              \
                 y2: 1,              \
-                stop: 0 #fdae6b,    \
-                stop: 1 #fd8d3c);           \
-                border-style: outset;       \
-                border-radius: 3px;         \
-                border-width: 1px;          \
-                border-color: #f16913;      \
+                stop: 0 #fcaf3e,    \
+                stop: 1 #f57900);           \
+            border-style: outset;       \
+            border-radius: 3px;         \
+            border-width: 1px;          \
+            border-color: #ce5c00;      \
         }')
 
 class ProbeOkButton(QPushButton):
@@ -154,10 +154,10 @@ class ProbeOkButton(QPushButton):
                 y2: 1,              \
                 stop: 0 #a1d99b,    \
                 stop: 1 #74c476);           \
-                border-style: outset;       \
-                border-radius: 3px;         \
-                border-width: 1px;          \
-                border-color: #41ab5d;      \
+            border-style: outset;       \
+            border-radius: 3px;         \
+            border-width: 1px;          \
+            border-color: #41ab5d;      \
         }')
 
 class TargetProbeSummaryWidget(QLabel):
