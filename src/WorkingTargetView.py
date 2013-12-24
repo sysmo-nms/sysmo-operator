@@ -94,6 +94,72 @@ class TargetBody(QFrame):
 #         self.setWindowTitle("Flow Layout")
 
 
+class ProbeCriticalButton(QPushButton):
+    def __init__(self, parent):
+        super(ProbeCriticalButton, self).__init__(parent)
+        self.setText('   critical: check-qqchose   ')
+        self.setStyleSheet('QPushButton {   \
+            min-height: 1.5em;              \
+            font: bold 1em;                       \
+            margin: 0 1px 0 1px;            \
+            color: white;                   \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #ef3b2c,    \
+                stop: 1 #cb181d);           \
+                border-style: outset;       \
+                border-radius: 3px;         \
+                border-width: 1px;          \
+                border-color: #99000d;      \
+        }')
+
+class ProbeWarningButton(QPushButton):
+    def __init__(self, parent):
+        super(ProbeWarningButton, self).__init__(parent)
+        self.setText('   warning: check-qqchose   ')
+        self.setStyleSheet('QPushButton {   \
+            min-height: 1.5em;              \
+            font: bold 1em;                       \
+            margin: 0 1px 0 1px;            \
+            color: white;                   \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #fdae6b,    \
+                stop: 1 #fd8d3c);           \
+                border-style: outset;       \
+                border-radius: 3px;         \
+                border-width: 1px;          \
+                border-color: #f16913;      \
+        }')
+
+class ProbeOkButton(QPushButton):
+    def __init__(self, parent):
+        super(ProbeOkButton, self).__init__(parent)
+        self.setText('   ok: check-qqchose   ')
+        self.setStyleSheet('QPushButton {   \
+            min-height: 1.5em;              \
+            font: 1em;                       \
+            margin: 0 1px 0 1px;            \
+            color: white;                   \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #a1d99b,    \
+                stop: 1 #74c476);           \
+                border-style: outset;       \
+                border-radius: 3px;         \
+                border-width: 1px;          \
+                border-color: #41ab5d;      \
+        }')
+
 class TargetProbeSummaryWidget(QLabel):
     def __init__(self, parent):
         super(TargetProbeSummary, self).__init__(parent)
@@ -101,35 +167,28 @@ class TargetProbeSummaryWidget(QLabel):
 class TargetProbeOverallSummary(QFrame):
     def __init__(self, parent):
         super(TargetProbeOverallSummary, self).__init__(parent)
-        self.setFixedWidth(600)
+        self.setFixedWidth(800)
         layout = FlowLayout(self)
 
-        layout.addWidget(QPushButton("Short"))
-        layout.addWidget(QPushButton("Longer"))
-        layout.addWidget(QPushButton("Different text"))
-        layout.addWidget(QPushButton("More text"))
-        layout.addWidget(QPushButton("Short"))
-        layout.addWidget(QPushButton("Short"))
-        layout.addWidget(QPushButton("Short"))
-        layout.addWidget(QPushButton("Short"))
-        layout.addWidget(QPushButton("Longer"))
-        layout.addWidget(QPushButton("Different text"))
-        layout.addWidget(QPushButton("More text"))
-        layout.addWidget(QPushButton("Longer"))
-        layout.addWidget(QPushButton("Different text"))
-        layout.addWidget(QPushButton("More text"))
-        layout.addWidget(QPushButton("Longer"))
-        layout.addWidget(QPushButton("Different text"))
-        layout.addWidget(QPushButton("More text"))
-        layout.addWidget(QPushButton("Longer"))
-        layout.addWidget(QPushButton("Different text"))
-        layout.addWidget(QPushButton("More text"))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeCriticalButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeOkButton(self))
+        layout.addWidget(ProbeWarningButton(self))
+        layout.addWidget(ProbeOkButton(self))
+
         self.setLayout(layout)
 
 class FlowLayout(QLayout):
     def __init__(self, parent=None, margin=0, spacing=-1):
         super(FlowLayout, self).__init__(parent)
 
+        # XXX
         #if parent is not None:
             #self.setMargin(margin)
 
@@ -183,6 +242,7 @@ class FlowLayout(QLayout):
         for item in self.itemList:
             size = size.expandedTo(item.minimumSize())
 
+        # XXX
         #size += QSize(2 * self.margin(), 2 * self.margin())
         return size
 
