@@ -167,7 +167,7 @@ class TargetProbeSummaryWidget(QLabel):
 class TargetProbeOverallSummary(QFrame):
     def __init__(self, parent):
         super(TargetProbeOverallSummary, self).__init__(parent)
-        self.setFixedWidth(800)
+        self.setFixedWidth(500)
         layout = FlowLayout(self)
 
         layout.addWidget(ProbeOkButton(self))

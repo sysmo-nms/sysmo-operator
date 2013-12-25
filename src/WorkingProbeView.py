@@ -95,7 +95,7 @@ class ProbeHead(QFrame):
         #self.setBackgroundRole(QPalette.Window)
         #self.setAutoFillBackground(True)
         self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Sunken)
+        self.setFrameShadow(QFrame.Raised)
 
         self.toggle = QPushButton('toggle', self)
         self.toggle.clicked.connect(parent.toggleBody)
@@ -111,7 +111,7 @@ class ProbeHead(QFrame):
             self, parent.probeDict['timeout'] * 1000, 'Timeout: %p%')
         self.stepProgress    = StepProgressBar(
             self, parent.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
-        self.timeoutProgress.setFixedWidth(200)
+        self.timeoutProgress.setFixedWidth(400)
         self.stepProgress.setFixedWidth(400)
         progressGrid.addWidget(self.stepProgress,                0,0,1,1)
         progressGrid.addWidget(self.timeoutProgress,             1,0,1,1)
@@ -238,7 +238,7 @@ class StepProgressBar(QProgressBar):
             border-width: 1px;          \
             max-height: 5px;            \
             min-height: 5px;            \
-            border-color: #4e9a06;      \
+            border-color: #888a85;      \
         } \
         QProgressBar::chunk {      \
             background-color: qlineargradient(  \
@@ -246,8 +246,10 @@ class StepProgressBar(QProgressBar):
                 y1: 0,              \
                 x2: 0,              \
                 y2: 1,              \
-                stop: 0 #8ae234,    \
-                stop: 1 #73d216);           \
+                stop: 0 #a1d99b,    \
+                stop: 1 #74c476);           \
+            width: 10px;           \
+            margin: 0.5px;           \
         }')
 
         self.setOrientation(Qt.Horizontal)
@@ -306,7 +308,7 @@ class TimeoutProgressBar(QProgressBar):
             border-width: 1px;          \
             max-height: 5px;            \
             min-height: 5px;            \
-            border-color: #4e9a06;      \
+            border-color: #888a85;      \
         } \
         QProgressBar::chunk {      \
             background-color: qlineargradient(  \
@@ -316,6 +318,8 @@ class TimeoutProgressBar(QProgressBar):
                 y2: 1,              \
                 stop: 0 #8ae234,    \
                 stop: 1 #73d216);           \
+            width: 10px;           \
+            margin: 0.5px;           \
         }')
 
         # TODO move QTimeLine in a thread
