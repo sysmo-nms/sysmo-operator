@@ -15,6 +15,7 @@ class ProbeView(AbstractChannelQFrame):
         super(ProbeView, self).__init__(parent, probe)
         self.probeDict   = ChannelHandler.singleton.probes[probe]
         self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
         self.targetName = self.probeDict['target']
         self.probeName  = probe
 
@@ -94,8 +95,8 @@ class ProbeHead(QFrame):
 
         #self.setBackgroundRole(QPalette.Window)
         #self.setAutoFillBackground(True)
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Raised)
+        #self.setFrameShape(QFrame.StyledPanel)
+        #self.setFrameShadow(QFrame.Raised)
 
         self.toggle = QPushButton('toggle', self)
         self.toggle.clicked.connect(parent.toggleBody)
