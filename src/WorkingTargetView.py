@@ -1,6 +1,7 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    WorkingProbeView    import ProbeView
+from    MonitorProxyEvents  import ChannelHandler
 
 
 class TargetView(QFrame):
@@ -60,7 +61,7 @@ class TargetHead(QFrame):
         self.toggleButton = QPushButton('Toggle', self)
         self.toggleButton.clicked.connect(parent.toggleBody)
 
-        self.summary    = TargetProbeOverallSummary(self)
+        self.summary    = TargetProbeOverallSummary(self, target)
 
         self.promoteCheck = QCheckBox('include in Dashboard', self)
 
@@ -101,9 +102,9 @@ class TargetBody(QFrame):
 
 
 class ProbeCriticalButton(QPushButton):
-    def __init__(self, parent):
+    def __init__(self, parent, probeName):
         super(ProbeCriticalButton, self).__init__(parent)
-        self.setText('   critical: check-qqchose   ')
+        self.setText('   %s   ' % probeName)
         self.setStyleSheet('\
         QPushButton {   \
             min-height: 1.5em;              \
@@ -133,9 +134,9 @@ class ProbeCriticalButton(QPushButton):
         }')
 
 class ProbeWarningButton(QPushButton):
-    def __init__(self, parent):
+    def __init__(self, parent, probeName):
         super(ProbeWarningButton, self).__init__(parent)
-        self.setText('   warning: check-qqchose   ')
+        self.setText('   %s   ' % probeName)
         self.setStyleSheet('QPushButton {   \
             min-height: 1.5em;              \
             font: bold 1em;                       \
@@ -164,9 +165,9 @@ class ProbeWarningButton(QPushButton):
         }')
 
 class ProbeOkButton(QPushButton):
-    def __init__(self, parent):
+    def __init__(self, parent, probeName):
         super(ProbeOkButton, self).__init__(parent)
-        self.setText('   ok: check-qqchose   ')
+        self.setText('   %s   ' % probeName)
         self.setStyleSheet('QPushButton {   \
             min-height: 1.5em;              \
             font: 1em;                       \
@@ -195,24 +196,47 @@ class ProbeOkButton(QPushButton):
         }')
 
 class TargetProbeOverallSummary(QFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, target):
         super(TargetProbeOverallSummary, self).__init__(parent)
         self.setFixedWidth(800)
-        layout = FlowLayout(self)
+        sigDict = ChannelHandler.singleton.masterSignalsDict
+        sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
 
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeOkButton(self))
-#        layout.addWidget(ProbeOkButton(self))
-#        layout.addWidget(ProbeOkButton(self))
-#        layout.addWidget(ProbeCriticalButton(self))
-#         layout.addWidget(ProbeOkButton(self))
-#         layout.addWidget(ProbeOkButton(self))
-#         layout.addWidget(ProbeOkButton(self))
-#         layout.addWidget(ProbeOkButton(self))
-#         layout.addWidget(ProbeWarningButton(self))
-#         layout.addWidget(ProbeOkButton(self))
-# 
-        self.setLayout(layout)
+        self.buttonDict = dict()
+        #self.layout = FlowLayout(self)
+        self.layout = QGridLayout(self)
+        self.columnCount = 0
+
+        self.setLayout(self.layout)
+        self._initializeSummary(target)
+
+    def _initializeSummary(self, target):
+        probeDict   = ChannelHandler.singleton.probes
+        for key in probeDict.keys():
+            if probeDict[key]['target'] == target:
+                self.buttonDict[key] = dict()
+                self.buttonDict[key]['column'] = self.columnCount
+                if probeDict[key]['status'] == 'OK':
+                    self.buttonDict[key]['widget'] = ProbeOkButton(self, key)
+                    self.layout.setColumnStretch(self.columnCount, 0)
+                    self.layout.setColumnStretch(self.columnCount + 1, 1)
+                    self.layout.addWidget(self.buttonDict[key]['widget'], 0, self.columnCount)
+                if probeDict[key]['status'] == 'CRITICAL':
+                    self.buttonDict[key]['widget'] = ProbeCriticalButton(self, key)
+                    self.layout.setColumnStretch(self.columnCount, 0)
+                    self.layout.setColumnStretch(self.columnCount + 1, 1)
+                    self.layout.addWidget(self.buttonDict[key]['widget'], 0, self.columnCount)
+                if probeDict[key]['status'] == 'WARNING':
+                    self.buttonDict[key]['widget'] = ProbeWarningButton(self, key)
+                    self.layout.setColumnStretch(self.columnCount, 0)
+                    self.layout.setColumnStretch(self.columnCount + 1, 1)
+                    self.layout.addWidget(self.buttonDict[key]['widget'], 0, self.columnCount)
+
+                self.columnCount += 1
+        
+    def _handleProbeInfo(self, msg):
+        print "handle probe info"
+
 
 class FlowLayout(QLayout):
     def __init__(self, parent=None, margin=0, spacing=-1):
