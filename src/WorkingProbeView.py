@@ -6,6 +6,7 @@ from    MonitorProxyEvents  import ChannelHandler
 from    LoggerViewText      import TextLog
 from    LoggerViewRrds      import *
 from    LoggerViewEventsTimeLine    import *
+from    LoggerViewEventsTimeLineSimple    import *
 
 import  TkorderIcons
 
@@ -103,6 +104,8 @@ class ProbeHead(QFrame):
 
         self.promoteCheck = QCheckBox('include in Dashboard', self)
 
+        self.timeLine   = SimpleTimeLine(self)
+
         head = QLabel(probe, self)
         head.setFixedWidth(200)
 
@@ -123,10 +126,11 @@ class ProbeHead(QFrame):
         progressFrame.setLayout(progressGrid)
 
         grid = QGridLayout(self)
-        grid.addWidget(self.toggle,         0,0)
+        grid.addWidget(self.toggle,         0,0,2,1)
         grid.addWidget(head,                0,1)
         grid.addWidget(progressFrame,       0,2)
         grid.addWidget(self.promoteCheck,   0,3)
+        grid.addWidget(self.timeLine,       1,1,1,2)
         self.setLayout(grid)
 
     def resetProgress(self):
@@ -337,5 +341,3 @@ class TimeoutProgressBar(QProgressBar):
 
     def handleValueChanged(self, i):
         if self.timeMax == i: pass # do something
-            
-

@@ -7,12 +7,14 @@ class TargetView(QFrame):
     def __init__(self, parent, target, probe):
         super(TargetView, self).__init__(parent)
         self.probeViews = dict()
+        self.parent = parent
         self.rowCount   = 1
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
 
         self.targetHead  = TargetHead(self, target)
-        self.targetBody  = TargetBody(self)
+
+        self.targetBody     = TargetBody(self)
         self.targetBodyGrid = QGridLayout(self)
         self.targetBody.setLayout(self.targetBodyGrid)
 
@@ -20,9 +22,9 @@ class TargetView(QFrame):
         tab.setFixedWidth(10)
 
         self.grid = QGridLayout(self)
-        self.grid.addWidget(self.targetHead, 0,0,1,2)
-        self.grid.addWidget(tab,                      1,0)
-        self.grid.addWidget(self.targetBody, 1,1)
+        self.grid.addWidget(self.targetHead,    0,0,1,2)
+        self.grid.addWidget(tab,                1,0)
+        self.grid.addWidget(self.targetBody,    1,1)
         self.grid.setColumnStretch(0,0)
         self.grid.setColumnStretch(1,1)
         self.setLayout(self.grid)
@@ -30,8 +32,10 @@ class TargetView(QFrame):
 
     def toggleBody(self):
         if self.grid.itemAtPosition(1,1) == None:
+            self.targetBody.show()
             self.grid.addWidget(self.targetBody, 1, 1)
         else:
+            self.targetBody.hide()
             self.grid.removeWidget(self.targetBody)
 
     def newProbe(self, probe):
@@ -62,16 +66,18 @@ class TargetHead(QFrame):
 
         grid = QGridLayout(self)
 
-        grid.addWidget(self.toggleButton,    0,0)
-        grid.addWidget(QLabel(target, self), 0,1)
-        grid.addWidget(self.summary,         0,2)
-        grid.addWidget(self.promoteCheck,    0,4)
+        grid.addWidget(QLabel(target, self), 0, 1, 1, 1)
+        grid.addWidget(self.toggleButton,    0, 0, 1, 1)
+        grid.addWidget(self.summary,         0, 2, 1, 1)
+        grid.addWidget(self.promoteCheck,    0, 4, 1, 1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,0)
         grid.setColumnStretch(2,0)
         grid.setColumnStretch(3,1)
         grid.setColumnStretch(4,0)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,0)
         self.setLayout(grid)
 
 class TargetBody(QFrame):
@@ -188,10 +194,6 @@ class ProbeOkButton(QPushButton):
                 stop: 0 #74c476);           \
         }')
 
-class TargetProbeSummaryWidget(QLabel):
-    def __init__(self, parent):
-        super(TargetProbeSummary, self).__init__(parent)
-
 class TargetProbeOverallSummary(QFrame):
     def __init__(self, parent):
         super(TargetProbeOverallSummary, self).__init__(parent)
@@ -200,25 +202,24 @@ class TargetProbeOverallSummary(QFrame):
 
         layout.addWidget(ProbeOkButton(self))
         layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeCriticalButton(self))
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeOkButton(self))
-        layout.addWidget(ProbeWarningButton(self))
-        layout.addWidget(ProbeOkButton(self))
-
+#        layout.addWidget(ProbeOkButton(self))
+#        layout.addWidget(ProbeOkButton(self))
+#        layout.addWidget(ProbeCriticalButton(self))
+#         layout.addWidget(ProbeOkButton(self))
+#         layout.addWidget(ProbeOkButton(self))
+#         layout.addWidget(ProbeOkButton(self))
+#         layout.addWidget(ProbeOkButton(self))
+#         layout.addWidget(ProbeWarningButton(self))
+#         layout.addWidget(ProbeOkButton(self))
+# 
         self.setLayout(layout)
 
 class FlowLayout(QLayout):
     def __init__(self, parent=None, margin=0, spacing=-1):
         super(FlowLayout, self).__init__(parent)
 
-        # XXX
-        #if parent is not None:
-            #self.setMargin(margin)
+        if parent is not None:
+            self.setContentsMargins(margin, margin, margin, margin)
 
         self.setSpacing(spacing)
 
@@ -271,7 +272,10 @@ class FlowLayout(QLayout):
             size = size.expandedTo(item.minimumSize())
 
         # XXX
-        #size += QSize(2 * self.margin(), 2 * self.margin())
+        (margin,_,_,_) = self.getContentsMargins()
+        # size += QSize(2 * self.margin(), 2 * self.margin())
+        size += QSize(2 * margin, 2 * margin)
+
         return size
 
     def doLayout(self, rect, testOnly):
@@ -296,4 +300,5 @@ class FlowLayout(QLayout):
             x = nextX
             lineHeight = max(lineHeight, item.sizeHint().height())
 
+        print y
         return y + lineHeight - rect.y()
