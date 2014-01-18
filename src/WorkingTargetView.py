@@ -15,7 +15,7 @@ class TargetView(QFrame):
 
         self.targetHead  = TargetHead(self, target)
 
-        self.targetBody     = TargetBody(self)
+        self.targetBody     = QFrame(self)
         self.targetBodyGrid = QGridLayout(self)
         self.targetBody.setLayout(self.targetBodyGrid)
 
@@ -81,24 +81,91 @@ class TargetHead(QFrame):
         grid.setRowStretch(1,0)
         self.setLayout(grid)
 
-class TargetBody(QFrame):
-    def __init__(self, parent):
-        super(TargetBody, self).__init__(parent)
 
+class TargetProbeOverallSummary(QFrame):
+    def __init__(self, parent, target):
+        super(TargetProbeOverallSummary, self).__init__(parent)
+        self.setFixedWidth(800)
+        self.target = target
+        sigDict = ChannelHandler.singleton.masterSignalsDict
+        sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
 
-# class Window(QtGui.QWidget):
-#     def __init__(self):
-#         super(Window, self).__init__()
-# 
-#         flowLayout = FlowLayout()
-#         flowLayout.addWidget(QtGui.QPushButton("Short"))
-#         flowLayout.addWidget(QtGui.QPushButton("Longer"))
-#         flowLayout.addWidget(QtGui.QPushButton("Different text"))
-#         flowLayout.addWidget(QtGui.QPushButton("More text"))
-#         flowLayout.addWidget(QtGui.QPushButton("Even longer button text"))
-#         self.setLayout(flowLayout)
-# 
-#         self.setWindowTitle("Flow Layout")
+        self.buttonDict = dict()
+        #self.layout = FlowLayout(self)
+        self.layout = QGridLayout(self)
+        self.columnCount = 0
+
+        self.setLayout(self.layout)
+        self._initializeSummary(target)
+
+    def _initializeSummary(self, target):
+        probeDict   = ChannelHandler.singleton.probes
+        for probe in probeDict.keys():
+            if probeDict[probe]['target'] == target:
+                self.buttonDict[probe] = dict()
+                self.buttonDict[probe]['column'] = self.columnCount
+                status = probeDict[probe]['status']
+                self._setButtonStatus(status, probe, self.columnCount)
+                self.columnCount += 1
+        
+    def _setButtonStatus(self, status, probe, column):
+        if status == 'OK':
+            self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'CRITICAL':
+            self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+            
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'WARNING':
+            self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+            
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+
+    def _updateButtonStatus(self, status, probe):
+        if status == 'OK':
+            self.layout.removeWidget(self.buttonDict[probe]['widget'])
+            self.buttonDict[probe]['widget'].hide()
+            self.buttonDict[probe]['widget'].deleteLater()
+            del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'CRITICAL':
+            self.layout.removeWidget(self.buttonDict[probe]['widget'])
+            self.buttonDict[probe]['widget'].hide()
+            self.buttonDict[probe]['widget'].deleteLater()
+            del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'WARNING':
+            self.layout.removeWidget(self.buttonDict[probe]['widget'])
+            self.buttonDict[probe]['widget'].hide()
+            self.buttonDict[probe]['widget'].deleteLater()
+            del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+
+    def _handleProbeInfo(self, msg):
+        target = msg['value']['target']
+        if target == self.target:
+            probe  = msg['value']['name']
+            status = msg['value']['status']
+            self._updateButtonStatus(status, probe)
 
 
 class ProbeCriticalButton(QPushButton):
@@ -194,178 +261,3 @@ class ProbeOkButton(QPushButton):
                 stop: 1 #a1d99b,    \
                 stop: 0 #74c476);           \
         }')
-
-class TargetProbeOverallSummary(QFrame):
-    def __init__(self, parent, target):
-        super(TargetProbeOverallSummary, self).__init__(parent)
-        self.setFixedWidth(800)
-        self.target = target
-        sigDict = ChannelHandler.singleton.masterSignalsDict
-        sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
-
-        self.buttonDict = dict()
-        #self.layout = FlowLayout(self)
-        self.layout = QGridLayout(self)
-        self.columnCount = 0
-
-        self.setLayout(self.layout)
-        self._initializeSummary(target)
-
-    def _initializeSummary(self, target):
-        probeDict   = ChannelHandler.singleton.probes
-        for probe in probeDict.keys():
-            if probeDict[probe]['target'] == target:
-                self.buttonDict[probe] = dict()
-                self.buttonDict[probe]['column'] = self.columnCount
-                status = probeDict[probe]['status']
-                self._setButtonStatus(status, probe, self.columnCount)
-                self.columnCount += 1
-        
-    def _setButtonStatus(self, status, probe, column):
-        if status == 'OK':
-            self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
-            self.buttonDict[probe]['column'] = column
-
-            self.layout.setColumnStretch(column, 0)
-            self.layout.setColumnStretch(column + 1, 1)
-            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
-        if status == 'CRITICAL':
-            self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
-            self.buttonDict[probe]['column'] = column
-            
-            self.layout.setColumnStretch(column, 0)
-            self.layout.setColumnStretch(column + 1, 1)
-            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
-        if status == 'WARNING':
-            self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
-            self.buttonDict[probe]['column'] = column
-            
-            self.layout.setColumnStretch(column, 0)
-            self.layout.setColumnStretch(column + 1, 1)
-            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
-
-    def _updateButtonStatus(self, status, probe):
-        if status == 'OK':
-            self.layout.removeWidget(self.buttonDict[probe]['widget'])
-            self.buttonDict[probe]['widget'].hide()
-            self.buttonDict[probe]['widget'].deleteLater()
-            del self.buttonDict[probe]['widget']
-
-            self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
-            column = self.buttonDict[probe]['column']
-            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
-        if status == 'CRITICAL':
-            self.layout.removeWidget(self.buttonDict[probe]['widget'])
-            self.buttonDict[probe]['widget'].hide()
-            self.buttonDict[probe]['widget'].deleteLater()
-            del self.buttonDict[probe]['widget']
-
-            self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
-            column = self.buttonDict[probe]['column']
-            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
-        if status == 'WARNING':
-            self.layout.removeWidget(self.buttonDict[probe]['widget'])
-            self.buttonDict[probe]['widget'].hide()
-            self.buttonDict[probe]['widget'].deleteLater()
-            del self.buttonDict[probe]['widget']
-
-            self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
-            column = self.buttonDict[probe]['column']
-            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
-
-    def _handleProbeInfo(self, msg):
-        target = msg['value']['target']
-        if target == self.target:
-            probe  = msg['value']['name']
-            status = msg['value']['status']
-            self._updateButtonStatus(status, probe)
-
-
-class FlowLayout(QLayout):
-    def __init__(self, parent=None, margin=0, spacing=-1):
-        super(FlowLayout, self).__init__(parent)
-
-        if parent is not None:
-            self.setContentsMargins(margin, margin, margin, margin)
-
-        self.setSpacing(spacing)
-
-        self.itemList = []
-
-    def __del__(self):
-        item = self.takeAt(0)
-        while item:
-            item = self.takeAt(0)
-
-    def addItem(self, item):
-        self.itemList.append(item)
-
-    def count(self):
-        return len(self.itemList)
-
-    def itemAt(self, index):
-        if index >= 0 and index < len(self.itemList):
-            return self.itemList[index]
-
-        return None
-
-    def takeAt(self, index):
-        if index >= 0 and index < len(self.itemList):
-            return self.itemList.pop(index)
-
-        return None
-
-    def expandingDirections(self):
-        return Qt.Orientations(Qt.Orientation(0))
-
-    def hasHeightForWidth(self):
-        return True
-
-    def heightForWidth(self, width):
-        height = self.doLayout(QRect(0, 0, width, 0), True)
-        return height
-
-    def setGeometry(self, rect):
-        super(FlowLayout, self).setGeometry(rect)
-        self.doLayout(rect, False)
-
-    def sizeHint(self):
-        return self.minimumSize()
-
-    def minimumSize(self):
-        size = QSize()
-
-        for item in self.itemList:
-            size = size.expandedTo(item.minimumSize())
-
-        # XXX
-        (margin,_,_,_) = self.getContentsMargins()
-        # size += QSize(2 * self.margin(), 2 * self.margin())
-        size += QSize(2 * margin, 2 * margin)
-
-        return size
-
-    def doLayout(self, rect, testOnly):
-        x = rect.x()
-        y = rect.y()
-        lineHeight = 0
-
-        for item in self.itemList:
-            wid = item.widget()
-            spaceX = self.spacing() + wid.style().layoutSpacing(QSizePolicy.PushButton, QSizePolicy.PushButton, Qt.Horizontal)
-            spaceY = self.spacing() + wid.style().layoutSpacing(QSizePolicy.PushButton, QSizePolicy.PushButton, Qt.Vertical)
-            nextX = x + item.sizeHint().width() + spaceX
-            if nextX - spaceX > rect.right() and lineHeight > 0:
-                x = rect.x()
-                y = y + lineHeight + spaceY
-                nextX = x + item.sizeHint().width() + spaceX
-                lineHeight = 0
-
-            if not testOnly:
-                item.setGeometry(QRect(QPoint(x, y), item.sizeHint()))
-
-            x = nextX
-            lineHeight = max(lineHeight, item.sizeHint().height())
-
-        print y
-        return y + lineHeight - rect.y()
