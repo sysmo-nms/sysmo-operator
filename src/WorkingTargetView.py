@@ -58,8 +58,10 @@ class TargetHead(QFrame):
     def __init__(self, parent, target):
         super(TargetHead, self).__init__(parent)
 
-        self.toggleButton = QPushButton('Toggle', self)
+        self.toggleButton = QPushButton(target, self)
         self.toggleButton.clicked.connect(parent.toggleBody)
+        self.toggleButton.setFixedWidth(100)
+        self.toggleButton.setFixedHeight(30)
 
         self.summary    = TargetProbeOverallSummary(self, target)
 
@@ -67,10 +69,10 @@ class TargetHead(QFrame):
 
         grid = QGridLayout(self)
 
-        grid.addWidget(QLabel(target, self), 0, 1, 1, 1)
-        grid.addWidget(self.toggleButton,    0, 0, 1, 1)
+        #targetLabel = QLabel(target, self)
         grid.addWidget(self.summary,         0, 2, 1, 1)
         grid.addWidget(self.promoteCheck,    0, 4, 1, 1)
+        grid.addWidget(self.toggleButton,    0, 0, 1, 1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,0)
