@@ -34,6 +34,8 @@ class ProbeView(AbstractChannelQFrame):
 
         # body 
         self.body       = ProbeBody(self)
+        self.body.hide()
+        self.bodyInit   = False
         self.bodyGrid   = QGridLayout(self)
         self.eventsView = EventsView(self)
         self.textLog    = TextLog(self)
@@ -59,6 +61,7 @@ class ProbeView(AbstractChannelQFrame):
         
 
         self.setLayout(self.grid)
+        self.toggleBody()
         self.connectProbe()
         #self.signal.connect(rightPaneView.handleEvent)
         #self.signal.connect(stepProgress.handleEvent)
@@ -67,6 +70,7 @@ class ProbeView(AbstractChannelQFrame):
 
     def toggleBody(self):
         if self.grid.itemAtPosition(1,1) == None:
+            if self.bodyInit == False: self.body.show()
             self.grid.addWidget(self.body, 1, 1)
         else:
             self.grid.removeWidget(self.body)
