@@ -199,6 +199,7 @@ class TargetProbeOverallSummary(QFrame):
     def __init__(self, parent, target):
         super(TargetProbeOverallSummary, self).__init__(parent)
         self.setFixedWidth(800)
+        self.target = target
         sigDict = ChannelHandler.singleton.masterSignalsDict
         sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
 
@@ -212,30 +213,72 @@ class TargetProbeOverallSummary(QFrame):
 
     def _initializeSummary(self, target):
         probeDict   = ChannelHandler.singleton.probes
-        for key in probeDict.keys():
-            if probeDict[key]['target'] == target:
-                self.buttonDict[key] = dict()
-                self.buttonDict[key]['column'] = self.columnCount
-                if probeDict[key]['status'] == 'OK':
-                    self.buttonDict[key]['widget'] = ProbeOkButton(self, key)
-                    self.layout.setColumnStretch(self.columnCount, 0)
-                    self.layout.setColumnStretch(self.columnCount + 1, 1)
-                    self.layout.addWidget(self.buttonDict[key]['widget'], 0, self.columnCount)
-                if probeDict[key]['status'] == 'CRITICAL':
-                    self.buttonDict[key]['widget'] = ProbeCriticalButton(self, key)
-                    self.layout.setColumnStretch(self.columnCount, 0)
-                    self.layout.setColumnStretch(self.columnCount + 1, 1)
-                    self.layout.addWidget(self.buttonDict[key]['widget'], 0, self.columnCount)
-                if probeDict[key]['status'] == 'WARNING':
-                    self.buttonDict[key]['widget'] = ProbeWarningButton(self, key)
-                    self.layout.setColumnStretch(self.columnCount, 0)
-                    self.layout.setColumnStretch(self.columnCount + 1, 1)
-                    self.layout.addWidget(self.buttonDict[key]['widget'], 0, self.columnCount)
-
+        for probe in probeDict.keys():
+            if probeDict[probe]['target'] == target:
+                self.buttonDict[probe] = dict()
+                self.buttonDict[probe]['column'] = self.columnCount
+                status = probeDict[probe]['status']
+                self._setButtonStatus(status, probe, self.columnCount)
                 self.columnCount += 1
         
+    def _setButtonStatus(self, status, probe, column):
+        if status == 'OK':
+            self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'CRITICAL':
+            self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+            
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'WARNING':
+            self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+            
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+
+    def _updateButtonStatus(self, status, probe):
+        if status == 'OK':
+            self.layout.removeWidget(self.buttonDict[probe]['widget'])
+            self.buttonDict[probe]['widget'].hide()
+            self.buttonDict[probe]['widget'].deleteLater()
+            del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'CRITICAL':
+            self.layout.removeWidget(self.buttonDict[probe]['widget'])
+            self.buttonDict[probe]['widget'].hide()
+            self.buttonDict[probe]['widget'].deleteLater()
+            del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'WARNING':
+            self.layout.removeWidget(self.buttonDict[probe]['widget'])
+            self.buttonDict[probe]['widget'].hide()
+            self.buttonDict[probe]['widget'].deleteLater()
+            del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+
     def _handleProbeInfo(self, msg):
-        print "handle probe info"
+        target = msg['value']['target']
+        if target == self.target:
+            probe  = msg['value']['name']
+            status = msg['value']['status']
+            self._updateButtonStatus(status, probe)
 
 
 class FlowLayout(QLayout):
