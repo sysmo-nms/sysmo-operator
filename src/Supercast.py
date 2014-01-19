@@ -27,10 +27,10 @@ class Link(QTcpSocket):
         self._mpd           = dict()
         self._nextBlockSize = 0
         self._headerLen     = 4
+        self._errorHandler  = None
 
         self.connected.connect(self._socketConnected)
         self.readyRead.connect(self._socketReadyRead)
-        self.disconnected.connect(self._socketDisconnected)
         self.error.connect(self._socketErrorEvent)
         self.setMessageProcessor('modSupercastPDU', self._handleSupercastPDU)
 
@@ -39,6 +39,9 @@ class Link(QTcpSocket):
     ###################
     def setMessageProcessor(self, fromKey, function):
         self._mpd.update({fromKey: function})
+
+    def setErrorHandler(self, errHandler):
+        self._errorHandler = errHandler       
 
     def tryConnect(self):
         self.connectToHost(self.server, self.port)
@@ -81,11 +84,12 @@ class Link(QTcpSocket):
 
     def _socketConnected(self): pass
 
-    def _socketDisconnected(self):
-        print "socket is disconnected"
-
     def _socketErrorEvent(self, event):
-        print "error event is: ", event
+        if self._errorHandler == None:
+            print "Supercast socket event: ", event
+        else:
+            self._errorHandler(event)
+
 
     # MESSAGES HANDLING
     def _handleServerMessage(self, msg):

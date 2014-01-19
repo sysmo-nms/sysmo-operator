@@ -70,6 +70,7 @@ class TkorderClient(QMainWindow):
 
         " Server connexion and socket related "
         self.supercast = Supercast.Link(self)
+        self.supercast.setErrorHandler(self.socketEventHandler)
 
         " End init "
         self.central = TkorderCentralWidget(self)
@@ -82,6 +83,46 @@ class TkorderClient(QMainWindow):
         else:
             self.showNormal()
         
+    def socketEventHandler(self, event):
+        if   event == QAbstractSocket.ConnectionRefusedError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.RemoteHostClosedError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.HostNotFoundError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.SocketAccessError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.SocketResourceError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.SocketTimeoutError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.DatagramTooLargeError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.NetworkError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.AddressInUseError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.SocketAddressNotAvailableError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.UnsupportedSocketOperationError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.SslHandshakeFailedError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.UnfinishedSocketOperationError:
+            self._showMessageBox(event)
+        elif event == QAbstractSocket.UnknownSocketError:
+            self._showMessageBox(event)
+        else:
+            self._showMessageBox(event)
+
+    def _showMessageBox(self, event):
+        msgBox = QMessageBox(self)
+        msgBox.setText("Socket ERROR %s" % event)
+        msgBox.setStandardButtons(QMessageBox.Close)
+        msgBox.exec_()
+        self.close()
+
+
     def logTargets(self):
         pp  = pprint.PrettyPrinter(indent=4)
         d   = MonitorProxyEvents.ChannelHandler.singleton.targets
