@@ -135,28 +135,31 @@ class TargetProbeOverallSummary(QFrame):
 
     def _updateButtonStatus(self, status, probe):
         if status == 'OK':
-            self.layout.removeWidget(self.buttonDict[probe]['widget'])
-            self.buttonDict[probe]['widget'].hide()
-            self.buttonDict[probe]['widget'].deleteLater()
-            del self.buttonDict[probe]['widget']
+            if 'widget' in self.buttonDict[probe]:
+                self.layout.removeWidget(self.buttonDict[probe]['widget'])
+                self.buttonDict[probe]['widget'].hide()
+                self.buttonDict[probe]['widget'].deleteLater()
+                del self.buttonDict[probe]['widget']
 
             self.buttonDict[probe]['widget'] = ProbeOkButton(self, probe)
             column = self.buttonDict[probe]['column']
             self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
         if status == 'CRITICAL':
-            self.layout.removeWidget(self.buttonDict[probe]['widget'])
-            self.buttonDict[probe]['widget'].hide()
-            self.buttonDict[probe]['widget'].deleteLater()
-            del self.buttonDict[probe]['widget']
+            if 'widget' in self.buttonDict[probe]:
+                self.layout.removeWidget(self.buttonDict[probe]['widget'])
+                self.buttonDict[probe]['widget'].hide()
+                self.buttonDict[probe]['widget'].deleteLater()
+                del self.buttonDict[probe]['widget']
 
             self.buttonDict[probe]['widget'] = ProbeCriticalButton(self, probe)
             column = self.buttonDict[probe]['column']
             self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
         if status == 'WARNING':
-            self.layout.removeWidget(self.buttonDict[probe]['widget'])
-            self.buttonDict[probe]['widget'].hide()
-            self.buttonDict[probe]['widget'].deleteLater()
-            del self.buttonDict[probe]['widget']
+            if 'widget' in self.buttonDict[probe]:
+                self.layout.removeWidget(self.buttonDict[probe]['widget'])
+                self.buttonDict[probe]['widget'].hide()
+                self.buttonDict[probe]['widget'].deleteLater()
+                del self.buttonDict[probe]['widget']
 
             self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
             column = self.buttonDict[probe]['column']
