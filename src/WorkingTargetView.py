@@ -132,6 +132,13 @@ class TargetProbeOverallSummary(QFrame):
             self.layout.setColumnStretch(column, 0)
             self.layout.setColumnStretch(column + 1, 1)
             self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'UNKNOWN':
+            self.buttonDict[probe]['widget'] = ProbeUnknownButton(self, probe)
+            self.buttonDict[probe]['column'] = column
+            
+            self.layout.setColumnStretch(column, 0)
+            self.layout.setColumnStretch(column + 1, 1)
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
 
     def _updateButtonStatus(self, status, probe):
         if status == 'OK':
@@ -162,6 +169,16 @@ class TargetProbeOverallSummary(QFrame):
                 del self.buttonDict[probe]['widget']
 
             self.buttonDict[probe]['widget'] = ProbeWarningButton(self, probe)
+            column = self.buttonDict[probe]['column']
+            self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
+        if status == 'UNKNOWN':
+            if 'widget' in self.buttonDict[probe]:
+                self.layout.removeWidget(self.buttonDict[probe]['widget'])
+                self.buttonDict[probe]['widget'].hide()
+                self.buttonDict[probe]['widget'].deleteLater()
+                del self.buttonDict[probe]['widget']
+
+            self.buttonDict[probe]['widget'] = ProbeUnknownButton(self, probe)
             column = self.buttonDict[probe]['column']
             self.layout.addWidget(self.buttonDict[probe]['widget'], 0, column)
 
@@ -256,6 +273,37 @@ class ProbeOkButton(QPushButton):
             border-radius: 3px;         \
             border-width: 1px;          \
             border-color: #41ab5d;      \
+        }   \
+        QPushButton:pressed {   \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 1 #a1d99b,    \
+                stop: 0 #74c476);           \
+        }')
+
+class ProbeUnknownButton(QPushButton):
+    def __init__(self, parent, probeName):
+        super(ProbeUnknownButton, self).__init__(parent)
+        self.setText('   %s   ' % probeName)
+        self.setStyleSheet('QPushButton {   \
+            min-height: 1.5em;              \
+            font: 1em;                       \
+            margin: 0 1px 0 1px;            \
+            color: white;                   \
+            background-color: qlineargradient(  \
+                x1: 0,              \
+                y1: 0,              \
+                x2: 0,              \
+                y2: 1,              \
+                stop: 0 #666666,    \
+                stop: 1 #222222);           \
+            border-style: outset;       \
+            border-radius: 3px;         \
+            border-width: 1px;          \
+            border-color: #aaaaaa;      \
         }   \
         QPushButton:pressed {   \
             background-color: qlineargradient(  \
