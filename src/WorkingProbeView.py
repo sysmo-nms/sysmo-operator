@@ -5,6 +5,7 @@ from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 from    LoggerViewText      import TextLog
 from    LoggerViewRrds      import *
+from    CustomButtons       import *
 from    LoggerViewEventsTimeLine    import *
 from    LoggerViewEventsTimeLineSimple    import *
 
@@ -63,10 +64,6 @@ class ProbeView(AbstractChannelQFrame):
         self.setLayout(self.grid)
         self.toggleBody()
         self.connectProbe()
-        #self.signal.connect(rightPaneView.handleEvent)
-        #self.signal.connect(stepProgress.handleEvent)
-        #self.signal.connect(textLog.handleEvent)
-        #self.signal.connect(probeInfo.handleEvent)
 
     def toggleBody(self):
         if self.grid.itemAtPosition(1,1) == None:
@@ -94,52 +91,140 @@ class ProbeView(AbstractChannelQFrame):
             if self.rrdArea != None: 
                 self.rrdArea.updateGraph()
 
+#############################
+# HEAD
+#############################
 class ProbeHead(QFrame):
     def __init__(self, parent, probe):
         super(ProbeHead, self).__init__(parent)
-
-        #self.setBackgroundRole(QPalette.Window)
-        #self.setAutoFillBackground(True)
-        #self.setFrameShape(QFrame.StyledPanel)
-        #self.setFrameShadow(QFrame.Raised)
-
-        self.toggle = QPushButton(probe, self)
-        self.toggle.setFixedWidth(100)
-        self.toggle.setFixedHeight(30)
-        self.toggle.clicked.connect(parent.toggleBody)
-
-        self.promoteCheck = QCheckBox('include in Dashboard', self)
-
-        self.timeLine   = SimpleTimeLine(self)
-
-        progressFrame   = QFrame(self)
-        progressGrid    = QGridLayout(self)
-        self.timeoutProgress = TimeoutProgressBar(
-            self, parent.probeDict['timeout'] * 1000, 'Timeout: %p%')
-        self.stepProgress    = StepProgressBar(
-            self, parent.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
-        self.timeoutProgress.setFixedWidth(400)
-        self.stepProgress.setFixedWidth(400)
-        progressGrid.addWidget(self.stepProgress,                0,0,1,1)
-        progressGrid.addWidget(self.timeoutProgress,             1,0,1,1)
-        progressGrid.setColumnStretch(0,0)
-        progressGrid.setColumnStretch(1,0)
-        progressGrid.setColumnStretch(2,0)
-        progressGrid.setColumnStretch(3,1)
-        progressFrame.setLayout(progressGrid)
+        
+        self.label   = HeadProbeLabel(self, probe)
+        self.control = HeadProbeControl(self, probe, parent)
+        self.options = HeadProbeOptions(self, probe)
+        self.body    = HeadProbeBody(self, probe)
 
         grid = QGridLayout(self)
-        grid.addWidget(self.toggle,         0,0,2,1)
-        grid.addWidget(progressFrame,       0,2)
-        grid.addWidget(self.promoteCheck,   0,3)
-        grid.addWidget(self.timeLine,       1,1,1,2)
+        grid.addWidget(self.label,   0,0,1,2)
+        grid.addWidget(self.options, 0,2,1,1)
 
-        grid.setColumnStretch(0, 0)
+        grid.addWidget(self.control, 1,0,1,1)
+        grid.addWidget(self.body,    1,1,1,2)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+        grid.setColumnStretch(2,0)
+        self.setLayout(grid)
+
+    def resetProgress(self):
+        self.body.resetProgress()
+
+class HeadProbeLabel(QFrame):
+    def __init__(self, parent, probe):
+        super(HeadProbeLabel, self).__init__(parent)
+        self.probeDict  = ChannelHandler.singleton.probes[probe]
+        self.target     = self.probeDict['target']
+        self.probe      = self.probeDict['name']
+
+        self.probeLabel = self._setLabel(self.probeDict['status'])
+        sigDict = ChannelHandler.singleton.masterSignalsDict
+        sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
+        self.grid = QGridLayout(self)
+        self.grid.addWidget(self.probeLabel, 0,0)
+        self.grid.setColumnStretch(0,0)
+        self.grid.setColumnStretch(1,1)
+        self.setLayout(self.grid)
+
+    def _setLabel(self, status):
+        if   status == 'OK':
+            return ProbeOkButton(self, self.probe)
+        elif status == 'WARNING':
+            return ProbeWarningButton(self, self.probe)
+        elif status == 'UNKNOWN':
+            return ProbeUnknownButton(self, self.probe)
+        elif status == 'CRITICAL':
+            return ProbeCriticalButton(self, self.probe)
+
+    def _updateLabel(self, status):
+        self.grid.removeWidget(self.probeLabel)
+        self.probeLabel.hide()
+        self.probeLabel.deleteLater()
+        self.probeLabel = self._setLabel(status)
+        self.grid.addWidget(self.probeLabel, 0,0)
+
+    def _handleProbeInfo(self, msg):
+        target = msg['value']['target']
+        probe  = msg['value']['name']
+        if target == self.target:
+            if probe == self.probe:
+                status = msg['value']['status']
+                self._updateLabel(status)
+
+class HeadProbeControl(QFrame):
+    def __init__(self, parent, probe, toggler):
+        super(HeadProbeControl, self).__init__(parent)
+
+        self.action = QPushButton('Actions', self)
+
+        self.toggle = QPushButton('Details', self)
+        self.toggle.clicked.connect(toggler.toggleBody)
+
+        grid = QGridLayout(self)
+        grid.addWidget(self.action,     0,0)
+        grid.addWidget(self.toggle,     1,0)
+        self.setLayout(grid)
+
+
+class HeadProbeBody(QFrame):
+    def __init__(self, parent, probe):
+        super(HeadProbeBody, self).__init__(parent)
+        self.probeDict   = ChannelHandler.singleton.probes[probe]
+
+        # progress timeout and step
+        self.statusHistory   = SimpleTimeLine(self)
+        self.timeoutProgress = TimeoutProgressBar(
+            self, self.probeDict['timeout'] * 1000, 'Timeout: %p%')
+        self.stepProgress    = StepProgressBar(
+            self, self.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
+
+        
+        checkProgressLabel = QLabel('<span style="font-weight:600;">  \
+            Check progress: \
+        </span>', self)
+        lastReturnLabel = QLabel('<span style="font-weight:600;">  \
+            Last return: \
+        </span>', self)
+        statusHistoryLabel = QLabel('<span style="font-weight:600;">  \
+            Status history: \
+        </span>', self)
+
+        grid = QGridLayout(self)
+
+    
+        grid.addWidget(statusHistoryLabel,      0,0)
+        grid.addWidget(self.statusHistory,      0,1)
+
+        grid.addWidget(checkProgressLabel,      1,0)
+        grid.addWidget(self.stepProgress,       1,1)
+        grid.addWidget(self.timeoutProgress,    1,2)
+
+        grid.addWidget(lastReturnLabel,         3,0)
+        grid.addWidget(QLabel('last return', self),   3,1)
+
         self.setLayout(grid)
 
     def resetProgress(self):
         self.stepProgress.resetProgress()
 
+class HeadProbeOptions(QFrame):
+    def __init__(self, parent, probe):
+        super(HeadProbeOptions, self).__init__(parent)
+        self.promoteCheck = QCheckBox('include in Dashboard', self)
+        grid = QGridLayout(self)
+        grid.addWidget(self.promoteCheck, 0,0)
+        self.setLayout(grid)
+
+#############################
+# BODY
+#############################
 class ProbeBody(QFrame):
     def __init__(self, parent):
         super(ProbeBody, self).__init__(parent)
