@@ -85,8 +85,7 @@ class ProbeView(AbstractChannelQFrame):
         elif msgType == 'probeReturn':
             # log text
             self.textLog.textAppend(msg['value'])
-            # progress
-            self.head.resetProgress()
+            self.head.handleReturn(msg)
             # rrd
             if self.rrdArea != None: 
                 self.rrdArea.updateGraph()
@@ -102,9 +101,11 @@ class ProbeHead(QFrame):
         self.control = HeadProbeControl(self, probe, parent)
         self.options = HeadProbeOptions(self, probe)
         self.body    = HeadProbeBody(self, probe)
+        self.progress = HeadProbeProgress(self, probe)
 
         grid = QGridLayout(self)
-        grid.addWidget(self.label,   0,0,1,2)
+        grid.addWidget(self.label,   0,0,1,1)
+        grid.addWidget(self.progress,0,1,1,1)
         grid.addWidget(self.options, 0,2,1,1)
 
         grid.addWidget(self.control, 1,0,1,1)
@@ -114,8 +115,8 @@ class ProbeHead(QFrame):
         grid.setColumnStretch(2,0)
         self.setLayout(grid)
 
-    def resetProgress(self):
-        self.body.resetProgress()
+    def handleReturn(self, msg):
+        self.body.handleReturn(msg)
 
 class HeadProbeLabel(QFrame):
     def __init__(self, parent, probe):
@@ -158,6 +159,12 @@ class HeadProbeLabel(QFrame):
                 status = msg['value']['status']
                 self._updateLabel(status)
 
+class HeadProbeProgress(QFrame):
+    def __init__(self, parent, probe):
+        super(HeadProbeProgress, self).__init__(parent)
+        grid = QGridLayout(self)
+        grid.addWidget(QLabel('hello', self), 0,0)
+
 class HeadProbeControl(QFrame):
     def __init__(self, parent, probe, toggler):
         super(HeadProbeControl, self).__init__(parent)
@@ -168,8 +175,11 @@ class HeadProbeControl(QFrame):
         self.toggle.clicked.connect(toggler.toggleBody)
 
         grid = QGridLayout(self)
-        grid.addWidget(self.action,     0,0)
-        grid.addWidget(self.toggle,     1,0)
+        grid.addWidget(self.action,     1,0)
+        grid.addWidget(self.toggle,     2,0)
+        grid.setRowStretch(0,1)
+        grid.setRowStretch(1,0)
+        grid.setRowStretch(2,0)
         self.setLayout(grid)
 
 
@@ -178,41 +188,104 @@ class HeadProbeBody(QFrame):
         super(HeadProbeBody, self).__init__(parent)
         self.probeDict   = ChannelHandler.singleton.probes[probe]
 
+
+        grid = QGridLayout(self)
+
         # progress timeout and step
-        self.statusHistory   = SimpleTimeLine(self)
         self.timeoutProgress = TimeoutProgressBar(
             self, self.probeDict['timeout'] * 1000, 'Timeout: %p%')
         self.stepProgress    = StepProgressBar(
             self, self.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
+        checkProgressLabel  = QLabel('Step progress: ', self)
+        grid.addWidget(checkProgressLabel,      0,2)
+        grid.addWidget(self.stepProgress,       0,3)
+        stepLabel           = QLabel('Step: ', self)
+        grid.addWidget(stepLabel,                   0,0)
+        grid.addWidget(BoldLabel(str(self.probeDict['step']), self), 0,1)
 
-        
-        checkProgressLabel = QLabel('<span style="font-weight:600;">  \
-            Check progress: \
-        </span>', self)
-        lastReturnLabel = QLabel('<span style="font-weight:600;">  \
-            Last return: \
-        </span>', self)
-        statusHistoryLabel = QLabel('<span style="font-weight:600;">  \
-            Status history: \
-        </span>', self)
+        timeoutLabel        = QLabel('Timeout: ', self)
+        grid.addWidget(timeoutLabel,                1,0)
+        grid.addWidget(BoldLabel(str(self.probeDict['timeout']), self), 1,1)
+        timeoutProgressLabel = QLabel('Timeout progress: ', self)
+        grid.addWidget(timeoutProgressLabel,    1,2)
+        grid.addWidget(self.timeoutProgress,    1,3)
 
-        grid = QGridLayout(self)
+        moduleLabel         = QLabel('Check module: ', self)
+        grid.addWidget(moduleLabel,                 2,0)
+        grid.addWidget(BoldLabel(self.probeDict['probeMod'], self), 2,1)
 
-    
-        grid.addWidget(statusHistoryLabel,      0,0)
-        grid.addWidget(self.statusHistory,      0,1)
+        if self.probeDict['probeMod'] == 'btracker_probe_nagios':
+            checkCommand        = QLabel('Command: ', self)
+            grid.addWidget(checkCommand,                 2,2)
+            grid.addWidget(BoldLabel(self.probeDict['probeconf'], self), 2,3)
 
-        grid.addWidget(checkProgressLabel,      1,0)
-        grid.addWidget(self.stepProgress,       1,1)
-        grid.addWidget(self.timeoutProgress,    1,2)
+        targetName          = QLabel('Target name: ', self)
+        grid.addWidget(targetName,                  4,0)
+        grid.addWidget(BoldLabel(self.probeDict['target'], self), 4,1)
 
-        grid.addWidget(lastReturnLabel,         3,0)
-        grid.addWidget(QLabel('last return', self),   3,1)
+        targetIpLabel       = QLabel('Target IP address: ', self)
+        targetIp = ChannelHandler.singleton.targets[self.probeDict['target']]
+
+        grid.addWidget(targetIpLabel,               4,2)
+        grid.addWidget(BoldLabel('192.168.0.1', self), 4,3)
+
+
+        inspectStr = ''
+        for inspector in self.probeDict['inspectors'].keys():
+            inspectStr += '%s |  ' % inspector.title()
+
+        inspectorsLabel     = QLabel('Inspectors: ', self)
+        grid.addWidget(inspectorsLabel,             8,0)
+        grid.addWidget(BoldLabel(inspectStr, self), 8,1,1,4)
+
+        logStr     = ''
+        for logger in self.probeDict['loggers'].keys():
+            logStr += '%s | ' % logger.title()
+
+        loggersLabel        = QLabel('Loggers: ', self)
+        grid.addWidget(loggersLabel,                10,0)
+        grid.addWidget(BoldLabel(logStr, self),     10,1,1,4)
+
+        lastReturnTimeLabel = QLabel('Last return: ', self)
+        self.lastReturnTime = BoldLabel('', self)
+        grid.addWidget(lastReturnTimeLabel,         12,0)
+        grid.addWidget(self.lastReturnTime,         12,1)
+
+        lastReturnValueLabel = QLabel('Last return value: ', self)
+        self.lastReturnValue = BoldLabel('', self)
+        self.lastReturnValue.setMaximumWidth(500)
+        grid.addWidget(lastReturnValueLabel,        12,2)
+        grid.addWidget(self.lastReturnValue,        12,3,1,2)
+
+        self.statusHistory   = SimpleTimeLine(self)
+        statusHistoryLabel  = QLabel('Status History: ', self)
+        grid.addWidget(statusHistoryLabel,      14,0)
+        grid.addWidget(self.statusHistory,      14,1)
 
         self.setLayout(grid)
 
-    def resetProgress(self):
+
+    def handleReturn(self, msg):
         self.stepProgress.resetProgress()
+        self._setLastReturn(msg)
+
+    def _setLastReturn(self, msg):
+        ts      = msg['value']['timestamp'] / 1000000
+        time    = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+        rep     = msg['value']['originalRep'].rstrip()
+        printable = rep.replace('\n', ' ').replace('  ', ' ')
+        self.lastReturnTime.setText(time)
+        self.lastReturnValue.setText(printable)
+
+
+class BoldLabel(QLabel):
+    def __init__(self, text, parent):
+        super(BoldLabel, self).__init__(parent)
+        self.setTextFormat(Qt.RichText)
+        self.setText(text)
+
+    def setText(self, text):
+        QLabel.setText(self,'<span style="font-weight:600;"> %s </span>' % text)
 
 class HeadProbeOptions(QFrame):
     def __init__(self, parent, probe):
@@ -313,6 +386,7 @@ class StepProgressBar(QProgressBar):
 
     def __init__(self, parent, timerRange, textValue, timeoutProgress):
         super(StepProgressBar, self).__init__(parent)
+        self.setInvertedAppearance(True)
         self.timeMax    = timerRange
         self.setTextVisible(False)
         self.timeoutProgress    = timeoutProgress
@@ -410,8 +484,8 @@ class TimeoutProgressBar(QProgressBar):
                 y1: 0,              \
                 x2: 0,              \
                 y2: 1,              \
-                stop: 0 #8ae234,    \
-                stop: 1 #73d216);           \
+                stop: 0 #ef2929,    \
+                stop: 1 #cc0000);           \
             width: 10px;           \
             margin: 0.5px;           \
         }')
