@@ -35,8 +35,10 @@ class TargetView(QFrame):
     def toggleBody(self):
         if self.grid.itemAtPosition(1,1) == None:
             self.targetBody.show()
+            self.targetHead.hideSummary()
             self.grid.addWidget(self.targetBody, 1, 1)
         else:
+            self.targetHead.showSummary()
             self.targetBody.hide()
             self.grid.removeWidget(self.targetBody)
 
@@ -55,6 +57,9 @@ class TargetView(QFrame):
         else:
             return 'full'
 
+    def updateToolTip(self, msg):
+        self.targetHead.updateToolTip(msg)
+
 class TargetHead(QFrame):
     def __init__(self, parent, target):
         super(TargetHead, self).__init__(parent)
@@ -65,8 +70,9 @@ class TargetHead(QFrame):
         self.toggleButton.setFixedHeight(30)
 
         self.summary    = TargetProbeOverallSummary(self, target)
+        self.summary.hide()
 
-        self.promoteCheck = QCheckBox('include in Dashboard', self)
+        self.promoteCheck = TargetRightControls(self)
 
         grid = QGridLayout(self)
 
@@ -84,6 +90,24 @@ class TargetHead(QFrame):
         grid.setRowStretch(1,0)
         self.setLayout(grid)
 
+    def updateToolTip(self, msg):
+        self.summary.updateToolTip(msg)
+
+    def hideSummary(self):
+        self.summary.hide()
+
+    def showSummary(self):
+        self.summary.show()
+
+class TargetRightControls(QFrame):
+    def __init__(self, parent):
+        super(TargetRightControls, self).__init__(parent)
+        grid = QGridLayout(self)
+        self.setFixedWidth(151)
+        self.promoteCheck = QCheckBox('include in Dashboard', self)
+        self.promoteCheck.setContentsMargins(0,0,400,0)
+        grid.addWidget(self.promoteCheck, 0,0)
+        self.setLayout(grid)
 
 class TargetProbeOverallSummary(QFrame):
     def __init__(self, parent, target):
@@ -189,3 +213,8 @@ class TargetProbeOverallSummary(QFrame):
             probe  = msg['value']['name']
             status = msg['value']['status']
             self._updateButtonStatus(status, probe)
+
+    def updateToolTip(self, msg):
+        probe = msg['value']['id']
+        text  = msg['value']['originalRep']
+        self.buttonDict[probe]['widget'].setToolTip("Last return: %s" % text)

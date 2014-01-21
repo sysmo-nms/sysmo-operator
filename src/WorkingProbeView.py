@@ -1,6 +1,7 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
+from    WorkingProbeViewBody    import ProbeBody
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 from    LoggerViewText      import TextLog
@@ -17,9 +18,10 @@ class ProbeView(AbstractChannelQFrame):
         super(ProbeView, self).__init__(parent, probe)
         self.probeDict   = ChannelHandler.singleton.probes[probe]
         self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Raised)
+        self.setFrameShadow(QFrame.Sunken)
         self.targetName = self.probeDict['target']
         self.probeName  = probe
+        self.parent = parent
 
         loggers = self.probeDict['loggers']
 
@@ -34,20 +36,8 @@ class ProbeView(AbstractChannelQFrame):
         self.head = ProbeHead(self, probe)
 
         # body 
-        self.body       = ProbeBody(self)
-        self.body.hide()
+        self.body       = ProbeBody(self, viewType, self.probeDict)
         self.bodyInit   = False
-        self.bodyGrid   = QGridLayout(self)
-        self.eventsView = EventsView(self)
-        self.textLog    = TextLog(self)
-        self.bodyGrid.addWidget(self.eventsView, 0, 0)
-        self.bodyGrid.addWidget(self.textLog,   1, 0)
-        if viewType == 'text_and_rrdgraph':
-            self.rrdArea    = RrdArea(self, self.probeDict)
-            self.bodyGrid.addWidget(self.rrdArea, 2,0)
-        else:
-            self.rrdArea = None
-        self.body.setLayout(self.bodyGrid)
 
         # tabulation
         tab = QFrame(self)
@@ -70,25 +60,15 @@ class ProbeView(AbstractChannelQFrame):
             if self.bodyInit == False: self.body.show()
             self.grid.addWidget(self.body, 1, 1)
         else:
+            self.body.hide()
             self.grid.removeWidget(self.body)
 
     def handleProbeEvent(self, msg):
-        msgType = msg['msgType']
-        if msgType == 'probeDump':
-            if msg['logger'] == 'btracker_logger_text':
-                self.textLog.textDump(msg['data'])
-            elif msg['logger'] == 'btracker_logger_rrd':
-                self.rrdArea.rrdDump(msg['data'])
-            elif msg['logger'] == 'tracker_events':
-                print "logger tracker_events event"
-
-        elif msgType == 'probeReturn':
-            # log text
-            self.textLog.textAppend(msg['value'])
+        if msg['msgType'] == 'probeReturn':
             self.head.handleReturn(msg)
-            # rrd
-            if self.rrdArea != None: 
-                self.rrdArea.updateGraph()
+            self.parent.updateToolTip(msg)
+
+        self.body.handleProbeEvent(msg)
 
 #############################
 # HEAD
@@ -98,25 +78,29 @@ class ProbeHead(QFrame):
         super(ProbeHead, self).__init__(parent)
         
         self.label   = HeadProbeLabel(self, probe)
-        self.control = HeadProbeControl(self, probe, parent)
+        self.timeLine   = SimpleTimeLine(self)
+        #self.control = HeadProbeControl(self, probe, parent)
         self.options = HeadProbeOptions(self, probe)
-        self.body    = HeadProbeBody(self, probe)
         self.progress = HeadProbeProgress(self, probe)
+        self.showHistory = QCheckBox('Show history', self)
+        self.showHistory.clicked.connect(parent.toggleBody)
 
         grid = QGridLayout(self)
-        grid.addWidget(self.label,   0,0,1,1)
-        grid.addWidget(self.progress,0,1,1,1)
-        grid.addWidget(self.options, 0,2,1,1)
+        grid.addWidget(self.label,      0,0,1,1)
+        grid.addWidget(self.progress,   0,1,1,1)
+        grid.addWidget(self.options,    0,2,1,1)
+        grid.addWidget(self.timeLine,   1,1,1,1)
+        grid.addWidget(self.showHistory,2,0,1,1)
+        #grid.addWidget(self.control, 1,0,1,1)
 
-        grid.addWidget(self.control, 1,0,1,1)
-        grid.addWidget(self.body,    1,1,1,2)
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
         grid.setColumnStretch(2,0)
         self.setLayout(grid)
 
     def handleReturn(self, msg):
-        self.body.handleReturn(msg)
+        #self.body.handleReturn(msg)
+        self.progress.handleReturn(msg)
 
 class HeadProbeLabel(QFrame):
     def __init__(self, parent, probe):
@@ -124,6 +108,8 @@ class HeadProbeLabel(QFrame):
         self.probeDict  = ChannelHandler.singleton.probes[probe]
         self.target     = self.probeDict['target']
         self.probe      = self.probeDict['name']
+        self.setFixedWidth(200)
+        self.setContentsMargins(0,0,0,0)
 
         self.probeLabel = self._setLabel(self.probeDict['status'])
         sigDict = ChannelHandler.singleton.masterSignalsDict
@@ -132,6 +118,10 @@ class HeadProbeLabel(QFrame):
         self.grid.addWidget(self.probeLabel, 0,0)
         self.grid.setColumnStretch(0,0)
         self.grid.setColumnStretch(1,1)
+        self.grid.setRowStretch(0,0)
+        self.grid.setRowStretch(1,1)
+        self.grid.setVerticalSpacing(0)
+        self.grid.setHorizontalSpacing(0)
         self.setLayout(self.grid)
 
     def _setLabel(self, status):
@@ -162,8 +152,57 @@ class HeadProbeLabel(QFrame):
 class HeadProbeProgress(QFrame):
     def __init__(self, parent, probe):
         super(HeadProbeProgress, self).__init__(parent)
+        self.probeDict   = ChannelHandler.singleton.probes[probe]
         grid = QGridLayout(self)
-        grid.addWidget(QLabel('hello', self), 0,0)
+
+        # progress timeout and step
+        self.timeoutProgress = TimeoutProgressBar(
+            self, self.probeDict['timeout'] * 1000, 'Timeout: %p%')
+        self.stepProgress    = StepProgressBar(
+            self, self.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
+        checkProgressLabel  = QLabel('Step progress: ', self)
+        grid.addWidget(checkProgressLabel,      0,2)
+        grid.addWidget(self.stepProgress,       0,3)
+        stepLabel           = QLabel('Step: ', self)
+        grid.addWidget(stepLabel,                   0,0)
+        grid.addWidget(BoldLabel('%i seconds' % self.probeDict['step'], self), 0,1)
+
+        timeoutLabel        = QLabel('Timeout: ', self)
+        grid.addWidget(timeoutLabel,                1,0)
+        grid.addWidget(BoldLabel('%i seconds' % self.probeDict['timeout'], self), 1,1)
+        timeoutProgressLabel = QLabel('Timeout progress: ', self)
+        grid.addWidget(timeoutProgressLabel,    1,2)
+        grid.addWidget(self.timeoutProgress,    1,3)
+
+        lastReturnTimeLabel = QLabel('Last return: ', self)
+        self.lastReturnTime = BoldLabel('', self)
+        grid.addWidget(lastReturnTimeLabel,         2,0)
+        grid.addWidget(self.lastReturnTime,         2,1)
+
+        lastReturnValueLabel = QLabel('Last return value: ', self)
+        grid.addWidget(lastReturnValueLabel,        2,2)
+
+        self.lastReturnValue = QTextEdit(self)
+        self.lastReturnValue.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.lastReturnValue.setFixedHeight(20)
+        self.lastReturnValue.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.lastReturnValue.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.lastReturnValue.setLineWrapMode(QTextEdit.NoWrap)
+
+        grid.addWidget(self.lastReturnValue,        2,3)
+
+    def _setLastReturn(self, msg):
+        ts      = msg['value']['timestamp'] / 1000000
+        time    = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+        rep     = msg['value']['originalRep'].rstrip()
+        printable = rep.replace('\n', ' ').replace('  ', ' ')
+        self.lastReturnTime.setText(time)
+        self.lastReturnValue.setText(printable)
+
+    def handleReturn(self, msg):
+        self._setLastReturn(msg)
+        self.lastReturnValue.setToolTip(msg['value']['originalRep'])
+        self.stepProgress.resetProgress()
 
 class HeadProbeControl(QFrame):
     def __init__(self, parent, probe, toggler):
@@ -183,32 +222,13 @@ class HeadProbeControl(QFrame):
         self.setLayout(grid)
 
 
-class HeadProbeBody(QFrame):
+class ProbeConfig(QFrame):
     def __init__(self, parent, probe):
-        super(HeadProbeBody, self).__init__(parent)
+        super(ProbeConfig, self).__init__(parent)
         self.probeDict   = ChannelHandler.singleton.probes[probe]
 
 
         grid = QGridLayout(self)
-
-        # progress timeout and step
-        self.timeoutProgress = TimeoutProgressBar(
-            self, self.probeDict['timeout'] * 1000, 'Timeout: %p%')
-        self.stepProgress    = StepProgressBar(
-            self, self.probeDict['step'] * 1000, 'Step: %p%', self.timeoutProgress)
-        checkProgressLabel  = QLabel('Step progress: ', self)
-        grid.addWidget(checkProgressLabel,      0,2)
-        grid.addWidget(self.stepProgress,       0,3)
-        stepLabel           = QLabel('Step: ', self)
-        grid.addWidget(stepLabel,                   0,0)
-        grid.addWidget(BoldLabel(str(self.probeDict['step']), self), 0,1)
-
-        timeoutLabel        = QLabel('Timeout: ', self)
-        grid.addWidget(timeoutLabel,                1,0)
-        grid.addWidget(BoldLabel(str(self.probeDict['timeout']), self), 1,1)
-        timeoutProgressLabel = QLabel('Timeout progress: ', self)
-        grid.addWidget(timeoutProgressLabel,    1,2)
-        grid.addWidget(self.timeoutProgress,    1,3)
 
         moduleLabel         = QLabel('Check module: ', self)
         grid.addWidget(moduleLabel,                 2,0)
@@ -266,7 +286,6 @@ class HeadProbeBody(QFrame):
 
 
     def handleReturn(self, msg):
-        self.stepProgress.resetProgress()
         self._setLastReturn(msg)
 
     def _setLastReturn(self, msg):
@@ -298,11 +317,6 @@ class HeadProbeOptions(QFrame):
 #############################
 # BODY
 #############################
-class ProbeBody(QFrame):
-    def __init__(self, parent):
-        super(ProbeBody, self).__init__(parent)
-
-
 class ProbeInfo(QFrame):
     def __init__(self, parent, targetName, probeId, probeDict):
         super(ProbeInfo, self).__init__(parent)

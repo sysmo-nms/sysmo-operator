@@ -77,6 +77,10 @@ class TkorderClient(QMainWindow):
         self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
 
+    def setDpi(self, width, height):
+        self.dpiWidth   = width
+        self.dpiHeight  = height
+
     def toggleFullScreen(self):
         if self.isFullScreen() == False:
             self.showFullScreen()
@@ -216,8 +220,11 @@ class ModView(QFrame):
 
 def main(arguments):
     tkorderApp  = QApplication(arguments)
+    screen_rect = tkorderApp.desktop().screenGeometry()
+    width, height = screen_rect.width, screen_rect.height()
     #tkorderApp.setStyle('cde')
     tkorderUi   = TkorderClient()
+    tkorderUi.setDpi(width, height)
     tkorderApp.setWindowIcon(TkorderIcons.get('applications-development'))
     loginUi     = LogIn()
     loginUi.supercastClient = tkorderUi
