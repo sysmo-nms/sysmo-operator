@@ -1,15 +1,18 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
+import MonitorDashboardArea
 import operator
 
 class SimpleTimeLine(QWidget):
     def __init__(self, parent):
         super(SimpleTimeLine, self).__init__(parent)
+        self._initSliders()
         pal = QPalette()
         self.windowColor = pal.color(QPalette.Normal, QPalette.Window)
         self.altColor    = pal.color(QPalette.Normal, QPalette.AlternateBase)
         self.baseColor   = pal.color(QPalette.Normal, QPalette.Base)
         self.darkColor   = pal.color(QPalette.Normal, QPalette.Dark)
+
 
         self.widgetHeight       = 20
         self.timeLineHeight     = self.widgetHeight - 2
@@ -64,3 +67,22 @@ class SimpleTimeLine(QWidget):
         painter.setPen(self.altColor)
         painter.setBrush(self.timeLineUnknownBrush)
         painter.drawRoundRect(atimeLine, 5,5)
+    
+    # Time range and stop time controls
+    def _initSliders(self):
+        self.timeRangeSlider = MonitorDashboardArea.Dashboard.singleton.timelineSlide
+        self.stopTimeSlider  = MonitorDashboardArea.Dashboard.singleton.stopSlide
+
+        self.timeRangeSlider.sliderReleased.connect(self._timeRangeChanged)
+        self.stopTimeSlider.sliderReleased.connect(self._stopTimeChanged)
+
+        self.stopTime   = self.stopTimeSlider.value()
+        self.timeRange  = self.timeRangeSlider.value()
+
+    def _stopTimeChanged(self):
+        self.stopTime   = self.stopTimeSlider.value()
+        print 'stop time changed'
+
+    def _timeRangeChanged(self):
+        self.timeRange  = self.timeRangeSlider.value()
+        print 'time range changed'
