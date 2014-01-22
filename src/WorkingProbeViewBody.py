@@ -50,12 +50,13 @@ class ProbeBody(QTabWidget):
     def __init__(self, parent, viewType, probeDict):
         super(ProbeBody, self).__init__(parent)
         self.probeDict = probeDict
+        self.setFixedHeight(200)
 
         self.setTabPosition(QTabWidget.West)
         self.setTabShape(QTabWidget.Triangular)
-        self.setMinimumHeight(300)
 
         self.eventsView = EventsView(self)
+
         self.addTab(self.eventsView, 'Events')
         self.textLog    = TextLog(self)
         self.addTab(self.textLog, 'Text logs')

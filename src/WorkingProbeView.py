@@ -85,17 +85,21 @@ class ProbeHead(QFrame):
         self.showHistory = QCheckBox('Show history', self)
         self.showHistory.clicked.connect(parent.toggleBody)
 
+        self.setFixedHeight(120)
         grid = QGridLayout(self)
-        grid.addWidget(self.label,      0,0,1,1)
-        grid.addWidget(self.progress,   0,1,1,1)
-        grid.addWidget(self.options,    0,2,1,1)
-        grid.addWidget(self.timeLine,   1,1,1,1)
-        grid.addWidget(self.showHistory,2,0,1,1)
+        grid.addWidget(self.label,          0,0)
+        grid.addWidget(self.progress,       0,1)
+        grid.addWidget(self.options,        0,2)
+        grid.addWidget(self.timeLine,       1,1)
+        grid.addWidget(self.showHistory,    2,0)
         #grid.addWidget(self.control, 1,0,1,1)
 
         grid.setColumnStretch(0,0)
         grid.setColumnStretch(1,1)
         grid.setColumnStretch(2,0)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,0)
+        grid.setRowStretch(2,0)
         self.setLayout(grid)
 
     def handleProbeEvent(self, msg):
