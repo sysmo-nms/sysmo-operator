@@ -1,12 +1,12 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
-import MonitorDashboardArea
-import operator
+import  MonitorDashboardArea
+import  operator
+import  time
 
 class SimpleTimeLine(QWidget):
     def __init__(self, parent):
         super(SimpleTimeLine, self).__init__(parent)
-        self._initSliders()
         pal = QPalette()
         self.windowColor = pal.color(QPalette.Normal, QPalette.Window)
         self.altColor    = pal.color(QPalette.Normal, QPalette.AlternateBase)
@@ -24,21 +24,44 @@ class SimpleTimeLine(QWidget):
         self.borderBrush            = QBrush(self.windowColor)
         self.timeLineUnknownBrush   = QBrush(self.darkColor)
 
+        self.eventDatas             = list()
+        self._initSliders()
+
     def handleProbeEvent(self, msg):
         if msg['msgType'] == 'probeDump':
             if msg['logger'] == 'tracker_events':
-                self._synchronizeTimeLine(msg)
+                self._synchronizeData(msg)
+                self._updateGraph()
         elif msg['msgType'] == 'probeReturn':
-            self._updateTimeLine(msg)
+            self._updateData(msg)
+            self._updateGraph()
 
-    def _synchronizeTimeLine(self, msg):
+    def _synchronizeData(self, msg):
         data            = msg['data']
         data.sort(key=operator.itemgetter('insertTs'))
         self.eventDatas = data
         for l in self.eventDatas:
             print l['insertTs'] / 1000000, l['status']
 
-    def _updateTimeLine(self, msg): pass
+    def _updateData(self, msg): pass
+
+    def _updateGraph(self):
+        figureWidth     = self.size().width()
+
+        secondRange     = self.timeRange
+        secondFromNow   = self.stopTime
+        timeNow         = int(time.time())
+        tsEnd           = timeNow + secondFromNow
+        tsStart         = tsEnd - secondRange
+
+        #print secondRange, " ", secondFromNow, " ", figureWidth, " ", timeNow
+        print 'graph will start ad ', tsStart, ' and end at ', tsEnd
+
+        print self
+        for i in range(len(self.eventDatas)):
+            ts = self.eventDatas[i]['insertTs'] / 1000000
+            if ts > tsStart and ts < tsEnd:
+                print ts
 
     # QWidget custom painting
     def sizeHint(self):
@@ -78,11 +101,14 @@ class SimpleTimeLine(QWidget):
 
         self.stopTime   = self.stopTimeSlider.value()
         self.timeRange  = self.timeRangeSlider.value()
+        self._updateGraph()
 
     def _stopTimeChanged(self):
         self.stopTime   = self.stopTimeSlider.value()
+        self._updateGraph()
         print 'stop time changed'
 
     def _timeRangeChanged(self):
         self.timeRange  = self.timeRangeSlider.value()
+        self._updateGraph()
         print 'time range changed'
