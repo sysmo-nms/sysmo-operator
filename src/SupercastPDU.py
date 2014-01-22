@@ -917,8 +917,8 @@ def decode(pdu):
                         'id':           probeName,
                         'data': {
                             'eventId':      eventId,
-                            'insertTs':     insertTs,
-                            'ackTs':        ackTs,
+                            'insertTs':     int(insertTs),
+                            'ackTs':        int(ackTs),
                             'status':       status,
                             'textual':      textual,
                             'ackNeeded':    ackNeeded,
@@ -948,8 +948,8 @@ def decode(pdu):
                     userOwner   = str(anEvent.getComponentByName('userOwner'))
                     eventDict = {
                         'eventId':      eventId,
-                        'insertTs':     insertTs,
-                        'ackTs':        ackTs,
+                        'insertTs':     int(insertTs),
+                        'ackTs':        int(ackTs),
                         'status':       status,
                         'textual':      textual,
                         'ackNeeded':    ackNeeded,

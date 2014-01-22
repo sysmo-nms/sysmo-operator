@@ -74,8 +74,8 @@ class ProbeBody(QTabWidget):
                 self.textLog.textDump(msg['data'])
             elif msg['logger'] == 'btracker_logger_rrd':
                 self.rrdArea.rrdDump(msg['data'])
-            elif msg['logger'] == 'tracker_events':
-                print "logger tracker_events event"
+            #elif msg['logger'] == 'tracker_events':
+                #print "logger tracker_events event"
 
         elif msgType == 'probeReturn':
             # log text

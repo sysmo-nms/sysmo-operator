@@ -65,9 +65,9 @@ class ProbeView(AbstractChannelQFrame):
 
     def handleProbeEvent(self, msg):
         if msg['msgType'] == 'probeReturn':
-            self.head.handleReturn(msg)
             self.parent.updateToolTip(msg)
 
+        self.head.handleProbeEvent(msg)
         self.body.handleProbeEvent(msg)
 
 #############################
@@ -97,6 +97,12 @@ class ProbeHead(QFrame):
         grid.setColumnStretch(1,1)
         grid.setColumnStretch(2,0)
         self.setLayout(grid)
+
+    def handleProbeEvent(self, msg):
+        if msg['msgType'] == 'probeReturn':
+            self.handleReturn(msg)
+
+        self.timeLine.handleProbeEvent(msg)
 
     def handleReturn(self, msg):
         #self.body.handleReturn(msg)
