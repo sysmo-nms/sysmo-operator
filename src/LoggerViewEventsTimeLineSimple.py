@@ -13,8 +13,12 @@ class SimpleTimeLine(QWidget):
         self.baseColor   = pal.color(QPalette.Normal, QPalette.Base)
         self.darkColor   = pal.color(QPalette.Normal, QPalette.Dark)
 
+        self.alpha0      = pal.color(QPalette.Normal, QPalette.Dark)
+        self.alpha1      = pal.color(QPalette.Normal, QPalette.Dark)
+        self.alpha0.setAlpha(150)
+        self.alpha1.setAlpha(1)
 
-        self.widgetHeight       = 20
+        self.widgetHeight       = 15 
         self.timeLineHeight     = self.widgetHeight - 2
         self.widgetHeightHint   = self.widgetHeight + 1
 
@@ -45,8 +49,6 @@ class SimpleTimeLine(QWidget):
         data            = msg['data']
         data.sort(key=operator.itemgetter('insertTs'))
         self.eventDatas = data
-        #for l in self.eventDatas:
-        #    print l['insertTs'] / 1000000, l['status']
 
     def _updateData(self, msg): pass
 
@@ -88,6 +90,7 @@ class SimpleTimeLine(QWidget):
         self._drawContainer()
         if self.selection != None:
             self._drawTimeLines()
+        self._drawGradient()
 
     def _drawContainer(self):
         border  = QRect(0.0,0.0,self.widgetWidth,self.widgetHeight)
@@ -99,51 +102,71 @@ class SimpleTimeLine(QWidget):
     def _drawTimeLines(self):
         figureTics      = self.tsEnd - self.tsStart
         figurePix       = self.size().width()
-        ticsPerPix      = figureTics / figurePix
-        print "total  tics: ", figureTics
-        print "figure pix:  ", figurePix
-        print "tics per pixel: ", ticsPerPix
+        ticsPerPix      = float(figureTics) / float(figurePix)
 
-        toDrawFromEnd   = list()
         selLen          = len(self.selection)
         remainingPix    = figurePix
 
-        print len(self.selection)
-
+        toDrawFromEnd   = list()
+        firstPass       = True
         for i in range(len(self.selection)):
             eventTs     = self.selection[i]['insertTs']     / 1000000
-            if i == 0: 
-                # last event
-                totalTics   = self.timeNow - eventTs
-                totalPix    = totalTics / ticsPerPix
-                #print remainingPix, totalPix, totalTics
+            if selLen == 1: 
+                # last value, only one value, unique pass
+                totalPix = remainingPix
+            if i == 0:
+                # last value, use timeNow to mesure the timeTics
+                totalTics    = self.timeNow - self.selection[i]['insertTs'] / 1000000
+                totalPix     = totalTics / ticsPerPix
                 remainingPix = remainingPix - totalPix
             elif i == selLen - 1:
-                # first out of bound event, with will be the remaining
-                # available pixels
-                #print remainingPix
-                totalPix    = remainingPix
+                # first value, all remaining pix go here
+                totalPix = remainingPix
             else:
                 nextEventTs = self.selection[i - 1]['insertTs'] / 1000000
                 totalTics   = nextEventTs - eventTs
                 totalPix    = totalTics / ticsPerPix
-                #print remainingPix
                 remainingPix = remainingPix - totalPix
-            
+ 
             anEvent = dict()
             anEvent['pixWidth']     = totalPix
             anEvent['status']       = self.selection[i]['status']
             toDrawFromEnd.append(anEvent)
 
-        #print toDrawFromEnd
-
-
-        atimeLine = QRect(1,1,80,self.timeLineHeight)
+        startLeft = 1
         painter = QPainter(self)
-        painter.setPen(self.altColor)
-        painter.setBrush(self.timeLineUnknownBrush)
-        painter.drawRoundRect(atimeLine, 5,5)
-    
+        for val in reversed(toDrawFromEnd):
+            r = QRect(startLeft, 1, val['pixWidth'], self.timeLineHeight)
+            startLeft = startLeft + val['pixWidth']
+            if val['status'] == 'OK':
+                painter.setPen(Qt.green)
+                painter.setBrush(Qt.green)
+            elif val['status'] == 'UNKNOWN':
+                painter.setPen(self.timeLineUnknownBrush)
+                painter.setBrush(self.timeLineUnknownBrush)
+            elif val['status'] == 'CRITICAL':
+                painter.setPen(Qt.red)
+                painter.setBrush(Qt.red)
+            elif val['status'] == 'WARNING':
+                painter.setPen(Qt.yellow)
+                painter.setBrush(Qt.yellow)
+            painter.drawRoundRect(r, 5,5)
+
+    def _drawGradient(self):
+        border  = QRect(0.0,0.0,self.widgetWidth,self.widgetHeight)
+        startHeight = self.widgetHeight / 2
+        painter = QPainter(self)
+        gradiant = QLinearGradient(1,startHeight,self.widgetWidth,startHeight)
+        gradiant.setColorAt(0, self.alpha0)
+        gradiant.setColorAt(1, self.alpha1)
+        print self.alpha1
+        #gradiant.setColorAt(0, QColor(100,100,100,254))
+        #gradiant.setColorAt(1, QColor(100,100,100,1))
+        brush = QBrush(gradiant)
+        painter.setPen(self.darkColor)
+        painter.setBrush(brush)
+        painter.drawRoundRect(border, 5,5)
+
     # Time range and stop time controls
     def _initSliders(self):
         self.timeRangeSlider = MonitorDashboardArea.Dashboard.singleton.timelineSlide
