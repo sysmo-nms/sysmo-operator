@@ -168,6 +168,12 @@ class Channel(QObject):
             dumpMsg['logger']   = 'btracker_logger_rrd'
             dumpMsg['data']     = self.rrdFiles
             view.handleProbeEvent(dumpMsg)
+        if self.loggerEventState != None:
+            dumpMsg = dict()
+            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['logger']   = 'tracker_events'
+            dumpMsg['data']     = self.loggerEventState
+            self.signal.emit(dumpMsg)
         
     def handleDump(self, msg):
         dumpType = msg['value']['logger']
