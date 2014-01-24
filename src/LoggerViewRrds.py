@@ -74,7 +74,11 @@ class RrdView(QLabel):
         rrdFile = QTemporaryFile(self)
         rrdFile.open()
         rrdFile.close()
+        rrdThumb = QTemporaryFile(self)
+        rrdThumb.open()
+        rrdThumb.close()
         self.rrdGraphFileName = rrdFile.fileName()
+        self.rrdThumbFileName = rrdThumb.fileName()
 
     def setRrdFile(self, fileName):
         self._rrdfileReady  = True
@@ -116,11 +120,51 @@ class RrdView(QLabel):
         # python rrdtool did not support list of DEFs or LINEs in the module
         # args. This lead to generate the function as string and evaluate
         # it with eval().
+        eval(self._generateGraphCmd(rrdStart, rrdStop, defs, lines, areas))
+        eval(self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas))
+
+        self.setPixmap(QPixmap(self.rrdGraphFileName))
+
+    
+    def _generateGraphCmd(self, rrdStart, rrdStop, defs, lines, areas):
         cmd = "rrdtool.graph(str(self.rrdGraphFileName), \
             '--imgformat', 'PNG', \
             '--width', str(rrdWidth), \
             '--height', str(rrdHeight), \
             '--full-size-mode', \
+            '--disable-rrdtool-tag', \
+            '--border', '0', \
+            '--dynamic-labels', \
+            '--slope-mode', \
+            '--tabwidth', '40', \
+            '--watermark', 'Watermark', \
+            '--color', 'BACK#00000000',  \
+            '--color', 'CANVAS%s'   % self.hexaPalette['Base'], \
+            '--color', 'GRID%s'     % self.hexaPalette['Dark'], \
+            '--color', 'MGRID%s'    % self.hexaPalette['Shadow'], \
+            '--color', 'FONT%s'     % self.hexaPalette['WindowText'], \
+            '--color', 'AXIS%s'     % self.hexaPalette['Dark'], \
+            '--color', 'FRAME%s'    % self.hexaPalette['Window'], \
+            '--color', 'ARROW%s'    % self.hexaPalette['Shadow'], \
+            '--start', 'end-%i'     % rrdStart, \
+            '--end',   '%i'         % rrdStop,"
+
+        for i in range(len(defs)):
+            cmd += "'%s'," % defs[i]
+        for i in range(len(lines)):
+            cmd += "'%s'," % lines[i]
+        for i in range(len(areas)):
+            cmd += "'%s'," % areas[i]
+
+        cmd     = re.sub(r',$', ')\n', cmd)
+        return cmd
+
+    def _generateThumbCmd(self, rrdStart, rrdStop, defs, lines, areas):
+        cmd = "rrdtool.graph(str(self.rrdThumbFileName), \
+            '--imgformat', 'PNG', \
+            '--width', '30', \
+            '--height', '30', \
+            '--only-graph', \
             '--border', '0', \
             '--dynamic-labels', \
             '--slope-mode', \
@@ -145,6 +189,4 @@ class RrdView(QLabel):
             cmd += "'%s'," % areas[i]
 
         cmd = re.sub(r',$', ')\n', cmd)
-        eval(cmd)
-        picture = QPixmap(self.rrdGraphFileName)
-        self.setPixmap(picture)
+        return cmd

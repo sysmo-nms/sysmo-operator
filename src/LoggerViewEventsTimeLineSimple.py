@@ -139,17 +139,20 @@ class SimpleTimeLine(QWidget):
             r = QRect(startLeft, 1, val['pixWidth'], self.timeLineHeight)
             startLeft = startLeft + val['pixWidth']
             if val['status'] == 'OK':
-                painter.setPen(Qt.green)
-                painter.setBrush(Qt.green)
+                color = QColor(161,217,155)
+                painter.setPen(color)
+                painter.setBrush(color)
             elif val['status'] == 'UNKNOWN':
-                painter.setPen(self.timeLineUnknownBrush)
+                painter.setPen(self.windowColor)
                 painter.setBrush(self.timeLineUnknownBrush)
             elif val['status'] == 'CRITICAL':
-                painter.setPen(Qt.red)
-                painter.setBrush(Qt.red)
+                color = QColor(239,29,29)
+                painter.setPen(color)
+                painter.setBrush(color)
             elif val['status'] == 'WARNING':
-                painter.setPen(Qt.yellow)
-                painter.setBrush(Qt.yellow)
+                color = QColor(252,175,62)
+                painter.setPen(color)
+                painter.setBrush(color)
             painter.drawRoundRect(r, 5,5)
 
     def _drawGradient(self):
@@ -159,9 +162,6 @@ class SimpleTimeLine(QWidget):
         gradiant = QLinearGradient(1,startHeight,self.widgetWidth,startHeight)
         gradiant.setColorAt(0, self.alpha0)
         gradiant.setColorAt(1, self.alpha1)
-        print self.alpha1
-        #gradiant.setColorAt(0, QColor(100,100,100,254))
-        #gradiant.setColorAt(1, QColor(100,100,100,1))
         brush = QBrush(gradiant)
         painter.setPen(self.darkColor)
         painter.setBrush(brush)
