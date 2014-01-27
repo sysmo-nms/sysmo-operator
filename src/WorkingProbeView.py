@@ -33,10 +33,16 @@ class ProbeView(AbstractChannelQFrame):
 
 
         # head
-        self.head = ProbeHead(self, probe)
+        self.head  = ProbeHead(self, probe)
+        if viewType == 'text_and_rrdgraph':
+            self.head.setFixedHeight(130)
+        else:
+            self.head.setFixedHeight(125)
+
+        self.thumb = self.head.getThumb()
 
         # body 
-        self.body       = ProbeBody(self, viewType, self.probeDict)
+        self.body       = ProbeBody(self, viewType, self.probeDict, self.thumb)
         self.bodyInit   = False
 
         # tabulation
@@ -74,7 +80,7 @@ class ProbeView(AbstractChannelQFrame):
 # HEAD
 #############################
 class ProbeHead(QFrame):
-    def __init__(self, parent, probe):
+    def __init__(self, parent, probe, rrd = False):
         super(ProbeHead, self).__init__(parent)
         
         self.label   = HeadProbeLabel(self, probe)
@@ -84,14 +90,16 @@ class ProbeHead(QFrame):
         self.progress = HeadProbeProgress(self, probe)
         self.showHistory = QCheckBox('Show history', self)
         self.showHistory.clicked.connect(parent.toggleBody)
+        self.rrdThumbs = RrdThumb(self)
 
-        self.setFixedHeight(120)
+
         grid = QGridLayout(self)
         grid.addWidget(self.label,          0,0)
         grid.addWidget(self.progress,       0,1)
         #grid.addWidget(self.options,        0,2)
         grid.addWidget(self.timeLine,       1,1)
         grid.addWidget(self.showHistory,    2,0)
+        grid.addWidget(self.rrdThumbs,      2,1)
         #grid.addWidget(self.control, 1,0,1,1)
 
         grid.setColumnStretch(0,0)
@@ -102,6 +110,9 @@ class ProbeHead(QFrame):
         grid.setRowStretch(2,0)
         self.setLayout(grid)
 
+    def getThumb(self):
+        return self.rrdThumbs
+
     def handleProbeEvent(self, msg):
         if msg['msgType'] == 'probeReturn':
             self.handleReturn(msg)
@@ -111,6 +122,31 @@ class ProbeHead(QFrame):
     def handleReturn(self, msg):
         #self.body.handleReturn(msg)
         self.progress.handleReturn(msg)
+
+class RrdThumb(QFrame):
+    def __init__(self, parent):
+        super(RrdThumb, self).__init__(parent)
+        self.layout = QGridLayout(self)
+        self.setLayout(self.layout)
+        self.thumbFiles = dict()
+        self.setFixedHeight(30)
+        self.layout.setVerticalSpacing(0)
+        self.col = 0
+    
+    def setThumbnail(self, fileName):
+        if fileName in self.thumbFiles.keys():
+            self.thumbFiles[fileName]['widget'].setPixmap(QPixmap(fileName))
+        else:
+            lab = QLabel(self)
+            lab.setPixmap(QPixmap(fileName))
+            self.thumbFiles[fileName] = dict()
+            self.thumbFiles[fileName]['widget'] = lab
+            self.thumbFiles[fileName]['column'] = self.col
+            self.layout.addWidget(self.thumbFiles[fileName]['widget'], 0, self.col)
+            self.layout.setColumnStretch(self.col, 0)
+            self.col = self.col + 1
+            self.layout.setColumnStretch(self.col, 1)
+
 
 class HeadProbeLabel(QFrame):
     def __init__(self, parent, probe):

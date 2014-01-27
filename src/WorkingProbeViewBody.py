@@ -47,7 +47,7 @@ import  TkorderIcons
 #             if self.rrdArea != None: 
 #                 self.rrdArea.updateGraph()
 class ProbeBody(QTabWidget):
-    def __init__(self, parent, viewType, probeDict):
+    def __init__(self, parent, viewType, probeDict, headThumb):
         super(ProbeBody, self).__init__(parent)
         self.probeDict = probeDict
         self.setFixedHeight(200)
@@ -61,7 +61,7 @@ class ProbeBody(QTabWidget):
         self.textLog    = TextLog(self)
         self.addTab(self.textLog, 'Text logs')
         if viewType == 'text_and_rrdgraph':
-            self.rrdArea    = RrdArea(self, self.probeDict)
+            self.rrdArea    = RrdArea(self, self.probeDict, headThumb)
             self.addTab(self.rrdArea, 'RRDs')
         else:
             self.addTab(QFrame(self), 'RRDs')

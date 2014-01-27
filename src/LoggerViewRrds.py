@@ -12,8 +12,9 @@ import  re
 import  tempfile
 
 class RrdArea(QFrame):
-    def __init__(self, parent, probeDict):
+    def __init__(self, parent, probeDict, headThumb=None):
         super(RrdArea, self).__init__(parent)
+        self.headThumb = headThumb
         self.setMinimumWidth(600)
         self.knownHeight    = 0
         self.knownWidth     = 0
@@ -41,6 +42,10 @@ class RrdArea(QFrame):
             grid.addWidget(self.rrdViews[key], rowCount, 0)
             rowCount += 1
 
+    def thumbUpdate(self, filename):
+        if self.headThumb != None:
+            self.headThumb.setThumbnail(filename)
+
     def timelineChanged(self):
         for key in self.rrdViews:
             self.rrdViews[key].updateTimeline(self.timelineSlider.value())
@@ -63,6 +68,7 @@ class RrdArea(QFrame):
 class RrdView(QLabel):
     def __init__(self, parent, key, confDict, timeline, stop):
         super(RrdView, self).__init__(parent)
+        self.parent = parent
         self.fileId = key
         self.config = confDict
         self.timeline = timeline
@@ -105,7 +111,6 @@ class RrdView(QLabel):
         QLabel.paintEvent(self, event)
 
     def updateGraph(self):
-        if self.isVisible() == False: return
 
         defs    = re.findall(r'DEF:[^\s]+', self.rrdGraphConf)
         lines   = re.findall(r'LINE[^\s]+', self.rrdGraphConf)
@@ -120,10 +125,15 @@ class RrdView(QLabel):
         # python rrdtool did not support list of DEFs or LINEs in the module
         # args. This lead to generate the function as string and evaluate
         # it with eval().
-        eval(self._generateGraphCmd(rrdStart, rrdStop, defs, lines, areas))
-        eval(self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas))
+        if self.isVisible() == False:
+            eval(self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas))
+            self.parent.thumbUpdate(self.rrdThumbFileName)
+        else:
+            eval(self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas))
+            self.parent.thumbUpdate(self.rrdThumbFileName)
+            eval(self._generateGraphCmd(rrdStart, rrdStop, defs, lines, areas))
+            self.setPixmap(QPixmap(self.rrdGraphFileName))
 
-        self.setPixmap(QPixmap(self.rrdGraphFileName))
 
     
     def _generateGraphCmd(self, rrdStart, rrdStop, defs, lines, areas):
@@ -162,9 +172,10 @@ class RrdView(QLabel):
     def _generateThumbCmd(self, rrdStart, rrdStop, defs, lines, areas):
         cmd = "rrdtool.graph(str(self.rrdThumbFileName), \
             '--imgformat', 'PNG', \
-            '--width', '30', \
+            '--width', '90', \
             '--height', '30', \
             '--only-graph', \
+            '--rigid', \
             '--border', '0', \
             '--dynamic-labels', \
             '--slope-mode', \
