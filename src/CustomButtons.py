@@ -73,7 +73,7 @@ class ProbeOkButton(QPushButton):
             min-height: 1.5em;              \
             font: 1em;                       \
             margin: 0 1px 0 1px;            \
-            color: white;                   \
+            color: black;                   \
             background-color: qlineargradient(  \
                 x1: 0,              \
                 y1: 0,              \
