@@ -165,10 +165,78 @@ class MonitorTreeView(QTreeView):
         self.setFrameShape(QFrame.NoFrame)
         #self.setHeaderHidden(True)
 
+        self.createMenus()
+        self.contextActions = QAction('test', self)
+        self.addAction(self.contextActions)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+
+        self.customContextMenuRequested.connect(self.test)
+
         self.setSortingEnabled(True)
         self.setAlternatingRowColors(True)
         #self.clicked.connect(self.userActivity)
 
+    def createMenus(self):
+        self.targetMenu = QMenu(self)
+
+        targetAction = QAction('Create a new probe', self)
+        self.targetMenu.addAction(targetAction)
+        targetAction.triggered[bool].connect(self.createProbe)
+
+
+        self.targetMenu.addSeparator()
+
+        targetAction = QAction('Add to working view', self)
+        self.targetMenu.addAction(targetAction)
+
+        targetAction = QAction('Suspend all target probes', self)
+        self.targetMenu.addAction(targetAction)
+
+        self.targetMenu.addSeparator()
+
+        targetAction = QAction('Delete this target ans his probes', self)
+        self.targetMenu.addAction(targetAction)
+
+        self.targetMenu.addSeparator()
+
+        targetAction = QAction('Properties', self)
+        self.targetMenu.addAction(targetAction)
+
+
+        self.probeMenu  = QMenu(self)
+
+        self.probeMenu.addSeparator()
+
+        probeAction = QAction('Add to working view', self)
+        self.probeMenu.addAction(probeAction)
+
+        probeAction = QAction('Suspend probe', self)
+        self.probeMenu.addAction(probeAction)
+
+        self.probeMenu.addSeparator()
+
+        probeAction = QAction('Delete this probe', self)
+        self.probeMenu.addAction(probeAction)
+
+        self.probeMenu.addSeparator()
+
+        probeAction = QAction('Properties', self)
+        self.probeMenu.addAction(probeAction)
+
+
+        self.noneMenu = QMenu(self)
+
+        noneAction = QAction('Create a new target', self)
+        self.noneMenu.addAction(noneAction)
+        noneAction.triggered[bool].connect(self.createTarget)
+
+        noneAction = QAction('Select all', self)
+        self.noneMenu.addAction(noneAction)
+
+
+    def createTarget(self): pass
+    def createProbe(self): pass
+    def configureProbe(self): pass
     def userActivity(self, index):
         print "clicked!", self.selectedIndexes()
 
@@ -184,6 +252,25 @@ class MonitorTreeView(QTreeView):
             selectionList.append(modelItem.name)
         Dashboard.singleton.userNewSelection(selectionList)
         QTreeView.selectionChanged(self, selected, deselected)
+
+    def test(self, point):
+        index = self.proxy.mapToSource(self.indexAt(point))
+        item  = self.model.itemFromIndex(index)
+        if      item.__class__.__name__ == 'ProbeItem':
+            self.probeMenu.popup(self.mapToGlobal(point))
+        elif    item.__class__.__name__ == 'TargetItem':
+            self.targetMenu.popup(self.mapToGlobal(point))
+        elif    item.__class__.__name__ == 'NoneType':
+            self.noneMenu.popup(self.mapToGlobal(point))
+
+
+    def mousePressEvent(self, pressEvent):
+        button = pressEvent.button()
+        if button == Qt.MouseButton.RightButton: pass
+        else:
+            QTreeView.mousePressEvent(self, pressEvent)
+
+
         
 class MonitorTreeModel(QStandardItemModel):
     def __init__(self, parent):

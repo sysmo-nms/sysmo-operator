@@ -1,6 +1,7 @@
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 import  TkorderIcons
+
 class AddTargetWizard(QWizard):
     def __init__(self, parent=None):
         super(AddTargetWizard, self).__init__(parent)
@@ -48,3 +49,12 @@ class AddTargetWizard(QWizard):
         layout.addWidget(label)
         page.setLayout(layout)
         return page
+
+class AddTargetForm(QDialog):
+    def __init__(self, parent=None):
+        super(AddTargetForm, self).__init__(parent)
+
+class AddProbeForm(QDialog):
+    def __init__(self, parent=None):
+        super(AddProbeForm, self).__init__(parent)
+
