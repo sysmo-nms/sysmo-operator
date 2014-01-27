@@ -2,6 +2,7 @@ from    PySide.QtCore   import *
 from    PySide.QtGui    import *
 from    MonitorProxyEvents   import ChannelHandler
 from    MonitorDashboardArea import Dashboard
+from    NewTargetForm   import AddTargetWizard
 import  TkorderIcons
 
 
@@ -26,11 +27,13 @@ class TreeContainer(QFrame):
         self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview, 'Probes')
         self.tabs.addTab(self.compositeList, 'Dashboards')
+        self.commands = Commands(self)
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(5)
+        grid.addWidget(self.commands,           0, 0)
         grid.addWidget(self.searchBar,          1, 0)
         grid.addWidget(self.tabs,               2, 0)
         grid.addWidget(self.info,               3, 0)
@@ -42,6 +45,23 @@ class TreeContainer(QFrame):
 
         self.setLayout(grid)
         self.setMaximumWidth(500)
+
+class Commands(QFrame):
+    def __init__(self, parent):
+        super(Commands, self).__init__(parent)
+        grid = QGridLayout(self)
+        self.addButton = QPushButton(TkorderIcons.get('list-add'), 'Add', self)
+        self.addButton.clicked.connect(self._launchWizard)
+        grid.addWidget(self.addButton, 0,0)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+        self.setLayout(grid)
+
+    def _launchWizard(self):
+        wizard = AddTargetWizard(self)
+
+
+
 
 class MonitorTreeSearch(QFrame):
     def __init__(self, parent):

@@ -12,6 +12,7 @@ class TkorderIcons(object):
     @classmethod
     def init(cls):
         cls.iconSet = {
+            'list-add': QtGui.QIcon("icons/list-add.svg"),
             'go-next': QtGui.QIcon("icons/go-next.svg"),
             'go-previous': QtGui.QIcon("icons/go-previous.svg"),
             'go-first': QtGui.QIcon("icons/go-first.svg"),
@@ -78,6 +79,7 @@ class TkorderImages(object):
     @classmethod
     def init(cls):
         cls.imageSet = {
+            'list-add': "icons/list-add.svg",
             'system-log-out': "icons/system-log-out.svg",
             'applications-development': "icons/applications-development.svg",
             'applications-multimedia': "icons/applications-multimedia.svg",
