@@ -116,8 +116,6 @@ class ViewControls(QFrame):
         self.timelineSlide.setValue(3600)
         self.timelineInfo = QLabel(self)
         self.timelineInfo.setText('hell')
-        self.timelineInfo.setBackgroundRole(QPalette.Base)
-        self.timelineInfo.setAutoFillBackground(True)
         self.timelineSlide.valueChanged.connect(self.updateTimelineLabel)
 
         self.timelineSlide.setOrientation(Qt.Horizontal)
@@ -130,8 +128,6 @@ class ViewControls(QFrame):
         self.stopSlide.setValue(0)
         self.stopInfo = QLabel(self)
         self.stopInfo.setText('hell')
-        self.stopInfo.setBackgroundRole(QPalette.Base)
-        self.stopInfo.setAutoFillBackground(True)
         self.stopSlide.valueChanged.connect(self.updateStopLabel)
 
         grid = QGridLayout(self)

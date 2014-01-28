@@ -24,13 +24,13 @@ class WorkView(QFrame):
     def __init__(self, parent):
         super(WorkView, self).__init__(parent)
 
+
         self.tmpMainGridCount = 0
 
         self.targetViews = dict()
 
         self.mainGrid   = QGridLayout()
         self.mainFrame  = QFrame(self)
-        #self.mainFrame.setBackgroundRole(QPalette.Dark)
         self.mainFrame.setLayout(self.mainGrid)
 
         self.scroll = QScrollArea(self)

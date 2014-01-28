@@ -164,6 +164,12 @@ class MonitorTreeView(QTreeView):
         self.setAnimated(True)
         self.setFrameShape(QFrame.NoFrame)
         #self.setHeaderHidden(True)
+        self.setObjectName('backTree')
+        self.setStyleSheet('QFrame#backTree {   \
+            background-image: url(./icons/hover_info_files.png); \
+            background-repeat: no-repeat;                            \
+            background-attachment: fixed;                            \
+            background-position: bottom right}')
 
         self.createMenus()
         self.contextActions = QAction('test', self)
@@ -179,18 +185,22 @@ class MonitorTreeView(QTreeView):
     def createMenus(self):
         self.targetMenu = QMenu(self)
 
-        targetAction = QAction('Create a new probe', self)
+
+
+
+        targetAction = QAction('Add to working view', self)
+        targetAction.triggered[bool].connect(self.addToWorkingView)
         self.targetMenu.addAction(targetAction)
-        targetAction.triggered[bool].connect(self.createProbe)
 
 
         self.targetMenu.addSeparator()
 
-        targetAction = QAction('Add to working view', self)
-        self.targetMenu.addAction(targetAction)
-
         targetAction = QAction('Suspend all target probes', self)
         self.targetMenu.addAction(targetAction)
+
+        targetAction = QAction('Create a new probe', self)
+        self.targetMenu.addAction(targetAction)
+        targetAction.triggered[bool].connect(self.createProbe)
 
         self.targetMenu.addSeparator()
 
@@ -208,6 +218,7 @@ class MonitorTreeView(QTreeView):
         self.probeMenu.addSeparator()
 
         probeAction = QAction('Add to working view', self)
+        probeAction.triggered[bool].connect(self.addToWorkingView)
         self.probeMenu.addAction(probeAction)
 
         probeAction = QAction('Suspend probe', self)
@@ -237,13 +248,7 @@ class MonitorTreeView(QTreeView):
     def createTarget(self): pass
     def createProbe(self): pass
     def configureProbe(self): pass
-    def userActivity(self, index):
-        print "clicked!", self.selectedIndexes()
-
-    def filterThis(self, text):
-        self.proxy.setFilterFixedString(text)
-
-    def selectionChanged(self, selected, deselected):
+    def addToWorkingView(self):
         proxyIndexes = self.selectedIndexes()
         selectionList = list()
         for i in range(len(proxyIndexes)):
@@ -251,6 +256,14 @@ class MonitorTreeView(QTreeView):
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
         Dashboard.singleton.userNewSelection(selectionList)
+
+    def userActivity(self, index):
+        print "clicked!", self.selectedIndexes()
+
+    def filterThis(self, text):
+        self.proxy.setFilterFixedString(text)
+
+    def selectionChanged(self, selected, deselected):
         QTreeView.selectionChanged(self, selected, deselected)
 
     def test(self, point):
@@ -266,7 +279,8 @@ class MonitorTreeView(QTreeView):
 
     def mousePressEvent(self, pressEvent):
         button = pressEvent.button()
-        if button == Qt.MouseButton.RightButton: pass
+        if button == Qt.MouseButton.RightButton: 
+            QTreeView.mousePressEvent(self, pressEvent)
         else:
             QTreeView.mousePressEvent(self, pressEvent)
 
