@@ -1,5 +1,6 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
+from    PySide.QtWebKit     import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 from    LoggerViewRrds          import RrdArea
@@ -44,6 +45,11 @@ class MDIArea(QMdiArea):
         super(MDIArea, self).__init__(parent)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.osmWidget = OSMView(self)
+        self.osmWidget.setWindowTitle('OpenStreetMap view')
+        osmWindow = self.addSubWindow(self.osmWidget)
+        osmWindow.setWindowFlags(Qt.WindowTitleHint|Qt.WindowMinimizeButtonHint)
+        osmWindow.show()
 
     def delProbeView(self, win):
         self.removeSubWindow(win)
@@ -56,6 +62,11 @@ class MDIArea(QMdiArea):
         mdiWindow.show()
         return (mdiWidget, mdiWindow)
         
+
+class OSMView(QWebView):
+    def __init__(self, parent):
+        super(OSMView, self).__init__(parent)
+        self.load(QUrl("./html/OpenStreetMap.html"))
 
 class MDIProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
