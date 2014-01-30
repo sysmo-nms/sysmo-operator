@@ -27,8 +27,12 @@ class TreeContainer(QFrame):
         self.summary    = Summary(self)
         self.info       = MonitorTreeAreaInfo(self)
         self.tabs       = QTabWidget(self)
-        self.tabs.addTab(self.treeview, 'Probes')
-        self.tabs.addTab(self.compositeList, 'Dashboards')
+        self.vServices  = VirtualServices(self)
+
+        self.tabs.addTab(self.treeview,         'Probes')
+        self.tabs.addTab(self.compositeList,    'Dashboards')
+        self.tabs.addTab(self.vServices,        'Services')
+
         self.commands = Commands(self)
 
         grid = QGridLayout(self)
@@ -49,6 +53,13 @@ class TreeContainer(QFrame):
 
         self.setLayout(grid)
         self.setMaximumWidth(500)
+
+class VirtualServices(QFrame):
+    def __init__(self, parent):
+        super(VirtualServices, self).__init__(parent)
+        grid = QGridLayout(self)
+        grid.addWidget(QLabel('hello', self), 0,0)
+        self.setLayout(grid)
 
 class Commands(QFrame):
     def __init__(self, parent):

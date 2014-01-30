@@ -4,6 +4,7 @@ from    PySide.QtWebKit     import *
 from    MonitorProxyEvents  import ChannelHandler
 from    MonitorViewMDI      import MDIView
 from    MonitorViewWorking  import WorkView
+from    PerformanceViews    import *
 from    copy                import copy
 import  TkorderIcons
 
@@ -193,7 +194,11 @@ class DashTab(QTabWidget):
         self.views      = list()
         workView    = WorkView(self)
         mdiView     = MDIView(self)
-        self.views.append(workView)
+        perfView    = PerformanceMap(self)
+
         self.views.append(mdiView)
-        self.addTab(workView, 'Work view')
+        self.views.append(workView)
+
         self.addTab(mdiView,  'Dashboard')
+        self.addTab(perfView, 'Performance map')
+        self.addTab(workView, 'Explorer')
