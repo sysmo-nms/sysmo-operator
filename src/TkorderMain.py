@@ -7,6 +7,7 @@ import  pprint
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    PySide.QtNetwork    import *
+from    MonitorDashboardArea    import *
 from    TkorderIcons        import TkorderIcons,TkorderImages
 from    TkorderDialog       import LogIn
 import  Supercast
@@ -64,7 +65,25 @@ class TkorderClient(QMainWindow):
             TkorderIcons.get('video-display'), '&Full screen', self)
         fullScreenAction.setShortcut('Ctrl+F')
         fullScreenAction.triggered.connect(self.toggleFullScreen)
+
+        actionSimpleView    = QAction('Simplified view', self)
+        actionSimpleView.setCheckable(True)
+        actionSimpleView.setChecked(True)
+        actionSimpleView.triggered.connect(self.setSimpleView)
+
+        actionExpertView    = QAction('Expert view', self)
+        actionExpertView.setCheckable(True)
+        actionExpertView.triggered.connect(self.setExpertView)
+
+        toggleSimpleView    = QActionGroup(self)
+        toggleSimpleView.addAction(actionSimpleView)
+        toggleSimpleView.addAction(actionExpertView)
+        toggleSimpleView.setExclusive(True)
+
         menuWin     = menu.addMenu('Views')
+        menuWin.addAction(actionSimpleView)
+        menuWin.addAction(actionExpertView)
+        menuWin.addSeparator()
         menuWin.addAction(fullScreenAction)
 
 
@@ -76,6 +95,12 @@ class TkorderClient(QMainWindow):
         self.central = TkorderCentralWidget(self)
         self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
+
+    def setSimpleView(self):
+        DashboardStack.singleton.setSimpleView()
+
+    def setExpertView(self):
+        DashboardStack.singleton.setExpertView()
 
     def setDpi(self, width, height):
         self.dpiWidth   = width

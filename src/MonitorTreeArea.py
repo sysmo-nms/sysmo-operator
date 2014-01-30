@@ -1,8 +1,9 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
 from    MonitorProxyEvents   import ChannelHandler
-from    MonitorDashboardArea import Dashboard
-from    NewTargetForm   import AddTargetWizard
+import    MonitorDashboardArea
+from    NewTargetForm   import  AddTargetWizard
+from    CommonWidgets   import  *
 import  TkorderIcons
 
 
@@ -23,6 +24,7 @@ class TreeContainer(QFrame):
         self.treeview   = MonitorTreeView(self)
         self.compositeList = MonitorDashboardList(self)
         self.searchBar  = MonitorTreeSearch(self)
+        self.summary    = Summary(self)
         self.info       = MonitorTreeAreaInfo(self)
         self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview, 'Probes')
@@ -33,15 +35,17 @@ class TreeContainer(QFrame):
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(5)
-        grid.addWidget(self.commands,           0, 0)
-        grid.addWidget(self.searchBar,          1, 0)
-        grid.addWidget(self.tabs,               2, 0)
-        grid.addWidget(self.info,               3, 0)
+        grid.addWidget(self.summary,            0, 0)
+        grid.addWidget(self.commands,           1, 0)
+        grid.addWidget(self.searchBar,          2, 0)
+        grid.addWidget(self.tabs,               3, 0)
+        grid.addWidget(self.info,               4, 0)
 
         grid.setRowStretch(0,0)
         grid.setRowStretch(1,0)
-        grid.setRowStretch(2,1)
-        grid.setRowStretch(3,0)
+        grid.setRowStretch(2,0)
+        grid.setRowStretch(3,1)
+        grid.setRowStretch(4,0)
 
         self.setLayout(grid)
         self.setMaximumWidth(500)
@@ -175,7 +179,6 @@ class MonitorTreeView(QTreeView):
         self.contextActions = QAction('test', self)
         self.addAction(self.contextActions)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-
         self.customContextMenuRequested.connect(self.test)
 
         self.setSortingEnabled(True)
@@ -248,6 +251,7 @@ class MonitorTreeView(QTreeView):
     def createTarget(self): pass
     def createProbe(self): pass
     def configureProbe(self): pass
+
     def addToWorkingView(self):
         proxyIndexes = self.selectedIndexes()
         selectionList = list()
@@ -255,7 +259,7 @@ class MonitorTreeView(QTreeView):
             modelIndex = self.proxy.mapToSource(proxyIndexes[i])
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
-        Dashboard.singleton.userNewSelection(selectionList)
+        MonitorDashboardArea.Dashboard.singleton.userNewSelection(selectionList)
 
     def userActivity(self, index):
         print "clicked!", self.selectedIndexes()

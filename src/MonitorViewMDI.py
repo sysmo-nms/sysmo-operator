@@ -3,7 +3,8 @@ from    PySide.QtCore       import *
 from    PySide.QtWebKit     import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
-from    LoggerViewRrds          import RrdArea
+from    CommonWidgets       import *
+from    LoggerViewRrds      import RrdArea
 import  datetime
 import  TkorderIcons
 
@@ -35,7 +36,6 @@ class MDIView(QFrame):
 
     def createProbeView(self, probe):
         mdiInfo = self.mdiArea.addProbeView(probe)
-        self.mdiArea.tileSubWindows()
         self.probeViews[probe] = mdiInfo
         
         
@@ -44,12 +44,28 @@ class MDIArea(QMdiArea):
     def __init__(self, parent):
         super(MDIArea, self).__init__(parent)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setDocumentMode(True)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.osmWidget = OSMView(self)
+
+        self.osmWidget  = OSMView(self)
         self.osmWidget.setWindowTitle('OpenStreetMap view')
         osmWindow = self.addSubWindow(self.osmWidget)
-        osmWindow.setWindowFlags(Qt.WindowTitleHint|Qt.WindowMinimizeButtonHint)
+        osmWindow.setWindowFlags(
+            Qt.WindowTitleHint|
+            Qt.WindowMinimizeButtonHint|
+            Qt.WindowStaysOnBottomHint)
         osmWindow.show()
+
+        self.summaryWidget    = Summary(self)
+        self.summaryWidget.setWindowTitle('Summary')
+        summaryWindow = self.addSubWindow(self.summaryWidget)
+        summaryWindow.setWindowFlags(
+            Qt.WindowTitleHint|
+            Qt.WindowMinimizeButtonHint|
+            Qt.WindowStaysOnTopHint|
+            Qt.MSWindowsFixedSizeDialogHint)
+        summaryWindow
+        summaryWindow.show()
 
     def delProbeView(self, win):
         self.removeSubWindow(win)

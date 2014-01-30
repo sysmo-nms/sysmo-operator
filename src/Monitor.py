@@ -24,7 +24,7 @@ class MonitorMain(QSplitter):
         self.collapsed  = False
 
         self.leftTree   = MonitorTreeArea.TreeContainer(self)
-        self.rightDash  = MonitorDashboardArea.Dashboard(self)
+        self.rightDash  = MonitorDashboardArea.DashboardStack(self)
 
         self.addWidget(self.leftTree)
         self.addWidget(self.rightDash)

@@ -1,10 +1,44 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
+from    PySide.QtWebKit     import *
 from    MonitorProxyEvents  import ChannelHandler
 from    MonitorViewMDI      import MDIView
 from    MonitorViewWorking  import WorkView
 from    copy                import copy
 import  TkorderIcons
+
+class DashboardStack(QFrame):
+    def __init__(self, parent):
+        super(DashboardStack, self).__init__(parent)
+        DashboardStack.singleton = self
+        self.stack = QStackedLayout(self)
+        self.expertDashboard = Dashboard(self)
+        self.simpleDashboard = DashboardSimplified(self)
+        self.stack.addWidget(self.simpleDashboard)
+        self.stack.addWidget(self.expertDashboard)
+        self.setLayout(self.stack)
+
+    def setSimpleView(self):
+        self.stack.setCurrentWidget(self.simpleDashboard)
+
+    def setExpertView(self):
+        self.stack.setCurrentWidget(self.expertDashboard)
+
+class DashboardSimplified(QFrame):
+    def __init__(self, parent):
+        super(DashboardSimplified, self).__init__(parent)
+        grid = QGridLayout(self)
+        mapWidget = QWebView(self)
+        mapWidget.load(QUrl('./html/OpenStreetMap.html'))
+
+        perfWidget = QFrame(self)
+        perfWidget.setFixedHeight(260)
+        perfWidget.setFrameShape(QFrame.StyledPanel)
+        perfWidget.setFrameShadow(QFrame.Raised)
+
+        grid.addWidget(mapWidget,  0,0)
+        grid.addWidget(perfWidget, 1,0)
+        self.setLayout(grid)
 
 class Dashboard(QFrame):
     def __init__(self, parent):
