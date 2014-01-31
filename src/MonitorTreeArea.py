@@ -220,13 +220,22 @@ class MonitorTreeView(QTreeView):
     def createMenus(self):
         self.targetMenu = QMenu(self)
 
-
-
-
         targetAction = QAction('Add to working view', self)
         targetAction.triggered[bool].connect(self.addToWorkingView)
         self.targetMenu.addAction(targetAction)
 
+        self.targetMenu.addSeparator()
+
+        localMenu    = QMenu('Local Actions', self)
+        sshAction = QAction('Acces SSH', self)
+        phpAction = QAction('Acces phpldapadmin HTTP', self)
+        configureAction = QAction('Configure new action', self)
+        localMenu.addAction(sshAction)
+        localMenu.addAction(phpAction)
+        localMenu.addSeparator()
+        localMenu.addAction(configureAction)
+
+        self.targetMenu.addMenu(localMenu)
 
         self.targetMenu.addSeparator()
 
@@ -246,7 +255,6 @@ class MonitorTreeView(QTreeView):
 
         targetAction = QAction('Properties', self)
         self.targetMenu.addAction(targetAction)
-
 
         self.probeMenu  = QMenu(self)
 
