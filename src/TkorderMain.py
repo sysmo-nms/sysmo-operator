@@ -69,18 +69,25 @@ class TkorderClient(QMainWindow):
         actionSimpleView    = QAction('Simplified view', self)
         actionSimpleView.setCheckable(True)
         actionSimpleView.setChecked(True)
+        self.viewMode = 'simple'
         actionSimpleView.triggered.connect(self.setSimpleView)
+
+        actionMinimalView    = QAction('Minimal view', self)
+        actionMinimalView.setCheckable(True)
+        actionMinimalView.triggered.connect(self.setMinimalView)
 
         actionExpertView    = QAction('Expert view', self)
         actionExpertView.setCheckable(True)
         actionExpertView.triggered.connect(self.setExpertView)
 
         toggleSimpleView    = QActionGroup(self)
+        toggleSimpleView.addAction(actionMinimalView)
         toggleSimpleView.addAction(actionSimpleView)
         toggleSimpleView.addAction(actionExpertView)
         toggleSimpleView.setExclusive(True)
 
         menuWin     = menu.addMenu('Views')
+        menuWin.addAction(actionMinimalView)
         menuWin.addAction(actionSimpleView)
         menuWin.addAction(actionExpertView)
         menuWin.addSeparator()
@@ -96,11 +103,30 @@ class TkorderClient(QMainWindow):
         self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
 
+    def setMinimalView(self):
+        if self.viewMode != 'minimal':
+            self.viewGeometry = self.saveGeometry()
+            Monitor.MonitorMain.singleton.setMinimalView(True)
+            self.setFixedWidth(400)
+            self.viewMode = 'minimal'
+
     def setSimpleView(self):
+        if self.viewMode == 'minimal':
+            self.setMaximumSize(16777215,16777215)
+            self.setMinimumSize(0,0)
+            self.restoreGeometry(self.viewGeometry)
+        Monitor.MonitorMain.singleton.setMinimalView(False)
         DashboardStack.singleton.setSimpleView()
+        self.viewMode = 'simple'
 
     def setExpertView(self):
+        if self.viewMode == 'minimal':
+            self.setMaximumSize(16777215,16777215)
+            self.setMinimumSize(0,0)
+            self.restoreGeometry(self.viewGeometry)
+        Monitor.MonitorMain.singleton.setMinimalView(False)
         DashboardStack.singleton.setExpertView()
+        self.viewMode = 'expert'
 
     def setDpi(self, width, height):
         self.dpiWidth   = width

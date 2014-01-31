@@ -31,17 +31,22 @@ class MonitorMain(QSplitter):
         
         self.targets    = dict()
         self.initHexaPalettes()
-        self.readLayoutState()
+        #self.readLayoutState()
 
     def toggleButtonClicked(self):
         if self.collapsed == False:
-            [a,_] = self.sizes()
-            self.oldSize = a
-            self.moveSplitter(0,1)
+            self.leftTree.hide()
             self.collapsed = True
         elif self.collapsed == True:
-            self.moveSplitter(self.oldSize, 1)
+            self.leftTree.show()
             self.collapsed = False
+
+    def setMinimalView(self, bol):
+        if bol == True:
+            self.rightDash.hide()
+        else:
+            self.rightDash.show()
+
 
     def handleMsg(self, msg):
         mType = msg['msgType']

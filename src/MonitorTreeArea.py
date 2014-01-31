@@ -21,19 +21,19 @@ class TreeContainer(QFrame):
         TreeContainer.singleton = self
         self.trackerMain  = parent
 
+        self.summary    = Summary(self)
+        self.commands = Commands(self)
+        self.searchBar  = MonitorTreeSearch(self)
+
         self.treeview   = MonitorTreeView(self)
         self.compositeList = MonitorDashboardList(self)
-        self.searchBar  = MonitorTreeSearch(self)
-        self.summary    = Summary(self)
-        self.info       = MonitorTreeAreaInfo(self)
-        self.tabs       = QTabWidget(self)
         self.vServices  = VirtualServices(self)
-
+        self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview,         'Probes')
         self.tabs.addTab(self.compositeList,    'Dashboards')
         self.tabs.addTab(self.vServices,        'Services')
 
-        self.commands = Commands(self)
+        self.info       = MonitorTreeAreaInfo(self)
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
@@ -52,14 +52,14 @@ class TreeContainer(QFrame):
         grid.setRowStretch(4,0)
 
         self.setLayout(grid)
-        self.setMaximumWidth(500)
+        #self.setMaximumWidth(500)
 
-class VirtualServices(QFrame):
+class VirtualServices(QTreeView):
     def __init__(self, parent):
         super(VirtualServices, self).__init__(parent)
-        grid = QGridLayout(self)
-        grid.addWidget(QLabel('hello', self), 0,0)
-        self.setLayout(grid)
+        self.setAnimated(True)
+        self.setFrameShape(QFrame.NoFrame)
+        self.setHeaderHidden(False)
 
 class Commands(QFrame):
     def __init__(self, parent):

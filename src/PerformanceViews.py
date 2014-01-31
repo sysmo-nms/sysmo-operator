@@ -13,5 +13,5 @@ class PerformanceMap(QFrame):
 
         grid = QGridLayout(self)
         grid.addWidget(self.osmView, 0,0)
-        grid.addWidget(QLabel('lqsdkfjlqskdfjlqskdj', self), 0,0)
+        grid.addWidget(QFrame(self), 0,0)
         self.setLayout(grid)
