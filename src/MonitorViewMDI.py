@@ -7,21 +7,19 @@ from    LoggerViewRrds      import RrdArea
 import  datetime
 import  TkorderIcons
 
-class Controls(QToolBar):
-    def __init__(self, parent):
-        super(Controls, self).__init__(parent)
-        de = QAction('Other', self)
-        self.addAction(de)
+
 
 class MDIView(QFrame):
     def __init__(self, parent):
         super(MDIView, self).__init__(parent)
-        self.mdiArea = MDIArea(self)
+
+        self.mdiArea    = MDIArea(self)
+        self.controls   = Controls(self, self.mdiArea)
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0,0,0,0)
-        grid.addWidget(Controls(self), 0,0)
-        grid.addWidget(self.mdiArea,   1,0)
+        grid.addWidget(self.controls,   0,0)
+        grid.addWidget(self.mdiArea,    1,0)
         self.setLayout(grid)
         self.probeViews = dict()
 
@@ -37,6 +35,11 @@ class MDIView(QFrame):
         mdiInfo = self.mdiArea.addProbeView(probe)
         self.probeViews[probe] = mdiInfo
         
+    def saveLayout(self):
+        print "ssss"
+
+    def restoreLayout(self):
+        print "rrrrrrr"
         
 
 class MDIArea(QMdiArea):
@@ -45,26 +48,31 @@ class MDIArea(QMdiArea):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setDocumentMode(True)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-
+        self._initializeCommonWindows()
+        
+    def _initializeCommonWindows(self):
         self.osmWidget  = OSMView(self)
         self.osmWidget.setWindowTitle('OpenStreetMap view')
-        osmWindow = self.addSubWindow(self.osmWidget)
-        osmWindow.setWindowFlags(
+        self.osmWindow = CustomMdiSubWindow(self)
+        self.osmWindow.setWidget(self.osmWidget)
+        #osmWindow = self.addSubWindow(self.osmWidget)
+        self.addSubWindow(self.osmWindow)
+        self.osmWindow.setWindowFlags(
             Qt.WindowTitleHint|
             Qt.WindowMinimizeButtonHint|
             Qt.WindowStaysOnBottomHint)
-        osmWindow.show()
+        self.osmWindow.show()
 
         self.summaryWidget    = Summary(self)
         self.summaryWidget.setWindowTitle('Summary')
-        summaryWindow = self.addSubWindow(self.summaryWidget)
-        summaryWindow.setWindowFlags(
+        self.summaryWindow = self.addSubWindow(self.summaryWidget)
+        self.summaryWindow.setWindowFlags(
             Qt.WindowTitleHint|
             Qt.WindowMinimizeButtonHint|
             Qt.WindowStaysOnTopHint|
             Qt.MSWindowsFixedSizeDialogHint)
-        summaryWindow
-        summaryWindow.show()
+        self.summaryWindow
+        self.summaryWindow.show()
 
     def delProbeView(self, win):
         self.removeSubWindow(win)
@@ -76,7 +84,84 @@ class MDIArea(QMdiArea):
         mdiWindow.setWindowFlags(Qt.WindowTitleHint|Qt.WindowMinimizeButtonHint)
         mdiWindow.show()
         return (mdiWidget, mdiWindow)
+
+    def saveLayout(self):
+        osmGeo  = self.osmWindow.saveGeometry()
+        return osmGeo
+
+    def restoreLayout(self, value):
+        print "jjjjjjjjjjjjjlllllllll"
+        self.osmWindow.restoreGeometry(value)
         
+class Controls(QToolBar):
+    def __init__(self, parent, mdiAreaWidget):
+        super(Controls, self).__init__(parent)
+
+        #########################################
+        self.settings = QSettings('mdi', 'state')
+        #########################################
+
+        self.areaWidget = mdiAreaWidget
+
+        saveIcon                = TkorderIcons.get('document-save-as')
+        self.saveLayoutAction   = QAction(saveIcon, 'Save layout', self)
+        self.saveLayoutAction.triggered.connect(self._saveLayout)
+
+        undoIcon                = TkorderIcons.get('edit-undo')
+        self.undoAction         = QAction(undoIcon, 'Restore layout', self)
+        self.undoAction.triggered.connect(self._restoreLayout)
+        self.addAction(self.saveLayoutAction)
+        self.addAction(self.undoAction)
+
+    def _saveLayout(self):
+        ret = self.areaWidget.saveLayout()
+        self.settings.setValue('OSM geometry', ret)
+        
+    def _restoreLayout(self):
+        self.areaWidget.restoreLayout(self.settings.value('OSM geometry'))
+
+class CustomMdiSubWindow(QMdiSubWindow):
+    def __init__(self, parent):
+        super(CustomMdiSubWindow, self).__init__(parent)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MDIProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
         super(MDIProbeView, self).__init__(parent, probe)

@@ -30,6 +30,9 @@ class DashboardSimplified(QFrame):
         super(DashboardSimplified, self).__init__(parent)
         grid = QGridLayout(self)
         mapWidget = OSMView(self)
+        mapWidget.setBrowsable(False)
+        mapWidget.setFrameStyle(QFrame.StyledPanel)
+        mapWidget.setFrameShadow(QFrame.Raised)
 
         perfWidget = QFrame(self)
         perfWidget.setFixedHeight(260)
@@ -198,6 +201,6 @@ class DashTab(QTabWidget):
         self.views.append(mdiView)
         self.views.append(workView)
 
+        self.addTab(workView, 'Explorer')
         self.addTab(mdiView,  'Dashboard')
         self.addTab(perfView, 'Performance map')
-        self.addTab(workView, 'Explorer')

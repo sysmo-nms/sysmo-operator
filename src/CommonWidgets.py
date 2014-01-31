@@ -12,6 +12,7 @@ import  TkorderIcons
 class Summary(QFrame):
     def __init__(self, parent):
         super(Summary, self).__init__(parent)
+        self.setContentsMargins(0,0,0,0)
         self.chanH   = ChannelHandler.singleton
         sigDict     = self.chanH.masterSignalsDict
         sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
@@ -20,6 +21,10 @@ class Summary(QFrame):
     def _initInterface(self):
 
         grid = QGridLayout(self)
+
+        grid.setContentsMargins(0,0,0,0)
+        grid.setHorizontalSpacing(5)
+        grid.setVerticalSpacing(0)
 
         self.okWidget       = StatusSummary(self, 'OK')
         self.warningWidget  = StatusSummary(self, 'WARNING')
@@ -68,17 +73,19 @@ class Summary(QFrame):
     def _handleProbeInfo(self, msg): 
         self._setCounters()
 
-class StatusSummary(QFrame):
+class StatusSummary(QPushButton):
     def __init__(self, parent, status):
         super(StatusSummary, self).__init__(parent)
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Raised)
+        buttonPol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSizePolicy(buttonPol)
+        self.setFixedHeight(40)
+        self.setMinimumWidth(80)
 
         self.startBlinkTimer()
 
         # QLCD number
-        self.countArea = QLCDNumber(2, self)
-        self.countArea.display(99)
+        self.countArea = QLCDNumber(3, self)
+        self.countArea.display(888)
         self.countArea.setSegmentStyle(QLCDNumber.Flat)
         self.countArea.setAutoFillBackground(True)
         self.countArea.setBackgroundRole(QPalette.Base)
@@ -146,7 +153,29 @@ class StatusSummary(QFrame):
 ###################################
 # OSM WIDGET
 ###################################
-class OSMView(QWebView):
+class OSMView(QFrame):
     def __init__(self, parent):
         super(OSMView, self).__init__(parent)
-        self.load(QUrl('./html/OpenStreetMap.html'))
+        self.setContentsMargins(0,0,0,0)
+
+        self.osm    = QWebView(self)
+        self.osm.load(QUrl('./html/OpenStreetMap.html'))
+
+        self.shade = QFrame(self)
+        self.shade.setAutoFillBackground(False)
+        self.shade.hide()
+        self._browsable = True
+
+        self.grid = QGridLayout(self)
+        self.grid.addWidget(self.osm, 0,0)
+        self.setLayout(self.grid)
+
+    def setBrowsable(self, bol):
+        if  bol == False and self._browsable == True:
+            self.shade.show()
+            self.grid.addWidget(self.shade, 0,0)
+            self.shadeStatus = False
+        elif bol == True and self._browsable == False:
+            self.shade.hide()
+            self.grid.removeWidget(self.shade)
+            self.shadeStatus = True

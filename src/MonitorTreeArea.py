@@ -22,7 +22,7 @@ class TreeContainer(QFrame):
         self.trackerMain  = parent
 
         self.summary    = Summary(self)
-        self.commands = Commands(self)
+        self.commands   = Commands(self)
         self.searchBar  = MonitorTreeSearch(self)
 
         self.treeview   = MonitorTreeView(self)
@@ -30,11 +30,15 @@ class TreeContainer(QFrame):
         self.vServices  = VirtualServices(self)
         self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview,         'Probes')
-        self.tabs.addTab(self.compositeList,    'Dashboards')
         self.tabs.addTab(self.vServices,        'Services')
+        self.tabs.addTab(self.compositeList,    'Dashboards')
 
         self.info       = MonitorTreeAreaInfo(self)
         self.osmView    = OSMView(self)
+        self.osmView.setFrameShape(QFrame.StyledPanel)
+        self.osmView.setFrameShadow(QFrame.Raised)
+        self.osmView.setBrowsable(False)
+
         self.osmView.hide()
         self.osmView.setFixedHeight(300)
 
@@ -86,6 +90,9 @@ class Commands(QFrame):
     def __init__(self, parent):
         super(Commands, self).__init__(parent)
         grid = QGridLayout(self)
+        grid.setContentsMargins(0,0,0,0)
+        grid.setHorizontalSpacing(5)
+        grid.setVerticalSpacing(0)
         self.addButton = QPushButton(TkorderIcons.get('list-add'), 'Add', self)
         self.addButton.clicked.connect(self._launchWizard)
         grid.addWidget(self.addButton, 0,0)
