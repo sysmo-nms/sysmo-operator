@@ -1,6 +1,7 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
 from    MonitorProxyEvents   import ChannelHandler
+from    DashboardTree   import *
 import    MonitorDashboardArea
 from    NewTargetForm   import  AddTargetWizard
 from    CommonWidgets   import  *
@@ -26,12 +27,13 @@ class TreeContainer(QFrame):
         self.searchBar  = MonitorTreeSearch(self)
 
         self.treeview   = MonitorTreeView(self)
-        self.compositeList = MonitorDashboardList(self)
+        self.dashboardList = DashboardTreeView(self)
         self.vServices  = VirtualServices(self)
         self.tabs       = QTabWidget(self)
         self.tabs.addTab(self.treeview,         'Probes')
         self.tabs.addTab(self.vServices,        'Services')
-        self.tabs.addTab(self.compositeList,    'Dashboards')
+        self.tabs.addTab(self.dashboardList,    'Dashboards')
+        self.tabs.setCurrentWidget(self.dashboardList)
 
         self.info       = MonitorTreeAreaInfo(self)
         self.osmView    = OSMView(self)
