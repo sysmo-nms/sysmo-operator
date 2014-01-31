@@ -35,13 +35,6 @@ class MDIView(QFrame):
         mdiInfo = self.mdiArea.addProbeView(probe)
         self.probeViews[probe] = mdiInfo
         
-    def saveLayout(self):
-        print "ssss"
-
-    def restoreLayout(self):
-        print "rrrrrrr"
-        
-
 class MDIArea(QMdiArea):
     def __init__(self, parent):
         super(MDIArea, self).__init__(parent)
@@ -86,20 +79,32 @@ class MDIArea(QMdiArea):
         return (mdiWidget, mdiWindow)
 
     def saveLayout(self):
-        osmGeo  = self.osmWindow.saveGeometry()
-        return osmGeo
+        # XXX
+        osmState  = self.saveMDIState(self.osmWindow)
+        return osmState
 
-    def restoreLayout(self, value):
-        print "jjjjjjjjjjjjjlllllllll"
-        self.osmWindow.restoreGeometry(value)
+    def saveMDIState(self, mdiWindow):
+        # XXX
+        mdiGeom  = mdiWindow.saveGeometry()
+        mdiState = mdiWindow.windowState()
+        winState = dict()
+        winState['geometry']    = mdiGeom
+        winState['wState']      = mdiState
+        return winState
+
+    def restoreLayout(self, windowState):
+        # XXX
+        self.osmWindow.restoreGeometry(windowState['geometry'])
+        self.osmWidget.setWindowState(windowState['wState'])
         
 class Controls(QToolBar):
     def __init__(self, parent, mdiAreaWidget):
         super(Controls, self).__init__(parent)
 
         #########################################
-        self.settings = QSettings('mdi', 'state')
+        #self.settings = QSettings('mdi', 'state')
         #########################################
+        self.settings = ''
 
         self.areaWidget = mdiAreaWidget
 
@@ -114,11 +119,14 @@ class Controls(QToolBar):
         self.addAction(self.undoAction)
 
     def _saveLayout(self):
+        # XXX
         ret = self.areaWidget.saveLayout()
-        self.settings.setValue('OSM geometry', ret)
+        self.settings = ret
         
     def _restoreLayout(self):
-        self.areaWidget.restoreLayout(self.settings.value('OSM geometry'))
+        # XXX
+        #self.areaWidget.restoreLayout(self.settings.value('OSM geometry'))
+        self.areaWidget.restoreLayout(self.settings)
 
 class CustomMdiSubWindow(QMdiSubWindow):
     def __init__(self, parent):
