@@ -1,6 +1,5 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
-from    PySide.QtWebKit     import *
 from    MonitorAbstract     import AbstractChannelQFrame
 from    MonitorProxyEvents  import ChannelHandler
 from    CommonWidgets       import *
@@ -78,12 +77,6 @@ class MDIArea(QMdiArea):
         mdiWindow.show()
         return (mdiWidget, mdiWindow)
         
-
-class OSMView(QWebView):
-    def __init__(self, parent):
-        super(OSMView, self).__init__(parent)
-        self.load(QUrl("./html/OpenStreetMap.html"))
-
 class MDIProbeView(AbstractChannelQFrame):
     def __init__(self, parent, probe):
         super(MDIProbeView, self).__init__(parent, probe)

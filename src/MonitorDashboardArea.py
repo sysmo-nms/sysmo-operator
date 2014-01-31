@@ -1,10 +1,10 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
-from    PySide.QtWebKit     import *
 from    MonitorProxyEvents  import ChannelHandler
 from    MonitorViewMDI      import MDIView
 from    MonitorViewWorking  import WorkView
 from    PerformanceViews    import *
+from    CommonWidgets       import *
 from    copy                import copy
 import  TkorderIcons
 
@@ -29,8 +29,7 @@ class DashboardSimplified(QFrame):
     def __init__(self, parent):
         super(DashboardSimplified, self).__init__(parent)
         grid = QGridLayout(self)
-        mapWidget = QWebView(self)
-        mapWidget.load(QUrl('./html/OpenStreetMap.html'))
+        mapWidget = OSMView(self)
 
         perfWidget = QFrame(self)
         perfWidget.setFixedHeight(260)

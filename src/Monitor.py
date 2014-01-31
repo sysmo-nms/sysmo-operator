@@ -44,8 +44,10 @@ class MonitorMain(QSplitter):
     def setMinimalView(self, bol):
         if bol == True:
             self.rightDash.hide()
+            MonitorTreeArea.TreeContainer.singleton.setMinimalView(True)
         else:
             self.rightDash.show()
+            MonitorTreeArea.TreeContainer.singleton.setMinimalView(False)
 
 
     def handleMsg(self, msg):

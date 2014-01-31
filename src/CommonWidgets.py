@@ -1,10 +1,14 @@
 from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
+from    PySide.QtWebKit     import *
 from    MonitorProxyEvents  import *
 import  TkorderIcons
 
 
+###################################
+# SUMMARY WIDGET
+###################################
 class Summary(QFrame):
     def __init__(self, parent):
         super(Summary, self).__init__(parent)
@@ -136,3 +140,13 @@ class StatusSummary(QFrame):
             elif self.paletteShift == 1:
                 self.countArea.setPalette(self.originalPalette)
                 self.paletteShift = 0
+
+
+
+###################################
+# OSM WIDGET
+###################################
+class OSMView(QWebView):
+    def __init__(self, parent):
+        super(OSMView, self).__init__(parent)
+        self.load(QUrl('./html/OpenStreetMap.html'))

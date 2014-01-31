@@ -1,6 +1,6 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
-from    PySide.QtWebKit import *
+from    CommonWidgets   import *
 
 class PerformanceMap(QFrame):
     def __init__(self, parent):
@@ -8,8 +8,7 @@ class PerformanceMap(QFrame):
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
 
-        self.osmView = QWebView(self)
-        self.osmView.load(QUrl('./html/OpenStreetMap.html'))
+        self.osmView = OSMView(self)
 
         grid = QGridLayout(self)
         grid.addWidget(self.osmView, 0,0)

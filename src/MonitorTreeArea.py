@@ -34,25 +34,46 @@ class TreeContainer(QFrame):
         self.tabs.addTab(self.vServices,        'Services')
 
         self.info       = MonitorTreeAreaInfo(self)
+        self.osmView    = OSMView(self)
+        self.osmView.hide()
+        self.osmView.setFixedHeight(300)
 
-        grid = QGridLayout(self)
-        grid.setContentsMargins(0,0,0,0)
-        grid.setHorizontalSpacing(0)
-        grid.setVerticalSpacing(5)
-        grid.addWidget(self.summary,            0, 0)
-        grid.addWidget(self.commands,           1, 0)
-        grid.addWidget(self.searchBar,          2, 0)
-        grid.addWidget(self.tabs,               3, 0)
-        grid.addWidget(self.info,               4, 0)
+        self.grid = QGridLayout(self)
+        self.grid.setContentsMargins(0,0,0,0)
+        self.grid.setHorizontalSpacing(0)
+        self.grid.setVerticalSpacing(5)
+        self.grid.addWidget(self.summary,            0, 0)
+        self.grid.addWidget(self.commands,           1, 0)
+        self.grid.addWidget(self.searchBar,          2, 0)
+        self.grid.addWidget(self.tabs,               3, 0)
+        self.grid.addWidget(self.info,               4, 0)
 
-        grid.setRowStretch(0,0)
-        grid.setRowStretch(1,0)
-        grid.setRowStretch(2,0)
-        grid.setRowStretch(3,1)
-        grid.setRowStretch(4,0)
+        self.grid.setRowStretch(0,0)
+        self.grid.setRowStretch(1,0)
+        self.grid.setRowStretch(2,0)
+        self.grid.setRowStretch(3,1)
+        self.grid.setRowStretch(4,0)
 
-        self.setLayout(grid)
+        self.setLayout(self.grid)
+
+        self.viewMode = 'full'
         #self.setMaximumWidth(500)
+
+    def setMinimalView(self, bol):
+        if bol == True and self.viewMode == 'full':
+            self.commands.hide()
+            self.grid.removeWidget(self.info)
+            self.info.hide()
+            self.osmView.show()
+            self.grid.addWidget(self.osmView, 4,0)
+            self.viewMode = 'minimal'
+        elif bol == False and self.viewMode == 'minimal':
+            self.commands.show()
+            self.grid.removeWidget(self.osmView)
+            self.osmView.hide()
+            self.info.show()
+            self.grid.addWidget(self.info, 4,0)
+            self.viewMode = 'full'
 
 class VirtualServices(QTreeView):
     def __init__(self, parent):
