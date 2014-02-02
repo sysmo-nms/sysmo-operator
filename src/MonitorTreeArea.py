@@ -30,9 +30,9 @@ class TreeContainer(QFrame):
         self.dashboardList = DashboardTreeView(self)
         self.vServices  = VirtualServices(self)
         self.tabs       = QTabWidget(self)
-        self.tabs.addTab(self.treeview,         'Probes')
-        self.tabs.addTab(self.vServices,        'Services')
         self.tabs.addTab(self.dashboardList,    'Dashboards')
+        self.tabs.addTab(self.vServices,        'Services')
+        self.tabs.addTab(self.treeview,         'Probes')
         self.tabs.setCurrentWidget(self.dashboardList)
 
         self.info       = MonitorTreeAreaInfo(self)

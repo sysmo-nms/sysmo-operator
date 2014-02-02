@@ -28,20 +28,20 @@ class DashboardStack(QFrame):
 class DashboardSimplified(QFrame):
     def __init__(self, parent):
         super(DashboardSimplified, self).__init__(parent)
+        sig = ChannelHandler.singleton.masterSignalsDict['probeInfo']
+        sig.signal.connect(self.handleProbeInfo)
         grid = QGridLayout(self)
-        mapWidget = OSMView(self)
-        mapWidget.setBrowsable(False)
-        mapWidget.setFrameStyle(QFrame.StyledPanel)
-        mapWidget.setFrameShadow(QFrame.Raised)
-
-        perfWidget = QFrame(self)
-        perfWidget.setFixedHeight(260)
-        perfWidget.setFrameShape(QFrame.StyledPanel)
-        perfWidget.setFrameShadow(QFrame.Raised)
-
-        grid.addWidget(mapWidget,  0,0)
-        grid.addWidget(perfWidget, 1,0)
+        grid.setVerticalSpacing(0)
+        grid.setContentsMargins(0,0,0,0)
+        self.dash = MDIView(self)
+        self.dash.setFrameShape(QFrame.StyledPanel)
+        self.dash.setFrameShadow(QFrame.Raised)
+        grid.addWidget(self.dash, 1,0)
         self.setLayout(grid)
+
+    def handleProbeInfo(self, msg):
+        name = msg['value']['name']
+        self.dash.createProbeView(name)
 
 class Dashboard(QFrame):
     def __init__(self, parent):
@@ -201,6 +201,7 @@ class DashTab(QTabWidget):
         self.views.append(mdiView)
         self.views.append(workView)
 
-        self.addTab(workView, 'Explorer')
-        self.addTab(mdiView,  'Dashboard')
-        self.addTab(perfView, 'Performance map')
+        self.insertTab(0, workView, 'Explorer')
+        self.insertTab(1, mdiView,  'Dashboard')
+        self.insertTab(2, perfView, 'Performance map')
+        self.setTabEnabled(2,False)
