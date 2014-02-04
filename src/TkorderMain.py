@@ -33,6 +33,7 @@ class TkorderClient(QMainWindow):
 
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
+        self.setWindowTitle('Noctopus')
 
         " Tray icon "
         #self.trayMenu = QMenu(self)
