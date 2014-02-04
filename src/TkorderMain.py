@@ -35,11 +35,12 @@ class TkorderClient(QMainWindow):
         self.setObjectName(_fromUtf8("MainWindow"))
 
         " Tray icon "
-        self.trayMenu = QMenu(self)
+        #self.trayMenu = QMenu(self)
         self.trayIcon = QSystemTrayIcon(self)
-        self.trayIcon.setContextMenu(self.trayMenu)
+        #self.trayIcon.setContextMenu(self.trayMenu)
         self.trayIcon.setIcon(TkorderIcons.get('applications-development'))
         self.trayIcon.setVisible(True)
+        self.trayIcon.activated.connect(self._trayClic)
 
         " Status bar "
         self.statusBar = QStatusBar(self)
@@ -102,6 +103,14 @@ class TkorderClient(QMainWindow):
         self.central = TkorderCentralWidget(self)
         self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
+
+    def _trayClic(self, reason):
+        if reason == QSystemTrayIcon.ActivationReason.Trigger:
+            print self.isHidden()
+            if self.isHidden():
+                self.show()
+            else:
+                self.hide()
 
     def setMinimalView(self):
         if self.viewMode != 'minimal':

@@ -103,6 +103,8 @@ class StatusTimelineView(QScrollArea):
 
     def createProbe(self, probe):
         label = QLabel(probe,self)
+        label.setFrameShape(QFrame.StyledPanel)
+        label.setFrameShadow(QFrame.Raised)
         self.grid.addWidget(label,                              self.widgetCount,0)
         self.grid.addWidget(StatusTimelineElement(self, probe), self.widgetCount,1)
         self.grid.setRowStretch(self.widgetCount, 0)
