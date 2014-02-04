@@ -276,6 +276,9 @@ class MonitorTreeView(QTreeView):
         probeAction = QAction('Suspend probe', self)
         self.probeMenu.addAction(probeAction)
 
+        probeAction = QAction('Force check', self)
+        self.probeMenu.addAction(probeAction)
+
         self.probeMenu.addSeparator()
 
         probeAction = QAction('Delete this probe', self)
