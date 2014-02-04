@@ -173,7 +173,7 @@ class Channel(QObject):
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = 'tracker_events'
             dumpMsg['data']     = self.loggerEventState
-            self.signal.emit(dumpMsg)
+            view.handleProbeEvent(dumpMsg)
         
     def handleDump(self, msg):
         dumpType = msg['value']['logger']
