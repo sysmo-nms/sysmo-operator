@@ -104,7 +104,6 @@ class DashboardItem(QStandardItem):
 
         probesDict = ChannelHandler.singleton.probes
         targetDict = dict()
-        print probesDict
         #for probe in config['probes']:
             
 
