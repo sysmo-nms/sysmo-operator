@@ -12,6 +12,10 @@ from    TkorderIcons        import TkorderIcons,TkorderImages
 from    TkorderDialog       import LogIn
 import  Supercast
 import  Monitor
+import  Locator
+import  Logs
+import  Iphelper
+import  Backup
 import  MonitorProxyEvents
 
 _fromUtf8 = lambda s: s
@@ -70,7 +74,6 @@ class TkorderClient(QMainWindow):
 
         actionSimpleView    = QAction('Simplified view', self)
         actionSimpleView.setCheckable(True)
-        actionSimpleView.setChecked(True)
         self.viewMode = 'simple'
         actionSimpleView.triggered.connect(self.setSimpleView)
 
@@ -81,6 +84,7 @@ class TkorderClient(QMainWindow):
         actionExpertView    = QAction('Expert view', self)
         actionExpertView.setCheckable(True)
         actionExpertView.triggered.connect(self.setExpertView)
+        actionExpertView.setChecked(True)
 
         toggleSimpleView    = QActionGroup(self)
         toggleSimpleView.addAction(actionMinimalView)
@@ -230,8 +234,10 @@ class TkorderCentralWidget(QFrame):
         grid.setContentsMargins(5,9,9,9)
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(0)
-        self.leftSelector   = LeftModSelector(self)
-        self.modView        = ModView(self)
+
+        self.modView        = TkorderStackedLayout(self)
+        self.leftSelector   = LeftModSelector(self, self.modView)
+
         grid.addWidget(self.leftSelector,     0,0,0,1)
         grid.addWidget(self.modView,          0,1,1,1)
         grid.setColumnStretch(0, 0)
@@ -239,45 +245,150 @@ class TkorderCentralWidget(QFrame):
         self.leftSelector.connectAll()
         self.setLayout(grid)
 
-class LeftModSelector(QFrame):
+class TkorderStackedLayout(QFrame):
     def __init__(self, parent):
+        super(TkorderStackedLayout, self).__init__(parent)
+        self.stack = QStackedLayout(self)
+        self.stack.setContentsMargins(5,0,0,0)
+
+        self.monitor = Monitor.MonitorMain(self)
+        self.locator = Locator.LocatorMain(self)
+        self.logs    = Logs.LogsMain(self)
+        self.iphelper = Iphelper.IphelperMain(self)
+        self.backup  = Backup.BackupMain(self)
+
+        self.stack.addWidget(self.monitor)
+        self.stack.addWidget(self.locator)
+        self.stack.addWidget(self.logs)
+        self.stack.addWidget(self.iphelper)
+        self.stack.addWidget(self.backup)
+        self.setLayout(self.stack)
+
+    def goToLocator(self):
+        self.stack.setCurrentWidget(self.locator)
+
+    def goToMonitor(self):
+        self.stack.setCurrentWidget(self.monitor)
+    
+    def goToLogs(self):
+        self.stack.setCurrentWidget(self.logs)
+
+    def goToIphelper(self):
+        self.stack.setCurrentWidget(self.iphelper)
+
+    def goToBackup(self):
+        self.stack.setCurrentWidget(self.backup)
+
+class LeftModSelector(QFrame):
+    def __init__(self, parent, stackWidget):
         super(LeftModSelector, self).__init__(parent)
+        self.stackWidget = stackWidget
+
         self.setFixedWidth(30)
         grid        = QGridLayout(self)
+        self.setContentsMargins(0,0,0,0)
         grid.setContentsMargins(0,0,0,0)
         grid.setHorizontalSpacing(0)
-        grid.setVerticalSpacing(5)
+        grid.setVerticalSpacing(0)
 
         buttonPol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        self.mod1 = QPushButton(self)
-        self.mod1.setSizePolicy(buttonPol)
-        self.mod1.setIconSize(QSize(30,100))
-        self.mod1.setCheckable(True)
-        self.mod1.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-        grid.addWidget(self.mod1, 0,0)
+        self.monitor = QPushButton(self)
+        self.monitor.setSizePolicy(buttonPol)
+        self.monitor.setIconSize(QSize(30,100))
+        self.monitor.setCheckable(True)
+        self.monitor.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
+        self.monitor.setChecked(True)
 
-        #self.mod2 = QPushButton(self)
-        #self.mod2.setSizePolicy(buttonPol)
-        #self.mod2.setIcon(TkorderIcons.get('emblem-system'))
-        #grid.addWidget(self.mod2, 1,0)
+        self.locator = QPushButton(self)
+        self.locator.setSizePolicy(buttonPol)
+        self.locator.setIconSize(QSize(30,100))
+        self.locator.setCheckable(True)
+        self.locator.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
 
+        self.logs = QPushButton(self)
+        self.logs.setSizePolicy(buttonPol)
+        self.logs.setIconSize(QSize(30,100))
+        self.logs.setCheckable(True)
+        self.logs.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
+
+        self.iphelper = QPushButton(self)
+        self.iphelper.setSizePolicy(buttonPol)
+        self.iphelper.setIconSize(QSize(30,100))
+        self.iphelper.setCheckable(True)
+        self.iphelper.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
+
+        self.backup = QPushButton(self)
+        self.backup.setSizePolicy(buttonPol)
+        self.backup.setIconSize(QSize(30,100))
+        self.backup.setCheckable(True)
+        self.backup.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
+
+        self.buttonGroup = QButtonGroup(self)
+        self.buttonGroup.addButton(self.monitor)
+        self.buttonGroup.addButton(self.locator)
+        self.buttonGroup.addButton(self.logs)
+        self.buttonGroup.addButton(self.iphelper)
+        self.buttonGroup.addButton(self.backup)
+        self.buttonGroup.setExclusive(True)
+
+        grid.addWidget(self.monitor,    0,0)
+        grid.addWidget(self.locator,    1,0)
+        grid.addWidget(self.logs,       2,0)
+        grid.addWidget(self.iphelper,   3,0)
+        grid.addWidget(self.backup,     4,0)
+
+        #self.backup = QPushButton(self)
+        #self.backup.setSizePolicy(buttonPol)
+        #self.backup.setIcon(TkorderIcons.get('emblem-system'))
+        #grid.addWidget(self.backup, 1,0)
+        self.currentView = 'monitor'
         self.setLayout(grid)
 
     def connectAll(self):
-        mod1Toggle = Monitor.MonitorMain.singleton.toggleButtonClicked
-        self.mod1.clicked.connect(mod1Toggle)
+        self.monitor.clicked.connect(self.monitorClick)
+        self.locator.clicked.connect(self.locatorClick)
+        self.logs.clicked.connect(self.logsClick)
+        self.iphelper.clicked.connect(self.iphelperClick)
+        self.backup.clicked.connect(self.backupClick)
 
-class ModView(QFrame):
-    def __init__(self, parent):
-        super(ModView, self).__init__(parent)
-        grid        = QGridLayout(self)
-        grid.setContentsMargins(5,0,0,0)
-        grid.setHorizontalSpacing(0)
-        grid.setVerticalSpacing(0)
-        self.monitor = Monitor.MonitorMain(self)
-        grid.addWidget(self.monitor, 0, 0)
-        self.setLayout(grid)
+    def monitorClick(self):
+        if self.currentView == 'monitor':
+            Monitor.MonitorMain.singleton.toggleButtonClicked()
+        else:
+            self.currentView = 'monitor'
+            self.stackWidget.goToMonitor()
+
+    def locatorClick(self):
+        if self.currentView == 'locator':
+            Locator.LocatorMain.singleton.toggleButtonClicked()
+        else:
+            self.currentView = 'locator'
+            self.stackWidget.goToLocator()
+    
+    def logsClick(self):
+        if self.currentView == 'logs':
+            Logs.LogsMain.singleton.toggleButtonClicked()
+        else:
+            self.currentView = 'logs'
+            self.stackWidget.goToLogs()
+
+    def iphelperClick(self):
+        if self.currentView == 'iphelper':
+            Iphelper.IphelperMain.singleton.toggleButtonClicked()
+        else:
+            self.currentView = 'iphelper'
+            self.stackWidget.goToIphelper()
+
+    def backupClick(self):
+        if self.currentView == 'backup':
+            Backup.BackupMain.singleton.toggleButtonClicked()
+        else:
+            self.currentView = 'backup'
+            self.stackWidget.goToBackup()
+
+  
+
 
 def main(arguments):
     tkorderApp  = QApplication(arguments)

@@ -17,6 +17,7 @@ class DashboardStack(QFrame):
         self.simpleDashboard = DashboardSimplified(self)
         self.stack.addWidget(self.simpleDashboard)
         self.stack.addWidget(self.expertDashboard)
+        self.stack.setCurrentWidget(self.expertDashboard)
         self.setLayout(self.stack)
 
     def setSimpleView(self):
@@ -194,9 +195,9 @@ class DashTab(QTabWidget):
         super(DashTab, self).__init__(parent)
         self.stackDict  = dict()
         self.views      = list()
-        workView    = WorkView(self)
-        mdiView     = MDIView(self)
-        perfView    = PerformanceMap(self)
+        workView        = WorkView(self)
+        mdiView         = MDIView(self)
+        perfView        = PerformanceMap(self)
 
         self.views.append(mdiView)
         self.views.append(workView)

@@ -33,7 +33,7 @@ class TreeContainer(QFrame):
         self.tabs.addTab(self.dashboardList,    'Dashboards')
         self.tabs.addTab(self.vServices,        'Services')
         self.tabs.addTab(self.treeview,         'Probes')
-        self.tabs.setCurrentWidget(self.dashboardList)
+        self.tabs.setCurrentWidget(self.treeview)
 
         self.info       = MonitorTreeAreaInfo(self)
         self.osmView    = OSMView(self)
