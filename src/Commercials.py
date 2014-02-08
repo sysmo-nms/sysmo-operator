@@ -48,7 +48,7 @@ class LocatorAd(QFrame):
         insertGrid = QGridLayout(insertFrame)
         insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
         insertGrid.addWidget(QLineEdit(self),                       0,1)
-        insertGrid.addWidget(QPushButton('Validate', self),         0,2)
+        insertGrid.addWidget(QPushButton('Activate', self),         0,2)
         insertFrame.setLayout(insertGrid)
         return insertFrame
 
@@ -111,7 +111,7 @@ class LogAd(QFrame):
         insertGrid = QGridLayout(insertFrame)
         insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
         insertGrid.addWidget(QLineEdit(self),                       0,1)
-        insertGrid.addWidget(QPushButton('Validate', self),         0,2)
+        insertGrid.addWidget(QPushButton('Activate', self),         0,2)
         insertFrame.setLayout(insertGrid)
         return insertFrame
 
@@ -172,7 +172,7 @@ class BackupAd(QFrame):
         insertGrid = QGridLayout(insertFrame)
         insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
         insertGrid.addWidget(QLineEdit(self),                       0,1)
-        insertGrid.addWidget(QPushButton('Validate', self),         0,2)
+        insertGrid.addWidget(QPushButton('Activate', self),         0,2)
         insertFrame.setLayout(insertGrid)
         return insertFrame
 
@@ -233,7 +233,7 @@ class IphelperAd(QFrame):
         insertGrid = QGridLayout(insertFrame)
         insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
         insertGrid.addWidget(QLineEdit(self),                       0,1)
-        insertGrid.addWidget(QPushButton('Validate', self),         0,2)
+        insertGrid.addWidget(QPushButton('Activate', self),         0,2)
         insertFrame.setLayout(insertGrid)
         return insertFrame
 
