@@ -8,6 +8,7 @@ import  TkorderMain
 class IphelperMain(QFrame):
     def __init__(self, parent):
         super(IphelperMain, self).__init__(parent)
+        IphelperMain.singleton = self
         grid = self.initIpHelper()
         self.setLayout(grid)
 

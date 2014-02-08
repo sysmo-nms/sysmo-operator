@@ -6,6 +6,8 @@ import  TkorderIcons
 class LocatorAd(QFrame):
     def __init__(self, parent):
         super(LocatorAd, self).__init__(parent)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
         grid            = QGridLayout(self)
         centralWidget   = self.generateCentralWidget()
         banner          = Banner60(self)
@@ -26,13 +28,15 @@ class LocatorAd(QFrame):
 
         moreInfoButton      = QPushButton('About Locator',  self)
         moreInfoButton.clicked.connect(self.showLocatorDescr)
-        startTrialButton    = QPushButton('Start Trial',    self)
         getLicenceButton    = QPushButton('Get licence key',self)
         getLicenceButton.clicked.connect(self.showUpdateLicence)
+        startTrialButton    = QPushButton('Start Trial',    self)
+        printQuote          = QPushButton('Print quote',     self)
 
-        centralGrid.addWidget(getLicenceButton, 0,0)
-        centralGrid.addWidget(startTrialButton, 1,0)
-        centralGrid.addWidget(moreInfoButton,   2,0)
+        centralGrid.addWidget(startTrialButton, 0,0)
+        centralGrid.addWidget(getLicenceButton, 1,0)
+        centralGrid.addWidget(printQuote,       2,0)
+        centralGrid.addWidget(moreInfoButton,   3,0)
         
         infoLabel   = self.generateFormatedText()
         centralGrid.addWidget(infoLabel,         0,1,4,1)
@@ -68,6 +72,8 @@ class LocatorAd(QFrame):
 class LogAd(QFrame):
     def __init__(self, parent):
         super(LogAd, self).__init__(parent)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
         grid            = QGridLayout(self)
         centralWidget   = self.generateCentralWidget()
         banner          = Banner60(self)
@@ -92,10 +98,12 @@ class LogAd(QFrame):
         startTrialButton    = QPushButton('Start Trial',    self)
         getLicenceButton    = QPushButton('Get licence key',self)
         getLicenceButton.clicked.connect(self.showUpdateLicence)
+        printQuote          = QPushButton('Print quote',     self)
 
         centralGrid.addWidget(getLicenceButton, 0,0)
         centralGrid.addWidget(startTrialButton, 1,0)
-        centralGrid.addWidget(moreInfoButton,   2,0)
+        centralGrid.addWidget(printQuote,       2,0)
+        centralGrid.addWidget(moreInfoButton,   3,0)
         
         infoLabel   = self.generateFormatedText()
         centralGrid.addWidget(infoLabel,         0,1,4,1)
@@ -129,6 +137,8 @@ class LogAd(QFrame):
 class BackupAd(QFrame):
     def __init__(self, parent):
         super(BackupAd, self).__init__(parent)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
         grid            = QGridLayout(self)
         centralWidget   = self.generateCentralWidget()
         banner          = Banner60(self)
@@ -153,10 +163,12 @@ class BackupAd(QFrame):
         startTrialButton    = QPushButton('Start Trial',    self)
         getLicenceButton    = QPushButton('Get licence key',self)
         getLicenceButton.clicked.connect(self.showUpdateLicence)
+        printQuote          = QPushButton('Print quote',     self)
 
         centralGrid.addWidget(getLicenceButton, 0,0)
         centralGrid.addWidget(startTrialButton, 1,0)
-        centralGrid.addWidget(moreInfoButton,   2,0)
+        centralGrid.addWidget(printQuote,       2,0)
+        centralGrid.addWidget(moreInfoButton,   3,0)
         
         infoLabel   = self.generateFormatedText()
         centralGrid.addWidget(infoLabel,         0,1,4,1)
@@ -190,6 +202,8 @@ class BackupAd(QFrame):
 class IphelperAd(QFrame):
     def __init__(self, parent):
         super(IphelperAd, self).__init__(parent)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
         grid            = QGridLayout(self)
         centralWidget   = self.generateCentralWidget()
         banner          = Banner60(self)
@@ -214,10 +228,12 @@ class IphelperAd(QFrame):
         startTrialButton    = QPushButton('Start Trial',    self)
         getLicenceButton    = QPushButton('Get licence key',self)
         getLicenceButton.clicked.connect(self.showUpdateLicence)
+        printQuote          = QPushButton('Print quote',     self)
 
         centralGrid.addWidget(getLicenceButton, 0,0)
         centralGrid.addWidget(startTrialButton, 1,0)
-        centralGrid.addWidget(moreInfoButton,   2,0)
+        centralGrid.addWidget(printQuote,       2,0)
+        centralGrid.addWidget(moreInfoButton,   3,0)
         
         infoLabel   = self.generateFormatedText()
         centralGrid.addWidget(infoLabel,         0,1,4,1)

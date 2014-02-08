@@ -13,6 +13,7 @@ class Summary(QFrame):
     def __init__(self, parent):
         super(Summary, self).__init__(parent)
         self.setContentsMargins(0,0,0,0)
+        self.setSizePolicy(QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
         self.chanH   = ChannelHandler.singleton
         sigDict     = self.chanH.masterSignalsDict
         sigDict['probeInfo'].signal.connect(self._handleProbeInfo)

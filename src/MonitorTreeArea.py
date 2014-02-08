@@ -22,7 +22,6 @@ class TreeContainer(QFrame):
         TreeContainer.singleton = self
         self.trackerMain  = parent
 
-        self.summary    = Summary(self)
         self.commands   = Commands(self)
         self.searchBar  = MonitorTreeSearch(self)
 
@@ -48,7 +47,8 @@ class TreeContainer(QFrame):
         self.grid.setContentsMargins(0,0,0,0)
         self.grid.setHorizontalSpacing(0)
         self.grid.setVerticalSpacing(5)
-        self.grid.addWidget(self.summary,            0, 0)
+        self.setMinimumWidth(350)
+        
         self.grid.addWidget(self.commands,           1, 0)
         self.grid.addWidget(self.searchBar,          2, 0)
         self.grid.addWidget(self.tabs,               3, 0)
@@ -63,7 +63,7 @@ class TreeContainer(QFrame):
         self.setLayout(self.grid)
 
         self.viewMode = 'full'
-        #self.setMaximumWidth(500)
+        self.setMaximumWidth(500)
 
     def setMinimalView(self, bol):
         if bol == True and self.viewMode == 'full':

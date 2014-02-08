@@ -8,6 +8,7 @@ import  TkorderMain
 class BackupMain(QFrame):
     def __init__(self, parent):
         super(BackupMain, self).__init__(parent)
+        BackupMain.singleton = self
         grid = self.initBackupLayout()
         self.setLayout(grid)
 

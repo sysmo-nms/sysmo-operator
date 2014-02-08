@@ -4,7 +4,8 @@ import  TkorderIcons
 import  os
 import  re
 
-from    MonitorProxyEvents   import ChannelHandler
+from    MonitorProxyEvents  import ChannelHandler
+from    CommonWidgets       import *
 import  MonitorDashboardArea
 import  MonitorTreeArea
 import  TkorderMain
@@ -16,8 +17,9 @@ class MonitorMain(QSplitter):
     def __init__(self, parent):
         super(MonitorMain, self).__init__(parent)
 
-        Tko = TkorderMain.TkorderClient.singleton
-        Tko.closeSignal.connect(self.saveLayoutState)
+        self.setObjectName('monitorMain splitter')
+        tko = TkorderMain.TkorderClient.singleton
+        tko.closeSignal.connect(self.saveLayoutState)
         MonitorMain.singleton   = self
         self.eventHandler       = ChannelHandler(self, 5)
 
@@ -29,6 +31,8 @@ class MonitorMain(QSplitter):
         self.addWidget(self.leftTree)
         self.addWidget(self.rightDash)
         
+        tko.addTopDockWidget(Summary(self), 'Monitoriii')
+
         self.targets    = dict()
         self.initHexaPalettes()
         #self.readLayoutState()

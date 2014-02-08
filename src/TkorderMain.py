@@ -34,7 +34,28 @@ class TkorderClient(QMainWindow):
         TkorderImages.init()
 
         self.readSettings()
+        self.initMenus()
 
+        # Server connexion and socket related
+        self.supercast = Supercast.Link(self)
+        self.supercast.setErrorHandler(self.socketEventHandler)
+
+        # Widget layout
+        self.central = TkorderCentralWidget(self)
+        self.setCentralWidget(self.central)
+        self.updateStatusBar("Started!")
+
+    def addTopDockWidget(self, widget, name):
+        newDock = QDockWidget(self)
+        newDock.setObjectName(name)
+        newDock.setAllowedAreas(Qt.TopDockWidgetArea)
+        newDock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetVerticalTitleBar)
+        newDock.setWidget(widget)
+        newDock.setSizePolicy(QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
+        newDock.setContentsMargins(0,0,0,0)
+        self.addDockWidget(Qt.TopDockWidgetArea,newDock,Qt.Horizontal)
+        
+    def initMenus(self):
         " MainWindow "
         self.setObjectName(_fromUtf8("MainWindow"))
         self.setWindowTitle('Noctopus')
@@ -107,14 +128,6 @@ class TkorderClient(QMainWindow):
 
         menuConf    = menu.addMenu('Configure')
         menuConf.addAction(actionConfigureProxy)
-        " Server connexion and socket related "
-        self.supercast = Supercast.Link(self)
-        self.supercast.setErrorHandler(self.socketEventHandler)
-
-        " End init "
-        self.central = TkorderCentralWidget(self)
-        self.setCentralWidget(self.central)
-        self.updateStatusBar("Started!")
 
     def setProxySettings(self):
         print "set proxy settings"

@@ -8,6 +8,7 @@ import  TkorderMain
 class LogsMain(QFrame):
     def __init__(self, parent):
         super(LogsMain, self).__init__(parent)
+        LogsMain.singleton = self
         grid = self.initLogLayout()
 
         self.setLayout(grid)
