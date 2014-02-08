@@ -81,6 +81,10 @@ class TkorderImages(object):
     @classmethod
     def init(cls):
         cls.imageSet = {
+            '60-day-trial-banner': "icons/60-day-trial-banner.svg",
+            '60-day-trial-banner-reversed': "icons/60-day-trial-banner-reversed.svg",
+            '30-day-trial-banner': "icons/30-day-trial-banner.svg",
+            '30-day-trial-banner-reversed': "icons/30-day-trial-banner-reversed.svg",
             'edit-undo': "icons/edit-undo.svg",
             'edit-redo': "icons/edit-redo.svg",
             'list-add': "icons/list-add.svg",

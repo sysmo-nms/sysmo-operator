@@ -1,21 +1,20 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 import  TkorderIcons
+import  Commercials
 
 import  TkorderMain
 
 class IphelperMain(QFrame):
-
-    " The main window. Emit tracker server events "
-
     def __init__(self, parent):
         super(IphelperMain, self).__init__(parent)
-        IphelperMain.singleton = self
-
-        grid = QGridLayout(self)
-        grid.addWidget(QLabel('iphelper', self), 0,0)
-
+        grid = self.initIpHelper()
         self.setLayout(grid)
+
+    def initIpHelper(self):
+        ad = Commercials.IphelperAd(self)
+        grid = QGridLayout(self)
+        grid.addWidget(ad, 0,0)
 
     def toggleButtonClicked(self):
         print "toggle"

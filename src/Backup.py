@@ -1,21 +1,20 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 import  TkorderIcons
+import  Commercials
 
 import  TkorderMain
 
 class BackupMain(QFrame):
-
-    " The main window. Emit tracker server events "
-
     def __init__(self, parent):
         super(BackupMain, self).__init__(parent)
-        BackupMain.singleton = self
-
-        grid = QGridLayout(self)
-        grid.addWidget(QLabel('Backup', self), 0,0)
-
+        grid = self.initBackupLayout()
         self.setLayout(grid)
+
+    def initBackupLayout(self):
+        ad = Commercials.BackupAd(self)
+        grid = QGridLayout(self)
+        grid.addWidget(ad, 0,0)
 
     def toggleButtonClicked(self):
         print "toggle"

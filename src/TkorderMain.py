@@ -100,6 +100,13 @@ class TkorderClient(QMainWindow):
         menuWin.addAction(fullScreenAction)
 
 
+        " configure menu "
+
+        actionConfigureProxy = QAction('Proxy settings', self)
+        actionConfigureProxy.triggered.connect(self.setProxySettings)
+
+        menuConf    = menu.addMenu('Configure')
+        menuConf.addAction(actionConfigureProxy)
         " Server connexion and socket related "
         self.supercast = Supercast.Link(self)
         self.supercast.setErrorHandler(self.socketEventHandler)
@@ -108,6 +115,9 @@ class TkorderClient(QMainWindow):
         self.central = TkorderCentralWidget(self)
         self.setCentralWidget(self.central)
         self.updateStatusBar("Started!")
+
+    def setProxySettings(self):
+        print "set proxy settings"
 
     def _trayClic(self, reason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
