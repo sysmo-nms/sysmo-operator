@@ -202,7 +202,8 @@ class DashTab(QTabWidget):
         self.views.append(mdiView)
         self.views.append(workView)
 
-        self.insertTab(0, workView, 'Explorer')
-        self.insertTab(1, mdiView,  'Dashboard')
+        self.insertTab(0, mdiView,  'Dashboard')
+        self.insertTab(1, workView, 'Explorer')
         self.insertTab(2, perfView, 'Performance map')
+        self.setCurrentWidget(mdiView)
         self.setTabEnabled(2,False)
