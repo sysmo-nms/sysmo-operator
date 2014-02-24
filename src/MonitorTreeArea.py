@@ -32,6 +32,7 @@ class TreeContainer(QFrame):
         self.tabs.addTab(self.dashboardList,    'Dashboards')
         self.tabs.addTab(self.vServices,        'Services')
         self.tabs.addTab(self.treeview,         'Probes')
+        self.tabs.addTab(QLabel('elements', self), 'SNMP Elements')
         self.tabs.setCurrentWidget(self.treeview)
 
         self.info       = MonitorTreeAreaInfo(self)
