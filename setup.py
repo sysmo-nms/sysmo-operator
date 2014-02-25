@@ -1,13 +1,13 @@
 from distutils.core import setup
 
 setup(
-    name='tkorder',
+    name='noctopus-client',
     version='1.0',
     author='Sebastien Serre',
     author_email='sserre.bx@gmail.com',
-    url='www.github.com/ssbx/tkorder',
+    url='www.github.com/ssbx/noctopus-client',
     package_dir = {'': 'src'},
-    scripts = ['bin/tkorder'],
+    scripts = ['bin/noctopus-client'],
     py_modules=[
         'ModTracker',
         'ModTrackerCube',
