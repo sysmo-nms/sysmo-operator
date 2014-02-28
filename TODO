@@ -28,6 +28,17 @@ for targets and custom targets.
 - perf: build the maximum number of view widget at startup (total of probe
 entries of the treeview).
 
+- windows packages:
+- PyRrd, https://pypi.python.org/pypi/PyRRD/ peut etre utilisé avec le 
+binaire rrdtool (c:\rrdtool -). Necessite la compilation de rrdtool.
+"
+I downloaded RRDtool and library sources.
+I found and installed Microsoft Visual C++ 6.
+I somehow managed to solve some compile errors.
+"
+- rrdtool, http://oss.oetiker.ch/rrdtool/pub/contrib/
+- py2exe, cx_Freeze, pyinstaller http://qt-project.org/wiki/Packaging_PySide_applications_on_Windows
+- installer, http://nsis.sourceforge.net/Main_Page, http://www.jrsoftware.org/isinfo.php
 BUGS
 - tko do not have updated property list. The problem dit not come 
 from the server.
