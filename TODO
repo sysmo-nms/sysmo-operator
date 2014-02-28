@@ -30,7 +30,7 @@ entries of the treeview).
 
 - windows packages:
 - PyRrd, https://pypi.python.org/pypi/PyRRD/ peut etre utilisé avec le 
-binaire rrdtool (c:\rrdtool -). Necessite la compilation de rrdtool.
+binaire rrdtool (c:\rrdtool -). Necessite la compilation de rrdtool?
 "
 I downloaded RRDtool and library sources.
 I found and installed Microsoft Visual C++ 6.
