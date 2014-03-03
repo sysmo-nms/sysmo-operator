@@ -1,6 +1,7 @@
 from    PySide.QtCore   import *
 import  re
 #import  rrdtool
+import 	pyrrd
 import  Supercast
 from    collections import deque
 
