@@ -254,15 +254,8 @@ class Channel(QObject):
             template    = re.sub(r'--template\s+', r'', template[0])
             rrdvalues   = re.findall(r'N:[^\s]+', updateString)
             rrdvalues   = rrdvalues[0]
-            #rrdtool.update(str(rrdFiles[rrd]), '--template', template, rrdvalues)
-            #commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
-            ret = norrd.cmd('-v')
-            print ret
-            #startupinfo = subprocess.STARTUPINFO()
-            #startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            #st = subprocess.Popen('rrdtool update %s' % commandString, startupinfo=startupinfo).wait()
-            #st = subprocess.Popen('rrdtool -v', startupinfo=startupinfo).wait()
-            #print st
+            commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
+            norrd.cmd(commandString)
 
 class SimpleSignal(QObject):
     signal = Signal(dict)
