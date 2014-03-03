@@ -13,6 +13,9 @@ def cmd(command):
     return ret
 
 class Rrdtool(object):
+    # TODO performances issues in an event drivent application. Move Rrdtool()
+    # in a QThread, and make it respond to the caller with a caller medthod
+    # caller.commandComplete(cmd)
     def __init__(self, executable):
         Rrdtool.singleton = self
         self._locked            = False
