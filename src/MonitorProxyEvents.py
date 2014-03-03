@@ -1,6 +1,6 @@
 from    PySide.QtCore   import *
 import  re
-import  rrdtool
+#import  rrdtool
 import  Supercast
 from    collections import deque
 
@@ -254,7 +254,7 @@ class Channel(QObject):
             template    = re.sub(r'--template\s+', r'', template[0])
             rrdvalues   = re.findall(r'N:[^\s]+', updateString)
             rrdvalues   = rrdvalues[0]
-            rrdtool.update(str(rrdFiles[rrd]), '--template', template, rrdvalues)
+            #rrdtool.update(str(rrdFiles[rrd]), '--template', template, rrdvalues)
 
 class SimpleSignal(QObject):
     signal = Signal(dict)
