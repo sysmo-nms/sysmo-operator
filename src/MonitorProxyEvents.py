@@ -1,8 +1,6 @@
 from    PySide.QtCore   import *
 import  re
-import  subprocess
-#import  rrdtool
-import 	pyrrd
+import  norrd
 import  Supercast
 from    collections import deque
 
@@ -257,12 +255,14 @@ class Channel(QObject):
             rrdvalues   = re.findall(r'N:[^\s]+', updateString)
             rrdvalues   = rrdvalues[0]
             #rrdtool.update(str(rrdFiles[rrd]), '--template', template, rrdvalues)
-            commandString = '%s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            #commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
+            ret = norrd.cmd('-v')
+            print ret
+            #startupinfo = subprocess.STARTUPINFO()
+            #startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             #st = subprocess.Popen('rrdtool update %s' % commandString, startupinfo=startupinfo).wait()
-            st = subprocess.Popen('rrdtool -v', startupinfo=startupinfo).wait()
-            print st
+            #st = subprocess.Popen('rrdtool -v', startupinfo=startupinfo).wait()
+            #print st
 
 class SimpleSignal(QObject):
     signal = Signal(dict)
