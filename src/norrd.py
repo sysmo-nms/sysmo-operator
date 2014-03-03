@@ -1,5 +1,6 @@
 import  subprocess
 import  re
+import  platform
 
 def init(executable='rrdtool'):
     return Rrdtool(executable)
@@ -21,9 +22,21 @@ class Rrdtool(object):
         self._initialize(executable)
 
     def _initialize(self, executable):
-        self._rrdProcess = subprocess.Popen(
-            [executable, '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE
-        )
+        if platform.system() == 'Windows':
+            customStartupinfo = subprocess.STARTUPINFO()
+            customStartupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            self._rrdProcess = subprocess.Popen(
+                [executable, '-'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                startupinfo=customStartupinfo
+            )
+        else:
+            self._rrdProcess = subprocess.Popen(
+                [executable, '-'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE
+            )
 
     def _cmd(self, command):
         if self._locked == True:
