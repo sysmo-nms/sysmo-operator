@@ -3,7 +3,7 @@ from    PySide.QtCore   import *
 import  TkorderIcons
 import  os
 import  re
-import  norrd
+import  norrdQtThreaded
 
 from    MonitorProxyEvents  import ChannelHandler
 from    CommonWidgets       import *
@@ -17,7 +17,7 @@ class MonitorMain(QSplitter):
 
     def __init__(self, parent):
         super(MonitorMain, self).__init__(parent)
-        norrd.init()
+        norrdQtThreaded.init(parent=self)
 
         self.setObjectName('monitorMain splitter')
         tko = TkorderMain.TkorderClient.singleton

@@ -1,6 +1,6 @@
 from    PySide.QtCore   import *
 import  re
-import  norrd
+import  norrdQtThreaded
 import  Supercast
 from    collections import deque
 
@@ -255,7 +255,7 @@ class Channel(QObject):
             rrdvalues   = re.findall(r'N:[^\s]+', updateString)
             rrdvalues   = rrdvalues[0]
             commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
-            norrd.cmd(commandString)
+            norrdQtThreaded.cmd(commandString)
 
 class SimpleSignal(QObject):
     signal = Signal(dict)

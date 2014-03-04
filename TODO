@@ -1,14 +1,8 @@
 - add unit test,
 - setup.py,
-- right clic on targets should open a menu with user defined commands using
-probe and targets properties as arguments. Possibly right clic on multiple
-selected items.
-- events time plots (inspector_events)
 - keep an average packet time travel from server to client and add this in
 the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
-- customize the probe step and timeout probressbar. Timeout: gradiant from
-yellow to red, step: green. Modify QTimeLine curve.
 - custom target view with probes from diferents targets with tree views:
 . standard target view, look like a target view,
 . MDI view, when the user create his own rrd graphs view,
@@ -18,19 +12,21 @@ for targets and custom targets.
 - higlight selection in treeview
 - rrd editor
 - rrd time range slides
-- threads (implementation order). Widget classes can not be threaded: 
-    one  Socket,
-    one  Supercast (encode, decode) (or many if it keep the order of arriving
-    messages using a buffer for example),
-    many MonitorProxyEvents.Channel (including rrdtool.update)
-    many rrdtool.graph
-    many QTimeLine (MonitorViewWorking.SetProgressBar and TimeoutProgressBar)
 - perf: build the maximum number of view widget at startup (total of probe
 entries of the treeview).
 
 - windows packages:
 - py2exe, cx_Freeze, pyinstaller http://qt-project.org/wiki/Packaging_PySide_applications_on_Windows
 - installer, http://nsis.sourceforge.net/Main_Page, http://www.jrsoftware.org/isinfo.php
+
+THREADS
+    Rrdtool (DONE)
+    Socket,
+    Supercast (encode, decode),
+    QTimelines
+
+
+
 BUGS
 - tko do not have updated property list. The problem dit not come 
 from the server.

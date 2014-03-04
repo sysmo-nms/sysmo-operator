@@ -7,7 +7,7 @@ import  os
 import  datetime
 import  TkorderIcons
 import  Monitor
-import  norrd
+import  norrdQtThreaded
 import  re
 import  tempfile
 
@@ -124,15 +124,16 @@ class RrdView(QLabel):
 
         if self.isVisible() == False:
             cmd = self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas, rrdWidth, rrdHeight)
-            ret = norrd.cmd(cmd)
-            self.parent.thumbUpdate(self.rrdThumbFileName)
+            ret = norrdQtThreaded.cmd(cmd, self._thumbComplete)
         else:
-            #print self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas)
-            #self.parent.thumbUpdate(self.rrdThumbFileName)
             cmd = self._generateGraphCmd(rrdStart, rrdStop, defs, lines, areas, rrdWidth, rrdHeight)
-            ret = norrd.cmd(cmd)
-            self.setPixmap(QPixmap(self.rrdGraphFileName))
+            ret = norrdQtThreaded.cmd(cmd, self._graphComplete)
 
+    def _thumbComplete(self, msg):
+        self.parent.thumbUpdate(self.rrdThumbFileName)
+
+    def _graphComplete(self, msg):
+        self.setPixmap(QPixmap(self.rrdGraphFileName))
 
     
     def _generateGraphCmd(self, rrdStart, rrdStop, defs, lines, areas, w, h):
