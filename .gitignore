@@ -5,3 +5,7 @@
 *.bk
 *.directory
 commercials
+build
+dist
+noctopus-win32*
+
