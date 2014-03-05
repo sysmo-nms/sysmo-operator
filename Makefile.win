@@ -1,0 +1,4 @@
+PYTHON_EXE   = "C:\Python27\python"
+
+binary:
+	$(PYTHON_EXE) setup.py py2exe
