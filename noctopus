@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
-import os
 import sys
+sys.stdout = open("noctopus.stdout.txt", "w")
+sys.stderr = open("noctopus.stderr.txt", "w")
 import TkorderMain
 TkorderMain.main(sys.argv)

@@ -1,6 +1,7 @@
 from PySide import QtGui
 from PySide import QtSvg
 import os
+import sys
 
 def get(iconSet):
     return TkorderIcons.get(iconSet)
@@ -11,7 +12,7 @@ def getImage(imageSet):
 class TkorderIcons(object):
     @classmethod
     def init(cls):
-        currentPath = os.path.dirname(os.path.realpath(__file__))
+        currentPath = os.path.dirname(sys.executable)
         iconsPath   = os.path.join(currentPath, 'icons')
         cls.iconSet = {
             'edit-redo': QtGui.QIcon(os.path.join(iconsPath, "edit-redo.svg")),
@@ -82,7 +83,7 @@ class TkorderIcons(object):
 class TkorderImages(object):
     @classmethod
     def init(cls):
-        currentPath = os.path.dirname(os.path.realpath(__file__))
+        currentPath = os.path.dirname(sys.executable)
         imagesPath  = os.path.join(currentPath, 'icons')
         cls.imageSet = {
             '60-day-trial-banner': os.path.join(imagesPath, "60-day-trial-banner.svg"),
