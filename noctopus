@@ -1,0 +1,5 @@
+#!/usr/bin/env python2
+import os
+import sys
+import TkorderMain
+TkorderMain.main(sys.argv)
