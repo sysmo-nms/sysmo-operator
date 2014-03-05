@@ -1,18 +1,12 @@
-from cx_Freeze import setup, Executable
-
-# Dependencies are automatically detected, but it might need
-# fine tuning.
-buildOptions = dict(packages = [], excludes = [])
-
+from distutils.core import setup
 import sys
-base = 'Win32GUI' if sys.platform=='win32' else None
-
-executables = [
-    Executable('noctopus-client.pyw', base=base)
-]
-
-setup(name='noctopus',
-      version = '1.0',
-      description = 'd',
-      options = dict(build_exe = buildOptions),
-      executables = executables)
+import py2exe
+sys.path.append("C:\\WINDOWS\\WinSxS\\x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.21022.8_x-ww_d08d0375")
+setup(
+    windows = ['noctopus-client.pyw'],
+    options = {
+        'py2exe' : {
+            'includes' :['sys']
+        }
+    }
+)
