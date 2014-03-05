@@ -8,11 +8,11 @@ import sys
 base = 'Win32GUI' if sys.platform=='win32' else None
 
 executables = [
-    Executable('noctopus-client.pyw', base=base, targetName = 'noctopus')
+    Executable('noctopus-client.pyw', base=base)
 ]
 
 setup(name='noctopus',
       version = '1.0',
-      description = 'fj',
+      description = 'd',
       options = dict(build_exe = buildOptions),
       executables = executables)
