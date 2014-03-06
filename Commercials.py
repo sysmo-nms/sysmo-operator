@@ -184,9 +184,9 @@ class LogAd(QFrame):
         url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
         QDesktopServices.openUrl(url)
 
-class BackupAd(QFrame):
+class SchedullerAd(QFrame):
     def __init__(self, parent):
-        super(BackupAd, self).__init__(parent)
+        super(SchedullerAd, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
         grid            = QGridLayout(self)
@@ -208,8 +208,8 @@ class BackupAd(QFrame):
         centralFrame    = QFrame(self)
         centralGrid     = QGridLayout(centralFrame)
 
-        moreInfoButton      = QPushButton('About Backup',  self)
-        moreInfoButton.clicked.connect(self.showBackupDescr)
+        moreInfoButton      = QPushButton('About Scheduller',  self)
+        moreInfoButton.clicked.connect(self.showSchedullerDescr)
         startTrialButton    = QPushButton('Start Trial',    self)
         getLicenceButton    = QPushButton('Get licence key',self)
         getLicenceButton.clicked.connect(self.showUpdateLicence)
@@ -239,9 +239,74 @@ class BackupAd(QFrame):
         return insertFrame
 
     def generateFormatedText(self):
-        return QLabel('Backup tool descriptions et screenshots', self)
+        return QLabel('Scheduller tool descriptions et screenshots', self)
 
-    def showBackupDescr(self):
+    def showSchedullerDescr(self):
+        url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
+        QDesktopServices.openUrl(url)
+
+    def showUpdateLicence(self):
+        url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
+        QDesktopServices.openUrl(url)
+
+class KnowledgeAd(QFrame):
+    def __init__(self, parent):
+        super(KnowledgeAd, self).__init__(parent)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
+        grid            = QGridLayout(self)
+        centralWidget   = self.generateCentralWidget()
+        banner          = Banner60(self)
+        banner.move(-15,-15)
+        #grid.addWidget(banner, 0,0)
+        grid.addWidget(centralWidget, 1,1)
+        grid.setColumnStretch(0,1)
+        grid.setColumnStretch(1,0)
+        grid.setColumnStretch(2,1)
+        grid.setRowStretch(0,1)
+        grid.setRowStretch(1,0)
+        grid.setRowStretch(2,1)
+
+        self.setLayout(grid)
+
+    def generateCentralWidget(self):
+        centralFrame    = QFrame(self)
+        centralGrid     = QGridLayout(centralFrame)
+
+        moreInfoButton      = QPushButton('About Knowledge',  self)
+        moreInfoButton.clicked.connect(self.showKnowledgeDescr)
+        startTrialButton    = QPushButton('Start Trial',    self)
+        getLicenceButton    = QPushButton('Get licence key',self)
+        getLicenceButton.clicked.connect(self.showUpdateLicence)
+        printQuote          = QPushButton('Print quote',     self)
+
+        centralGrid.addWidget(getLicenceButton, 0,0)
+        centralGrid.addWidget(startTrialButton, 1,0)
+        centralGrid.addWidget(printQuote,       2,0)
+        centralGrid.addWidget(moreInfoButton,   3,0)
+        
+        infoLabel   = self.generateFormatedText()
+        centralGrid.addWidget(infoLabel,         0,1,4,1)
+
+        insertKey = self.generateInsertKeyForm()
+        centralGrid.addWidget(insertKey,         4,0,1,2)
+        centralFrame.setLayout(centralGrid)
+
+        return centralFrame
+
+    def generateInsertKeyForm(self):
+        insertFrame = QFrame(self)
+        insertGrid = QGridLayout(insertFrame)
+        insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
+        insertGrid.addWidget(QLineEdit(self),                       0,1)
+        insertGrid.addWidget(QPushButton('Activate', self),         0,2)
+        insertFrame.setLayout(insertGrid)
+        return insertFrame
+
+    def generateFormatedText(self):
+        return QLabel('Knowledge tool descriptions et screenshots', self)
+
+    def showKnowledgeDescr(self):
         url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
         QDesktopServices.openUrl(url)
 

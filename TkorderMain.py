@@ -15,7 +15,8 @@ import  Monitor
 import  Locator
 import  Logs
 import  Iphelper
-import  Backup
+import  Scheduller
+import  Knowledge
 import  MonitorProxyEvents
 
 _fromUtf8 = lambda s: s
@@ -278,13 +279,15 @@ class TkorderStackedLayout(QFrame):
         self.locator = Locator.LocatorMain(self)
         self.logs    = Logs.LogsMain(self)
         self.iphelper = Iphelper.IphelperMain(self)
-        self.backup  = Backup.BackupMain(self)
+        self.shedule = Scheduller.SchedullerMain(self)
+        self.knowledge = Knowledge.KnowledgeMain(self)
 
         self.stack.addWidget(self.monitor)
         self.stack.addWidget(self.locator)
         self.stack.addWidget(self.logs)
         self.stack.addWidget(self.iphelper)
-        self.stack.addWidget(self.backup)
+        self.stack.addWidget(self.shedule)
+        self.stack.addWidget(self.knowledge)
         self.setLayout(self.stack)
 
     def goToLocator(self):
@@ -299,8 +302,11 @@ class TkorderStackedLayout(QFrame):
     def goToIphelper(self):
         self.stack.setCurrentWidget(self.iphelper)
 
-    def goToBackup(self):
-        self.stack.setCurrentWidget(self.backup)
+    def goToScheduller(self):
+        self.stack.setCurrentWidget(self.shedule)
+
+    def goToKnowledge(self):
+        self.stack.setCurrentWidget(self.knowledge)
 
 class LeftModSelector(QFrame):
     def __init__(self, parent, stackWidget):
@@ -341,30 +347,34 @@ class LeftModSelector(QFrame):
         self.iphelper.setCheckable(True)
         self.iphelper.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
 
-        self.backup = QPushButton(self)
-        self.backup.setSizePolicy(buttonPol)
-        self.backup.setIconSize(QSize(30,100))
-        self.backup.setCheckable(True)
-        self.backup.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
+        self.shedule = QPushButton(self)
+        self.shedule.setSizePolicy(buttonPol)
+        self.shedule.setIconSize(QSize(30,100))
+        self.shedule.setCheckable(True)
+        self.shedule.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
+
+        self.knowledge = QPushButton(self)
+        self.knowledge.setSizePolicy(buttonPol)
+        self.knowledge.setIconSize(QSize(30,100))
+        self.knowledge.setCheckable(True)
+        self.knowledge.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
 
         self.buttonGroup = QButtonGroup(self)
         self.buttonGroup.addButton(self.monitor)
         self.buttonGroup.addButton(self.locator)
         self.buttonGroup.addButton(self.logs)
         self.buttonGroup.addButton(self.iphelper)
-        self.buttonGroup.addButton(self.backup)
+        self.buttonGroup.addButton(self.shedule)
+        self.buttonGroup.addButton(self.knowledge)
         self.buttonGroup.setExclusive(True)
 
         grid.addWidget(self.monitor,    0,0)
         grid.addWidget(self.locator,    1,0)
-        grid.addWidget(self.logs,       2,0)
-        grid.addWidget(self.iphelper,   3,0)
-        grid.addWidget(self.backup,     4,0)
+        grid.addWidget(self.iphelper,   2,0)
+        grid.addWidget(self.knowledge,  3,0)
+        grid.addWidget(self.logs,       4,0)
+        grid.addWidget(self.shedule,    5,0)
 
-        #self.backup = QPushButton(self)
-        #self.backup.setSizePolicy(buttonPol)
-        #self.backup.setIcon(TkorderIcons.get('emblem-system'))
-        #grid.addWidget(self.backup, 1,0)
         self.currentView = 'monitor'
         self.setLayout(grid)
 
@@ -373,7 +383,8 @@ class LeftModSelector(QFrame):
         self.locator.clicked.connect(self.locatorClick)
         self.logs.clicked.connect(self.logsClick)
         self.iphelper.clicked.connect(self.iphelperClick)
-        self.backup.clicked.connect(self.backupClick)
+        self.shedule.clicked.connect(self.sheduleClick)
+        self.knowledge.clicked.connect(self.knowledgeClick)
 
     def monitorClick(self):
         if self.currentView == 'monitor':
@@ -403,13 +414,19 @@ class LeftModSelector(QFrame):
             self.currentView = 'iphelper'
             self.stackWidget.goToIphelper()
 
-    def backupClick(self):
-        if self.currentView == 'backup':
-            Backup.BackupMain.singleton.toggleButtonClicked()
+    def sheduleClick(self):
+        if self.currentView == 'sheduller':
+            Scheduller.SchedullerMain.singleton.toggleButtonClicked()
         else:
-            self.currentView = 'backup'
-            self.stackWidget.goToBackup()
+            self.currentView = 'sheduller'
+            self.stackWidget.goToScheduller()
 
+    def knowledgeClick(self):
+        if self.currentView == 'knowledge':
+            Knowledge.KnowledgeMain.singleton.toggleButtonClicked()
+        else:
+            self.currentView = 'knowledge'
+            self.stackWidget.goToKnowledge()
   
 
 

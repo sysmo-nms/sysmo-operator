@@ -5,15 +5,15 @@ import  Commercials
 
 import  TkorderMain
 
-class BackupMain(QFrame):
+class SchedullerMain(QFrame):
     def __init__(self, parent):
-        super(BackupMain, self).__init__(parent)
-        BackupMain.singleton = self
-        grid = self.initBackupLayout()
+        super(SchedullerMain, self).__init__(parent)
+        SchedullerMain.singleton = self
+        grid = self.initSchedullerLayout()
         self.setLayout(grid)
 
-    def initBackupLayout(self):
-        ad = Commercials.BackupAd(self)
+    def initSchedullerLayout(self):
+        ad = Commercials.SchedullerAd(self)
         grid = QGridLayout(self)
         grid.addWidget(ad, 0,0)
 
