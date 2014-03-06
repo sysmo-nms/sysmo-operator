@@ -431,14 +431,15 @@ class LeftModSelector(QFrame):
 
 
 def main(arguments):
-    tkorderApp  = QApplication(arguments)
-    screen_rect = tkorderApp.desktop().screenGeometry()
-    width, height = screen_rect.width, screen_rect.height()
-    #tkorderApp.setStyle('cde')
-    tkorderUi   = TkorderClient()
+    tkorderApp      = QApplication(arguments)
+    screen_rect     = tkorderApp.desktop().screenGeometry()
+    width, height   = screen_rect.width, screen_rect.height()
+
+    tkorderUi       = TkorderClient()
     tkorderUi.setDpi(width, height)
     tkorderApp.setWindowIcon(TkorderIcons.get('applications-development'))
-    loginUi     = LogIn()
-    loginUi.supercastClient = tkorderUi
+
+    loginUi         = LogIn()
     loginUi.show()
+
     sys.exit(tkorderApp.exec_())
