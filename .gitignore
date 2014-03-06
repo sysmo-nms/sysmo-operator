@@ -8,4 +8,5 @@ commercials
 build
 dist
 noctopus-win32*
-
+noctopus.stderr.txt
+noctopus.stdout.txt
