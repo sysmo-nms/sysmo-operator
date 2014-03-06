@@ -2,6 +2,7 @@ from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    PySide.QtWebKit import *
 import  Commercials
+import  TkorderIcons
 
 import  TkorderMain
 
@@ -35,14 +36,32 @@ class KnowledgeApp(QFrame):
         self.setContentsMargins(0,0,0,0)
         grid.setContentsMargins(0,0,0,0)
 
-        server  = 'localhost'
 
+        server  = 'localhost'
         wiki = QWebView(self)
         wiki.load(QUrl("http://%s:8080/wiki_base.html" % server))
 
-        grid.addWidget(wiki,        0,0)
+        controls = self.initControls()
+
+        grid.addWidget(controls,    0,0)
+        grid.addWidget(wiki,        1,0)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,1)
         self.setLayout(grid)
 
+    def initControls(self):
+        cFrame = QFrame(self)
+        cGrid = QGridLayout(cFrame)
+
+        forceButton = QPushButton(
+            TkorderIcons.get('dialog-warning'),
+            'Force auto edit', cFrame)
+        cGrid.addWidget(forceButton,    0,0)
+        cGrid.setColumnStretch(0,0)
+        cGrid.setColumnStretch(1,1)
+
+        cFrame.setLayout(cGrid)
+        return cFrame
 
 
 
