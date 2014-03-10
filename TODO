@@ -1,30 +1,32 @@
-- add unit test,
-- setup.py,
-- keep an average packet time travel from server to client and add this in
-the status bar. Move it red when the latency it to high. Use this value
-to calculate the probes QProgressBars (step and timeout)
+##################
+# MODULE MONITOR #
+##################
+### HIGH
+- SNMP element rrdtool view
+- rrd time range slides
+
+### MEDIUM:
+- rrd time range slider for individual probes, or the entire set of probes
+for targets and custom targets.
+- rrd editor
 - custom target view with probes from diferents targets with tree views:
 . standard target view, look like a target view,
 . MDI view, when the user create his own rrd graphs view,
 . Map view, when links betwin nodes represent a probe rrd.
-- rrd time range slider for individual probes, or the entire set of probes
-for targets and custom targets.
-- higlight selection in treeview
-- rrd editor
-- rrd time range slides
+. Map zoom, zoom on map show more precise layers of info
+
+
+MAYBE:
+- keep an average packet time travel from server to client and add this in
+the status bar. Move it red when the latency it to high. Use this value
+to calculate the probes QProgressBars (step and timeout)
 - perf: build the maximum number of view widget at startup (total of probe
 entries of the treeview).
+- threading (Socket, Supercast (encode, decode), QTimelines)
+- traceroute tool
 
-- windows packages:
-- py2exe, cx_Freeze, pyinstaller http://qt-project.org/wiki/Packaging_PySide_applications_on_Windows
-- installer, http://nsis.sourceforge.net/Main_Page, http://www.jrsoftware.org/isinfo.php
-
-THREADS
-    Rrdtool (DONE)
-    Socket,
-    Supercast (encode, decode),
-    QTimelines
-
+ESTHETIC:
+- higlight selection in treeview
 
 
 BUGS
