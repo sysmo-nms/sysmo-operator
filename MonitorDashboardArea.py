@@ -29,8 +29,6 @@ class DashboardStack(QFrame):
 class DashboardSimplified(QFrame):
     def __init__(self, parent):
         super(DashboardSimplified, self).__init__(parent)
-        sig = ChannelHandler.singleton.masterSignalsDict['probeInfo']
-        sig.signal.connect(self.handleProbeInfo)
         grid = QGridLayout(self)
         grid.setVerticalSpacing(0)
         grid.setContentsMargins(0,0,0,0)
@@ -39,10 +37,6 @@ class DashboardSimplified(QFrame):
         self.dash.setFrameShadow(QFrame.Raised)
         grid.addWidget(self.dash, 1,0)
         self.setLayout(grid)
-
-    def handleProbeInfo(self, msg):
-        name = msg['value']['name']
-        self.dash.createProbeView(name)
 
 class Dashboard(QFrame):
     def __init__(self, parent):
