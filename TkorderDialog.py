@@ -11,8 +11,7 @@ class LogIn(QDialog):
         autoName    = 'admuser'
         autoPass    = 'passwd'
         autoPort    = 8888
-        #autoHost    = 'localhost'
-        autoHost    = '192.168.0.9'
+        autoHost    = 'localhost'
 
         self.nameLineEdit   = QLineEdit(self)
         self.nameLineEdit.setText(autoName)
