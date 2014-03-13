@@ -16,6 +16,7 @@ win32Binary: clean
 	mv $(DIST_DIR) $(RELEASE_NAME)-$(RELEASE_VERSION)
 
 clean:
+	rm -f *.pyc
 	rm -rf dist
 	rm -rf build
 	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
