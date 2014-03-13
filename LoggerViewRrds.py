@@ -1,6 +1,7 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    PySide.QtSvg    import *
+import  platform
 import  MonitorDashboardArea
 import  time
 import  os
@@ -88,7 +89,13 @@ class RrdView(QLabel):
 
     def setRrdFile(self, fileName):
         self._rrdfileReady  = True
-        self.rrdFile        = fileName
+        if platform.system() == 'Windows':
+            # DS can be read by rrdtool windows only on files formated like:
+            # C\:\\bla\\bla\\bla.rrd. WTF
+            self.rrdFile = fileName.replace("/", "\\\\").replace(":", "\\:")
+        else:
+            self.rrdFile = fileName
+
         self.rrdGraphConf = re.sub('<FILE>',self.rrdFile, self.rrdGraphConf)
 
     def updateTimeline(self, value):
@@ -138,7 +145,8 @@ class RrdView(QLabel):
     
     def _generateGraphCmd(self, rrdStart, rrdStop, defs, lines, areas, w, h):
         head = 'graph %s --imgformat PNG --width %s --height %i ' % (self.rrdGraphFileName, w, h)
-        opts = '--full-size-mode --disable-rrdtool-tag --border 0 --dynamic-labels --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
+        opts = '--full-size-mode --disable-rrdtool-tag --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
+        #opts = '--full-size-mode --disable-rrdtool-tag --border 0 --dynamic-labels --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
         colors = '--color BACK#00000000 --color CANVAS%s --color GRID%s --color MGRID%s --color FONT%s --color AXIS%s --color FRAME%s --color ARROW%s ' % (
                 self.hexaPalette['Base'],
                 self.hexaPalette['Dark'],
@@ -166,7 +174,7 @@ class RrdView(QLabel):
 
     def _generateThumbCmd(self, rrdStart, rrdStop, defs, lines, areas, w, h):
         head = 'graph %s --imgformat PNG --width 90 --height 30 ' % self.rrdThumbFileName
-        opts = '--only-graph --rigid --border 0 --dynamic-labels --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
+        opts = '--only-graph --rigid --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
         colors = '--color BACK#00000000 --color CANVAS%s --color GRID%s --color MGRID%s --color FONT%s --color AXIS%s --color FRAME%s --color ARROW%s ' % (
                 self.hexaPalette['Base'],
                 self.hexaPalette['Dark'],
