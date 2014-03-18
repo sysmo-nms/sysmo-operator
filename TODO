@@ -4,6 +4,8 @@
 ### HIGH
 - SNMP element rrdtool view
 - rrd time range slides
+- Dashboards
+- Services.
 
 ### MEDIUM:
 - rrd time range slider for individual probes, or the entire set of probes
