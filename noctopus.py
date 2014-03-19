@@ -553,6 +553,21 @@ class NCentralStack(QFrame):
         self._stackElements[app] = obj
         self._stack.addWidget(obj)
 
+##############################################################################
+class NSocketThread(QThread):
+    def __init__(self, parent):
+        super(NSocketThread, self).__init__(parent)
+        # Example dupuis le parent:
+        # t = NSocketThread(self)
+        # t.start()
+
+    def start(self):
+        self._supercast = Supercast.Link(self)
+        #self._supercast = Supercast.Link(self)
+        #self._supercast.setErrorHandler(self.socketEventHandler)
+        #self.exec_() <- sans event loop ?
+        #self.exec() <- avec event loop ?
+        QThread.start(self)
 
 if __name__ == '__main__':
     noctopusApp     = QApplication(sys.argv)
