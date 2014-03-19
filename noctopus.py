@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 # python lib
 import  sys
 from functools import partial
@@ -51,7 +49,7 @@ def nGetIcon(iconName):
     return getIcon(iconName)
 
 def nGetImage(imageName):
-    return getIcon(imageName)
+    return getImage(imageName)
 
 def nConnectProxySettings(pyScallable):
     return NMainWindow.singleton.proxySettings.connect(pyScallable)
@@ -202,7 +200,7 @@ class NMainWindow(QMainWindow):
         msgBox.setText("Socket ERROR %s" % event)
         msgBox.setStandardButtons(QMessageBox.Close)
         msgBox.exec_()
-        self._terminateNoctopus()
+        self.close()
 
     #################
     # VARIOUS INITS #
@@ -238,7 +236,7 @@ class NMainWindow(QMainWindow):
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
         menu        = self.menuBar()
-        menuFile    = menu.addMenu('Engage')
+        menuFile    = menu.addMenu('Noctopus')
         menuFile.addAction(exitAction)
 
         "Win"
@@ -287,11 +285,11 @@ class NMainWindow(QMainWindow):
     def _toggleFullScreen(self):
         if self.isFullScreen() == False:
             self.showFullScreen()
-            self._activeViewMode['screen'] = "full"
+            self._activeViewMode['screen'] = 'full'
             self.viewMode.emit(self._activeViewMode)
         else:
             self.showNormal()
-            self._activeViewMode['screen'] = "normal"
+            self._activeViewMode['screen'] = 'normal'
             self.viewMode.emit(self._activeViewMode)
 
     def _setMinimalView(self):
@@ -316,10 +314,6 @@ class NMainWindow(QMainWindow):
                 self.hide()
                 self._activeViewMode['tray'] = 'traymin'
                 self.viewMode.emit(self._activeViewMode)
-
-    #################
-    # CONFIGURATION #
-    #################
 
     ##########
     # LAYOUT #
@@ -452,11 +446,6 @@ class NSelector(QFrame):
         wid.show()
         self.grid.addWidget(wid, row, 0)
         self.grid.setRowStretch(row, 1)
-
-    #################
-    # VARIOUS INITS #
-    #################
-
 
 ##############################################################################
 ################# EXTENTION CONFIGURATION BEGIN ##############################
