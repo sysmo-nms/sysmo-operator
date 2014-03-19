@@ -32,12 +32,11 @@ import  Supercast
 
 # extentions
 #import  Monitor
-#import  Locator
-#import  Logs
-#import  Iphelper
-#import  Scheduller
+import  Locator.main
+import  Logviewer.main
+import  Iphelper.main
+import  Scheduller.main
 import  Knowledge.main
-#import  MonitorProxyEvents
 
 ######################
 # MODULES API HELPER #
@@ -62,6 +61,9 @@ def nConnectViewMode(pyScallable):
 
 def nConnectAppToggle(pyScallable):
     return NSelector.singleton.appButtonToggle.connect(pyScallable)
+
+def nConnectAppSelect(pyScallable):
+    return NSelector.singleton.appButtonPressed.connect(pyScallable)
 
 def nSetStatusMsg(msg):
     return NMainWindow.singleton.setStatusMsg(msg)
@@ -454,6 +456,12 @@ class NSelector(QFrame):
     #################
     # VARIOUS INITS #
     #################
+
+
+##############################################################################
+################# EXTENTION CONFIGURATION BEGIN ##############################
+##############################################################################
+# TODO use a configuration file
     def _initButtons(self):
         self._buttons = dict()
         self._buttons['monitor'] = dict()
@@ -468,10 +476,10 @@ class NSelector(QFrame):
         self._buttons['locator']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
-        self._buttons['logs'] = dict()
-        self._buttons['logs']['row'] = 3
-        self._buttons['logs']['widget']       = NSelectorButton(self)
-        self._buttons['logs']['widget'].setIcon(
+        self._buttons['logviewer'] = dict()
+        self._buttons['logviewer']['row'] = 3
+        self._buttons['logviewer']['widget']       = NSelectorButton(self)
+        self._buttons['logviewer']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['iphelper'] = dict()
@@ -480,10 +488,10 @@ class NSelector(QFrame):
         self._buttons['iphelper']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
-        self._buttons['shedule'] = dict()
-        self._buttons['shedule']['row'] = 5
-        self._buttons['shedule']['widget']    = NSelectorButton(self)
-        self._buttons['shedule']['widget'].setIcon(
+        self._buttons['scheduller'] = dict()
+        self._buttons['scheduller']['row'] = 5
+        self._buttons['scheduller']['widget']    = NSelectorButton(self)
+        self._buttons['scheduller']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['knowledge'] = dict()
@@ -492,21 +500,25 @@ class NSelector(QFrame):
         self._buttons['knowledge']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
+    def _initStack(self):
+        self.appButtonPressed.connect(self._stackWidget.selectEvent)
+        #self.monitor = Monitor.MonitorMain(self)
+        self._stackWidget.addLayer(Locator.main.Central,    'locator')
+        self._stackWidget.addLayer(Knowledge.main.Central,  'knowledge')
+        self._stackWidget.addLayer(Iphelper.main.Central,   'iphelper')
+        self._stackWidget.addLayer(Scheduller.main.Central, 'scheduller')
+        self._stackWidget.addLayer(Logviewer.main.Central,  'logviewer')
+##############################################################################
+################# EXTENTION CONFIGURATION END ################################
+##############################################################################
+
+
     def _initButtonGroup(self):
         self._buttons['monitor']['widget'].setChecked(True)
         self.buttonGroup = QButtonGroup(self)
         self.buttonGroup.setExclusive(True)
         for key in self._buttons.keys():
             self.buttonGroup.addButton(self._buttons[key]['widget'])
-        
-    def _initStack(self):
-        #self.monitor = Monitor.MonitorMain(self)
-        self._stackWidget.addLayer(Knowledge.main.Central, 'knowledge')
-        #self._stackWidget.addWidget = Locator.LocatorMain
-        #self.logs    = Logs.LogsMain(self)
-        #self.iphelper = Iphelper.IphelperMain(self)
-        #self.shedule = Scheduller.SchedullerMain(self)
-        #self.knowledge = Knowledge.KnowledgeMain(self)
 
     def connectAll(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
@@ -536,13 +548,12 @@ class NCentralStack(QFrame):
         self.setLayout(self._stack)
 
     def selectEvent(self, app):
-        print "select event from stack"
+        self._stack.setCurrentWidget(self._stackElements[app])
 
     def addLayer(self, pyScallable, app):
         obj = pyScallable(self)
-        self._stackElements['app'] = obj
+        self._stackElements[app] = obj
         self._stack.addWidget(obj)
-        self._stack.setCurrentWidget(obj)
 
 
 if __name__ == '__main__':

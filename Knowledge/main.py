@@ -8,6 +8,7 @@ from    PySide.QtGui    import (
 from    PySide.QtCore   import QUrl
 from    PySide.QtWebKit import QWebView
 from    PySide.QtSvg    import QSvgWidget
+import noctopus
 
 class Central(QFrame):
     def __init__(self, parent):
