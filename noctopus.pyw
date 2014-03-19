@@ -2,9 +2,10 @@
 
 # python lib
 import  sys
+from functools import partial
 
 # PySide
-from    PySide.QtCore   import Signal, QSettings, QSize
+from    PySide.QtCore   import Signal, QSettings, QSize, QObject
 from    PySide.QtGui    import (
     QMainWindow,
     QApplication,
@@ -111,7 +112,6 @@ class NMainWindow(QMainWindow):
         return self._activeProxySettings
 
     def setStatusMsg(self, msg):
-        # TODO show log of msgs button
         self._statusBar.showMessage(msg)
 
     def addTopDockWidget(self, widget, name):
@@ -201,7 +201,6 @@ class NMainWindow(QMainWindow):
     #################
     # VARIOUS INITS #
     #################
-
 
     def _initProxySettings(self):
         proxySet = dict()
@@ -343,6 +342,8 @@ class NMainWindow(QMainWindow):
 
 
 
+
+
 ##############################################################################
 class NCentralFrame(QFrame):
 
@@ -359,16 +360,6 @@ class NCentralFrame(QFrame):
         grid.setColumnStretch(1, 1)
         self.selector.connectAll()
         self.setLayout(grid)
-
-
-
-##############################################################################
-class NCentralStack(QFrame):
-
-    " main stack container "
-
-    def __init__(self, parent):
-        super(NCentralStack, self).__init__(parent)
 
 
 
@@ -390,71 +381,114 @@ class NSelector(QFrame):
         self._stackWidget   = stackWidget
         self.setFixedWidth(30)
 
-        self._initButtonSelector()
         self._initButtons()
         self._initButtonGroup()
+        self._initButtonSelector()
 
-        grid = QGridLayout(self)
-        grid.setContentsMargins(0,0,0,0)
-        grid.setVerticalSpacing(2)
+        self._gridAll()
 
-        grid.addWidget(self.menuButton, 0,0)
+    def _gridAll(self):
+        self.grid = QGridLayout(self)
+        self.grid.setContentsMargins(0,0,0,0)
+        self.grid.setVerticalSpacing(2)
 
-        grid.addWidget(self.monitor,    1,0)
-        grid.addWidget(self.locator,    2,0)
-        grid.addWidget(self.iphelper,   3,0)
-        grid.addWidget(self.knowledge,  4,0)
-        grid.addWidget(self.logs,       5,0)
-        grid.addWidget(self.shedule,    6,0)
+        self.grid.addWidget(self.menuButton, 0,0)
 
-        grid.setRowStretch(0,0)
-        grid.setRowStretch(1,1)
-        grid.setRowStretch(2,1)
-        grid.setRowStretch(3,1)
-        grid.setRowStretch(4,1)
-        grid.setRowStretch(5,1)
-        grid.setRowStretch(6,1)
+        for key in self._buttons.keys():
+            self.grid.addWidget(
+                self._buttons[key]['widget'],
+                self._buttons[key]['row'],
+                0)
+            self.grid.setRowStretch(self._buttons[key]['row'], 1)
 
         self.currentView = 'monitor'
-        self.setLayout(grid)
+        self.setLayout(self.grid)
 
+    #################################
+    # SHOW OR HIDE BUTTONS FUNCTION #
+    #################################
     def _initButtonSelector(self):
         self.menuButton = QPushButton(self)
-        menu = QMenu(self)
-        # TODO menu, select buttons we want to hide
-        self.menuButton.setMenu(menu)
+        self._menuHide  = QMenu(self)
+        for key in self._buttons.keys():
+            action = self._menuHide.addAction(key)
+            action.setData(key)
+            action.setCheckable(True)
+            action.setChecked(True)
+            action.triggered.connect(partial(self._selectHide, key))
+            self._buttons[key]['action'] = action
+        self.menuButton.setMenu(self._menuHide)
         self.menuButton.setIcon(getIcon('emblem-system'))
         
+    def _selectHide(self, key):
+        if self._buttons[key]['action'].isChecked():
+            self._showButton(key)
+        else:
+            self._hideButton(key)
 
+    def _hideButton(self, key):
+        print "hide ", key
+        wid     = self._buttons[key]['widget']
+        row     = self._buttons[key]['row']
+        wid.hide()
+        self.grid.removeWidget(wid)
+        self.grid.setRowStretch(row, 0)
+        
+    def _showButton(self, key):
+        print "show ", key
+        row     = self._buttons[key]['row']
+        wid     = self._buttons[key]['widget']
+        wid.show()
+        self.grid.addWidget(wid, row, 0)
+        self.grid.setRowStretch(row, 1)
+
+    #################
+    # VARIOUS INITS #
+    #################
     def _initButtons(self):
-        self.monitor    = NSelectorButton(self)
-        self.monitor.setIcon(getIcon('utilities-system-monitor-black'))
+        self._buttons = dict()
+        self._buttons['monitor'] = dict()
+        self._buttons['monitor']['row'] = 1
+        self._buttons['monitor']['widget']    = NSelectorButton(self)
+        self._buttons['monitor']['widget'].setIcon(
+            getIcon('utilities-system-monitor-black'))
 
-        self.locator    = NSelectorButton(self)
-        self.locator.setIcon(getIcon('utilities-system-monitor-black'))
+        self._buttons['locator'] = dict()
+        self._buttons['locator']['row'] = 2
+        self._buttons['locator']['widget']    = NSelectorButton(self)
+        self._buttons['locator']['widget'].setIcon(
+            getIcon('utilities-system-monitor-black'))
 
-        self.logs       = NSelectorButton(self)
-        self.logs.setIcon(getIcon('utilities-system-monitor-black'))
+        self._buttons['logs'] = dict()
+        self._buttons['logs']['row'] = 3
+        self._buttons['logs']['widget']       = NSelectorButton(self)
+        self._buttons['logs']['widget'].setIcon(
+            getIcon('utilities-system-monitor-black'))
 
-        self.iphelper   = NSelectorButton(self)
-        self.iphelper.setIcon(getIcon('utilities-system-monitor-black'))
+        self._buttons['iphelper'] = dict()
+        self._buttons['iphelper']['row'] = 4
+        self._buttons['iphelper']['widget']   = NSelectorButton(self)
+        self._buttons['iphelper']['widget'].setIcon(
+            getIcon('utilities-system-monitor-black'))
 
-        self.shedule    = NSelectorButton(self)
-        self.shedule.setIcon(getIcon('utilities-system-monitor-black'))
+        self._buttons['shedule'] = dict()
+        self._buttons['shedule']['row'] = 5
+        self._buttons['shedule']['widget']    = NSelectorButton(self)
+        self._buttons['shedule']['widget'].setIcon(
+            getIcon('utilities-system-monitor-black'))
 
-        self.knowledge  = NSelectorButton(self)
-        self.knowledge.setIcon(getIcon('utilities-system-monitor-black'))
+        self._buttons['knowledge'] = dict()
+        self._buttons['knowledge']['row'] = 6
+        self._buttons['knowledge']['widget']  = NSelectorButton(self)
+        self._buttons['knowledge']['widget'].setIcon(
+            getIcon('utilities-system-monitor-black'))
 
     def _initButtonGroup(self):
-        self.monitor.setChecked(True)
+        self._buttons['monitor']['widget'].setChecked(True)
         self.buttonGroup = QButtonGroup(self)
-        self.buttonGroup.addButton(self.monitor)
-        self.buttonGroup.addButton(self.locator)
-        self.buttonGroup.addButton(self.logs)
-        self.buttonGroup.addButton(self.iphelper)
-        self.buttonGroup.addButton(self.shedule)
-        self.buttonGroup.addButton(self.knowledge)
         self.buttonGroup.setExclusive(True)
+        for key in self._buttons.keys():
+            self.buttonGroup.addButton(self._buttons[key]['widget'])
 
         
     def connectAll(self): pass
@@ -510,46 +544,16 @@ class NSelector(QFrame):
 #             self.stackWidget.goToKnowledge()
 #   
 # 
-# 
-#         
-# 
+##############################################################################
+class NCentralStack(QFrame):
 
-# 
-# 
-#         
-# 
-# 
-# 
-#     def logTargets(self):
-#         pp  = pprint.PrettyPrinter(indent=4)
-#         d   = MonitorProxyEvents.ChannelHandler.singleton.targets
-#         print pp.pprint(d)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# class TkorderCentralWidget(QFrame):
-#     def __init__(self, parent):
-#         super(TkorderCentralWidget, self).__init__(parent)
-#         grid        = QGridLayout(self)
-#         grid.setContentsMargins(5,9,9,9)
-#         grid.setHorizontalSpacing(0)
-#         grid.setVerticalSpacing(0)
-# 
-#         self.modView        = TkorderStackedLayout(self)
-#         self.leftSelector   = LeftModSelector(self, self.modView)
-# 
-#         grid.addWidget(self.leftSelector,     0,0,0,1)
-#         grid.addWidget(self.modView,          0,1,1,1)
-#         grid.setColumnStretch(0, 0)
-#         grid.setColumnStretch(1, 1)
-#         self.leftSelector.connectAll()
-#         self.setLayout(grid)
-# 
+    " main stack container "
+
+    def __init__(self, parent):
+        super(NCentralStack, self).__init__(parent)
+
+
+
 # class TkorderStackedLayout(QFrame):
 #     def __init__(self, parent):
 #         super(TkorderStackedLayout, self).__init__(parent)
