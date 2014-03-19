@@ -1,1 +1,1 @@
-c:\Python27\python.exe noctopus.pyw
+c:\Python27\python.exe noctopus.py

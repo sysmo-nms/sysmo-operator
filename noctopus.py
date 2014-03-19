@@ -19,7 +19,8 @@ from    PySide.QtGui    import (
     QSizePolicy,
     QPushButton,
     QButtonGroup,
-    QMenu
+    QMenu,
+    QStackedLayout
 )
 
 # local dependencies
@@ -35,7 +36,7 @@ import  Supercast
 #import  Logs
 #import  Iphelper
 #import  Scheduller
-#import  Knowledge
+import  Knowledge.main
 #import  MonitorProxyEvents
 
 ######################
@@ -58,6 +59,9 @@ def nConnectProxySettings(pyScallable):
 
 def nConnectViewMode(pyScallable):
     return NMainWindow.singleton.viewMode.connect(pyScallable)
+
+def nConnectAppToggle(pyScallable):
+    return NSelector.singleton.appButtonToggle.connect(pyScallable)
 
 def nSetStatusMsg(msg):
     return NMainWindow.singleton.setStatusMsg(msg)
@@ -376,14 +380,19 @@ class NSelector(QFrame):
     
     " left button ramp container "
 
+    appButtonPressed = Signal(str)
+    appButtonToggled = Signal(str)
+
     def __init__(self, parent, stackWidget):
         super(NSelector, self).__init__(parent)
+        NSelector.singleton = self
         self._stackWidget   = stackWidget
         self.setFixedWidth(30)
 
         self._initButtons()
         self._initButtonGroup()
         self._initButtonSelector()
+        self._initStack()
 
         self._gridAll()
 
@@ -489,61 +498,32 @@ class NSelector(QFrame):
         self.buttonGroup.setExclusive(True)
         for key in self._buttons.keys():
             self.buttonGroup.addButton(self._buttons[key]['widget'])
-
         
-    def connectAll(self): pass
+    def _initStack(self):
+        #self.monitor = Monitor.MonitorMain(self)
+        self._stackWidget.addLayer(Knowledge.main.Central, 'knowledge')
+        #self._stackWidget.addWidget = Locator.LocatorMain
+        #self.logs    = Logs.LogsMain(self)
+        #self.iphelper = Iphelper.IphelperMain(self)
+        #self.shedule = Scheduller.SchedullerMain(self)
+        #self.knowledge = Knowledge.KnowledgeMain(self)
 
-#     def connectAll(self):
-#         self.monitor.clicked.connect(self.monitorClick)
-#         self.locator.clicked.connect(self.locatorClick)
-#         self.logs.clicked.connect(self.logsClick)
-#         self.iphelper.clicked.connect(self.iphelperClick)
-#         self.shedule.clicked.connect(self.sheduleClick)
-#         self.knowledge.clicked.connect(self.knowledgeClick)
-# 
-#     def monitorClick(self):
-#         if self.currentView == 'monitor':
-#             Monitor.MonitorMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'monitor'
-#             self.stackWidget.goToMonitor()
-# 
-#     def locatorClick(self):
-#         if self.currentView == 'locator':
-#             Locator.LocatorMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'locator'
-#             self.stackWidget.goToLocator()
-#     
-#     def logsClick(self):
-#         if self.currentView == 'logs':
-#             Logs.LogsMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'logs'
-#             self.stackWidget.goToLogs()
-# 
-#     def iphelperClick(self):
-#         if self.currentView == 'iphelper':
-#             Iphelper.IphelperMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'iphelper'
-#             self.stackWidget.goToIphelper()
-# 
-#     def sheduleClick(self):
-#         if self.currentView == 'sheduller':
-#             Scheduller.SchedullerMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'sheduller'
-#             self.stackWidget.goToScheduller()
-# 
-#     def knowledgeClick(self):
-#         if self.currentView == 'knowledge':
-#             Knowledge.KnowledgeMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'knowledge'
-#             self.stackWidget.goToKnowledge()
-#   
-# 
+    def connectAll(self):
+        self.appButtonPressed.connect(self._stackWidget.selectEvent)
+        for key in self._buttons.keys():
+            but = self._buttons[key]['widget']
+            but.clicked.connect(partial(self._appButtonPressed, key))
+            
+    def _appButtonPressed(self, app):
+        if self.currentView == app:
+            self.appButtonToggled.emit(app)
+        else:
+            self.appButtonPressed.emit(app)
+            self.currentView = app
+        print "selection changed", app
+
+
+
 ##############################################################################
 class NCentralStack(QFrame):
 
@@ -551,48 +531,19 @@ class NCentralStack(QFrame):
 
     def __init__(self, parent):
         super(NCentralStack, self).__init__(parent)
+        self._stack = QStackedLayout(self)
+        self._stackElements = dict()
+        self.setLayout(self._stack)
 
+    def selectEvent(self, app):
+        print "select event from stack"
 
+    def addLayer(self, pyScallable, app):
+        obj = pyScallable(self)
+        self._stackElements['app'] = obj
+        self._stack.addWidget(obj)
+        self._stack.setCurrentWidget(obj)
 
-# class TkorderStackedLayout(QFrame):
-#     def __init__(self, parent):
-#         super(TkorderStackedLayout, self).__init__(parent)
-#         self.stack = QStackedLayout(self)
-#         self.stack.setContentsMargins(5,0,0,0)
-# 
-#         self.monitor = Monitor.MonitorMain(self)
-#         self.locator = Locator.LocatorMain(self)
-#         self.logs    = Logs.LogsMain(self)
-#         self.iphelper = Iphelper.IphelperMain(self)
-#         self.shedule = Scheduller.SchedullerMain(self)
-#         self.knowledge = Knowledge.KnowledgeMain(self)
-# 
-#         self.stack.addWidget(self.monitor)
-#         self.stack.addWidget(self.locator)
-#         self.stack.addWidget(self.logs)
-#         self.stack.addWidget(self.iphelper)
-#         self.stack.addWidget(self.shedule)
-#         self.stack.addWidget(self.knowledge)
-#         self.setLayout(self.stack)
-# 
-#     def goToLocator(self):
-#         self.stack.setCurrentWidget(self.locator)
-# 
-#     def goToMonitor(self):
-#         self.stack.setCurrentWidget(self.monitor)
-#     
-#     def goToLogs(self):
-#         self.stack.setCurrentWidget(self.logs)
-# 
-#     def goToIphelper(self):
-#         self.stack.setCurrentWidget(self.iphelper)
-# 
-#     def goToScheduller(self):
-#         self.stack.setCurrentWidget(self.shedule)
-# 
-#     def goToKnowledge(self):
-#         self.stack.setCurrentWidget(self.knowledge)
-# 
 
 if __name__ == '__main__':
     noctopusApp     = QApplication(sys.argv)

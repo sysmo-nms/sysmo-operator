@@ -1,7 +1,7 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 from    PySide.QtSvg    import *
-import  TkorderIcons
+import  noctopus
 
 class LocatorAd(QFrame):
     def __init__(self, parent):
@@ -383,7 +383,7 @@ class Banner60(QFrame):
     def __init__(self, parent):
         super(Banner60, self).__init__(parent)
         grid = QGridLayout(self)
-        banner = QSvgWidget(TkorderIcons.getImage('60-day-trial-banner'), self)
+        banner = QSvgWidget(noctopus.getImage('60-day-trial-banner'), self)
         banner.setFixedHeight(300)
         banner.setFixedWidth(300)
         self.setFixedWidth(300)
