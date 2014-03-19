@@ -18,7 +18,9 @@ from    PySide.QtGui    import (
     QPushButton,
     QButtonGroup,
     QMenu,
-    QStackedLayout
+    QStackedLayout,
+    QLabel,
+    QToolButton
 )
 
 # local dependencies
@@ -51,17 +53,17 @@ def nGetIcon(iconName):
 def nGetImage(imageName):
     return getImage(imageName)
 
-def nConnectProxySettings(pyScallable):
-    return NMainWindow.singleton.proxySettings.connect(pyScallable)
+def nConnectProxySettings(pyCallable):
+    return NMainWindow.singleton.proxySettings.connect(pyCallable)
 
-def nConnectViewMode(pyScallable):
-    return NMainWindow.singleton.viewMode.connect(pyScallable)
+def nConnectViewMode(pyCallable):
+    return NMainWindow.singleton.viewMode.connect(pyCallable)
 
-def nConnectAppToggle(pyScallable):
-    return NSelector.singleton.appButtonToggle.connect(pyScallable)
+def nConnectAppToggle(pyCallable):
+    return NSelector.singleton.appButtonToggle.connect(pyCallable)
 
-def nConnectAppSelect(pyScallable):
-    return NSelector.singleton.appButtonPressed.connect(pyScallable)
+def nConnectAppSelect(pyCallable):
+    return NSelector.singleton.appButtonPressed.connect(pyCallable)
 
 def nSetStatusMsg(msg):
     return NMainWindow.singleton.setStatusMsg(msg)
@@ -226,7 +228,7 @@ class NMainWindow(QMainWindow):
         self._trayIcon.activated.connect(self._trayClic)
 
     def _initStatusBar(self):
-        self._statusBar = QStatusBar(self)
+        self._statusBar = NStatusBar(self)
         self.setStatusBar(self._statusBar)
 
     def _initMenus(self):
@@ -341,6 +343,13 @@ class NMainWindow(QMainWindow):
         self.restoreState(settings.value("NMainWindow/windowState"))
 
 
+##############################################################################
+class NStatusBar(QStatusBar):
+    def __init__(self, parent):
+        super(NStatusBar, self).__init__(parent)
+        debugButton = QToolButton(self)
+        debugButton.setIcon(getIcon('applications-development'))
+        self.addPermanentWidget(debugButton)
 
 
 
@@ -539,8 +548,8 @@ class NCentralStack(QFrame):
     def selectEvent(self, app):
         self._stack.setCurrentWidget(self._stackElements[app])
 
-    def addLayer(self, pyScallable, app):
-        obj = pyScallable(self)
+    def addLayer(self, pyCallable, app):
+        obj = pyCallable(self)
         self._stackElements[app] = obj
         self._stack.addWidget(obj)
 
