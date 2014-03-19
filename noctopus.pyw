@@ -4,7 +4,7 @@
 import  sys
 
 # PySide
-from    PySide.QtCore   import Signal
+from    PySide.QtCore   import Signal, QSettings, QSize
 from    PySide.QtGui    import (
     QMainWindow,
     QApplication,
@@ -13,12 +13,16 @@ from    PySide.QtGui    import (
     QActionGroup,
     QStatusBar,
     QFrame,
-    QDockWidget
+    QDockWidget,
+    QGridLayout,
+    QSizePolicy,
+    QPushButton,
+    QButtonGroup,
+    QMenu
 )
 
-# dependencies
-import  NoctopusImages
-from    NoctopusImages  import getIcon, getImage
+# local dependencies
+from    NoctopusImages  import getIcon, getImage, noctopusGraphicsInit
 from    NoctopusDialogs import LogIn
 
 # supercast
@@ -33,25 +37,60 @@ import  Supercast
 #import  Knowledge
 #import  MonitorProxyEvents
 
-class Noctopus(QMainWindow):
+######################
+# MODULES API HELPER #
+######################
+def nGetProxySettings():
+    return NMainWindow.singleton.getProxySettings()
 
-    " The main noctopus window "
+def nGetViewMode():
+    return NMainWindow.singleton.getViewMode()
+
+def nGetIcon(iconName):
+    return getIcon(iconName)
+
+def nGetImage(imageName):
+    return getIcon(imageName)
+
+def nConnectProxySettings(pyScallable):
+    return NMainWindow.singleton.proxySettings.connect(pyScallable)
+
+def nConnectViewMode(pyScallable):
+    return NMainWindow.singleton.viewMode.connect(pyScallable)
+
+def nSetStatusMsg(msg):
+    return NMainWindow.singleton.setStatusMsg(msg)
+
+
+
+
+##############################################################################
+####################### CLASS DEFINITION #####################################
+##############################################################################
+class NMainWindow(QMainWindow):
+
+    " The noctopus QMainWindow "
 
     proxySettings   = Signal(dict)
-    exitTriggered   = Signal()
+    # emit self._activeProxySettings dict: {
+    #   'use':  True | False,
+    #   'host': str,
+    #   'port': int
+    # }
+
     viewMode        = Signal(dict)
-    # viewMode dict: {
-    # 'screen': 'full' | 'normal',
-    # 'mode':   'minimal' | 'simple' | 'expert',
-    # 'tray': 'traymin', 'traymax'
+    # emit self._activeViewMode dict: {
+    #   'screen':   'full' | 'normal',
+    #   'mode':     'minimal' | 'simple' | 'expert',
+    #   'tray':     'traymin' | 'traymax'
     # }
 
     def __init__(self, parent=None):
-        super(Noctopus, self).__init__(parent)
-        Noctopus.singleton = self
+        super(NMainWindow, self).__init__(parent)
+        NMainWindow.singleton = self
         self.setObjectName('MainWindow')
         self.setWindowTitle('Noctopus')
-        NoctopusImages.init()
+        noctopusGraphicsInit()
         self._initMenus()
         self._initTray()
         self._initStatusBar()
@@ -60,10 +99,11 @@ class Noctopus(QMainWindow):
         self._initLayout()
         self._supercast = Supercast.Link(self)
         self._supercast.setErrorHandler(self.socketEventHandler)
+        self._restoreSettings()
 
-#####################
-# CHILD MODULES API #
-#####################
+    #####################
+    # CHILD MODULES API #
+    #####################
     def getViewMode(self):
         return self._activeViewMode
 
@@ -71,7 +111,7 @@ class Noctopus(QMainWindow):
         return self._activeProxySettings
 
     def setStatusMsg(self, msg):
-        # TODO show log of msgs
+        # TODO show log of msgs button
         self._statusBar.showMessage(msg)
 
     def addTopDockWidget(self, widget, name):
@@ -86,10 +126,27 @@ class Noctopus(QMainWindow):
             QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
         newDock.setContentsMargins(0,0,0,0)
 
+    #########################################
+    # NoctopusDialogs.ProxySetting and      #
+    # NoctopusDialogs.ProxySetting CALLBACK #
+    #########################################
+    def _launchProxySettings(self):
+        # TODO
+        # dialog = NoctopusDialogs.ProxySettings(self, self.setProxySettings)
+        # dialog.show()
+        pass
+        
+    def setProxySettings(self, host, port, use):
+        self._activeProxySettings['host']       = host
+        self._activeProxySettings['port']       = port
+        self._activeProxySettings['use']        = use
+        self.proxySettings.emit(self._activeProxySettings)
 
-#######################
-# SUPERCAST CALLBACKS #
-#######################
+        print "set proxy settings"
+
+    ##################################
+    # NoctopusDialogs.LogIn CALLBACK #
+    ##################################
     def tryConnect(self, cred):
         self._supercast.userName = cred['name']
         self._supercast.userPass = cred['pass']
@@ -99,6 +156,9 @@ class Noctopus(QMainWindow):
         self.show()
         return True
 
+    ############################
+    # Supercast.Link CALLBACKS #
+    ############################
     def socketEventHandler(self, event):
         if   event == QAbstractSocket.ConnectionRefusedError:
             self._showMessageBox(event)
@@ -131,9 +191,6 @@ class Noctopus(QMainWindow):
         else:
             self._showMessageBox(event)
 
-#########################
-# SOCKET EVENT MESSAGES #
-#########################
     def _showMessageBox(self, event):
         msgBox = QMessageBox(self)
         msgBox.setText("Socket ERROR %s" % event)
@@ -141,9 +198,10 @@ class Noctopus(QMainWindow):
         msgBox.exec_()
         self._terminateNoctopus()
 
-#################
-# VARIOUS INITS #
-#################
+    #################
+    # VARIOUS INITS #
+    #################
+
 
     def _initProxySettings(self):
         proxySet = dict()
@@ -173,7 +231,7 @@ class Noctopus(QMainWindow):
         "File"
         exitAction  = QAction(getIcon('system-log-out'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
-        exitAction.triggered.connect(self._terminateNoctopus)
+        exitAction.triggered.connect(self.close)
         menu        = self.menuBar()
         menuFile    = menu.addMenu('Engage')
         menuFile.addAction(exitAction)
@@ -213,14 +271,14 @@ class Noctopus(QMainWindow):
         " configure menu "
 
         actionConfigureProxy = QAction('Proxy settings', self)
-        actionConfigureProxy.triggered.connect(self._setProxySettings)
+        actionConfigureProxy.triggered.connect(self._launchProxySettings)
 
         menuConf    = menu.addMenu('Configure')
         menuConf.addAction(actionConfigureProxy)
 
-###############
-## VIEW MODES #
-###############
+    ###############
+    ## VIEW MODES #
+    ###############
     def _toggleFullScreen(self):
         if self.isFullScreen() == False:
             self.showFullScreen()
@@ -254,38 +312,208 @@ class Noctopus(QMainWindow):
                 self._activeViewMode['tray'] = 'traymin'
                 self.viewMode.emit(self._activeViewMode)
 
-#################
-# CONFIGURATION #
-#################
-    def _setProxySettings(self, host, port, use):
-        self._activeProxySettings['host']       = host
-        self._activeProxySettings['port']       = port
-        self._activeProxySettings['use']        = use
-        self.proxySettings.emit(self._activeProxySettings)
+    #################
+    # CONFIGURATION #
+    #################
 
-        print "set proxy settings"
-
-##########
-# LAYOUT #
-##########
+    ##########
+    # LAYOUT #
+    ##########
     def _initLayout(self):
-        self._central = CentralWidget(self)
+        self._central = NCentralFrame(self)
         self.setCentralWidget(self._central)
 
-#########
-# UTILS #
-#########
-    def _terminateNoctopus(self):
-        self.exitTriggered.emit()
-        self.close()
+    #############
+    # OVERLOADS #
+    #############
+    def closeEvent(self, event):
+        settings = QSettings("Noctopus NMS", "noctopus-client")
+        settings.setValue("NMainWindow/geometry",       self.saveGeometry())
+        settings.setValue("NMainWindow/windowState",    self.saveState())
+        QMainWindow.closeEvent(self, event)
+
+    ############
+    # SETTINGS #
+    ############
+    def _restoreSettings(self):
+        settings = QSettings("Noctopus NMS", "noctopus-client")
+        self._config = settings 
+        self.restoreGeometry(settings.value("NMainWindow/geometry"))
+        self.restoreState(settings.value("NMainWindow/windowState"))
 
 
-class CentralWidget(QFrame):
+
+##############################################################################
+class NCentralFrame(QFrame):
+
+    " central widget container "
+
     def __init__(self, parent):
-        super(CentralWidget, self).__init__(parent)
+        super(NCentralFrame, self).__init__(parent)
+        grid = QGridLayout(self)
+        self.centralStack   = NCentralStack(self)
+        self.selector       = NSelector(self, self.centralStack)
+        grid.addWidget(self.selector,       0,0,0,1)
+        grid.addWidget(self.centralStack,   0,1,1,1)
+        grid.setColumnStretch(0, 0)
+        grid.setColumnStretch(1, 1)
+        self.selector.connectAll()
+        self.setLayout(grid)
 
+
+
+##############################################################################
+class NCentralStack(QFrame):
+
+    " main stack container "
+
+    def __init__(self, parent):
+        super(NCentralStack, self).__init__(parent)
+
+
+
+##############################################################################
+class NSelectorButton(QPushButton):
+    def __init__(self, parent):
+        super(NSelectorButton, self).__init__(parent)
+        buttonPol = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.setSizePolicy(buttonPol)
+        self.setIconSize(QSize(30,100))
+        self.setCheckable(True)
+
+class NSelector(QFrame):
+    
+    " left button ramp container "
+
+    def __init__(self, parent, stackWidget):
+        super(NSelector, self).__init__(parent)
+        self._stackWidget   = stackWidget
+        self.setFixedWidth(30)
+
+        self._initButtonSelector()
+        self._initButtons()
+        self._initButtonGroup()
+
+        grid = QGridLayout(self)
+        grid.setContentsMargins(0,0,0,0)
+        grid.setVerticalSpacing(2)
+
+        grid.addWidget(self.menuButton, 0,0)
+
+        grid.addWidget(self.monitor,    1,0)
+        grid.addWidget(self.locator,    2,0)
+        grid.addWidget(self.iphelper,   3,0)
+        grid.addWidget(self.knowledge,  4,0)
+        grid.addWidget(self.logs,       5,0)
+        grid.addWidget(self.shedule,    6,0)
+
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,1)
+        grid.setRowStretch(2,1)
+        grid.setRowStretch(3,1)
+        grid.setRowStretch(4,1)
+        grid.setRowStretch(5,1)
+        grid.setRowStretch(6,1)
+
+        self.currentView = 'monitor'
+        self.setLayout(grid)
+
+    def _initButtonSelector(self):
+        self.menuButton = QPushButton(self)
+        menu = QMenu(self)
+        # TODO menu, select buttons we want to hide
+        self.menuButton.setMenu(menu)
+        self.menuButton.setIcon(getIcon('emblem-system'))
+        
+
+    def _initButtons(self):
+        self.monitor    = NSelectorButton(self)
+        self.monitor.setIcon(getIcon('utilities-system-monitor-black'))
+
+        self.locator    = NSelectorButton(self)
+        self.locator.setIcon(getIcon('utilities-system-monitor-black'))
+
+        self.logs       = NSelectorButton(self)
+        self.logs.setIcon(getIcon('utilities-system-monitor-black'))
+
+        self.iphelper   = NSelectorButton(self)
+        self.iphelper.setIcon(getIcon('utilities-system-monitor-black'))
+
+        self.shedule    = NSelectorButton(self)
+        self.shedule.setIcon(getIcon('utilities-system-monitor-black'))
+
+        self.knowledge  = NSelectorButton(self)
+        self.knowledge.setIcon(getIcon('utilities-system-monitor-black'))
+
+    def _initButtonGroup(self):
+        self.monitor.setChecked(True)
+        self.buttonGroup = QButtonGroup(self)
+        self.buttonGroup.addButton(self.monitor)
+        self.buttonGroup.addButton(self.locator)
+        self.buttonGroup.addButton(self.logs)
+        self.buttonGroup.addButton(self.iphelper)
+        self.buttonGroup.addButton(self.shedule)
+        self.buttonGroup.addButton(self.knowledge)
+        self.buttonGroup.setExclusive(True)
+
+        
+    def connectAll(self): pass
+
+#     def connectAll(self):
+#         self.monitor.clicked.connect(self.monitorClick)
+#         self.locator.clicked.connect(self.locatorClick)
+#         self.logs.clicked.connect(self.logsClick)
+#         self.iphelper.clicked.connect(self.iphelperClick)
+#         self.shedule.clicked.connect(self.sheduleClick)
+#         self.knowledge.clicked.connect(self.knowledgeClick)
+# 
+#     def monitorClick(self):
+#         if self.currentView == 'monitor':
+#             Monitor.MonitorMain.singleton.toggleButtonClicked()
+#         else:
+#             self.currentView = 'monitor'
+#             self.stackWidget.goToMonitor()
+# 
+#     def locatorClick(self):
+#         if self.currentView == 'locator':
+#             Locator.LocatorMain.singleton.toggleButtonClicked()
+#         else:
+#             self.currentView = 'locator'
+#             self.stackWidget.goToLocator()
+#     
+#     def logsClick(self):
+#         if self.currentView == 'logs':
+#             Logs.LogsMain.singleton.toggleButtonClicked()
+#         else:
+#             self.currentView = 'logs'
+#             self.stackWidget.goToLogs()
+# 
+#     def iphelperClick(self):
+#         if self.currentView == 'iphelper':
+#             Iphelper.IphelperMain.singleton.toggleButtonClicked()
+#         else:
+#             self.currentView = 'iphelper'
+#             self.stackWidget.goToIphelper()
+# 
+#     def sheduleClick(self):
+#         if self.currentView == 'sheduller':
+#             Scheduller.SchedullerMain.singleton.toggleButtonClicked()
+#         else:
+#             self.currentView = 'sheduller'
+#             self.stackWidget.goToScheduller()
+# 
+#     def knowledgeClick(self):
+#         if self.currentView == 'knowledge':
+#             Knowledge.KnowledgeMain.singleton.toggleButtonClicked()
+#         else:
+#             self.currentView = 'knowledge'
+#             self.stackWidget.goToKnowledge()
+#   
+# 
+# 
 #         
 # 
+
 # 
 # 
 #         
@@ -299,19 +527,7 @@ class CentralWidget(QFrame):
 # 
 # 
 # 
-#     def readSettings(self):
-#         settings = QSettings("Kmars", "tkorder")
-#         self.config = settings 
-#         self.restoreGeometry(settings.value("TkorderMain/geometry"))
-#         self.restoreState(settings.value("TkorderMain/windowState"))
 # 
-#     def closeEvent(self, event):
-#         self.closeSignal.emit()
-#         settings = QSettings("Kmars", "tkorder")
-#         settings.setValue("TkorderMain/geometry",       self.saveGeometry())
-#         settings.setValue("TkorderMain/windowState",    self.saveState())
-#         self.central.modView.monitor.saveLayoutState()
-#         QMainWindow.closeEvent(self, event)
 # 
 # 
 # 
@@ -373,132 +589,10 @@ class CentralWidget(QFrame):
 #     def goToKnowledge(self):
 #         self.stack.setCurrentWidget(self.knowledge)
 # 
-# class LeftModSelector(QFrame):
-#     def __init__(self, parent, stackWidget):
-#         super(LeftModSelector, self).__init__(parent)
-#         self.stackWidget = stackWidget
-# 
-#         self.setFixedWidth(30)
-#         grid        = QGridLayout(self)
-#         self.setContentsMargins(0,0,0,0)
-#         grid.setContentsMargins(0,0,0,0)
-#         grid.setHorizontalSpacing(0)
-#         grid.setVerticalSpacing(0)
-# 
-#         buttonPol = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-# 
-#         self.monitor = QPushButton(self)
-#         self.monitor.setSizePolicy(buttonPol)
-#         self.monitor.setIconSize(QSize(30,100))
-#         self.monitor.setCheckable(True)
-#         self.monitor.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-#         self.monitor.setChecked(True)
-# 
-#         self.locator = QPushButton(self)
-#         self.locator.setSizePolicy(buttonPol)
-#         self.locator.setIconSize(QSize(30,100))
-#         self.locator.setCheckable(True)
-#         self.locator.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-# 
-#         self.logs = QPushButton(self)
-#         self.logs.setSizePolicy(buttonPol)
-#         self.logs.setIconSize(QSize(30,100))
-#         self.logs.setCheckable(True)
-#         self.logs.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-# 
-#         self.iphelper = QPushButton(self)
-#         self.iphelper.setSizePolicy(buttonPol)
-#         self.iphelper.setIconSize(QSize(30,100))
-#         self.iphelper.setCheckable(True)
-#         self.iphelper.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-# 
-#         self.shedule = QPushButton(self)
-#         self.shedule.setSizePolicy(buttonPol)
-#         self.shedule.setIconSize(QSize(30,100))
-#         self.shedule.setCheckable(True)
-#         self.shedule.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-# 
-#         self.knowledge = QPushButton(self)
-#         self.knowledge.setSizePolicy(buttonPol)
-#         self.knowledge.setIconSize(QSize(30,100))
-#         self.knowledge.setCheckable(True)
-#         self.knowledge.setIcon(TkorderIcons.get('utilities-system-monitor-black'))
-# 
-#         self.buttonGroup = QButtonGroup(self)
-#         self.buttonGroup.addButton(self.monitor)
-#         self.buttonGroup.addButton(self.locator)
-#         self.buttonGroup.addButton(self.logs)
-#         self.buttonGroup.addButton(self.iphelper)
-#         self.buttonGroup.addButton(self.shedule)
-#         self.buttonGroup.addButton(self.knowledge)
-#         self.buttonGroup.setExclusive(True)
-# 
-#         grid.addWidget(self.monitor,    0,0)
-#         grid.addWidget(self.locator,    1,0)
-#         grid.addWidget(self.iphelper,   2,0)
-#         grid.addWidget(self.knowledge,  3,0)
-#         grid.addWidget(self.logs,       4,0)
-#         grid.addWidget(self.shedule,    5,0)
-# 
-#         self.currentView = 'monitor'
-#         self.setLayout(grid)
-# 
-#     def connectAll(self):
-#         self.monitor.clicked.connect(self.monitorClick)
-#         self.locator.clicked.connect(self.locatorClick)
-#         self.logs.clicked.connect(self.logsClick)
-#         self.iphelper.clicked.connect(self.iphelperClick)
-#         self.shedule.clicked.connect(self.sheduleClick)
-#         self.knowledge.clicked.connect(self.knowledgeClick)
-# 
-#     def monitorClick(self):
-#         if self.currentView == 'monitor':
-#             Monitor.MonitorMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'monitor'
-#             self.stackWidget.goToMonitor()
-# 
-#     def locatorClick(self):
-#         if self.currentView == 'locator':
-#             Locator.LocatorMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'locator'
-#             self.stackWidget.goToLocator()
-#     
-#     def logsClick(self):
-#         if self.currentView == 'logs':
-#             Logs.LogsMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'logs'
-#             self.stackWidget.goToLogs()
-# 
-#     def iphelperClick(self):
-#         if self.currentView == 'iphelper':
-#             Iphelper.IphelperMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'iphelper'
-#             self.stackWidget.goToIphelper()
-# 
-#     def sheduleClick(self):
-#         if self.currentView == 'sheduller':
-#             Scheduller.SchedullerMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'sheduller'
-#             self.stackWidget.goToScheduller()
-# 
-#     def knowledgeClick(self):
-#         if self.currentView == 'knowledge':
-#             Knowledge.KnowledgeMain.singleton.toggleButtonClicked()
-#         else:
-#             self.currentView = 'knowledge'
-#             self.stackWidget.goToKnowledge()
-#   
-# 
-# 
 
 if __name__ == '__main__':
     noctopusApp     = QApplication(sys.argv)
-    noctopus        = Noctopus()
+    noctopus        = NMainWindow()
     noctopus.setWindowIcon(getIcon('applications-development'))
     loginUi         = LogIn(noctopus.tryConnect)
     loginUi.setWindowIcon(getIcon('applications-development'))

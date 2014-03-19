@@ -11,7 +11,7 @@ else:
 iconsPath   = os.path.join(currentPath, 'graphics')
 imagesPath  = os.path.join(currentPath, 'graphics')
 
-def init():
+def noctopusGraphicsInit():
     initIcons()
     initImages()
 
