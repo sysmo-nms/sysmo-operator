@@ -42,7 +42,7 @@ from    NoctopusDialogs import LogIn
 import  Supercast
 
 # extentions
-#import  Monitor
+import  Monitor.main
 import  Locator.main
 import  Logviewer.main
 import  Iphelper.main
@@ -104,7 +104,7 @@ class NMainWindow(QMainWindow):
     # }
 
     clientMsgQueue = Signal(tuple)
-    # datas queue from self to NSocketThread()
+    # datas queue from self to NSupercastThread()
     # tuple: (key, payload)
 
     def __init__(self, parent=None):
@@ -113,24 +113,15 @@ class NMainWindow(QMainWindow):
         self.setObjectName('MainWindow')
         self.setWindowTitle('Noctopus')
         noctopusGraphicsInit()
+
         self._initMenus()
         self._initTray()
         self._initStatusBar()
         self._initViewModes()
         self._initProxySettings()
         self._initLayout()
-        self._supercastThread = NSocketThread(self)
-        # datas from NSocketThread() to self
-        # tuple: (key, payload)
-        self._supercastThread.socketMsgQueue.connect(self.handleSocketMsg, Qt.QueuedConnection)
-        self._supercastThread.start()
         self._restoreSettings()
-
-    def handleSocketMsg(self, msg):
-        (key, payload) = msg
-        if key == 'socketEvent':
-            self.handleSocketEvent(payload)
-        print "handle socket msg ", msg
+        self._initSupercast()
 
     #####################
     # CHILD MODULES API #
@@ -184,48 +175,68 @@ class NMainWindow(QMainWindow):
     ############################
     # Supercast.Link CALLBACKS #
     ############################
-    def handleSocketEvent(self, event):
-        if   event == QAbstractSocket.ConnectionRefusedError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.RemoteHostClosedError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.HostNotFoundError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.SocketAccessError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.SocketResourceError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.SocketTimeoutError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.DatagramTooLargeError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.NetworkError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.AddressInUseError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.SocketAddressNotAvailableError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.UnsupportedSocketOperationError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.SslHandshakeFailedError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.UnfinishedSocketOperationError:
-            self._showMessageBox(event)
-        elif event == QAbstractSocket.UnknownSocketError:
-            self._showMessageBox(event)
-        else:
-            self._showMessageBox(event)
+    def handleSocketMsg(self, msg):
+        (key, payload) = msg
+        if key == 'socketError':
+            self.handleSocketError(payload)
+        print "handle socket msg ", msg
 
-    def _showMessageBox(self, event):
+    def handleSocketError(self, event):
+        if   event == QAbstractSocket.ConnectionRefusedError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.RemoteHostClosedError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.HostNotFoundError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketAccessError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketResourceError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketTimeoutError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.DatagramTooLargeError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.NetworkError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.AddressInUseError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketAddressNotAvailableError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.UnsupportedSocketOperationError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SslHandshakeFailedError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.UnfinishedSocketOperationError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.UnknownSocketError:
+            self._showErrorBox(event)
+        else:
+            self._showErrorBox(event)
+
+    def _showErrorBox(self, event):
         msgBox = QMessageBox(self)
         msgBox.setText("Socket ERROR %s" % event)
         msgBox.setStandardButtons(QMessageBox.Close)
         msgBox.exec_()
         self.close()
 
-    #################
-    # VARIOUS INITS #
-    #################
+
+    #########
+    # INITS #
+    #########
+    def _initSupercast(self):
+        self._supercastThread = NSupercastThread(self)
+        # datas from NSupercastThread() to self
+        # tuple: (key, payload)
+        self._supercastThread.socketMsgQueue.connect(
+            self.handleSocketMsg,
+            Qt.QueuedConnection
+        )
+        self._supercastThread.start()
+
+    def _initLayout(self):
+        self._central = NCentralFrame(self)
+        self.setCentralWidget(self._central)
 
     def _initProxySettings(self):
         proxySet = dict()
@@ -335,13 +346,6 @@ class NMainWindow(QMainWindow):
                 self.hide()
                 self._activeViewMode['tray'] = 'traymin'
                 self.viewMode.emit(self._activeViewMode)
-
-    ##########
-    # LAYOUT #
-    ##########
-    def _initLayout(self):
-        self._central = NCentralFrame(self)
-        self.setCentralWidget(self._central)
 
     #############
     # OVERLOADS #
@@ -520,7 +524,8 @@ class NSelector(QFrame):
 
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
-        #self.monitor = Monitor.MonitorMain(self)
+
+        self._stackWidget.addLayer(Monitor.main.Central,    'monitor')
         self._stackWidget.addLayer(Locator.main.Central,    'locator')
         self._stackWidget.addLayer(Knowledge.main.Central,  'knowledge')
         self._stackWidget.addLayer(Iphelper.main.Central,   'iphelper')
@@ -569,18 +574,18 @@ class NCentralStack(QFrame):
         self._stack.setCurrentWidget(self._stackElements[app])
 
     def addLayer(self, pyCallable, app):
-        obj = pyCallable(self)
-        self._stackElements[app] = obj
-        self._stack.addWidget(obj)
+        qWidget = pyCallable(self)
+        self._stackElements[app] = qWidget
+        self._stack.addWidget(qWidget)
 
 ##############################################################################
-class NSocketThread(QThread):
+class NSupercastThread(QThread):
     socketMsgQueue    = Signal(tuple)
     # datas from self to parent
     # tuple: (key, payload)
 
     def __init__(self, parent):
-        super(NSocketThread, self).__init__(parent)
+        super(NSupercastThread, self).__init__(parent)
         self._mainNoctopus = parent
         # datas from parent to self
         # tuple: (key, payload)
@@ -591,13 +596,13 @@ class NSocketThread(QThread):
 
     def start(self):
         self._supercast = Supercast.Link(self)
-        self._supercast.setErrorHandler(self.socketEventHandler)
+        self._supercast.setErrorHandler(self.socketErrorHandler)
         print "trhead start"
         QThread.start(self)
 
-    def socketEventHandler(self, event):
+    def socketErrorHandler(self, event):
         print "socket event!"
-        self.socketMsgQueue.emit(('socketEvent', event))
+        self.socketMsgQueue.emit(('socketError', event))
 
     def handleParentMsg(self, msg):
         (key, payload) = msg
