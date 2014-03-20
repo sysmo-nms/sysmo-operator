@@ -101,7 +101,6 @@ class NMainWindow(QMainWindow):
     #   'tray':     'traymin' | 'traymax'
     # }
 
-
     def __init__(self, parent=None):
         super(NMainWindow, self).__init__(parent)
         NMainWindow.singleton = self
@@ -342,6 +341,7 @@ class NMainWindow(QMainWindow):
         settings = QSettings("Noctopus NMS", "noctopus-client")
         settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
+        self._supercast.supercastClose()
         QMainWindow.closeEvent(self, event)
 
     ############

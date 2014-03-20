@@ -98,7 +98,7 @@ class Supercast(QObject):
                 handler = self._mpd.get(key)
                 handler(msg)
 
-    def close(self):
+    def supercastClose(self):
         self._thread.quit()
 
 
