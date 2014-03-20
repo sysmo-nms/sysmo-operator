@@ -95,6 +95,7 @@ class Link(QTcpSocket):
     def _handleServerMessage(self, msg):
         message = decode(msg)
         handler = self._mpd.get(message['from'])
+        print "msg for handler", handler, " ", message
         if (handler == None):
             print "pdu to unknown destination", message['from']
         else:

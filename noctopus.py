@@ -3,7 +3,16 @@ import  sys
 from functools import partial
 
 # PySide
-from    PySide.QtCore   import Signal, QSettings, QSize, QObject
+from    PySide.QtNetwork import QAbstractSocket
+from    PySide.QtCore   import (
+    Qt,
+    Signal,
+    QSettings,
+    QSize,
+    QObject,
+    QThread
+)
+
 from    PySide.QtGui    import (
     QMainWindow,
     QApplication,
@@ -20,8 +29,10 @@ from    PySide.QtGui    import (
     QMenu,
     QStackedLayout,
     QLabel,
-    QToolButton
+    QToolButton,
+    QMessageBox
 )
+
 
 # local dependencies
 from    NoctopusImages  import getIcon, getImage, noctopusGraphicsInit
@@ -92,6 +103,10 @@ class NMainWindow(QMainWindow):
     #   'tray':     'traymin' | 'traymax'
     # }
 
+    clientMsgQueue = Signal(tuple)
+    # datas queue from self to NSocketThread()
+    # tuple: (key, payload)
+
     def __init__(self, parent=None):
         super(NMainWindow, self).__init__(parent)
         NMainWindow.singleton = self
@@ -104,9 +119,18 @@ class NMainWindow(QMainWindow):
         self._initViewModes()
         self._initProxySettings()
         self._initLayout()
-        self._supercast = Supercast.Link(self)
-        self._supercast.setErrorHandler(self.socketEventHandler)
+        self._supercastThread = NSocketThread(self)
+        # datas from NSocketThread() to self
+        # tuple: (key, payload)
+        self._supercastThread.socketMsgQueue.connect(self.handleSocketMsg, Qt.QueuedConnection)
+        self._supercastThread.start()
         self._restoreSettings()
+
+    def handleSocketMsg(self, msg):
+        (key, payload) = msg
+        if key == 'socketEvent':
+            self.handleSocketEvent(payload)
+        print "handle socket msg ", msg
 
     #####################
     # CHILD MODULES API #
@@ -154,18 +178,13 @@ class NMainWindow(QMainWindow):
     # NoctopusDialogs.LogIn CALLBACK #
     ##################################
     def tryConnect(self, cred):
-        self._supercast.userName = cred['name']
-        self._supercast.userPass = cred['pass']
-        self._supercast.server   = cred['server']
-        self._supercast.port     = cred['port']
-        self._supercast.tryConnect()
+        self.clientMsgQueue.emit(('tryconnect', cred))
         self.show()
-        return True
 
     ############################
     # Supercast.Link CALLBACKS #
     ############################
-    def socketEventHandler(self, event):
+    def handleSocketEvent(self, event):
         if   event == QAbstractSocket.ConnectionRefusedError:
             self._showMessageBox(event)
         elif event == QAbstractSocket.RemoteHostClosedError:
@@ -331,6 +350,7 @@ class NMainWindow(QMainWindow):
         settings = QSettings("Noctopus NMS", "noctopus-client")
         settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
+        self._supercastThread.quit()
         QMainWindow.closeEvent(self, event)
 
     ############
@@ -555,19 +575,42 @@ class NCentralStack(QFrame):
 
 ##############################################################################
 class NSocketThread(QThread):
+    socketMsgQueue    = Signal(tuple)
+    # datas from self to parent
+    # tuple: (key, payload)
+
     def __init__(self, parent):
         super(NSocketThread, self).__init__(parent)
-        # Example dupuis le parent:
-        # t = NSocketThread(self)
-        # t.start()
+        self._mainNoctopus = parent
+        # datas from parent to self
+        # tuple: (key, payload)
+        self._mainNoctopus.clientMsgQueue.connect(
+            self.handleParentMsg,
+            Qt.QueuedConnection
+        )
 
     def start(self):
         self._supercast = Supercast.Link(self)
-        #self._supercast = Supercast.Link(self)
-        #self._supercast.setErrorHandler(self.socketEventHandler)
-        #self.exec_() <- sans event loop ?
-        #self.exec() <- avec event loop ?
+        self._supercast.setErrorHandler(self.socketEventHandler)
+        print "trhead start"
         QThread.start(self)
+
+    def socketEventHandler(self, event):
+        print "socket event!"
+        self.socketMsgQueue.emit(('socketEvent', event))
+
+    def handleParentMsg(self, msg):
+        (key, payload) = msg
+        if key == 'tryconnect':
+            self.tryConnect(payload)
+        print "handle client msg!", msg
+
+    def tryConnect(self, cred):
+        self._supercast.userName = cred['name']
+        self._supercast.userPass = cred['pass']
+        self._supercast.server   = cred['server']
+        self._supercast.port     = cred['port']
+        self._supercast.tryConnect()
 
 if __name__ == '__main__':
     noctopusApp     = QApplication(sys.argv)
