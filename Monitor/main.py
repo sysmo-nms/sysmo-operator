@@ -1,4 +1,6 @@
+
 # python libs
+
 import  os
 import  re
 
@@ -7,39 +9,49 @@ from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 
 # local libs
-from    MonitorProxyEvents  import ChannelHandler
-from    CommonWidgets       import *
+from    Monitor.widgetsCommon   import Summary
 
-import  norrdQtThreaded
-import  MonitorDashboardArea
-import  MonitorTreeArea
-import  TkorderMain
+from  Monitor           import norrd
+#import  MonitorDashboardArea
+#import  MonitorTreeArea
+import  noctopus
 
-class MonitorMain(QSplitter):
+#######
+# API #
+#######
+def connectProbeInfo(pyCallable):
+    infoSig = ChannelHandler.singleton.masterSignalsDict['probeInfo']
+    infoSig.signal.connect(pyCallable)
+
+class Central(QSplitter):
 
     " The main window. Emit tracker server events "
 
     def __init__(self, parent):
-        super(MonitorMain, self).__init__(parent)
+        super(Central, self).__init__(parent)
         self.setObjectName('monitorMain splitter')
-        norrdQtThreaded.init(parent=self)
-        tko = TkorderMain.TkorderClient.singleton
-        tko.closeSignal.connect(self.saveLayoutState)
-        MonitorMain.singleton   = self
+
+        norrd.init(parent=self)
+        #tko = TkorderMain.TkorderClient.singleton
+        #tko.closeSignal.connect(self.saveLayoutState)
+        Central.singleton   = self
         self.eventHandler       = ChannelHandler(self, 5)
 
         self.collapsed  = False
 
-        self.leftTree   = MonitorTreeArea.TreeContainer(self)
-        self.rightDash  = MonitorDashboardArea.DashboardStack(self)
+        #self.leftTree   = MonitorTreeArea.TreeContainer(self)
+        #self.rightDash  = MonitorDashboardArea.DashboardStack(self)
 
-        self.addWidget(self.leftTree)
-        self.addWidget(self.rightDash)
+        #self.addWidget(self.leftTree)
+        #self.addWidget(self.rightDash)
+
+        self.addWidget(QLabel('left', self))
+        self.addWidget(QLabel('right', self))
         
-        tko.addTopDockWidget(Summary(self), 'Monitoriii')
-
+        tko.addTopDockWidget(Summary(self), 'Monitori')
         self.targets    = dict()
         self.initHexaPalettes()
+
         #self.readLayoutState()
 
     def toggleButtonClicked(self):
@@ -126,9 +138,10 @@ class ChannelHandler(QObject):
         super(ChannelHandler, self).__init__(parent)
         # simple init
         ChannelHandler.singleton = self
-        self.sc         = Supercast.Link.singleton
-        self.sc.setMessageProcessor('modTrackerPDU', self.handleMsg)
-        self.masterChan = 'target-MasterChan'
+
+        #self.sc         = Supercast.Link.singleton
+        #self.sc.setMessageProcessor('modTrackerPDU', self.handleMsg)
+        #self.masterChan = 'target-MasterChan'
         
         # register handle probeInfo and targetInfo
         self.targets    = dict()

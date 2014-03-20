@@ -2,8 +2,8 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
 from    PySide.QtWebKit     import *
-from    MonitorProxyEvents  import *
-import  TkorderIcons
+import  Monitor
+from    noctopus            import getIcon
 
 
 ##################
