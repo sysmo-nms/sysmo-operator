@@ -16,6 +16,7 @@ for targets and custom targets.
 . MDI view, when the user create his own rrd graphs view,
 . Map view, when links betwin nodes represent a probe rrd.
 . Map zoom, zoom on map show more precise layers of info
+. add request ID on a subscribe call to identifie the recever
 
 
 MAYBE:
