@@ -8,10 +8,6 @@ from    PySide.QtCore import *
 def init(executable='rrdtool', parent=None):
     RrdtoolLocal(executable, parent)
 
-# the caller must give to the thread a callback method if he need
-# to be notified that the command is complete.
-# This method should return as soon as possible because it will
-# block the Rrdtool thread.
 def cmd(command, callback=None):
     msg = dict()
     msg['callback'] = callback
@@ -93,6 +89,7 @@ class Rrdtool(QObject):
         if self._includeNewlineRe.match(command) == None: command += '\n'
 
         Rrdtool.singleton._rrdProcess.stdin.write(command)
+        #TODO Rrdtool.singleton._rrdProcess.stdin.flush()
         responce = dict()
         responce['cmd']     = command
         responce['string']  = ''
