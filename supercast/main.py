@@ -105,12 +105,6 @@ class Supercast(QObject):
         else:
             self._showErrorBox(event)
 
-    def _showErrorBox(self, event):
-        msgBox = QMessageBox(self._mainwindow)
-        msgBox.setText("Socket ERROR %s" % event)
-        msgBox.setStandardButtons(QMessageBox.Close)
-        msgBox.exec_()
-        self._mainwindow.close()
 
     def _handleSupercastPDU(self, msg):
         msgType = msg['msgType']
@@ -180,6 +174,13 @@ class Supercast(QObject):
     def _setUserConn(self, state):
         self._eventHandler(('login_success', None))
         self._loginWin.close()
+
+    def _showErrorBox(self, event):
+        msgBox = QMessageBox(self._mainwindow)
+        msgBox.setText("Socket ERROR %s" % event)
+        msgBox.setStandardButtons(QMessageBox.Close)
+        msgBox.exec_()
+        self._eventHandler(('abort', None))
 
     #########
     # CLOSE #
