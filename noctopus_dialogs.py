@@ -50,9 +50,9 @@ class Proxy(QDialog):
         topFrame = QFrame(self)
         layout = QGridLayout(topFrame)
 
-        self.checkBoxNoProxy = QCheckBox(self)
+        self.checkBoxNoProxy = QCheckBox('No Proxy', self)
         self.checkBoxNoProxy.setChecked(True)
-        self.checkBoxProxy   = QCheckBox(self)
+        self.checkBoxProxy   = QCheckBox('Manual proxy configuration', self)
 
         checkBoxGroup = QButtonGroup(self)
         checkBoxGroup.buttonClicked.connect(self.clicked)
@@ -61,9 +61,7 @@ class Proxy(QDialog):
         checkBoxGroup.addButton(self.checkBoxNoProxy)
 
         layout.addWidget(self.checkBoxNoProxy,   0,0)
-        layout.addWidget(QLabel('No Proxy',self), 0,1)
         layout.addWidget(self.checkBoxProxy,     1,0)
-        layout.addWidget(QLabel('Manual proxy configuration:',self), 1,1)
         layout.setColumnStretch(0,0)
         layout.setColumnStretch(1,0)
         layout.setColumnStretch(2,1)
