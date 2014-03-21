@@ -10,7 +10,7 @@ from    PySide.QtGui        import (
     QGridLayout
 )
 from    PySide.QtSvg        import QSvgWidget
-from    NoctopusImages      import getImage, getIcon
+from    noctopus_api        import nGetImage, nGetIcon
 
 class LogIn(QDialog):
     def __init__(self, callback, parent=None):
@@ -52,20 +52,20 @@ class LogIn(QDialog):
 
         # button area
         ok = QPushButton(
-            getIcon('applications-development'),
+            nGetIcon('applications-development'),
             self.tr("&Engage"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self.tryValidate)
 
         ko = QPushButton(
-            getIcon('process-stop'),
+            nGetIcon('process-stop'),
             self.tr("&Abort"),
             self)
         ko.clicked.connect(self.close)
 
         helpB = QPushButton(
-            getIcon('dialog-information'),
+            nGetIcon('dialog-information'),
             self.tr("&Help"),
             self)
         helpB.setEnabled(False)
@@ -77,7 +77,7 @@ class LogIn(QDialog):
 
 
         # graphic area
-        svgImage = QSvgWidget(getImage('weather-showers'), self)
+        svgImage = QSvgWidget(nGetImage('weather-showers'), self)
         svgImage.setFixedSize(150, 150)
 
 

@@ -10,15 +10,15 @@ from    PySide.QtGui    import (
 )
 from    PySide.QtCore   import QUrl, Qt
 from    PySide.QtSvg    import QSvgWidget
-import  noctopus
+from    noctopus_api    import nGetImage
 
 class Central(QFrame):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
-        grid = self.initLogviewer()
+        grid = self.initIpHelper()
         self.setLayout(grid)
 
-    def initLogviewer(self):
+    def initIpHelper(self):
         ad = Add(self)
         grid = QGridLayout(self)
         grid.addWidget(ad, 0,0)
@@ -49,8 +49,8 @@ class Add(QFrame):
         centralFrame    = QFrame(self)
         centralGrid     = QGridLayout(centralFrame)
 
-        moreInfoButton      = QPushButton('About Logviewer',  self)
-        moreInfoButton.clicked.connect(self.showLogviewerDescr)
+        moreInfoButton      = QPushButton('About Iphelper',  self)
+        moreInfoButton.clicked.connect(self.showIphelperDescr)
         getLicenceButton    = QPushButton('Get licence key',self)
         getLicenceButton.clicked.connect(self.showUpdateLicence)
         startTrialButton    = QPushButton('Start Trial',    self)
@@ -110,7 +110,7 @@ class Add(QFrame):
 
     def generateFormatedText(self):
         text = '''
-            <h1>The Logviewer Opus</h1>
+            <h1>The Iphelper Opus</h1>
             <p>qsdfqsdfffffff qsdf qsdf qsdfqsdflkjqsdlfkj qsdlkj qsdflkj qdslfkj 
             <p>qsdfqsdfffffff qsdf qsdf qsdfqsdflkjqsdlfkj qsdlkj qsdflkj qdslfkj 
             A PySide.QtGui.QTextDocument can be edited programmatically using a PySide.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PySide.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PySide.QtGui.QTextDocument.begin() , PySide.QtGui.QTextDocument.end() , and PySide.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
@@ -132,7 +132,7 @@ class Add(QFrame):
         label.setWordWrap(True)
         return label
 
-    def showLogviewerDescr(self):
+    def showIphelperDescr(self):
         url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
         QDesktopServices.openUrl(url)
 
@@ -144,7 +144,7 @@ class Banner60(QFrame):
     def __init__(self, parent):
         super(Banner60, self).__init__(parent)
         grid = QGridLayout(self)
-        banner = QSvgWidget(noctopus.getImage('60-day-trial-banner'), self)
+        banner = QSvgWidget(nGetImage('60-day-trial-banner'), self)
         banner.setFixedHeight(300)
         banner.setFixedWidth(300)
         self.setFixedWidth(300)

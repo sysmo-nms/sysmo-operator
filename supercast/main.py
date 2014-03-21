@@ -5,7 +5,7 @@ import  sys
 from    PySide.QtNetwork    import *
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
-from    SupercastPDU        import decode, encode
+from    supercast.pdu       import decode, encode
 
 class Supercast(QObject):
 
@@ -55,7 +55,7 @@ class Supercast(QObject):
     # from socket
     def _handleThreadMsg(self, msg):
         (msgType, payload) = msg
-        print "message is ", payload, self._mpd
+        print "socket message is ", payload
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])
             if (handler == None):
@@ -104,6 +104,8 @@ class Supercast(QObject):
 
 class SupercastSocket(QThread):
     mQueue      = Signal(tuple)
+    # datas queue from self to Supercast()
+    # tuple: (key, payload)
     def __init__(self, parent=None):
         super(SupercastSocket, self).__init__(parent)
         self._client = parent
@@ -137,6 +139,7 @@ class SupercastSocket(QThread):
 
     def _handleClientMessage(self, msg):
         (key, payload) = msg
+        print "client message is ", payload
         if key == 'tryconnect':
             (server, port) = payload
             self.socket.connectToHost(server, port)
@@ -171,4 +174,3 @@ class SupercastSocket(QThread):
             payload = stream.readRawData(self._nextBlockSize)
             self._nextBlockSize = 0
             self._handleServerMessage(payload)
-
