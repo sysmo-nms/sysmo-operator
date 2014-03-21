@@ -35,10 +35,9 @@ from    PySide.QtGui    import (
 
 # local dependencies
 from    noctopus_images  import getIcon, getImage, noctopusGraphicsInit
-from    noctopus_dialogs import LogIn
 
 # supercast
-from  supercast.main import Supercast
+from  supercast.main    import Supercast
 
 # extentions
 #import  Monitor.main
@@ -48,36 +47,6 @@ import  opus.iphelper.main
 import  opus.scheduller.main
 import  opus.knowledge.main
 
-######################
-# MODULES API HELPER #
-######################
-# def nGetProxySettings():
-#     return NMainWindow.singleton.getProxySettings()
-# 
-# def nGetViewMode():
-#     return NMainWindow.singleton.getViewMode()
-# 
-# def nGetIcon(iconName):
-#     return getIcon(iconName)
-# 
-# def nGetImage(imageName):
-#     return getImage(imageName)
-# 
-# def nConnectProxySettings(pyCallable):
-#     return NMainWindow.singleton.proxySettings.connect(pyCallable)
-# 
-# def nConnectViewMode(pyCallable):
-#     return NMainWindow.singleton.viewMode.connect(pyCallable)
-# 
-# def nConnectAppToggle(pyCallable):
-#     return NSelector.singleton.appButtonToggle.connect(pyCallable)
-# 
-# def nConnectAppSelect(pyCallable):
-#     return NSelector.singleton.appButtonPressed.connect(pyCallable)
-# 
-# def nSetStatusMsg(msg):
-#     return NMainWindow.singleton.setStatusMsg(msg)
-# 
 
 ##############################################################################
 ####################### CLASS DEFINITION #####################################
@@ -160,67 +129,28 @@ class NMainWindow(QMainWindow):
 
         print "set proxy settings"
 
-    ##################################
-    # NoctopusDialogs.LogIn CALLBACK #
-    ##################################
-    def tryConnect(self, cred):
-        self._supercast.userName = cred['name']
-        self._supercast.userPass = cred['pass']
-        self._supercast.server   = cred['server']
-        self._supercast.port     = cred['port']
-        self._supercast.tryConnect()
-        self.show()
-
-    ############################
-    # Supercast.Link CALLBACKS #
-    ############################
-
-    def handleSocketError(self, event):
-        if   event == QAbstractSocket.ConnectionRefusedError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.RemoteHostClosedError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.HostNotFoundError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketAccessError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketResourceError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketTimeoutError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.DatagramTooLargeError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.NetworkError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.AddressInUseError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketAddressNotAvailableError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.UnsupportedSocketOperationError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SslHandshakeFailedError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.UnfinishedSocketOperationError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.UnknownSocketError:
-            self._showErrorBox(event)
-        else:
-            self._showErrorBox(event)
-
-    def _showErrorBox(self, event):
-        msgBox = QMessageBox(self)
-        msgBox.setText("Socket ERROR %s" % event)
-        msgBox.setStandardButtons(QMessageBox.Close)
-        msgBox.exec_()
-        self.close()
-
+    ######################
+    # Supercast CALLBACK #
+    ######################
+    def handleSupercastEvent(self, event):
+        (key, payload) = event
+        if    key == 'login_success':
+            self._supercastLogged == True
+            self.show()
+        elif  key == 'abort':
+            self.close()
 
     #########
     # INITS #
     #########
     def _initSupercast(self):
-        errHandler = self.handleSocketError
-        self._supercast = Supercast(self, errHandler)
+        eventHandler = self.handleSupercastEvent
+        self._supercastLogged = False
+        self._supercast = Supercast(self, eventHandler, mainwindow=self)
+        self._supercast.tryLogin()
+
+    def setConnectionStatus(self):
+        print "connection status"
 
     def _initLayout(self):
         self._central = NCentralFrame(self)
@@ -326,6 +256,8 @@ class NMainWindow(QMainWindow):
 
     def _trayClic(self, reason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
+            if self._supercastLogged == False:
+                return
             if self.isHidden():
                 self.show()
                 self._activeViewMode['tray'] = 'traymax'

@@ -6,6 +6,7 @@ from    PySide.QtNetwork    import *
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    supercast.pdu       import decode, encode
+import  supercast.login
 
 class Supercast(QObject):
 
@@ -13,8 +14,15 @@ class Supercast(QObject):
     # datas queue from self to SupercastSocket()
     # tuple: (key, payload)
 
-    def __init__(self, parent, eventHandler):
+    def __init__(self, parent, eventHandler, mainwindow=None):
         super(Supercast, self).__init__(parent)
+
+        # parent of dialogs must be a QMainWindow()
+        if mainwindow == None:
+            self._mainwindow = parent
+        else:
+            self._mainwindow = mainwindow
+
         self._eventHandler = eventHandler
         self._thread     = SupercastSocket(self)
         # datas from SupercastSocket() to self
@@ -41,8 +49,6 @@ class Supercast(QObject):
     def setEventHandler(self, pyCallable):
         self._eventHandler = pyCallable
 
-    def tryConnect(self):
-        self.lQueue.emit(('tryconnect', (self.server, self.port)))
 
     def subscribe(self, channel):
         # TODO include an id in the call, and associate it with a callable.
@@ -62,13 +68,58 @@ class Supercast(QObject):
                 print "unknown destination", payload['from']
             else:
                 handler(payload)
+        elif msgType == 'socketConnected':
+            self._setTcpConn(True)
+        elif msgType == 'socketError':
+            self._handleSocketError(payload)
+
+    def _handleSocketError(self, event):
+        if   event == QAbstractSocket.ConnectionRefusedError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.RemoteHostClosedError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.HostNotFoundError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketAccessError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketResourceError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketTimeoutError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.DatagramTooLargeError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.NetworkError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.AddressInUseError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SocketAddressNotAvailableError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.UnsupportedSocketOperationError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.SslHandshakeFailedError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.UnfinishedSocketOperationError:
+            self._showErrorBox(event)
+        elif event == QAbstractSocket.UnknownSocketError:
+            self._showErrorBox(event)
+        else:
+            self._showErrorBox(event)
+
+    def _showErrorBox(self, event):
+        msgBox = QMessageBox(self._mainwindow)
+        msgBox.setText("Socket ERROR %s" % event)
+        msgBox.setStandardButtons(QMessageBox.Close)
+        msgBox.exec_()
+        self._mainwindow.close()
 
     def _handleSupercastPDU(self, msg):
         msgType = msg['msgType']
         if (msgType == 'authReq'):
+            self._setSupConn(True)
             self.serverAuthProto = msg['value']
             self.lQueue.emit(('authResp', (self.userName, self.userPass)))
         elif (msgType == 'authAck'):
+            self._setUserConn(True)
             self.groups = msg['value']['groups']
             for item in msg['value']['chans']:
                 self._handleChanInfo(msg, item)
@@ -83,9 +134,6 @@ class Supercast(QObject):
     def _unsubscribeSuccess(self, chan):
         self.activeChannels.remove(chan)
 
-    def _unsubscribeSuccess(self, chan):
-        self.activeChannels.append(chan)
-
     def _handleChanInfo(self, msg, item):
         if (item['eventType'] == 'create'):
             self.staticChans.update({item['channelId']: None})
@@ -98,6 +146,44 @@ class Supercast(QObject):
                 handler = self._mpd.get(key)
                 handler(msg)
 
+    ###########################
+    # LOG IN AND MESSAGES BOX #
+    ###########################
+    def tryLogin(self):
+        # parent must be QMainWindow, but callbacks must be self.
+        parent = self._mainwindow
+        uncle  = self
+        self._loginWin = supercast.login.Query(parent, uncle)
+
+    def loginAbort(self):
+        self._eventHandler(('abort', None))
+
+    def tryConnect(self, cred):
+        self.userName   = cred['name']
+        self.userPass   = cred['pass']
+        self.server     = cred['server']
+        self.port       = cred['port']
+        self.lQueue.emit(('tryconnect', (self.server, self.port)))
+
+    def _setTcpConn(self, state):
+        if state == True:
+            self._loginWin.tcpConnected(True)
+        else:
+            self._loginWin.tcpConnected(False)
+
+    def _setSupConn(self, state):
+        if state == True:
+            self._loginWin.supConnected(True)
+        else:
+            self._loginWin.supConnected(False)
+
+    def _setUserConn(self, state):
+        self._eventHandler(('login_success', None))
+        self._loginWin.close()
+
+    #########
+    # CLOSE #
+    #########
     def supercastClose(self):
         self._thread.quit()
 
@@ -132,10 +218,10 @@ class SupercastSocket(QThread):
         self.mQueue.emit(('message', message))
 
     def _socketConnected(self):
-        self.mQueue.emit(('socketConnected', ''))
+        self.mQueue.emit(('socketConnected', None))
 
     def _socketErrorEvent(self, event):
-        self.mQueue.emit(('socketError', message))
+        self.mQueue.emit(('socketError', event))
 
     def _handleClientMessage(self, msg):
         (key, payload) = msg
