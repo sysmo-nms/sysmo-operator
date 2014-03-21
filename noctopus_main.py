@@ -135,7 +135,7 @@ class NMainWindow(QMainWindow):
     def handleSupercastEvent(self, event):
         (key, payload) = event
         if    key == 'login_success':
-            self._supercastLogged == True
+            self._supercastLogged = True
             self.show()
         elif  key == 'abort':
             self.close()
@@ -256,8 +256,7 @@ class NMainWindow(QMainWindow):
 
     def _trayClic(self, reason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
-            if self._supercastLogged == False:
-                return
+            if self._supercastLogged == False: return
             if self.isHidden():
                 self.show()
                 self._activeViewMode['tray'] = 'traymax'
