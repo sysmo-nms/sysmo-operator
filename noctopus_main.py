@@ -34,7 +34,8 @@ from    PySide.QtGui    import (
 
 
 # local dependencies
-from    noctopus_images  import getIcon, getImage, noctopusGraphicsInit
+from    noctopus_images     import getIcon, getImage, noctopusGraphicsInit
+from    noctopus_dialogs    import Proxy
 
 # supercast
 from  supercast.main    import Supercast
@@ -78,11 +79,12 @@ class NMainWindow(QMainWindow):
         self.setWindowTitle('Noctopus')
         noctopusGraphicsInit()
 
-        self._initMenus()
-        self._initTray()
-        self._initStatusBar()
-        self._initViewModes()
         self._initProxySettings()
+        self._initViewModes()
+        self._initTray()
+
+        self._initMenus()
+        self._initStatusBar()
         self._initLayout()
         self._restoreSettings()
         self._initSupercast()
@@ -111,23 +113,19 @@ class NMainWindow(QMainWindow):
             QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
         newDock.setContentsMargins(0,0,0,0)
 
-    #########################################
-    # NoctopusDialogs.ProxySetting and      #
-    # NoctopusDialogs.ProxySetting CALLBACK #
-    #########################################
+    #########################
+    # ProxySetting and      #
+    # ProxySetting callback #
+    #########################
     def _launchProxySettings(self):
         # TODO
         # dialog = NoctopusDialogs.ProxySettings(self, self.setProxySettings)
         # dialog.show()
-        pass
+        proxyUi = Proxy(self.setProxySettings, parent=self)
         
-    def setProxySettings(self, host, port, use):
-        self._activeProxySettings['host']       = host
-        self._activeProxySettings['port']       = port
-        self._activeProxySettings['use']        = use
+    def setProxySettings(self, proxySet):
+        self._activeProxySettings = proxySet
         self.proxySettings.emit(self._activeProxySettings)
-
-        print "set proxy settings"
 
     ######################
     # Supercast CALLBACK #
@@ -148,9 +146,6 @@ class NMainWindow(QMainWindow):
         self._supercastLogged = False
         self._supercast = Supercast(self, eventHandler, mainwindow=self)
         self._supercast.tryLogin()
-
-    def setConnectionStatus(self):
-        print "connection status"
 
     def _initLayout(self):
         self._central = NCentralFrame(self)
@@ -274,6 +269,8 @@ class NMainWindow(QMainWindow):
         settings = QSettings("Noctopus NMS", "noctopus-client")
         settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
+        settings.setValue("NMainWindow/proxySettings",  self._activeProxySettings)
+        settings.setValue("NMainWindow/viewMode",       self._activeViewMode)
         self._supercast.supercastClose()
         QMainWindow.closeEvent(self, event)
 
@@ -281,10 +278,15 @@ class NMainWindow(QMainWindow):
     # SETTINGS #
     ############
     def _restoreSettings(self):
-        settings = QSettings("Noctopus NMS", "noctopus-client")
-        self._config = settings 
+        settings        = QSettings("Noctopus NMS", "noctopus-client")
+        self._config    = settings 
         self.restoreGeometry(settings.value("NMainWindow/geometry"))
         self.restoreState(settings.value("NMainWindow/windowState"))
+        proxySet = settings.value("NMainWindow/proxySettings")
+        if proxySet != None: self._activeProxySettings = proxySet
+        #viewMode = settings.value("NMainWindow/viewMode")
+        #if viewMode != None: self._activeViewMode = viewMode
+        #activeOpus = ...
 
 
 ##############################################################################
@@ -385,7 +387,6 @@ class NSelector(QFrame):
             self._hideButton(key)
 
     def _hideButton(self, key):
-        print "hide ", key
         wid     = self._buttons[key]['widget']
         row     = self._buttons[key]['row']
         wid.hide()
@@ -393,7 +394,6 @@ class NSelector(QFrame):
         self.grid.setRowStretch(row, 0)
         
     def _showButton(self, key):
-        print "show ", key
         row     = self._buttons[key]['row']
         wid     = self._buttons[key]['widget']
         wid.show()
@@ -475,7 +475,6 @@ class NSelector(QFrame):
         else:
             self.appButtonPressed.emit(app)
             self.currentView = app
-        print "selection changed", app
 
 
 

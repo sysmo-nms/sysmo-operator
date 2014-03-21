@@ -1,4 +1,4 @@
-import noctopus
+import noctopus_main
 import noctopus_images
 
 ######################
@@ -14,7 +14,7 @@ def nGetProxySettings():
     }
     '''
         
-    return noctopus.NMainWindow.singleton.getProxySettings()
+    return noctopus_main.NMainWindow.singleton.getProxySettings()
 
 def nGetViewMode():
 
@@ -25,7 +25,7 @@ def nGetViewMode():
         'tray':     'traymin' | 'traymax'
     }
     '''
-    return noctopus.NMainWindow.singleton.getViewMode()
+    return noctopus_main.NMainWindow.singleton.getViewMode()
 
 def nGetIcon(iconName):
 
@@ -56,7 +56,7 @@ def nConnectProxySettings(pyCallable):
     }
     '''
 
-    return noctopus.NMainWindow.singleton.proxySettings.connect(pyCallable)
+    return noctopus_main.NMainWindow.singleton.proxySettings.connect(pyCallable)
 
 def nConnectViewMode(pyCallable):
 
@@ -70,7 +70,7 @@ def nConnectViewMode(pyCallable):
     }
     '''
 
-    noctopus.NMainWindow.singleton.viewMode.connect(pyCallable)
+    noctopus_main.NMainWindow.singleton.viewMode.connect(pyCallable)
     return True
 
 def nConnectAppToggle(pyCallable):
@@ -82,7 +82,7 @@ def nConnectAppToggle(pyCallable):
     pyCallable will receive: str, when str = module name. Signal(str)
     '''
 
-    noctopus.NSelector.singleton.appButtonToggle.connect(pyCallable)
+    noctopus_main.NSelector.singleton.appButtonToggle.connect(pyCallable)
     return True
 
 def nConnectAppSelect(pyCallable):
@@ -94,7 +94,7 @@ def nConnectAppSelect(pyCallable):
     pyCallable will receive: str, when str = module name. Signal(str)
     '''
 
-    noctopus.NSelector.singleton.appButtonPressed.connect(pyCallable)
+    noctopus_main.NSelector.singleton.appButtonPressed.connect(pyCallable)
     return True
 
 def nConnectWillClose(pyCallable):
@@ -106,7 +106,7 @@ def nConnectWillClose(pyCallable):
     pyCallable will receive nothing. Signal()
     '''
 
-    noctopus.NMainWindow.singleton.willClose.connect(pyCallable)
+    noctopus_main.NMainWindow.singleton.willClose.connect(pyCallable)
     return True
 
 def nSetStatusMsg(msg):
@@ -114,4 +114,4 @@ def nSetStatusMsg(msg):
     ''' return: None
         Set a message to the statusbar.
     '''
-    return noctopus.NMainWindow.singleton.setStatusMsg(msg)
+    return noctopus_main.NMainWindow.singleton.setStatusMsg(msg)
