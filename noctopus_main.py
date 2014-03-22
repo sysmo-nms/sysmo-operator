@@ -371,15 +371,18 @@ class NSelector(QFrame):
         self._initButtonSelector()
         self._initStack()
 
-        self._gridAll()
+        self._restoreSettings()
+        self._initGrid()
+        self._updateGrid()
 
-    def _gridAll(self):
+    def _initGrid(self):
         self.grid = QGridLayout(self)
         self.grid.setContentsMargins(0,0,0,0)
         self.grid.setVerticalSpacing(2)
-
         self.grid.addWidget(self.menuButton, 0,0)
+        self.setLayout(self.grid)
 
+    def _updateGrid(self):
         for key in self._buttons.keys():
             self.grid.addWidget(
                 self._buttons[key]['widget'],
@@ -389,6 +392,9 @@ class NSelector(QFrame):
 
         self.currentView = 'monitor'
         self.setLayout(self.grid)
+
+    def _restoreSettings(self):
+        self.currentView = 'monitor'
 
     #################################
     # SHOW OR HIDE BUTTONS FUNCTION #
@@ -434,37 +440,37 @@ class NSelector(QFrame):
         self._buttons = dict()
         self._buttons['monitor'] = dict()
         self._buttons['monitor']['row'] = 1
-        self._buttons['monitor']['widget']    = NSelectorButton(self)
+        self._buttons['monitor']['widget'] = NSelectorButton(self, 'monitor')
         self._buttons['monitor']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['locator'] = dict()
         self._buttons['locator']['row'] = 2
-        self._buttons['locator']['widget']    = NSelectorButton(self)
+        self._buttons['locator']['widget'] = NSelectorButton(self, 'locator')
         self._buttons['locator']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['logviewer'] = dict()
         self._buttons['logviewer']['row'] = 3
-        self._buttons['logviewer']['widget']       = NSelectorButton(self)
+        self._buttons['logviewer']['widget'] = NSelectorButton(self, 'logviewer')
         self._buttons['logviewer']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['iphelper'] = dict()
         self._buttons['iphelper']['row'] = 4
-        self._buttons['iphelper']['widget']   = NSelectorButton(self)
+        self._buttons['iphelper']['widget'] = NSelectorButton(self, 'iphelper')
         self._buttons['iphelper']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['scheduller'] = dict()
         self._buttons['scheduller']['row'] = 5
-        self._buttons['scheduller']['widget']    = NSelectorButton(self)
+        self._buttons['scheduller']['widget'] = NSelectorButton(self, 'scheduller')
         self._buttons['scheduller']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
         self._buttons['knowledge'] = dict()
         self._buttons['knowledge']['row'] = 6
-        self._buttons['knowledge']['widget']  = NSelectorButton(self)
+        self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
         self._buttons['knowledge']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
@@ -502,28 +508,52 @@ class NSelector(QFrame):
             self.appButtonPressed.emit(app)
             self.currentView = app
 
+    def goUp(self, mod):
+        print "go up ", mod
 
+    def goDown(self, mod):
+        print "go down ", mod
+
+    def goRemove(self, mod):
+        print "go remove ", mod
 
 
 
 
 # SELECTOR BUTTON #############################################################
 class NSelectorButton(QPushButton):
-    def __init__(self, parent):
+    def __init__(self, parent, identifier):
         super(NSelectorButton, self).__init__(parent)
         buttonPol = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         self.setSizePolicy(buttonPol)
         self.setIconSize(QSize(30,100))
         self.setCheckable(True)
+        self._identifier = identifier
+        self._parent     = parent
         self._initMenu()
 
     def _initMenu(self):
         self._menu = QMenu(self)
-        moveUp      = self._menu.addAction(getIcon('go-up'),       'Move up')
-        moveDown    = self._menu.addAction(getIcon('go-down'),     'Move down')
-        remove      = self._menu.addAction(getIcon('list-remove'), 'Remove')
+        self.goUp    = self._menu.addAction(getIcon('go-up'),       'Move up')
+        self.goDown  = self._menu.addAction(getIcon('go-down'),     'Move down')
+        self.goRemove = self._menu.addAction(getIcon('list-remove'), 'Remove')
+
+        self.goUp.triggered.connect(partial(self._parent.goUp, self._identifier))
+        self.goDown.triggered.connect(partial(self._parent.goDown, self._identifier))
+        self.goRemove.triggered.connect(partial(self._parent.goRemove,self._identifier))
     
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
             self._menu.exec_(self.mapToGlobal(event.pos()))
         QPushButton.mousePressEvent(self, event)
+
+    def isTop(self):
+        self.goUp.isDisabled(True)
+
+    def isDown(self):
+        self.goDown.isDisabled(True)
+
+    def noTopNoDown(self):
+        self.goUp.isDisabled(False)
+        self.goDown.isDisabled(False)
+
