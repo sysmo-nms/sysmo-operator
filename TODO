@@ -26,7 +26,7 @@ the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
 - perf: build the maximum number of view widget at startup (total of probe
 entries of the treeview).
-- threading (Socket, Supercast (encode, decode), QTimelines)
+- threading QTimelines,
 - traceroute tool
 
 ESTHETIC:

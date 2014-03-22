@@ -1,8 +1,8 @@
 # python lib
 import  sys
 from PySide.QtGui       import QApplication
-import noctopus.main
-import noctopus.api
+import noctopus_main
+import noctopus_api
 
 
 if __name__ == '__main__':
