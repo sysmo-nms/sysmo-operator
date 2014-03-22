@@ -30,6 +30,9 @@ def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+        'list-remove': QIcon(os.path.join(iconsPath, "list-remove.svg")),
+        'go-up': QIcon(os.path.join(iconsPath, "go-up.svg")),
+        'go-down': QIcon(os.path.join(iconsPath, "edit-down.svg")),
         'edit-redo': QIcon(os.path.join(iconsPath, "edit-redo.svg")),
         'edit-undo': QIcon(os.path.join(iconsPath, "edit-undo.svg")),
         'list-add': QIcon(os.path.join(iconsPath, "list-add.svg")),
@@ -100,6 +103,9 @@ def initImages():
         '60-day-trial-banner-reversed': os.path.join(imagesPath, "60-day-trial-banner-reversed.svg"),
         '30-day-trial-banner': os.path.join(imagesPath, "30-day-trial-banner.svg"),
         '30-day-trial-banner-reversed': os.path.join(imagesPath, "30-day-trial-banner-reversed.svg"),
+        'list-remove': os.path.join(imagesPath, "list-remove.svg"),
+        'go-up': os.path.join(imagesPath, "go-up.svg"),
+        'go-down': os.path.join(imagesPath, "go-down.svg"),
         'edit-undo': os.path.join(imagesPath, "edit-undo.svg"),
         'edit-redo': os.path.join(imagesPath, "edit-redo.svg"),
         'list-add': os.path.join(imagesPath, "list-add.svg"),
