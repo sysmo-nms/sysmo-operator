@@ -323,36 +323,18 @@ class NSelectorButton(QPushButton):
         self.setSizePolicy(buttonPol)
         self.setIconSize(QSize(30,100))
         self.setCheckable(True)
+        self._initMenu()
 
+    def _initMenu(self):
+        self._menu = QMenu(self)
+        self._menu.addAction('Move up')
+        self._menu.addAction('Move down')
+        self._menu.addAction('Hide button')
     
-#     def mousePressEvent(self, event):
-#         self.__mousePressPos    = None
-#         self.__mouseMovePos     = None
-#         if event.button() == Qt.LeftButton:
-#             self.__mousePressPos = event.globalPos()
-#             self.__mouseMovePos  = event.globalPos()
-# 
-#         QPushButton.mousePressEvent(self, event)
-# 
-#     def mouseMoveEvent(self, event):
-#         if event.buttons() == Qt.LeftButton:
-#             # adjust offset from clicked point to origin of widget
-#             currPos = self.mapToGlobal(self.pos())
-#             globalPos = event.globalPos()
-#             diff = globalPos - self.__mouseMovePos
-#             newPos = self.mapFromGlobal(currPos + diff)
-#             self.move(newPos)
-# 
-#             self.__mouseMovePos = globalPos
-# 
-#         QPushButton.mouseMoveEvent(self, event)
-# 
-#     def mouseReleaseEvent(self, event):
-#         if self.__mousePressPos is not None:
-#             moved = event.globalPos() - self.__mousePressPos 
-#             if moved.manhattanLength() > 3:
-#                 event.ignore()
-#                 return
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self._menu.exec_(self.mapToGlobal(event.pos()))
+        QPushButton.mousePressEvent(self, event)
 
 
 class NSelector(QFrame):
