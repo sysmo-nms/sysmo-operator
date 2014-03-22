@@ -29,7 +29,8 @@ from    PySide.QtGui    import (
     QStackedLayout,
     QLabel,
     QToolButton,
-    QMessageBox
+    QMessageBox,
+    QDrag
 )
 
 
@@ -118,9 +119,6 @@ class NMainWindow(QMainWindow):
     # ProxySetting callback #
     #########################
     def _launchProxySettings(self):
-        # TODO
-        # dialog = NoctopusDialogs.ProxySettings(self, self.setProxySettings)
-        # dialog.show()
         proxyUi = Proxy(self.setProxySettings, parent=self)
         
     def setProxySettings(self, proxySet):
@@ -155,7 +153,7 @@ class NMainWindow(QMainWindow):
         proxySet = dict()
         proxySet['use']     = False
         proxySet['host']    = ''
-        proxySet['port']    = 0
+        proxySet['port']    = 1
         self._activeProxySettings = proxySet
 
     def _initViewModes(self):
@@ -278,8 +276,7 @@ class NMainWindow(QMainWindow):
     # SETTINGS #
     ############
     def _restoreSettings(self):
-        settings        = QSettings("Noctopus NMS", "noctopus-client")
-        self._config    = settings 
+        settings = QSettings("Noctopus NMS", "noctopus-client")
         self.restoreGeometry(settings.value("NMainWindow/geometry"))
         self.restoreState(settings.value("NMainWindow/windowState"))
         proxySet = settings.value("NMainWindow/proxySettings")
@@ -326,6 +323,37 @@ class NSelectorButton(QPushButton):
         self.setSizePolicy(buttonPol)
         self.setIconSize(QSize(30,100))
         self.setCheckable(True)
+
+    
+#     def mousePressEvent(self, event):
+#         self.__mousePressPos    = None
+#         self.__mouseMovePos     = None
+#         if event.button() == Qt.LeftButton:
+#             self.__mousePressPos = event.globalPos()
+#             self.__mouseMovePos  = event.globalPos()
+# 
+#         QPushButton.mousePressEvent(self, event)
+# 
+#     def mouseMoveEvent(self, event):
+#         if event.buttons() == Qt.LeftButton:
+#             # adjust offset from clicked point to origin of widget
+#             currPos = self.mapToGlobal(self.pos())
+#             globalPos = event.globalPos()
+#             diff = globalPos - self.__mouseMovePos
+#             newPos = self.mapFromGlobal(currPos + diff)
+#             self.move(newPos)
+# 
+#             self.__mouseMovePos = globalPos
+# 
+#         QPushButton.mouseMoveEvent(self, event)
+# 
+#     def mouseReleaseEvent(self, event):
+#         if self.__mousePressPos is not None:
+#             moved = event.globalPos() - self.__mousePressPos 
+#             if moved.manhattanLength() > 3:
+#                 event.ignore()
+#                 return
+
 
 class NSelector(QFrame):
     
