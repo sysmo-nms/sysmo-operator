@@ -10,11 +10,14 @@ import  supercast.login
 
 class Supercast(QObject):
 
-    lQueue = Signal(tuple)
+    eventSignals = Signal(tuple)
+    # datas (key, other) where key = 'success' | 'abort'
+
+    lQueue      = Signal(tuple)
     # datas queue from self to SupercastSocket()
     # tuple: (key, payload)
 
-    def __init__(self, parent, eventHandler, mainwindow=None):
+    def __init__(self, parent, mainwindow=None):
         super(Supercast, self).__init__(parent)
 
         # parent of dialogs must be a QMainWindow()
@@ -23,7 +26,6 @@ class Supercast(QObject):
         else:
             self._mainwindow = mainwindow
 
-        self._eventHandler = eventHandler
         self._thread     = SupercastSocket(self)
         # datas from SupercastSocket() to self
         # tuple: (key, payload)
@@ -45,10 +47,6 @@ class Supercast(QObject):
     # from client to socket
     def setMessageProcessor(self, fromKey, pyCallable):
         self._mpd.update({fromKey: pyCallable})
-
-    def setEventHandler(self, pyCallable):
-        self._eventHandler = pyCallable
-
 
     def subscribe(self, channel):
         # TODO include an id in the call, and associate it with a callable.
@@ -150,7 +148,7 @@ class Supercast(QObject):
         self._loginWin = supercast.login.Query(parent, uncle)
 
     def loginAbort(self):
-        self._eventHandler(('abort', None))
+        self.eventSignals.emit(('abort', None))
 
     def tryConnect(self, cred):
         self.userName   = cred['name']
@@ -172,7 +170,7 @@ class Supercast(QObject):
             self._loginWin.supConnected(False)
 
     def _setUserConn(self, state):
-        self._eventHandler(('login_success', None))
+        self.eventSignals.emit(('success', None))
         self._loginWin.close()
 
     def _showErrorBox(self, event):
@@ -180,7 +178,7 @@ class Supercast(QObject):
         msgBox.setText("Socket ERROR %s" % event)
         msgBox.setStandardButtons(QMessageBox.Close)
         msgBox.exec_()
-        self._eventHandler(('abort', None))
+        self.eventSignals.emit(('abort', None))
 
     #########
     # CLOSE #
