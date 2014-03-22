@@ -32,7 +32,7 @@ def initIcons():
     iconSet = {
         'list-remove': QIcon(os.path.join(iconsPath, "list-remove.svg")),
         'go-up': QIcon(os.path.join(iconsPath, "go-up.svg")),
-        'go-down': QIcon(os.path.join(iconsPath, "edit-down.svg")),
+        'go-down': QIcon(os.path.join(iconsPath, "go-down.svg")),
         'edit-redo': QIcon(os.path.join(iconsPath, "edit-redo.svg")),
         'edit-undo': QIcon(os.path.join(iconsPath, "edit-undo.svg")),
         'list-add': QIcon(os.path.join(iconsPath, "list-add.svg")),

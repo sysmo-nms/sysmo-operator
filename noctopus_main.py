@@ -519,9 +519,9 @@ class NSelectorButton(QPushButton):
 
     def _initMenu(self):
         self._menu = QMenu(self)
-        self._menu.addAction('Move up')
-        self._menu.addAction('Move down')
-        self._menu.addAction('Hide button')
+        moveUp      = self._menu.addAction(getIcon('go-up'),       'Move up')
+        moveDown    = self._menu.addAction(getIcon('go-down'),     'Move down')
+        remove      = self._menu.addAction(getIcon('list-remove'), 'Remove')
     
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
