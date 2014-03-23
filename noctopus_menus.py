@@ -1,3 +1,5 @@
+# Python
+from functools import partial
 # PySide
 from    PySide.QtGui    import (
     QAction,
@@ -55,4 +57,48 @@ def initMenus(mainWin):
 
     menuConf    = menu.addMenu('Configure')
     menuConf.addAction(actionConfigureProxy)
+
+    " style menu "
+    nativeAction    = QAction('Native', mainWin)
+    nativeAction.setCheckable(True)
+    nativeAction.triggered.connect(partial(mainWin._setStyle, 'Native'))
+
+    plastiqueAction = QAction('plastique', mainWin)
+    plastiqueAction.setCheckable(True)
+    plastiqueAction.triggered.connect(partial(mainWin._setStyle, 'plastique'))
+
+    cdeAction       = QAction('cde', mainWin)
+    cdeAction.setCheckable(True)
+    cdeAction.triggered.connect(partial(mainWin._setStyle, 'cde'))
+
+    motifAction     = QAction('motif', mainWin)
+    motifAction.setCheckable(True)
+    motifAction.triggered.connect(partial(mainWin._setStyle, 'motif'))
+
+    windowAction    = QAction('windows classic', mainWin)
+    windowAction.setCheckable(True)
+    windowAction.triggered.connect(partial(mainWin._setStyle, 'window'))
+
+    windowxpAction  = QAction('windows xp', mainWin)
+    windowxpAction.setCheckable(True)
+    windowxpAction.triggered.connect(partial(mainWin._setStyle, 'windowxp'))
+
+    styleToggle = QActionGroup(mainWin)
+    styleToggle.addAction(plastiqueAction)
+    styleToggle.addAction(nativeAction)
+    styleToggle.addAction(cdeAction)
+    styleToggle.addAction(motifAction)
+    styleToggle.addAction(windowAction)
+    styleToggle.addAction(windowxpAction)
+    styleToggle.setExclusive(True)
+    plastiqueAction.setChecked(True)
+
+    menuStyle = menu.addMenu('Style')
+    menuStyle.addAction(nativeAction)
+    menuStyle.addAction(plastiqueAction)
+    menuStyle.addAction(cdeAction)
+    menuStyle.addAction(motifAction)
+    menuStyle.addAction(windowAction)
+    menuStyle.addAction(windowxpAction)
+
     return

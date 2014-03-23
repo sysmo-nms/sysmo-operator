@@ -197,6 +197,11 @@ class NMainWindow(QMainWindow):
             QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
         newDock.setContentsMargins(0,0,0,0)
 
+    ##########
+    # STYLES #
+    ##########
+    def _setStyle(self, style): pass
+
     ###########
     # DIALOGS #
     ###########
