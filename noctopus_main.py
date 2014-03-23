@@ -200,7 +200,14 @@ class NMainWindow(QMainWindow):
     ##########
     # STYLES #
     ##########
-    def _setStyle(self, style): pass
+    def _setStyle(self, style):
+        self._noctopusStyle = style
+        msgBox = QMessageBox(self)
+        msgBox.setText('The application must restart to take your modification in consideration')
+        msgBox.setInformativeText('Do you want to restart it now?')
+        msgBox.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
+        msgBox.setDefaultButton(QMessageBox.Yes)
+        if msgBox.exec_() == QMessageBox.Yes:  self.close()
 
     ###########
     # DIALOGS #
@@ -223,6 +230,7 @@ class NMainWindow(QMainWindow):
         settings.setValue("NMainWindow/windowState",    self.saveState())
         settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
         settings.setValue("NMainWindow/viewMode",       self.activeViewMode)
+        settings.setValue("NMainWindow/style",          self._noctopusStyle)
         self._supercast.supercastClose()
         QMainWindow.closeEvent(self, event)
 
@@ -231,10 +239,16 @@ class NMainWindow(QMainWindow):
     ############
     def _restoreSettings(self):
         settings = QSettings("Noctopus NMS", "noctopus-client")
+
         self.restoreGeometry(settings.value("NMainWindow/geometry"))
         self.restoreState(settings.value("NMainWindow/windowState"))
+
         proxySet = settings.value("NMainWindow/proxySettings")
         if proxySet != None: self.activeProxySettings = proxySet
+
+        noctoStyle = settings.value("NMainWindow/style")
+        if noctoStyle != None: self._noctopusStyle = noctoStyle
+
         #viewMode = settings.value("NMainWindow/viewMode")
         #if viewMode != None: self.activeViewMode = viewMode
         #activeOpus = ...

@@ -3,13 +3,19 @@ import  sys
 import  re
 import  platform
 from PySide.QtGui       import QApplication
+from PySide.QtCore      import QSettings
 import noctopus_main
 import noctopus_api
 
 
-if __name__ == '__main__':
+osType = platform.platform()
 
-    osType = platform.platform()
+noctopusSettings = QSettings("Noctopus NMS", "noctopus-client")
+noctopusStyle    = noctopusSettings.value("NMainWindow/style")
+
+if noctopusStyle != None:
+    QApplication.setStyle(noctopusStyle)
+else:
     if   re.match('^Windows-XP..*',    osType) != None:
         QApplication.setStyle('plastique')
     elif re.match('^Windows-Vista..*', osType) != None:
@@ -21,7 +27,7 @@ if __name__ == '__main__':
         # test on 7
         pass
 
-    noctopusApp = QApplication(sys.argv)
-    noctopus    = noctopus_main.NMainWindow()
-    noctopus.setWindowIcon(noctopus_api.nGetIcon('applications-development'))
-    sys.exit(noctopusApp.exec_())
+noctopusApp = QApplication(sys.argv)
+noctopus    = noctopus_main.NMainWindow()
+noctopus.setWindowIcon(noctopus_api.nGetIcon('applications-development'))
+sys.exit(noctopusApp.exec_())
