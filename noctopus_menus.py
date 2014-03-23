@@ -65,26 +65,31 @@ def initMenus(mainWin):
 
     plastiqueAction = QAction('plastique', mainWin)
     plastiqueAction.setCheckable(True)
-    plastiqueAction.triggered.connect(partial(mainWin._setStyle, 'plastique'))
+    plastiqueAction.triggered.connect(partial(mainWin._setStyle, 'Plastique'))
+
+    cleanlooksAction = QAction('cleanlooks', mainWin)
+    cleanlooksAction.setCheckable(True)
+    cleanlooksAction.triggered.connect(partial(mainWin._setStyle, 'Cleanlooks'))
 
     cdeAction       = QAction('cde', mainWin)
     cdeAction.setCheckable(True)
-    cdeAction.triggered.connect(partial(mainWin._setStyle, 'cde'))
+    cdeAction.triggered.connect(partial(mainWin._setStyle, 'CDE'))
 
     motifAction     = QAction('motif', mainWin)
     motifAction.setCheckable(True)
-    motifAction.triggered.connect(partial(mainWin._setStyle, 'motif'))
+    motifAction.triggered.connect(partial(mainWin._setStyle, 'Motif'))
 
     windowAction    = QAction('windows classic', mainWin)
     windowAction.setCheckable(True)
-    windowAction.triggered.connect(partial(mainWin._setStyle, 'window'))
+    windowAction.triggered.connect(partial(mainWin._setStyle, 'Windows'))
 
     windowxpAction  = QAction('windows xp', mainWin)
     windowxpAction.setCheckable(True)
-    windowxpAction.triggered.connect(partial(mainWin._setStyle, 'windowxp'))
+    windowxpAction.triggered.connect(partial(mainWin._setStyle, 'WindowXP'))
 
     styleToggle = QActionGroup(mainWin)
     styleToggle.addAction(plastiqueAction)
+    styleToggle.addAction(cleanlooksAction)
     styleToggle.addAction(nativeAction)
     styleToggle.addAction(cdeAction)
     styleToggle.addAction(motifAction)
@@ -96,6 +101,7 @@ def initMenus(mainWin):
     menuStyle = menu.addMenu('Style')
     menuStyle.addAction(nativeAction)
     menuStyle.addAction(plastiqueAction)
+    menuStyle.addAction(cleanlooksAction)
     menuStyle.addAction(cdeAction)
     menuStyle.addAction(motifAction)
     menuStyle.addAction(windowAction)

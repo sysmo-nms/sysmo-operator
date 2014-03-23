@@ -204,10 +204,8 @@ class NMainWindow(QMainWindow):
         self._noctopusStyle = style
         msgBox = QMessageBox(self)
         msgBox.setText('The application must restart to take your modification in consideration')
-        msgBox.setInformativeText('Do you want to restart it now?')
-        msgBox.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
-        msgBox.setDefaultButton(QMessageBox.Yes)
-        if msgBox.exec_() == QMessageBox.Yes:  self.close()
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
 
     ###########
     # DIALOGS #
