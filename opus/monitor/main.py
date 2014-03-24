@@ -2,9 +2,11 @@ from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 
 import  noctopus_api
-from    noctopus_widgets    import NSplitterContainer
-#from    opus.monitor.widgets       import *
 from    opus.monitor    import norrd
+from    opus.monitor.trees_area.main import TreeContainer
+from    noctopus_widgets    import NSplitterContainer
+
+#from    opus.monitor.widgets       import *
 
 #from    MonitorProxyEvents  import ChannelHandler
 
@@ -39,7 +41,8 @@ class Central(NSplitterContainer):
     def _initLayout(self):
 #         self._leftTree   = MonitorTreeArea.TreeContainer(self)
 #         self._rightDash  = MonitorDashboardArea.DashboardStack(self)
-        self._leftTree = QLabel('left', self)
+        self._leftTree = TreeContainer(self)
+        #self._leftTree = QLabel('hlk', self)
         self._rightDash = QLabel('right', self)
         self.addWidget(self._leftTree)
         self.addWidget(self._rightDash)
@@ -60,11 +63,6 @@ class Central(NSplitterContainer):
         settings.setValue("monitor/geometry",   self.saveGeometry())
         settings.setValue("monitor/state",      self.saveState())
 
-
-
-#         self.targets    = dict()
-#         self.initHexaPalettes()
-
     # CALLS from noctopus_* modules
     def toggleButtonClicked(self, app):
         if app != 'monitor': return
@@ -77,37 +75,3 @@ class Central(NSplitterContainer):
 
     def setViewMode(self, mode):
         print "set viewwwwwwwww mode ", mode
-
-
-#     def initHexaPalettes(self):
-# 
-#         " For widgets who need hexadecimal version of the colors actualy used "
-#         " by the application (rrdtool)"
-# 
-#         self.rgbDict    = dict()
-#         self.rgbaDict   = dict()
-#         pal             = self.palette()
-#         constDict = {
-#             'Window':       QPalette.Window,
-#             'WindowText':   QPalette.WindowText,
-#             'Base':         QPalette.Base,
-#             'AlternateBase':    QPalette.AlternateBase,
-#             'ToolTipBase':  QPalette.ToolTipBase,
-#             'ToolTipText':  QPalette.ToolTipText,
-#             'Text':         QPalette.Text,
-#             'Button':       QPalette.Button,
-#             'ButtonText':   QPalette.ButtonText,
-#             'BrightText':   QPalette.BrightText,
-#             'Light':        QPalette.Light,
-#             'MidLight':     QPalette.Midlight,
-#             'Dark':         QPalette.Dark,
-#             'Mid':          QPalette.Mid,
-#             'Shadow':       QPalette.Shadow
-#         }
-# 
-#         for key in constDict.keys():
-#             col         = pal.color(constDict[key])
-#             (r,g,b,a)   = col.getRgb()
-#             self.rgbaDict[key]  = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
-#             self.rgbDict[key] = "#%0.2X%0.2X%0.2X" % (r,g,b)
-#     
