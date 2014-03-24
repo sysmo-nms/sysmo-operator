@@ -96,7 +96,24 @@ def initMenus(mainWin):
     styleToggle.addAction(windowAction)
     styleToggle.addAction(windowxpAction)
     styleToggle.setExclusive(True)
-    plastiqueAction.setChecked(True)
+
+    print "style is ", mainWin._noctopusStyle
+    if mainWin._noctopusStyle == 'Native':
+        nativeAction.setChecked(True)
+    elif mainWin._noctopusStyle == 'Plastique':
+        plastiqueAction.setChecked(True)
+    elif mainWin._noctopusStyle == 'Cleanlooks':
+        cleanlooksAction.setChecked(True)
+    elif mainWin._noctopusStyle == 'CDE':
+        cdeAction.setChecked(True)
+    elif mainWin._noctopusStyle == 'Motif':
+        motifAction.setChecked(True)
+    elif mainWin._noctopusStyle == 'Windows':
+        windowAction.setChecked(True)
+    elif mainWin._noctopusStyle == 'WindowXP':
+        windowxpAction.setChecked(True)
+    else:
+        plastiqueAction.setChecked(True)
 
     menuStyle = menu.addMenu('Style')
     menuStyle.addAction(nativeAction)

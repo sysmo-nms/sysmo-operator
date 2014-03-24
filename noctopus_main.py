@@ -86,10 +86,10 @@ class NMainWindow(QMainWindow):
         self._initViewModes()
         self._initTray()
 
-        self._initMenus()
         self._initStatusBar()
         self._initLayout()
         self._restoreSettings()
+        self._initMenus()
         self._initSupercast()
 
 
