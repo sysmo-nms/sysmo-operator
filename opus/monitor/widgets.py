@@ -4,12 +4,13 @@ from    PySide.QtSvg        import *
 from    PySide.QtWebKit     import *
 import  Monitor
 from    noctopus            import getIcon
+from    noctopus_widgets    import NFrame
 
 
 ##################
 # SUMMARY WIDGET #
 ##################
-class Summary(QFrame):
+class Summary(NFrame):
     def __init__(self, parent):
         super(Summary, self).__init__(parent)
         self.setContentsMargins(0,0,0,0)

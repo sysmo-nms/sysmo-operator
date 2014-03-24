@@ -26,7 +26,7 @@ from    noctopus_images     import getIcon
 from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame
 
 # extentions
-#import  opus.monitor.main
+import  opus.monitor.main
 import  opus.locator.main
 import  opus.logviewer.main
 import  opus.iphelper.main
@@ -158,7 +158,7 @@ class NSelector(NFrameContainer):
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
 
-        #self._stackWidget.addLayer(opus.monitor.main.Central,    'monitor')
+        self._stackWidget.addLayer(opus.monitor.main.Central,    'monitor')
         self._stackWidget.addLayer(opus.locator.main.Central,    'locator')
         self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
         self._stackWidget.addLayer(opus.iphelper.main.Central,   'iphelper')
