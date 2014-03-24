@@ -9,7 +9,7 @@ from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 
 # local libs
-from    Monitor.widgetsCommon   import Summary
+#from    Monitor.widgetsCommon   import Summary
 
 from  Monitor           import norrd
 #import  MonitorDashboardArea

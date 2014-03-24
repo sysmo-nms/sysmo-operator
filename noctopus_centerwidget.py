@@ -5,6 +5,7 @@ from    PySide.QtGui    import (
     QGridLayout
 )
 from noctopus_ramp import NSelector
+from noctopus_widgets import NFrameContainer, NGridContainer
 
 class NCentralFrame(QFrame):
 
@@ -22,7 +23,7 @@ class NCentralFrame(QFrame):
         self.selector.connectAll()
         self.setLayout(grid)
 
-class NCentralStack(QFrame):
+class NCentralStack(NFrameContainer):
 
     " main stack container "
 

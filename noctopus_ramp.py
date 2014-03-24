@@ -25,9 +25,10 @@ from    PySide.QtGui    import (
 
 # local dependencies
 from    noctopus_images     import getIcon
+from    noctopus_widgets    import NFrameContainer
 
 # extentions
-#import  Monitor.main
+#import  opus.monitor.main
 import  opus.locator.main
 import  opus.logviewer.main
 import  opus.iphelper.main
@@ -36,7 +37,7 @@ import  opus.knowledge.main
 
 
 # SELECTOR RAMP ###############################################################
-class NSelector(QFrame):
+class NSelector(NFrameContainer):
     
     " left button ramp container "
 
