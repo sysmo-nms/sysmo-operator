@@ -1,6 +1,8 @@
-from    PySide.QtCore   import *
-from    PySide.QtGui    import *
-from    noctopus_widgets import NFrame
+from    PySide.QtCore       import *
+from    PySide.QtGui        import *
+from    noctopus_widgets    import NFrameContainer, NGridContainer
+from    opus.monitor.trees_area.widgets import Commands
+
 #from    MonitorProxyEvents   import ChannelHandler
 #from    DashboardTree   import *
 #import    MonitorDashboardArea
@@ -9,7 +11,7 @@ from    noctopus_widgets import NFrame
 #import  TkorderIcons
 
 
-class TreeContainer(NFrame):
+class TreeContainer(NFrameContainer):
     
     " the left tree area. Emit user clics events"
 
@@ -17,16 +19,15 @@ class TreeContainer(NFrame):
         super(TreeContainer, self).__init__(parent)
         TreeContainer.singleton = self
 
-        QLabel('hello',self)
 #         self.trackerMain  = parent
 # 
-#         self.commands   = Commands(self)
+        self._commands   = Commands(self)
 #         self.searchBar  = MonitorTreeSearch(self)
 # 
 #         self.treeview   = MonitorTreeView(self)
 #         self.dashboardList = DashboardTreeView(self)
 #         self.vServices  = VirtualServices(self)
-#         self.tabs       = QTabWidget(self)
+        self._tabs       = QTabWidget(self)
 #         self.tabs.addTab(self.dashboardList,    'Dashboards')
 #         self.tabs.addTab(self.vServices,        'Services')
 #         self.tabs.addTab(self.treeview,         'Probes')
@@ -42,27 +43,20 @@ class TreeContainer(NFrame):
 #         self.osmView.hide()
 #         self.osmView.setFixedHeight(300)
 # 
-#         self.grid = QGridLayout(self)
-#         self.grid.setContentsMargins(0,0,0,0)
-#         self.grid.setHorizontalSpacing(0)
-#         self.grid.setVerticalSpacing(5)
-#         self.setMinimumWidth(350)
-#         
-#         self.grid.addWidget(self.commands,           1, 0)
+        self._grid = NGridContainer(self)
+        self._grid.addWidget(self._commands,           1, 0)
 #         self.grid.addWidget(self.searchBar,          2, 0)
-#         self.grid.addWidget(self.tabs,               3, 0)
+        self._grid.addWidget(self._tabs,                3, 0)
 #         self.grid.addWidget(self.info,               4, 0)
 # 
-#         self.grid.setRowStretch(0,0)
-#         self.grid.setRowStretch(1,0)
-#         self.grid.setRowStretch(2,0)
-#         self.grid.setRowStretch(3,1)
-#         self.grid.setRowStretch(4,0)
-# 
-#         self.setLayout(self.grid)
-# 
-#         self.viewMode = 'full'
-#         self.setMaximumWidth(500)
+        self._grid.setRowStretch(0,0)
+        self._grid.setRowStretch(1,0)
+        self._grid.setRowStretch(2,0)
+        self._grid.setRowStretch(3,1)
+        self._grid.setRowStretch(4,0)
+        self.setLayout(self._grid)
+
+        self.setMaximumWidth(500)
 # 
 #     def setMinimalView(self, bol):
 #         if bol == True and self.viewMode == 'full':
@@ -79,33 +73,6 @@ class TreeContainer(NFrame):
 #             self.info.show()
 #             self.grid.addWidget(self.info, 4,0)
 #             self.viewMode = 'full'
-# 
-# class VirtualServices(QTreeView):
-#     def __init__(self, parent):
-#         super(VirtualServices, self).__init__(parent)
-#         self.setAnimated(True)
-#         self.setFrameShape(QFrame.NoFrame)
-#         self.setHeaderHidden(False)
-# 
-# class Commands(QFrame):
-#     def __init__(self, parent):
-#         super(Commands, self).__init__(parent)
-#         grid = QGridLayout(self)
-#         grid.setContentsMargins(0,0,0,0)
-#         grid.setHorizontalSpacing(5)
-#         grid.setVerticalSpacing(0)
-#         self.addButton = QPushButton(TkorderIcons.get('list-add'), 'Add', self)
-#         self.addButton.clicked.connect(self._launchWizard)
-#         grid.addWidget(self.addButton, 0,0)
-#         grid.setColumnStretch(0,0)
-#         grid.setColumnStretch(1,1)
-#         self.setLayout(grid)
-# 
-#     def _launchWizard(self):
-#         wizard = AddTargetWizard(self)
-# 
-# 
-# 
 # 
 # class MonitorTreeSearch(QFrame):
 #     def __init__(self, parent):

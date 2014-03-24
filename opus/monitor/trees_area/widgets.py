@@ -1,7 +1,6 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
-from    noctopus.widgets     import NFrameContainer, NGridContainer
-from    opus.monitor.wizards import AddTargetWizard
+from    noctopus_widgets     import NFrameContainer, NGridContainer
 import  noctopus_api
 
 class Commands(NFrameContainer):
