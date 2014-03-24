@@ -1,8 +1,10 @@
 import  os, sys, platform
-from    PySide.QtGui import QIcon
+from    PySide.QtGui import QIcon, QWidget, QPalette
 
 iconSet     = dict()
 imageSet    = dict()
+hexRgbSet   = dict()
+hexRgbaSet  = dict()
 
 if platform.system() == 'Windows':
     currentPath = os.path.dirname(sys.executable)
@@ -14,6 +16,7 @@ imagesPath  = os.path.join(currentPath, 'graphics')
 def noctopusGraphicsInit():
     initIcons()
     initImages()
+    initHexSet()
 
 def getIcon(icon):
     global iconSet
@@ -23,7 +26,13 @@ def getImage(image):
     global imageSet
     return imageSet[image]
 
+def getRgb(pal):
+    global hexRgbSet
+    return hexRgbSet[pal]
 
+def getRgba(pal):
+    global hexRgbaSet
+    return hexRgbaSet[pal]
 
 # ICONS
 def initIcons():
@@ -159,3 +168,39 @@ def initImages():
         'weather-storm': os.path.join(imagesPath, "weather-storm.svg"),
         'Filter': os.path.join(imagesPath, "Filter.svg")
     }
+
+def initHexSet():
+
+    " For widgets who need hexadecimal version of the colors actualy used "
+    " by the application (rrdtool)"
+
+    global hexRgbaSet
+    global hexRgbSet
+
+    _wid = QWidget()
+    pal  = _wid.palette()
+    _wid.deleteLater()
+
+    constDict = {
+        'Window':       QPalette.Window,
+        'WindowText':   QPalette.WindowText,
+        'Base':         QPalette.Base,
+        'AlternateBase':    QPalette.AlternateBase,
+        'ToolTipBase':  QPalette.ToolTipBase,
+        'ToolTipText':  QPalette.ToolTipText,
+        'Text':         QPalette.Text,
+        'Button':       QPalette.Button,
+        'ButtonText':   QPalette.ButtonText,
+        'BrightText':   QPalette.BrightText,
+        'Light':        QPalette.Light,
+        'MidLight':     QPalette.Midlight,
+        'Dark':         QPalette.Dark,
+        'Mid':          QPalette.Mid,
+        'Shadow':       QPalette.Shadow
+    }
+
+    for key in constDict.keys():
+        col             = pal.color(constDict[key])
+        (r,g,b,a)       = col.getRgb()
+        hexRgbaSet[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
+        hexRgbSet[key]  = "#%0.2X%0.2X%0.2X" % (r,g,b)
