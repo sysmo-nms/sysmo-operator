@@ -8,7 +8,7 @@ from    PySide.QtGui    import (
 from    PySide.QtCore   import QUrl
 from    PySide.QtWebKit import QWebView
 from    PySide.QtSvg    import QSvgWidget
-from    noctopus_api    import nGetImage, nGetIcon
+import    noctopus_api
 
 class Central(QFrame):
     def __init__(self, parent):
@@ -53,7 +53,7 @@ class App(QFrame):
         cGrid = QGridLayout(cFrame)
 
         forceButton = QPushButton(
-            nGetIcon('dialog-warning'),
+            noctopus_api.nGetIcon('dialog-warning'),
             'Force auto edit', cFrame)
         cGrid.addWidget(forceButton,    0,0)
         cGrid.setColumnStretch(0,0)
@@ -131,7 +131,7 @@ class Banner60(QFrame):
     def __init__(self, parent):
         super(Banner60, self).__init__(parent)
         grid = QGridLayout(self)
-        banner = QSvgWidget(nGetImage('60-day-trial-banner'), self)
+        banner = QSvgWidget(noctopus_api.nGetImage('60-day-trial-banner'), self)
         banner.setFixedHeight(300)
         banner.setFixedWidth(300)
         self.setFixedWidth(300)
