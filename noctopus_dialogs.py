@@ -5,15 +5,14 @@ from    PySide.QtGui        import (
     QSpinBox,
     QDialogButtonBox,
     QPushButton,
-    QFrame,
     QFormLayout,
-    QGridLayout,
     QCheckBox,
     QButtonGroup,
     QLabel
 )
 from    PySide.QtSvg        import QSvgWidget
 from    noctopus_api        import nGetImage, nGetIcon, nGetProxySettings
+from    noctopus_widgets    import NFrame, NGrid
 
 class Proxy(QDialog):
     def __init__(self, callback, parent=None):
@@ -37,7 +36,7 @@ class Proxy(QDialog):
             self.bottomFrame.setEnabled(True)
         
     def _initLayout(self):
-        layout = QGridLayout(self)
+        layout = NGrid(self)
         self._initCheckFrame()
         self._initFormFrame()
         self._initButtonFrame()
@@ -47,8 +46,8 @@ class Proxy(QDialog):
         self.setLayout(layout)
 
     def _initCheckFrame(self):
-        topFrame = QFrame(self)
-        layout = QGridLayout(topFrame)
+        topFrame = NFrame(self)
+        layout = NGrid(topFrame)
 
         self.checkBoxNoProxy = QCheckBox('No Proxy', self)
         self.checkBoxNoProxy.setChecked(True)
@@ -75,14 +74,14 @@ class Proxy(QDialog):
             self.bottomFrame.setDisabled(False)
 
     def _initFormFrame(self):
-        bottomFrame = QFrame(self)
+        bottomFrame = NFrame(self)
 
         self.serverLineEdit = QLineEdit(self)
         self.portLineEdit   = QSpinBox(self)
         self.portLineEdit.setMinimum(1)
         self.portLineEdit.setMaximum(65535)
 
-        layout = QGridLayout(bottomFrame)
+        layout = NGrid(bottomFrame)
         layout.addWidget(QLabel("Proxy server: ", self),   0,0)
         layout.addWidget(self.serverLineEdit,            0,1)
         layout.addWidget(QLabel("Port: ", self),    0,2)

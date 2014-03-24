@@ -1,19 +1,18 @@
 # PySide
 from    PySide.QtGui    import (
-    QFrame,
     QStackedLayout,
     QGridLayout
 )
 from noctopus_ramp import NSelector
-from noctopus_widgets import NFrameContainer, NGridContainer
+from noctopus_widgets import NFrameContainer, NGrid, NFrame
 
-class NCentralFrame(QFrame):
+class NCentralFrame(NFrame):
 
     " central widget container "
 
     def __init__(self, parent):
         super(NCentralFrame, self).__init__(parent)
-        grid = QGridLayout(self)
+        grid = NGrid(self)
         self.centralStack   = NCentralStack(self)
         self.selector       = NSelector(self, self.centralStack)
         grid.addWidget(self.selector,       0,0,0,1)

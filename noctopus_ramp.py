@@ -12,8 +12,6 @@ from    PySide.QtCore   import (
 from    PySide.QtGui    import (
     QAction,
     QActionGroup,
-    QFrame,
-    QGridLayout,
     QSizePolicy,
     QPushButton,
     QButtonGroup,
@@ -25,7 +23,7 @@ from    PySide.QtGui    import (
 
 # local dependencies
 from    noctopus_images     import getIcon
-from    noctopus_widgets    import NFrameContainer
+from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame
 
 # extentions
 #import  opus.monitor.main
@@ -60,8 +58,7 @@ class NSelector(NFrameContainer):
         self._updateGrid()
 
     def _initGrid(self):
-        self.grid = QGridLayout(self)
-        self.grid.setContentsMargins(0,0,0,0)
+        self.grid = NGridContainer(self)
         self.grid.setVerticalSpacing(2)
         self.grid.addWidget(self.menuButton, 0,0)
         self.setLayout(self.grid)
