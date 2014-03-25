@@ -125,14 +125,14 @@ def nConnectSupercastEnabled(pyCallable):
     '''
     noctopus_main.NMainWindow.singleton.supercastEnabled.connect(pyCallable)
 
-def nSubscribe(channel):
+def nSubscribe(pyCallable, channel):
     '''
         Subscribe to a supercast channel.
     '''
-    noctopus_main.NMainWindow.singleton.supercast.subscribe(channel)
+    noctopus_main.NMainWindow.singleton.supercast.subscribe(pyCallable, channel)
 
-def nUnsubscribe(channel):
+def nUnsubscribe(pyCallable, channel):
     '''
         Unsubscribe to a supercast channel.
     '''
-    noctopus_main.NMainWindow.singleton.supercast.unsubscribe(channel)
+    noctopus_main.NMainWindow.singleton.supercast.unsubscribe(pyCallable, channel)

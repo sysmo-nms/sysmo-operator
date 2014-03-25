@@ -26,12 +26,13 @@ class ChanHandler(QObject):
         nocapi.nSetMessageProcessor('modTrackerPDU', self.handleSupercastMsg)
 
     def _initChanHandling(self):
-        self._masterChan = 'target-MasterChan'
-        self._subscribedChans    = list()
-        self._pendingSubscribe   = list()
-        self._chanProxy          = dict()
-        self.targets    = dict()
-        self.probes     = dict()
+        self._masterChan        = 'target-MasterChan'
+        self._masterChanRunning = False
+        self._subscribedChans   = list()
+        self._pendingSubscribe  = list()
+        self._chanProxy         = dict()
+        self.targets            = dict()
+        self.probes             = dict()
 
     def _initSignals(self):
         # signals
@@ -76,8 +77,11 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'probeModInfo':
             self.masterSignalsDict['probeModInfo'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'authAck':
-            self._autoSubscribe()
+        elif    msg['msgType'] == 'staticChanInfo':
+            chan    = msg['value']
+            action  = msg['event']
+            if chan == self._masterChan and action == 'create':
+                self._autoSubscribe()
 
         elif    msg['msgType'] == 'subscribeOk':
             self._handleSubscribeOk(msg)
@@ -103,11 +107,11 @@ class ChanHandler(QObject):
 
     def _subscribe(self, channel):
         self.pendingSubscribe.append(channel)
-        nocapi.nSubscribe(channel)
+        nocapi.nSubscribe(self.handleSupercastMsg, channel)
 
     def _unsubscribe(self, channel):
         self.pendingUnsubscribe.append(channel)
-        nocapi.nUnsubscribe(channel)
+        nocapi.nUnsubscribe(self.handleSupercastMsg, channel)
 
     def _handleSubscribeOk(self, msg):
         channel = msg['value']
@@ -133,9 +137,6 @@ class ChanHandler(QObject):
         channel = msg['value']['id']
         self.chanProxy[channel].handleEvent(msg)
 
-    def _autoSubscribe(self):
-        nocapi.nSubscribe(self._masterChan)
-
     def _handleProbeInfo(self, msg):
         probeInfo   = msg['value']
         probeName   = probeInfo['name']
@@ -145,6 +146,17 @@ class ChanHandler(QObject):
         targetInfo  = msg['value']
         targetName  = targetInfo['name']
         self.targets[targetName] = targetInfo
+
+    # startup subscribe
+    def _autoSubscribe(self):
+        nocapi.nSubscribe(self._handleAutoSubscribe, self._masterChan)
+
+    def _handleAutoSubscribe(self, msg):
+        if msg['msgType'] == 'subscribeOk':
+            self._masterchanRunning = True
+        else:
+            print "error: ", msg
+
 
 
 

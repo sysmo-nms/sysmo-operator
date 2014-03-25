@@ -42,19 +42,35 @@ class Supercast(QObject):
         self.serverAuthProto    = ''
         self.staticChans        = dict()
         self._mpd               = dict()
+        self._queries           = dict()
         self.setMessageProcessor('modSupercastPDU', self._handleSupercastPDU)
 
     # from client to socket
     def setMessageProcessor(self, fromKey, pyCallable):
         self._mpd.update({fromKey: pyCallable})
 
-    def subscribe(self, channel):
-        # TODO include an id in the call, and associate it with a callable.
-        self.lQueue.emit(('subscribe', channel))
+    def subscribe(self,   callback, channel):
+        queryId = self._getQueryId(callback)
+        self.lQueue.emit(('subscribe', (queryId, channel)))
 
-    def unsubscribe(self, channel):
-        # TODO include an id in the call, and associate it with a callable.
-        self.lQueue.emit(('unsubscribe', channel))
+    def unsubscribe(self, callback, channel):
+        queryId = self._getQueryId(callback)
+        self.lQueue.emit(('unsubscribe', (queryId, channel)))
+
+    def _getQueryId(self, pyCallable):
+        queryId = 0
+        while True:
+            if queryId not in self._queries:
+                self._queries[queryId] = pyCallable
+                return queryId
+            else:
+                queryId = queryId + 1
+
+    def _queryNotify(self, msg):
+        queryId = msg['queryId']
+        caller  = self._queries[queryId]
+        caller(msg)
+        del self._queries[queryId]
 
     # from socket
     def _handleThreadMsg(self, msg):
@@ -114,12 +130,17 @@ class Supercast(QObject):
             self._setUserConn(True)
             self.groups = msg['value']['groups']
             for item in msg['value']['chans']:
-                self._handleChanInfo(msg, item)
+                self._handleChanInfo(item)
         elif (msgType == 'subscribeOk'):
             self._subscribeSuccess(msg['value'])
-            self._broadcast(msg)
+            self._queryNotify(msg)
         elif (msgType == 'unsubscribeOk'):
-            self._broadcast(msg)
+            self._unsubscribeSuccess(msg['value'])
+            self._queryNotify(msg)
+        elif (msgType == 'subscribeErr'):
+            self._queryNotify(msg)
+        elif (msgType == 'unsubscribeErr'):
+            self._queryNotify(msg)
         else:
             print "handle other?", msgType
 
@@ -129,9 +150,13 @@ class Supercast(QObject):
     def _unsubscribeSuccess(self, chan):
         self.activeChannels.remove(chan)
 
-    def _handleChanInfo(self, msg, item):
+    def _handleChanInfo(self, item):
         if (item['eventType'] == 'create'):
             self.staticChans.update({item['channelId']: None})
+            msg = dict()
+            msg['msgType']  = 'staticChanInfo'
+            msg['event']    = item['eventType']
+            msg['value']    = item['channelId']
             self._broadcast(msg)
 
     def _broadcast(self, msg):

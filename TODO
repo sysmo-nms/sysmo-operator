@@ -36,4 +36,3 @@ ESTHETIC:
 BUGS
 - tko do not have updated property list. The problem dit not come 
 from the server.
-- Supercast send one authAck, but MonitorProxyEvents get two.

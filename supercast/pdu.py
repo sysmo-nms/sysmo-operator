@@ -384,6 +384,46 @@ class TrackerPDU(univ.Choice):
 ##############################################################################
 class SupercastChan(char.PrintableString): pass
 
+# subscribe messages
+# from client
+class SupercastSubscribe(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',  univ.Integer()),
+        namedtype.NamedType('channel',  SupercastChan())
+    )
+
+class SupercastUnsubscribe(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',  univ.Integer()),
+        namedtype.NamedType('channel',  SupercastChan())
+    )
+
+# from server
+class SupercastUnsubscribeOk(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',  univ.Integer()),
+        namedtype.NamedType('channel',  SupercastChan())
+    )
+
+class SupercastUnsubscribeErr(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',  univ.Integer()),
+        namedtype.NamedType('channel',  SupercastChan())
+    )
+
+class SupercastSubscribeOk(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',  univ.Integer()),
+        namedtype.NamedType('channel',  SupercastChan())
+    )
+
+class SupercastSubscribeErr(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',  univ.Integer()),
+        namedtype.NamedType('channel',  SupercastChan())
+    )
+
+
 
 class SupercastGroup(char.PrintableString): pass
 
@@ -484,7 +524,7 @@ class SupercastPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'subscribeOk',
-            SupercastChan().subtype(
+            SupercastSubscribeOk().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -494,7 +534,7 @@ class SupercastPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'subscribeErr',
-            SupercastChan().subtype(
+            SupercastSubscribeErr().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -504,7 +544,7 @@ class SupercastPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'unsubscribeOk',
-            SupercastChan().subtype(
+            SupercastUnsubscribeOk().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -514,7 +554,7 @@ class SupercastPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'unsubscribeErr',
-            SupercastChan().subtype(
+            SupercastUnsubscribeErr().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -535,7 +575,7 @@ class SupercastPDU_fromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
             'subscribe', 
-            SupercastChan().subtype(
+            SupercastSubscribe().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -545,7 +585,7 @@ class SupercastPDU_fromClient(univ.Choice):
         ),
         namedtype.NamedType(
             'unsubscribe', 
-            SupercastChan().subtype(
+            SupercastUnsubscribe().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -635,28 +675,40 @@ def decode(pdu):
             msg3        = msg2.getComponent()
             msg3_type   = msg2.getName()
             if   msg3_type == 'unsubscribeOk':
+                queryId = msg3.getComponentByName('queryId')
+                channel = msg3.getComponentByName('channel')
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
-                    'value':    str(msg3)
+                    'queryId':  int(queryId),
+                    'value':    str(channel)
                 }
             elif msg3_type == 'subscribeOk':
+                queryId = msg3.getComponentByName('queryId')
+                channel = msg3.getComponentByName('channel')
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
-                    'value':    str(msg3)
+                    'queryId':  int(queryId),
+                    'value':    str(channel)
                 }
             elif msg3_type == 'subscribeErr':
+                queryId = msg3.getComponentByName('queryId')
+                channel = msg3.getComponentByName('channel')
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
-                    'value':    str(msg3)
+                    'queryId':  int(queryId),
+                    'value':    str(channel)
                 }
             elif msg3_type == 'unsubscribeErr':
+                queryId = msg3.getComponentByName('queryId')
+                channel = msg3.getComponentByName('channel')
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
-                    'value':    str(msg3)
+                    'queryId':  int(queryId),
+                    'value':    str(channel)
                 }
             elif msg3_type == 'chanInfo':
                 channel = msg3.getComponentByName('channel')
@@ -1049,27 +1101,36 @@ def decode(pdu):
 
 
 def encode(pduType, payload):
-    print "encode: ", pduType, payload
     if   pduType == 'subscribe':
-        channel = payload
-        return encode_subscribe(channel)
+        (queryId, channel) = payload
+        return encode_subscribe(queryId, channel)
     elif pduType == 'unsubscribe':
-        channel = payload
-        return encode_unsubscribe(payload)
+        (queryId, channel) = payload
+        return encode_unsubscribe(queryId, channel)
     elif pduType == 'authResp':
         (userId, password) = payload
         return encode_authResp(userId, password)
     else:
         return False
 
-def encode_unsubscribe(chanString):
-    chan = SupercastChan(chanString).subtype(
+def encode_unsubscribe(queryId, chanString):
+    #chan = SupercastChan(chanString).subtype(
+        #implicitTag=tag.Tag(
+            #tag.tagClassContext,
+            #tag.tagFormatSimple,
+            #1
+        #)
+    #)
+    unsubscribe = SupercastUnsubscribe().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
             tag.tagFormatSimple,
             1
         )
     )
+    unsubscribe.setComponentByName('queryId', univ.Integer(queryId))
+    unsubscribe.setComponentByName('channel', char.PrintableString(chanString))
+
     fromClient = SupercastPDU_fromClient().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
@@ -1086,20 +1147,23 @@ def encode_unsubscribe(chanString):
     )
     pduDef = NmsPDU()
 
-    fromClient.setComponentByName('unsubscribe', chan)
+    fromClient.setComponentByName('unsubscribe', unsubscribe)
     supercastPDU.setComponentByName('fromClient', fromClient)
     pduDef.setComponentByName('modSupercastPDU', supercastPDU)
     pdu = encoder.encode(pduDef)
     return pdu
 
-def encode_subscribe(chanString):
-    chan = SupercastChan(chanString).subtype(
+def encode_subscribe(queryId, chanString):
+    subscribe = SupercastSubscribe().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
             tag.tagFormatSimple,
             0
         )
     )
+    subscribe.setComponentByName('queryId', univ.Integer(queryId))
+    subscribe.setComponentByName('channel', char.PrintableString(chanString))
+
     fromClient = SupercastPDU_fromClient().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
@@ -1116,7 +1180,7 @@ def encode_subscribe(chanString):
     )
     pduDef = NmsPDU()
 
-    fromClient.setComponentByName('subscribe', chan)
+    fromClient.setComponentByName('subscribe', subscribe)
     supercastPDU.setComponentByName('fromClient', fromClient)
     pduDef.setComponentByName('modSupercastPDU', supercastPDU)
     pdu = encoder.encode(pduDef)
