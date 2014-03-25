@@ -1,3 +1,5 @@
+#!/usr/bin/env python27
+
 # python lib
 import  sys
 import  re

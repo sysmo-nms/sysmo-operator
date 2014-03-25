@@ -8,8 +8,7 @@ QT_PLUGINS_DIR  = /cygdrive/c/Python27/Lib/site-packages/PySide/plugins
 win32Binary: clean
 	$(PYTHON_EXE) setup.py py2exe
 	cp -r html $(DIST_DIR)
-	cp -r icons $(DIST_DIR)
-	cp -r style $(DIST_DIR)
+	cp -r graphics $(DIST_DIR)
 	cp -r $(QT_PLUGINS_DIR) $(DIST_DIR)
 	cp qt.conf $(DIST_DIR)
 	rm -rf $(BUILD_DIR)
