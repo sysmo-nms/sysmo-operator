@@ -1048,22 +1048,17 @@ def decode(pdu):
         return {}
 
 
-def encode(pduType, chanString=None, userId=None, password=None):
+def encode(pduType, payload):
+    print "encode: ", pduType, payload
     if   pduType == 'subscribe':
-        if chanString != None:
-            return encode_subscribe(chanString)
-        else:
-            return False
+        channel = payload
+        return encode_subscribe(channel)
     elif pduType == 'unsubscribe':
-        if chanString != None: 
-            return encode_unsubscribe(chanString)
-        else:
-            return False
+        channel = payload
+        return encode_unsubscribe(payload)
     elif pduType == 'authResp':
-        if (userId != None and password != None): 
-            return encode_authResp(userId, password)
-        else:
-            return False
+        (userId, password) = payload
+        return encode_authResp(userId, password)
     else:
         return False
 

@@ -233,7 +233,7 @@ class SupercastSocket(QThread):
             self.socket.connectToHost(server, port)
         elif key == 'authResp':
             (name, passw) = payload
-            pdu = encode(key, userId=name, password=passw)
+            pdu = encode('authResp', (name, passw))
             self._sendToServer(pdu)
         else:
             pdu = encode(key, payload)
