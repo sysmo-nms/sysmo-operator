@@ -28,6 +28,8 @@ to calculate the probes QProgressBars (step and timeout)
 entries of the treeview).
 - threading QTimelines,
 - traceroute tool
+- animate central stack
+    (QWidget->QGraphicScene->QML->QGraphicsProxyWidget->QWidget)
 
 ESTHETIC:
 - higlight selection in treeview
