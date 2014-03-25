@@ -28,7 +28,10 @@ class Central(NSplitterContainer):
         self.setViewMode(nocapi.nGetViewMode())
 
     def _initToggle(self):
-        self._collapsed  = False
+        self._collapseTimeline  = QTimeLine(100, self)
+        self._collapseTimeline.setCurveShape(QTimeLine.EaseInOutCurve)
+        self._collapseTimeline.setUpdateInterval(20)
+        self._collapseTimeline.frameChanged[int].connect(self._setSplitterSize)
         nocapi.nConnectAppToggled(self.toggleButtonClicked)
 
     def _initDockWidget(self): pass
@@ -51,22 +54,35 @@ class Central(NSplitterContainer):
         settings = QSettings("Noctopus NMS", "monitor")
         self.restoreGeometry(settings.value("monitor/geometry"))
         self.restoreState(settings.value("monitor/state"))
+        oldPosition = settings.value("monitor/oldPosition")
+
+        if oldPosition != None:
+            self._oldPosition = oldPosition
+        else:
+            self._oldPosition = 300
+
 
     def _willClose(self):
         settings = QSettings("Noctopus NMS", "monitor")
         settings.setValue("monitor/geometry",   self.saveGeometry())
         settings.setValue("monitor/state",      self.saveState())
+        settings.setValue("monitor/oldPosition", self._oldPosition)
         # close rrdtool thread (self._rrdtool.quit())
 
     # CALLS from noctopus_* modules
     def toggleButtonClicked(self, app):
         if app != 'monitor': return
-        if self._collapsed == False:
-            self._leftTree.hide()
-            self._collapsed = True
-        elif self._collapsed == True:
-            self._leftTree.show()
-            self._collapsed = False
+        [left, _] = self.sizes()
+        if left != 0:
+            self._oldPosition = left
+            self._collapseTimeline.setFrameRange(left, 0)
+            self._collapseTimeline.start()
+        else:
+            self._collapseTimeline.setFrameRange(0, self._oldPosition)
+            self._collapseTimeline.start()
+
+    def _setSplitterSize(self, value):
+        self.moveSplitter(value, 1)
 
     def setViewMode(self, mode):
         print "set viewwwwwwwww mode ", mode
