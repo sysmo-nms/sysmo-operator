@@ -62,6 +62,7 @@ class Central(NSplitterContainer):
         settings = QSettings("Noctopus NMS", "monitor")
         settings.setValue("monitor/geometry",   self.saveGeometry())
         settings.setValue("monitor/state",      self.saveState())
+        # close rrdtool thread (self._rrdtool.quit())
 
     # CALLS from noctopus_* modules
     def toggleButtonClicked(self, app):
