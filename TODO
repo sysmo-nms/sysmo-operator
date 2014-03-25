@@ -29,7 +29,8 @@ entries of the treeview).
 - threading QTimelines,
 - traceroute tool
 - animate central stack
-    (QWidget->QGraphicScene->QML->QGraphicsProxyWidget->QWidget)
+    (QGraphicScene->QGraphicsProxyWidget->QWidget)
+- double clic sur la rample inverse le toggle (vue max de la liste)
 
 ESTHETIC:
 - higlight selection in treeview
