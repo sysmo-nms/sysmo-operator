@@ -72,13 +72,19 @@ class NMainWindow(QMainWindow):
     # }
 
     willClose       = Signal()
+    # emit when the application will close
+
+    supercastEnabled = Signal()
+    # emit when supercast is enabled
 
     def __init__(self, parent=None):
         super(NMainWindow, self).__init__(parent)
         NMainWindow.singleton = self
         self.setObjectName('MainWindow')
         self.setWindowTitle('Noctopus')
+
         noctopusGraphicsInit()
+        self._initSupercast()
 
         self._initProxySettings()
         self._initViewModes()
@@ -88,7 +94,6 @@ class NMainWindow(QMainWindow):
         self._restoreSettings()
         self._initLayout()
         self._initMenus()
-        self._initSupercast()
 
 
     #########
@@ -97,15 +102,16 @@ class NMainWindow(QMainWindow):
 
     # Supercast
     def _initSupercast(self):
-        self._supercastLogged = False
-        self._supercast = Supercast(self, mainwindow=self)
-        self._supercast.eventSignals.connect(self._handleSupercastEvents)
-        self._supercast.tryLogin()
+        self.supercastLogged = False
+        self.supercast = Supercast(self, mainwindow=self)
+        self.supercast.eventSignals.connect(self._handleSupercastEvents)
+        self.supercast.tryLogin()
 
     def _handleSupercastEvents(self, event):
         (key, payload) = event
         if    key == 'success':
             self._supercastLogged = True
+            self.supercastEnabled.emit()
             self.show()
         elif  key == 'abort':
             self.close()
@@ -227,7 +233,7 @@ class NMainWindow(QMainWindow):
         settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
         settings.setValue("NMainWindow/viewMode",       self.activeViewMode)
         settings.setValue("NMainWindow/style",          self._noctopusStyle)
-        self._supercast.supercastClose()
+        self.supercast.supercastClose()
         QMainWindow.closeEvent(self, event)
 
     ############

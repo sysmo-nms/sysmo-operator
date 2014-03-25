@@ -1,14 +1,14 @@
 from    PySide.QtGui    import *
 from    PySide.QtCore   import *
 
-import  noctopus_api
-from    opus.monitor    import norrd
+import  nocapi
+from    opus.monitor                 import norrd
 from    opus.monitor.trees_area.main import TreeContainer
-from    noctopus_widgets    import NSplitterContainer
+from    opus.monitor.channel_proxy   import ChanHandler
+from    noctopus_widgets             import NSplitterContainer
 
 #from    opus.monitor.widgets       import *
 
-#from    MonitorProxyEvents  import ChannelHandler
 
 #import  MonitorDashboardArea
 #import  MonitorTreeArea
@@ -18,9 +18,9 @@ class Central(NSplitterContainer):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         Central.singleton = self
-        noctopus_api.nConnectWillClose(self._willClose)
+        nocapi.nConnectWillClose(self._willClose)
         self._initRrdtool()
-        self._initProxy()
+        self._initChanProxy()
         self._initLayout()
         self._initDockWidget()
         self._initToggle()
@@ -28,12 +28,12 @@ class Central(NSplitterContainer):
         self._readSettings()
 
     def _initViewMode(self):
-        noctopus_api.nConnectViewMode(self.setViewMode)
-        self.setViewMode(noctopus_api.nGetViewMode())
+        nocapi.nConnectViewMode(self.setViewMode)
+        self.setViewMode(nocapi.nGetViewMode())
 
     def _initToggle(self):
         self._collapsed  = False
-        noctopus_api.nConnectAppToggled(self.toggleButtonClicked)
+        nocapi.nConnectAppToggled(self.toggleButtonClicked)
 
     def _initDockWidget(self): pass
 #         tko.addTopDockWidget(Summary(self), 'Monitori')
@@ -50,8 +50,8 @@ class Central(NSplitterContainer):
     def _initRrdtool(self):
         self._rrdtool = norrd.init(parent=self)
 
-    def _initProxy(self): pass
-        #self.eventHandler       = ChannelHandler(self, 5)
+    def _initChanProxy(self): 
+        self._eventHandler = ChanHandler(self, 5)
 
     def _readSettings(self):
         settings = QSettings("Noctopus NMS", "monitor")

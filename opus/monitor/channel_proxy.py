@@ -1,11 +1,11 @@
 from    PySide.QtCore   import *
 import  re
-import  norrdQtThreaded
-import  Supercast
-from    collections import deque
+import  norrd
+import  nocapi
+from    collections         import deque
+from    noctopus_widgets    import NFrameContainer
 
-
-class ChannelHandler(QObject):
+class ChanHandler(QObject):
     
     " This class handle other widgets subscription and emit message "
     " received by the server with Signal(). The method 'handleMSG' receive "
@@ -14,22 +14,26 @@ class ChannelHandler(QObject):
     " limitations."
 
     def __init__(self, parent, maxChans=3):
-        super(ChannelHandler, self).__init__(parent)
-        # simple init
-        ChannelHandler.singleton = self
-        self.sc         = Supercast.Link.singleton
-        self.sc.setMessageProcessor('modTrackerPDU', self.handleMsg)
-        self.masterChan = 'target-MasterChan'
+        super(ChanHandler, self).__init__(parent)
+        ChanHandler.singleton = self
         
-        # register handle probeInfo and targetInfo
+        nocapi.nConnectSupercastEnabled(self._initSupercast)
+
+        self._initChanHandling()
+        self._initSignals()
+
+    def _initSupercast(self):
+        nocapi.nSetMessageProcessor('modTrackerPDU', self.handleSupercastMsg)
+
+    def _initChanHandling(self):
+        self._masterChan = 'target-MasterChan'
+        self._subscribedChans    = list()
+        self._pendingSubscribe   = list()
+        self._chanProxy          = dict()
         self.targets    = dict()
         self.probes     = dict()
 
-        # channel handling
-        self.subscribedChans    = list()
-        self.pendingSubscribe   = list()
-        self.chanProxy          = dict()
-
+    def _initSignals(self):
         # signals
         self.masterSignalsDict = dict()
         self.masterSignalsDict['probeInfo']     = SimpleSignal(self)
@@ -47,7 +51,7 @@ class ChannelHandler(QObject):
         self.masterSignalsDict['probeEventMsg'].signal.connect(self._handleEventMsg)
         # END
 
-    def handleMsg(self, msg):
+    def handleSupercastMsg(self, msg):
         if      msg['msgType'] == 'probeReturn':
             self.masterSignalsDict['probeReturn'].signal.emit(msg)
 
@@ -80,8 +84,6 @@ class ChannelHandler(QObject):
 
         elif    msg['msgType'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
-
-
         else: 
             print "unknown msg received", msg['msgType']
 
@@ -101,21 +103,21 @@ class ChannelHandler(QObject):
 
     def _subscribe(self, channel):
         self.pendingSubscribe.append(channel)
-        self.sc.subscribe(channel)
+        nocapi.nSubscribe(channel)
 
     def _unsubscribe(self, channel):
         self.pendingUnsubscribe.append(channel)
-        self.sc.unsubscribe(channel)
+        nocapi.nUnsubscribe(channel)
 
     def _handleSubscribeOk(self, msg):
         channel = msg['value']
-        if channel == self.masterChan: return
+        if channel == self._masterChan: return
         self.pendingSubscribe.remove(channel)
         self.subscribedChans.append(channel)
 
     def _handleUnsubscribeOk(self, msg):
         channel = msg['value']
-        if channel == self.masterChan: return
+        if channel == self._masterChan: return
         self.chanSignals[channel].destroy()
         del self.chanSignals[channel]
 
@@ -132,7 +134,7 @@ class ChannelHandler(QObject):
         self.chanProxy[channel].handleEvent(msg)
 
     def _autoSubscribe(self):
-        self.sc.subscribe(self.masterChan)
+        nocapi.nSubscribe(self._masterChan)
 
     def _handleProbeInfo(self, msg):
         probeInfo   = msg['value']
@@ -143,6 +145,8 @@ class ChannelHandler(QObject):
         targetInfo  = msg['value']
         targetName  = targetInfo['name']
         self.targets[targetName] = targetInfo
+
+
 
 
 class Channel(QObject):
@@ -257,12 +261,9 @@ class Channel(QObject):
             commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
             norrdQtThreaded.cmd(commandString)
 
-class SimpleSignal(QObject):
-    signal = Signal(dict)
-    def __init__(self, parent):
-        super(SimpleSignal, self).__init__(parent)
 
-class AbstractChannelQFrame(QFrame):
+
+class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelQFrame, self).__init__(parent)
         self.__channel = channel
@@ -279,3 +280,10 @@ class AbstractChannelQFrame(QFrame):
     def destroy(self):
         self.__disconnectProbe()
         QFrame.destroy(self)
+
+
+
+class SimpleSignal(QObject):
+    signal = Signal(dict)
+    def __init__(self, parent):
+        super(SimpleSignal, self).__init__(parent)

@@ -5,7 +5,7 @@ import  platform
 from PySide.QtGui       import QApplication
 from PySide.QtCore      import QSettings
 import noctopus_main
-import noctopus_api
+import nocapi
 
 
 osType = platform.platform()
@@ -29,5 +29,5 @@ else:
 
 noctopusApp = QApplication(sys.argv)
 noctopus    = noctopus_main.NMainWindow()
-noctopus.setWindowIcon(noctopus_api.nGetIcon('applications-development'))
+noctopus.setWindowIcon(nocapi.nGetIcon('applications-development'))
 sys.exit(noctopusApp.exec_())

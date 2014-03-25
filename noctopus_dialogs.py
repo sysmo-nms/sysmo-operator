@@ -11,8 +11,8 @@ from    PySide.QtGui        import (
     QLabel
 )
 from    PySide.QtSvg        import QSvgWidget
-from    noctopus_api        import nGetImage, nGetIcon, nGetProxySettings
 from    noctopus_widgets    import NFrame, NGrid
+import  nocapi
 
 class Proxy(QDialog):
     def __init__(self, callback, parent=None):
@@ -24,7 +24,7 @@ class Proxy(QDialog):
         self.show()
 
     def _initState(self):
-        proxySet = nGetProxySettings()
+        proxySet = nocapi.nGetProxySettings()
         host = proxySet['host']
         port = proxySet['port']
         self.serverLineEdit.setText(host)
@@ -95,20 +95,20 @@ class Proxy(QDialog):
     def _initButtonFrame(self):
         # button area
         ok = QPushButton(
-            nGetIcon('applications-development'),
+            nocapi.nGetIcon('applications-development'),
             self.tr("&Validate"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self._validate)
 
         ko = QPushButton(
-            nGetIcon('process-stop'),
+            nocapi.nGetIcon('process-stop'),
             self.tr("&Abort"),
             self)
         ko.clicked.connect(self.close)
 
         helpB = QPushButton(
-            nGetIcon('dialog-information'),
+            nocapi.nGetIcon('dialog-information'),
             self.tr("&Help"),
             self)
         helpB.setEnabled(False)

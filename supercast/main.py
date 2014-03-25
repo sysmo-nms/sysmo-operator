@@ -123,6 +123,9 @@ class Supercast(QObject):
         else:
             print "handle other?", msgType
 
+    def _subscribeSuccess(self, chan):
+        self.activeChannels.append(chan)
+
     def _unsubscribeSuccess(self, chan):
         self.activeChannels.remove(chan)
 
