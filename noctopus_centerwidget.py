@@ -29,6 +29,7 @@ class NCentralStack(NFrameContainer):
     def __init__(self, parent):
         super(NCentralStack, self).__init__(parent)
         self._stack = QStackedLayout(self)
+        self._stack.setContentsMargins(0,0,0,0)
         self._stackElements = dict()
         self.setLayout(self._stack)
 

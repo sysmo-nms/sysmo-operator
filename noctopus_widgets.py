@@ -9,6 +9,7 @@ from    PySide.QtGui    import (
 class NSplitter(QSplitter):
     def __init__(self, parent=None):
         super(NSplitter, self).__init__(parent)
+        self.setContentsMargins(2,2,2,2)
 
 class NSplitterContainer(QSplitter):
     def __init__(self, parent=None):
@@ -19,6 +20,7 @@ class NSplitterContainer(QSplitter):
 class NFrame(QFrame):
     def __init__(self, parent=None):
         super(NFrame, self).__init__(parent)
+        self.setContentsMargins(2,2,2,2)
 
 class NFrameContainer(QFrame):
     " QFrame with contents margins to 0 0 0 0 "
@@ -30,6 +32,7 @@ class NFrameContainer(QFrame):
 class NGrid(QGridLayout):
     def __init__(self, parent=None):
         super(NGrid, self).__init__(parent)
+        self.setContentsMargins(4,4,4,4)
 
 class NGridContainer(QGridLayout):
     " QGridLayout with contents margins to 0 0 0 0 "

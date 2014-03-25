@@ -4,15 +4,11 @@ from    PySide.QtCore   import *
 import  nocapi
 from    opus.monitor                 import norrd
 from    opus.monitor.trees_area.main import TreeContainer
+from    opus.monitor.dash_area.main  import DashContainer
 from    opus.monitor.channel_proxy   import ChanHandler
 from    noctopus_widgets             import NSplitterContainer
 
 #from    opus.monitor.widgets       import *
-
-
-#import  MonitorDashboardArea
-#import  MonitorTreeArea
-#import  TkorderMain
 
 class Central(NSplitterContainer):
     def __init__(self, parent):
@@ -39,11 +35,9 @@ class Central(NSplitterContainer):
 #         tko.addTopDockWidget(Summary(self), 'Monitori')
 
     def _initLayout(self):
-#         self._leftTree   = MonitorTreeArea.TreeContainer(self)
 #         self._rightDash  = MonitorDashboardArea.DashboardStack(self)
-        self._leftTree = TreeContainer(self)
-        #self._leftTree = QLabel('hlk', self)
-        self._rightDash = QLabel('right', self)
+        self._leftTree  = TreeContainer(self)
+        self._rightDash = DashContainer(self)
         self.addWidget(self._leftTree)
         self.addWidget(self._rightDash)
 

@@ -1,20 +1,32 @@
 from    PySide.QtCore   import *
 from    PySide.QtGui    import *
-from    MonitorProxyEvents   import ChannelHandler
-from    DashboardTree   import *
-import    MonitorDashboardArea
-from    NewTargetForm   import  AddTargetWizard
-from    CommonWidgets   import  *
-import  TkorderIcons
 
+import nocapi
+from    noctopus_widgets        import (
+    NFrame,
+    NFrameContainer,
+    NGrid,
+    NGridContainer
+)
+from    opus.monitor.widgets    import  *
 
-##############################################################################
-### PROBES TREEVIEW ##########################################################
-##############################################################################
-class MonitorTreeView(QTreeView):
+class ProbesTree(NFrame):
     def __init__(self, parent):
-        super(MonitorTreeView, self).__init__(parent)
-        MonitorTreeView.singleton = self
+        super(ProbesTree, self).__init__(parent)
+        self.setFrameShape(QFrame.StyledPanel)
+        self._grid = NGrid(self)
+        self._probesActions     = ProbesActions(self)
+        self._probesTreeview    = ProbesTreeview(self)
+        self._grid.addWidget(self._probesActions,   0,0)
+        self._grid.addWidget(self._probesTreeview,  1,0)
+        self._grid.setRowStretch(0,0)
+        self._grid.setRowStretch(1,1)
+        self.setLayout(self._grid)
+
+class ProbesTreeview(QTreeView):
+    def __init__(self, parent):
+        super(ProbesTreeview, self).__init__(parent)
+        ProbesTree.singleton = self
         self.model   = MonitorTreeModel(self)
         self.proxy   = QSortFilterProxyModel(self)
         self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
@@ -25,14 +37,14 @@ class MonitorTreeView(QTreeView):
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setIconSize(QSize(25, 25)) 
         self.setAnimated(True)
-        self.setFrameShape(QFrame.NoFrame)
+        #self.setFrameShape(QFrame.NoFrame)
         #self.setHeaderHidden(True)
         self.setObjectName('backTree')
-        self.setStyleSheet('QFrame#backTree {   \
-            background-image: url(./icons/hover_info_files.png); \
-            background-repeat: no-repeat;                            \
-            background-attachment: fixed;                            \
-            background-position: bottom right}')
+        self.setStyleSheet('''QFrame#backTree { 
+            background-image: url(./graphics/hover_info_files.png);
+            background-repeat: no-repeat;
+            background-attachment: fixed; 
+            background-position: bottom right}''')
 
         self.createMenus()
         self.contextActions = QAction('test', self)
@@ -129,7 +141,7 @@ class MonitorTreeView(QTreeView):
             modelIndex = self.proxy.mapToSource(proxyIndexes[i])
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
-        MonitorDashboardArea.Dashboard.singleton.userNewSelection(selectionList)
+        #MonitorDashboardArea.Dashboard.singleton.userNewSelection(selectionList)
 
     def userActivity(self, index):
         print "clicked!", self.selectedIndexes()
@@ -164,9 +176,9 @@ class MonitorTreeModel(QStandardItemModel):
     def __init__(self, parent):
         super(MonitorTreeModel, self).__init__(parent)
         self.setHorizontalHeaderLabels(["Targets/Probes"])
-        sigDict = ChannelHandler.singleton.masterSignalsDict
-        sigDict['targetInfo'].signal.connect(self._handleTargetInfo)
-        sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
+        #sigDict = ChannelHandler.singleton.masterSignalsDict
+        #sigDict['targetInfo'].signal.connect(self._handleTargetInfo)
+        #sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
 
     def _handleTargetInfo(self, msg):
         target = self._itemExist(msg['value']['name'])
@@ -311,3 +323,34 @@ class ProbeItem(QStandardItem):
             return TkorderIcons.get('weather-severe-alert')
         if self.status == 'OK':
             return TkorderIcons.get('weather-clear')
+
+class ProbesActions(NFrameContainer):
+    def __init__(self, parent):
+        super(ProbesActions, self).__init__(parent)
+        grid = NGridContainer(self)
+        grid.setHorizontalSpacing(4)
+
+        self._line = QLineEdit(self)
+        self._line.setPlaceholderText('Filter')
+        self._line.textChanged.connect(self._lineChanged)
+
+        add   = QPushButton(self)
+        add.setIcon(nocapi.nGetIcon('list-add'))
+
+        clear = QPushButton(self)
+        clear.setIcon(nocapi.nGetIcon('edit-clear'))
+        clear.clicked.connect(self._line.clear)
+
+        grid.addWidget(add,         0,0)
+        grid.addWidget(clear,       0,1)
+        grid.addWidget(self._line,  0,2)
+
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,0)
+        grid.setColumnStretch(2,1)
+        self.setLayout(grid)
+
+    def _lineChanged(self):
+        text = self._line.text()
+        print text
+        #MonitorTreeview.singleton.filterThis(text)

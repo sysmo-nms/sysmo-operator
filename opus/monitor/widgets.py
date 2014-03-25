@@ -2,9 +2,8 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
 from    PySide.QtWebKit     import *
-import  Monitor
-from    noctopus            import getIcon
 from    noctopus_widgets    import NFrame
+import  nocapi
 
 
 ##################
@@ -99,17 +98,17 @@ class StatusSummary(QPushButton):
 
         # set blinkingPalette and picutre
         if status == 'OK':
-            picture = QSvgWidget(TkorderIcons.getImage('weather-clear'), self)
+            picture = QSvgWidget(nocapi.nGetImage('weather-clear'), self)
         elif status == 'WARNING':
-            picture = QSvgWidget(TkorderIcons.getImage('weather-showers'), self)
+            picture = QSvgWidget(nocapi.nGetImage('weather-showers'), self)
             self.blinkingPalette.setColor(self.blinkingPalette.Light, QColor(255,255,0))
             self.blinkingPalette.setColor(self.blinkingPalette.Dark, QColor(255,255,0))
         elif status == 'CRITICAL':
-            picture = QSvgWidget(TkorderIcons.getImage('weather-severe-alert'), self)
+            picture = QSvgWidget(nocapi.nGetImage('weather-severe-alert'), self)
             self.blinkingPalette.setColor(self.blinkingPalette.Light, QColor(255,0,0))
             self.blinkingPalette.setColor(self.blinkingPalette.Dark, QColor(255,0,0))
         elif status == 'UNKNOWN':
-            picture = QSvgWidget(TkorderIcons.getImage('weather-clear-night'), self)
+            picture = QSvgWidget(nocapi.nGetImage('weather-clear-night'), self)
 
         picture.setFixedHeight(30)
         picture.setFixedWidth(30)

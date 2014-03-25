@@ -1,7 +1,9 @@
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    noctopus_widgets    import NFrameContainer, NGridContainer
-from    opus.monitor.trees_area.widgets import Commands
+from    opus.monitor.trees_area.widgets         import Commands
+from    opus.monitor.trees_area.tree_probes     import ProbesTree
+from    opus.monitor.trees_area.tree_services   import ServicesTree
 
 #from    MonitorProxyEvents   import ChannelHandler
 #from    DashboardTree   import *
@@ -18,16 +20,13 @@ class TreeContainer(NFrameContainer):
     def __init__(self, parent):
         super(TreeContainer, self).__init__(parent)
         TreeContainer.singleton = self
+        #self._commands      = Commands(self)
+        self._probesTree    = ProbesTree(self)
+        self._servicesTree  = ServicesTree(self)
 
-#         self.trackerMain  = parent
-# 
-        self._commands   = Commands(self)
-#         self.searchBar  = MonitorTreeSearch(self)
-# 
 #         self.treeview   = MonitorTreeView(self)
 #         self.dashboardList = DashboardTreeView(self)
 #         self.vServices  = VirtualServices(self)
-        self._tabs       = QTabWidget(self)
 #         self.tabs.addTab(self.dashboardList,    'Dashboards')
 #         self.tabs.addTab(self.vServices,        'Services')
 #         self.tabs.addTab(self.treeview,         'Probes')
@@ -44,19 +43,17 @@ class TreeContainer(NFrameContainer):
 #         self.osmView.setFixedHeight(300)
 # 
         self._grid = NGridContainer(self)
-        self._grid.addWidget(self._commands,           1, 0)
-#         self.grid.addWidget(self.searchBar,          2, 0)
-        self._grid.addWidget(self._tabs,                3, 0)
-#         self.grid.addWidget(self.info,               4, 0)
-# 
+        self._grid.setContentsMargins(2,0,2,0)
+        #self._grid.addWidget(self._commands,           0, 0)
+        self._grid.addWidget(self._probesTree,         1, 0)
+        self._grid.addWidget(self._servicesTree,       2, 0)
+
         self._grid.setRowStretch(0,0)
-        self._grid.setRowStretch(1,0)
-        self._grid.setRowStretch(2,0)
-        self._grid.setRowStretch(3,1)
-        self._grid.setRowStretch(4,0)
+        self._grid.setRowStretch(1,2)
+        self._grid.setRowStretch(2,1)
         self.setLayout(self._grid)
 
-        self.setMaximumWidth(500)
+        #self.setMaximumWidth(500)
 # 
 #     def setMinimalView(self, bol):
 #         if bol == True and self.viewMode == 'full':

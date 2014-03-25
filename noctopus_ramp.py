@@ -28,9 +28,9 @@ from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame
 # extentions
 import  opus.monitor.main
 import  opus.locator.main
-import  opus.logviewer.main
+#import  opus.logviewer.main
 import  opus.iphelper.main
-import  opus.scheduller.main
+#import  opus.scheduller.main
 import  opus.knowledge.main
 
 
@@ -45,6 +45,7 @@ class NSelector(NFrameContainer):
     def __init__(self, parent, stackWidget):
         super(NSelector, self).__init__(parent)
         NSelector.singleton = self
+        self.setContentsMargins(0,2,0,2)
         self._stackWidget   = stackWidget
         self.setFixedWidth(30)
 
@@ -59,7 +60,7 @@ class NSelector(NFrameContainer):
 
     def _initGrid(self):
         self.grid = NGridContainer(self)
-        self.grid.setVerticalSpacing(2)
+        self.grid.setVerticalSpacing(4)
         self.grid.addWidget(self.menuButton, 0,0)
         self.setLayout(self.grid)
 
@@ -131,11 +132,11 @@ class NSelector(NFrameContainer):
         self._buttons['locator']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
-        self._buttons['logviewer'] = dict()
-        self._buttons['logviewer']['row'] = 3
-        self._buttons['logviewer']['widget'] = NSelectorButton(self, 'logviewer')
-        self._buttons['logviewer']['widget'].setIcon(
-            getIcon('utilities-system-monitor-black'))
+        #self._buttons['logviewer'] = dict()
+        #self._buttons['logviewer']['row'] = 3
+        #self._buttons['logviewer']['widget'] = NSelectorButton(self, 'logviewer')
+        #self._buttons['logviewer']['widget'].setIcon(
+            #getIcon('utilities-system-monitor-black'))
 
         self._buttons['iphelper'] = dict()
         self._buttons['iphelper']['row'] = 4
@@ -143,11 +144,11 @@ class NSelector(NFrameContainer):
         self._buttons['iphelper']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
-        self._buttons['scheduller'] = dict()
-        self._buttons['scheduller']['row'] = 5
-        self._buttons['scheduller']['widget'] = NSelectorButton(self, 'scheduller')
-        self._buttons['scheduller']['widget'].setIcon(
-            getIcon('utilities-system-monitor-black'))
+        #self._buttons['scheduller'] = dict()
+        #self._buttons['scheduller']['row'] = 5
+        #self._buttons['scheduller']['widget'] = NSelectorButton(self, 'scheduller')
+        #self._buttons['scheduller']['widget'].setIcon(
+            #getIcon('utilities-system-monitor-black'))
 
         self._buttons['knowledge'] = dict()
         self._buttons['knowledge']['row'] = 6
@@ -162,8 +163,8 @@ class NSelector(NFrameContainer):
         self._stackWidget.addLayer(opus.locator.main.Central,    'locator')
         self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
         self._stackWidget.addLayer(opus.iphelper.main.Central,   'iphelper')
-        self._stackWidget.addLayer(opus.scheduller.main.Central, 'scheduller')
-        self._stackWidget.addLayer(opus.logviewer.main.Central,  'logviewer')
+        #self._stackWidget.addLayer(opus.scheduller.main.Central, 'scheduller')
+        #self._stackWidget.addLayer(opus.logviewer.main.Central,  'logviewer')
 ##############################################################################
 ################# EXTENTION CONFIGURATION END ################################
 ##############################################################################
