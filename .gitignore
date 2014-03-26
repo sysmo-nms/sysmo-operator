@@ -4,6 +4,7 @@
 *.bin
 *.bk
 *.directory
+*.qm
 commercials
 build
 dist

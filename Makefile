@@ -23,15 +23,15 @@ clean:
 	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
 	rm -f *.pyc
 
-translate: translate-dir
+translate: 
 	@R="`find . -name "*.py" -exec echo -n "{} " \;`"; \
 	echo "SOURCES=$$R" > noctopus.pro; \
-	echo "TRANSLATIONS=translate-dir/fr_FR.ts" >> noctopus.pro
-	pyside-lupdate -verbose noctopus.pro
-
-translate-dir:
-	mkdir translate-dir
+	echo "TRANSLATIONS=fr_FR.ts" >> noctopus.pro
+	@pyside-lupdate noctopus.pro
+	@ echo "Launching qt-linguist..."
+	@ echo "Do not forget to release the file when finished (File->Release)"
+	@linguist-qt4 fr_FR.ts
 
 translate-clean:
-	rm -rf translate-dir
 	rm -f noctopus.pro
+	rm -f *.ts

@@ -26,7 +26,7 @@ if noctopusStyle != None:
     QApplication.setStyle(noctopusStyle)
 
 translator   = QTranslator()
-translator.load('translate-dir/fr_FR')
+translator.load('fr_FR')
 
 noctopusApp  = QApplication(sys.argv)
 noctopusApp.installTranslator(translator)
