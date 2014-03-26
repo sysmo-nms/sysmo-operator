@@ -41,18 +41,7 @@ from    noctopus_menus      import initMenus
 # supercast
 from  supercast.main    import Supercast
 
-# extentions
-#import  Monitor.main
-#import  opus.locator.main
-#import  opus.logviewer.main
-#import  opus.iphelper.main
-#import  opus.scheduller.main
-#import  opus.knowledge.main
 
-
-##############################################################################
-####################### MAIN WINDOW ##########################################
-##############################################################################
 class NMainWindow(QMainWindow):
 
     " The noctopus QMainWindow "

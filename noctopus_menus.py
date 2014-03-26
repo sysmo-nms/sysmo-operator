@@ -1,5 +1,6 @@
 # Python
 from functools import partial
+
 # PySide
 from    PySide.QtGui    import (
     QAction,

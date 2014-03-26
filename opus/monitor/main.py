@@ -1,14 +1,15 @@
-from    PySide.QtGui    import *
-from    PySide.QtCore   import *
+from    PySide.QtCore   import (
+    QSettings,
+    QTimeLine
+)
 
-import  nocapi
 from    opus.monitor                 import norrd
 from    opus.monitor.trees_area.main import TreeContainer
 from    opus.monitor.dash_area.main  import DashContainer
-from    opus.monitor.channel_proxy   import ChanHandler
+from    opus.monitor.proxy           import ChanHandler
 from    noctopus_widgets             import NSplitterContainer
 
-#from    opus.monitor.widgets       import *
+import  nocapi
 
 class Central(NSplitterContainer):
     def __init__(self, parent):
@@ -17,6 +18,7 @@ class Central(NSplitterContainer):
         nocapi.nConnectWillClose(self._willClose)
         self._initRrdtool()
         self._initChanProxy()
+
         self._initLayout()
         self._initDockWidget()
         self._initToggle()

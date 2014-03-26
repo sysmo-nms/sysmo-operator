@@ -1,13 +1,12 @@
 #!/usr/bin/env python27
 
-# python lib
+from    PySide.QtGui    import QApplication
+from    PySide.QtCore   import QSettings
 import  sys
 import  re
 import  platform
-from PySide.QtGui       import QApplication
-from PySide.QtCore      import QSettings
-import noctopus_main
-import nocapi
+import  noctopus_main
+import  nocapi
 
 
 osType = platform.platform()

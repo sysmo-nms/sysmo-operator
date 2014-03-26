@@ -1,15 +1,10 @@
 # python lib
-from functools import partial
-
-# PySide
+from    functools       import partial
 from    PySide.QtGui    import (
     QStatusBar,
     QToolButton
 )
-
-
-# local dependencies
-from    noctopus_images     import getIcon
+from    noctopus_images import getIcon
 
 class NStatusBar(QStatusBar):
     def __init__(self, parent):

@@ -25,14 +25,11 @@ from    PySide.QtGui    import (
 from    noctopus_images     import getIcon
 from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame
 
-# extentions
+# opus
 import  opus.monitor.main
 import  opus.locator.main
-#import  opus.logviewer.main
 import  opus.iphelper.main
-#import  opus.scheduller.main
 import  opus.knowledge.main
-
 
 # SELECTOR RAMP ###############################################################
 class NSelector(NFrameContainer):
@@ -132,26 +129,14 @@ class NSelector(NFrameContainer):
         self._buttons['locator']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
-        #self._buttons['logviewer'] = dict()
-        #self._buttons['logviewer']['row'] = 3
-        #self._buttons['logviewer']['widget'] = NSelectorButton(self, 'logviewer')
-        #self._buttons['logviewer']['widget'].setIcon(
-            #getIcon('utilities-system-monitor-black'))
-
         self._buttons['iphelper'] = dict()
-        self._buttons['iphelper']['row'] = 4
+        self._buttons['iphelper']['row'] = 3
         self._buttons['iphelper']['widget'] = NSelectorButton(self, 'iphelper')
         self._buttons['iphelper']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
 
-        #self._buttons['scheduller'] = dict()
-        #self._buttons['scheduller']['row'] = 5
-        #self._buttons['scheduller']['widget'] = NSelectorButton(self, 'scheduller')
-        #self._buttons['scheduller']['widget'].setIcon(
-            #getIcon('utilities-system-monitor-black'))
-
         self._buttons['knowledge'] = dict()
-        self._buttons['knowledge']['row'] = 6
+        self._buttons['knowledge']['row'] = 4
         self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
         self._buttons['knowledge']['widget'].setIcon(
             getIcon('utilities-system-monitor-black'))
@@ -163,8 +148,6 @@ class NSelector(NFrameContainer):
         self._stackWidget.addLayer(opus.locator.main.Central,    'locator')
         self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
         self._stackWidget.addLayer(opus.iphelper.main.Central,   'iphelper')
-        #self._stackWidget.addLayer(opus.scheduller.main.Central, 'scheduller')
-        #self._stackWidget.addLayer(opus.logviewer.main.Central,  'logviewer')
 ##############################################################################
 ################# EXTENTION CONFIGURATION END ################################
 ##############################################################################

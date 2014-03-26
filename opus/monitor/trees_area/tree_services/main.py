@@ -4,8 +4,15 @@ from    PySide.QtGui    import (
     QLineEdit,
     QPushButton
 )
+
+from noctopus_widgets   import (
+    NFrame,
+    NFrameContainer,
+    NGridContainer,
+    NGrid
+)
+
 import nocapi
-from noctopus_widgets import NFrame, NFrameContainer, NGridContainer, NGrid
 
 
 class ServicesTree(NFrame):
@@ -30,8 +37,9 @@ class ServicesTreeview(QTreeView):
         self.setStyleSheet('''QFrame#serviceTree {
             background-image: url(./graphics/hover_info_files.png);
             background-repeat: no-repeat;
+            background-color: %s;
             background-attachment: fixed;
-            background-position: botom right}''')
+            background-position: botom right}''' % nocapi.nGetRgb('Base'))
 
 class ServicesActions(NFrameContainer):
     def __init__(self, parent):

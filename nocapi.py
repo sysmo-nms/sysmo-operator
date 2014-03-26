@@ -41,7 +41,7 @@ def nGetRgb(paletteKey):
     ''' return:
         str = "%R%G%B"
     '''
-    return noctopus_images.getRbg(paletteKey)
+    return noctopus_images.getRgb(paletteKey)
 
 def nGetRgba(paletteKey):
     ''' return:

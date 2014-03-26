@@ -1,16 +1,16 @@
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
-import  TkorderIcons
+import  nocapi
 
 class AddTargetWizard(QWizard):
     def __init__(self, parent=None):
         super(AddTargetWizard, self).__init__(parent)
         self.setModal(False)
         self.setWindowTitle('Create a target')
-        self.setPixmap(QWizard.WatermarkPixmap, TkorderIcons.get('list-add').pixmap(100,100))
+        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetIcon('list-add').pixmap(100,100))
         #self.setPixmap(QWizard.LogoPixmap, TkorderIcons.get('list-add').pixmap(100,100))
-        self.setPixmap(QWizard.BannerPixmap, TkorderIcons.get('list-add').pixmap(100,100))
-        self.setPixmap(QWizard.BackgroundPixmap, TkorderIcons.get('list-add').pixmap(100,100))
+        self.setPixmap(QWizard.BannerPixmap, nocapi.nGetIcon('list-add').pixmap(100,100))
+        self.setPixmap(QWizard.BackgroundPixmap, nocapi.nGetIcon('list-add').pixmap(100,100))
         self.setOption(QWizard.ExtendedWatermarkPixmap)
         self.setOption(QWizard.NoBackButtonOnStartPage)
         self.addPage(self.stepOne())

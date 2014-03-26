@@ -1,9 +1,12 @@
-from    PySide.QtCore   import *
+from    PySide.QtCore   import (
+    QObject,
+    Signal
+)
+from    collections         import deque
+from    noctopus_widgets    import NFrameContainer
 import  re
 import  norrd
 import  nocapi
-from    collections         import deque
-from    noctopus_widgets    import NFrameContainer
 
 class ChanHandler(QObject):
     
@@ -156,9 +159,6 @@ class ChanHandler(QObject):
             self._masterchanRunning = True
         else:
             print "error: ", msg
-
-
-
 
 
 class Channel(QObject):
