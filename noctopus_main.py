@@ -36,7 +36,6 @@ from    noctopus_images     import getIcon, noctopusGraphicsInit
 from    noctopus_dialogs    import Proxy
 from    noctopus_statusbar  import NStatusBar
 from    noctopus_centerwidget   import NCentralFrame
-from    noctopus_menus      import initMenus
 
 # supercast
 from  supercast.main    import Supercast
