@@ -1,4 +1,4 @@
-#!/usr/bin/env python27
+#!/usr/bin/env python
 
 from    PySide.QtGui    import QApplication
 from    PySide.QtCore   import QSettings
