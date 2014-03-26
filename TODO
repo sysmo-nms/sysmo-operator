@@ -16,6 +16,7 @@ for targets and custom targets.
 . MDI view, when the user create his own rrd graphs view,
 . Map view, when links betwin nodes represent a probe rrd.
 . Map zoom, zoom on map show more precise layers of info
+. add request ID on a subscribe call to identifie the recever
 
 
 MAYBE:
@@ -25,8 +26,11 @@ the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
 - perf: build the maximum number of view widget at startup (total of probe
 entries of the treeview).
-- threading (Socket, Supercast (encode, decode), QTimelines)
+- threading QTimelines,
 - traceroute tool
+- animate central stack
+    (QGraphicScene->QGraphicsProxyWidget->QWidget)
+- double clic sur la rample inverse le toggle (vue max de la liste)
 
 ESTHETIC:
 - higlight selection in treeview
@@ -35,4 +39,3 @@ ESTHETIC:
 BUGS
 - tko do not have updated property list. The problem dit not come 
 from the server.
-- Supercast send one authAck, but MonitorProxyEvents get two.

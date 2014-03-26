@@ -5,11 +5,12 @@ RELEASE_NAME = noctopus-win32
 RELEASE_VERSION = 0.1
 QT_PLUGINS_DIR  = /cygdrive/c/Python27/Lib/site-packages/PySide/plugins
 
+compile: win32Binary
+
 win32Binary: clean
 	$(PYTHON_EXE) setup.py py2exe
 	cp -r html $(DIST_DIR)
-	cp -r icons $(DIST_DIR)
-	cp -r style $(DIST_DIR)
+	cp -r graphics $(DIST_DIR)
 	cp -r $(QT_PLUGINS_DIR) $(DIST_DIR)
 	cp qt.conf $(DIST_DIR)
 	rm -rf $(BUILD_DIR)
@@ -21,3 +22,16 @@ clean:
 	rm -rf build
 	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
 	rm -f *.pyc
+
+translate: 
+	@R="`find . -name "*.py" -exec echo -n "{} " \;`"; \
+	echo "SOURCES=$$R" > noctopus.pro; \
+	echo "TRANSLATIONS=fr_FR.ts" >> noctopus.pro
+	@pyside-lupdate noctopus.pro
+	@ echo "Launching qt-linguist..."
+	@ echo "Do not forget to release the file when finished (File->Release)"
+	@linguist-qt4 fr_FR.ts
+
+translate-clean:
+	rm -f noctopus.pro
+	rm -f *.ts

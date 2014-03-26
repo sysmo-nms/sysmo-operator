@@ -5,7 +5,7 @@ sys.path.append("C:\\WINDOWS\\WinSxS\\x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.
 
 setup(
     windows = [
-      {'script': 'noctopus'}
+      {'script': 'noctopus.py'}
     ],
     options = {
         'py2exe' : {
