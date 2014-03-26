@@ -25,7 +25,7 @@ if noctopusStyle == None:
 if noctopusStyle != None:
     QApplication.setStyle(noctopusStyle)
 
-currentStyle = QApplication.style().objectName()
 noctopusApp  = QApplication(sys.argv)
+currentStyle = noctopusApp.style().objectName()
 noctopus     = noctopus_main.NMainWindow(currentStyle)
 sys.exit(noctopusApp.exec_())
