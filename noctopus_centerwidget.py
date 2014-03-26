@@ -13,6 +13,7 @@ class NCentralFrame(NFrame):
     def __init__(self, parent):
         super(NCentralFrame, self).__init__(parent)
         grid = NGrid(self)
+        grid.setHorizontalSpacing(2)
         self.centralStack   = NCentralStack(self)
         self.selector       = NSelector(self, self.centralStack)
         grid.addWidget(self.selector,       0,0,0,1)
