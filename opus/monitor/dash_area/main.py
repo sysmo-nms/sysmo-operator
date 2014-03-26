@@ -29,7 +29,7 @@ class DashContainer(NFrame):
 class DashTab(QTabWidget):
     def __init__(self, parent):
         super(DashTab, self).__init__(parent)
-        self.addTab(Dashboard(self), 'Default')
+        self.addTab(Dashboard(self), self.tr('Default'))
         #self.setFrameShape(QFrame.StyledPanel)
         #self.setContentsMargins(6,4,2,4)
         #self._grid      = NGrid(self)

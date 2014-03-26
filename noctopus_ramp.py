@@ -199,9 +199,9 @@ class NSelectorButton(QPushButton):
 
     def _initMenu(self):
         self._menu = QMenu(self)
-        self.goUp    = self._menu.addAction(getIcon('go-up'),       'Move up')
-        self.goDown  = self._menu.addAction(getIcon('go-down'),     'Move down')
-        self.goRemove = self._menu.addAction(getIcon('list-remove'), 'Remove')
+        self.goUp    = self._menu.addAction(getIcon('go-up'),       self.tr('Move up'))
+        self.goDown  = self._menu.addAction(getIcon('go-down'),     self.tr('Move down'))
+        self.goRemove = self._menu.addAction(getIcon('list-remove'), self.tr('Remove'))
 
         self.goUp.triggered.connect(partial(self._parent.goUp, self._identifier))
         self.goDown.triggered.connect(partial(self._parent.goDown, self._identifier))

@@ -41,17 +41,17 @@ class DashboardControls(NFrameContainer):
         self.buttonGroup.setExclusive(True)
 
 
-        browse  = QPushButton('browse', self)
+        browse  = QPushButton(self.tr('browse'), self)
         browse.setCheckable(True)
-        mdi     = QPushButton('mdi',    self)
+        mdi     = QPushButton(self.tr('mdi'),    self)
         mdi.setCheckable(True)
-        graphic = QPushButton('graphic',self)
+        graphic = QPushButton(self.tr('graphic'),self)
         graphic.setCheckable(True)
-        wmap    = QPushButton('wmap',   self)
+        wmap    = QPushButton(self.tr('wmap'),   self)
         wmap.setCheckable(True)
-        timeline = QPushButton('timeline',   self)
+        timeline = QPushButton(self.tr('timeline'),   self)
         timeline.setCheckable(True)
-        perfs   = QPushButton('perfs',   self)
+        perfs   = QPushButton(self.tr('perfs'),   self)
         perfs.setCheckable(True)
 
         self.buttonGroup.addButton(browse,    0)

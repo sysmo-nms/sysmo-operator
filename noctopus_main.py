@@ -141,8 +141,6 @@ class NMainWindow(QMainWindow):
         self.setStatusBar(self.statusBar)
 
     # Menus
-    def _initMenus(self):
-        initMenus(self)
 
     ###############
     ## VIEW MODES #
@@ -199,7 +197,7 @@ class NMainWindow(QMainWindow):
     def _setStyle(self, style):
         self._noctopusStyle = style
         msgBox = QMessageBox(self)
-        msgBox.setText('The application must restart to take your modification in consideration')
+        msgBox.setText(self.tr('The application must restart to take your modification in consideration'))
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
 
@@ -243,3 +241,124 @@ class NMainWindow(QMainWindow):
         #viewMode = settings.value("NMainWindow/viewMode")
         #if viewMode != None: self.activeViewMode = viewMode
         #activeOpus = ...
+
+    #########
+    # MENUS #
+    #########
+    def _initMenus(self):
+        " Menu bar "
+        "File"
+        menu = self.menuBar()
+        menuFile    = menu.addMenu('Noctopus')
+        exitAction  = QAction(getIcon('system-log-out'), self.tr('&Exit'), self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.triggered.connect(self.close)
+        menuFile.addAction(exitAction)
+    
+        "Win"
+        fullScreenAction  = QAction(
+            getIcon('video-display'), self.tr('&Full screen'), self)
+        fullScreenAction.setShortcut('Ctrl+F')
+        fullScreenAction.triggered.connect(self._toggleFullScreen)
+    
+        actionSimpleView    = QAction(self.tr('Simplified view'), self)
+        actionSimpleView.setCheckable(True)
+        actionSimpleView.triggered.connect(self._setSimpleView)
+    
+        actionMinimalView    = QAction(self.tr('Minimal view'), self)
+        actionMinimalView.setCheckable(True)
+        actionMinimalView.triggered.connect(self._setMinimalView)
+    
+        actionExpertView    = QAction(self.tr('Expert view'), self)
+        actionExpertView.setCheckable(True)
+        actionExpertView.triggered.connect(self._setExpertView)
+        actionExpertView.setChecked(True)
+    
+        toggleSimpleView    = QActionGroup(self)
+        toggleSimpleView.addAction(actionMinimalView)
+        toggleSimpleView.addAction(actionSimpleView)
+        toggleSimpleView.addAction(actionExpertView)
+        toggleSimpleView.setExclusive(True)
+    
+        menuWin     = menu.addMenu(self.tr('Views'))
+        menuWin.addAction(actionMinimalView)
+        menuWin.addAction(actionSimpleView)
+        menuWin.addAction(actionExpertView)
+        menuWin.addSeparator()
+        menuWin.addAction(fullScreenAction)
+    
+        " configure menu "
+    
+        actionConfigureProxy = QAction(self.tr('Proxy settings'), self)
+        actionConfigureProxy.triggered.connect(self._launchProxySettings)
+    
+        menuConf    = menu.addMenu(self.tr('Configure'))
+        menuConf.addAction(actionConfigureProxy)
+    
+        " style menu "
+        nativeAction    = QAction(self.tr('Native'), self)
+        nativeAction.setCheckable(True)
+        nativeAction.triggered.connect(partial(self._setStyle, 'Native'))
+    
+        plastiqueAction = QAction(self.tr('plastique'), self)
+        plastiqueAction.setCheckable(True)
+        plastiqueAction.triggered.connect(partial(self._setStyle, 'Plastique'))
+    
+        cleanlooksAction = QAction(self.tr('cleanlooks'), self)
+        cleanlooksAction.setCheckable(True)
+        cleanlooksAction.triggered.connect(partial(self._setStyle, 'Cleanlooks'))
+    
+        cdeAction       = QAction(self.tr('cde'), self)
+        cdeAction.setCheckable(True)
+        cdeAction.triggered.connect(partial(self._setStyle, 'CDE'))
+    
+        motifAction     = QAction(self.tr('motif'), self)
+        motifAction.setCheckable(True)
+        motifAction.triggered.connect(partial(self._setStyle, 'Motif'))
+    
+        windowAction    = QAction(self.tr('windows classic'), self)
+        windowAction.setCheckable(True)
+        windowAction.triggered.connect(partial(self._setStyle, 'Windows'))
+    
+        windowxpAction  = QAction(self.tr('windows xp'), self)
+        windowxpAction.setCheckable(True)
+        windowxpAction.triggered.connect(partial(self._setStyle, 'WindowXP'))
+    
+        styleToggle = QActionGroup(self)
+        styleToggle.addAction(plastiqueAction)
+        styleToggle.addAction(cleanlooksAction)
+        styleToggle.addAction(nativeAction)
+        styleToggle.addAction(cdeAction)
+        styleToggle.addAction(motifAction)
+        styleToggle.addAction(windowAction)
+        styleToggle.addAction(windowxpAction)
+        styleToggle.setExclusive(True)
+    
+        print "style is ", self._noctopusStyle
+        if self._noctopusStyle == 'Native':
+            nativeAction.setChecked(True)
+        elif self._noctopusStyle == 'Plastique':
+            plastiqueAction.setChecked(True)
+        elif self._noctopusStyle == 'Cleanlooks':
+            cleanlooksAction.setChecked(True)
+        elif self._noctopusStyle == 'CDE':
+            cdeAction.setChecked(True)
+        elif self._noctopusStyle == 'Motif':
+            motifAction.setChecked(True)
+        elif self._noctopusStyle == 'Windows':
+            windowAction.setChecked(True)
+        elif self._noctopusStyle == 'WindowXP':
+            windowxpAction.setChecked(True)
+        else:
+            plastiqueAction.setChecked(True)
+    
+        menuStyle = menu.addMenu(self.tr('Style'))
+        menuStyle.addAction(nativeAction)
+        menuStyle.addAction(plastiqueAction)
+        menuStyle.addAction(cleanlooksAction)
+        menuStyle.addAction(cdeAction)
+        menuStyle.addAction(motifAction)
+        menuStyle.addAction(windowAction)
+        menuStyle.addAction(windowxpAction)
+    
+        return

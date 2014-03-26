@@ -49,9 +49,9 @@ class Proxy(QDialog):
         topFrame = NFrame(self)
         layout = NGrid(topFrame)
 
-        self.checkBoxNoProxy = QCheckBox('No Proxy', self)
+        self.checkBoxNoProxy = QCheckBox(self.tr('No Proxy'), self)
         self.checkBoxNoProxy.setChecked(True)
-        self.checkBoxProxy   = QCheckBox('Manual proxy configuration', self)
+        self.checkBoxProxy   = QCheckBox(self.tr('Manual proxy configuration'), self)
 
         checkBoxGroup = QButtonGroup(self)
         checkBoxGroup.buttonClicked.connect(self.clicked)
@@ -82,10 +82,10 @@ class Proxy(QDialog):
         self.portLineEdit.setMaximum(65535)
 
         layout = NGrid(bottomFrame)
-        layout.addWidget(QLabel("Proxy server: ", self),   0,0)
-        layout.addWidget(self.serverLineEdit,            0,1)
-        layout.addWidget(QLabel("Port: ", self),    0,2)
-        layout.addWidget(self.portLineEdit,              0,3)
+        layout.addWidget(QLabel(self.tr("Proxy server: "), self),   0,0)
+        layout.addWidget(self.serverLineEdit,                       0,1)
+        layout.addWidget(QLabel(self.tr("Port: "), self),           0,2)
+        layout.addWidget(self.portLineEdit,                         0,3)
 
         bottomFrame.setLayout(layout)
         bottomFrame.setDisabled(True)

@@ -71,16 +71,16 @@ class ProbesTreeview(QTreeView):
     def _initMenus(self):
         self.targetMenu = QMenu(self)
 
-        targetAction = QAction('Add to working view', self)
+        targetAction = QAction(self.tr('Add to working view'), self)
         targetAction.triggered[bool].connect(self.addToWorkingView)
         self.targetMenu.addAction(targetAction)
 
         self.targetMenu.addSeparator()
 
-        localMenu    = QMenu('Local Actions', self)
-        sshAction = QAction('Acces SSH', self)
-        phpAction = QAction('Acces phpldapadmin HTTP', self)
-        configureAction = QAction('Configure new action', self)
+        localMenu    = QMenu(self.tr('Local Actions'), self)
+        sshAction = QAction(self.tr('Acces SSH'), self)
+        phpAction = QAction(self.tr('Acces phpldapadmin HTTP'), self)
+        configureAction = QAction(self.tr('Configure new action'), self)
         localMenu.addAction(sshAction)
         localMenu.addAction(phpAction)
         localMenu.addSeparator()
@@ -90,55 +90,55 @@ class ProbesTreeview(QTreeView):
 
         self.targetMenu.addSeparator()
 
-        targetAction = QAction('Suspend all target probes', self)
+        targetAction = QAction(self.tr('Suspend all target probes'), self)
         self.targetMenu.addAction(targetAction)
 
-        targetAction = QAction('Create a new probe', self)
+        targetAction = QAction(self.tr('Create a new probe'), self)
         self.targetMenu.addAction(targetAction)
         targetAction.triggered[bool].connect(self.createProbe)
 
         self.targetMenu.addSeparator()
 
-        targetAction = QAction('Delete this target ans his probes', self)
+        targetAction = QAction(self.tr('Delete this target ans his probes'), self)
         self.targetMenu.addAction(targetAction)
 
         self.targetMenu.addSeparator()
 
-        targetAction = QAction('Properties', self)
+        targetAction = QAction(self.tr('Properties'), self)
         self.targetMenu.addAction(targetAction)
 
         self.probeMenu  = QMenu(self)
 
         self.probeMenu.addSeparator()
 
-        probeAction = QAction('Add to working view', self)
+        probeAction = QAction(self.tr('Add to working view'), self)
         probeAction.triggered[bool].connect(self.addToWorkingView)
         self.probeMenu.addAction(probeAction)
 
-        probeAction = QAction('Suspend probe', self)
+        probeAction = QAction(self.tr('Suspend probe'), self)
         self.probeMenu.addAction(probeAction)
 
-        probeAction = QAction('Force check', self)
-        self.probeMenu.addAction(probeAction)
-
-        self.probeMenu.addSeparator()
-
-        probeAction = QAction('Delete this probe', self)
+        probeAction = QAction(self.tr('Force check'), self)
         self.probeMenu.addAction(probeAction)
 
         self.probeMenu.addSeparator()
 
-        probeAction = QAction('Properties', self)
+        probeAction = QAction(self.tr('Delete this probe'), self)
+        self.probeMenu.addAction(probeAction)
+
+        self.probeMenu.addSeparator()
+
+        probeAction = QAction(self.tr('Properties'), self)
         self.probeMenu.addAction(probeAction)
 
 
         self.noneMenu = QMenu(self)
 
-        noneAction = QAction('Create a new target', self)
+        noneAction = QAction(self.tr('Create a new target'), self)
         self.noneMenu.addAction(noneAction)
         noneAction.triggered[bool].connect(self.createTarget)
 
-        noneAction = QAction('Select all', self)
+        noneAction = QAction(self.tr('Select all'), self)
         self.noneMenu.addAction(noneAction)
 
 

@@ -14,26 +14,26 @@ def initMenus(mainWin):
     "File"
     menu = mainWin.menuBar()
     menuFile    = menu.addMenu('Noctopus')
-    exitAction  = QAction(getIcon('system-log-out'), '&Exit', mainWin)
+    exitAction  = QAction(getIcon('system-log-out'), mainWin.tr('&Exit'), mainWin)
     exitAction.setShortcut('Ctrl+Q')
     exitAction.triggered.connect(mainWin.close)
     menuFile.addAction(exitAction)
 
     "Win"
     fullScreenAction  = QAction(
-        getIcon('video-display'), '&Full screen', mainWin)
+        getIcon('video-display'), mainWin.tr('&Full screen'), mainWin)
     fullScreenAction.setShortcut('Ctrl+F')
     fullScreenAction.triggered.connect(mainWin._toggleFullScreen)
 
-    actionSimpleView    = QAction('Simplified view', mainWin)
+    actionSimpleView    = QAction(mainWin.tr('Simplified view'), mainWin)
     actionSimpleView.setCheckable(True)
     actionSimpleView.triggered.connect(mainWin._setSimpleView)
 
-    actionMinimalView    = QAction('Minimal view', mainWin)
+    actionMinimalView    = QAction(mainWin.tr('Minimal view'), mainWin)
     actionMinimalView.setCheckable(True)
     actionMinimalView.triggered.connect(mainWin._setMinimalView)
 
-    actionExpertView    = QAction('Expert view', mainWin)
+    actionExpertView    = QAction(mainWin.tr('Expert view'), mainWin)
     actionExpertView.setCheckable(True)
     actionExpertView.triggered.connect(mainWin._setExpertView)
     actionExpertView.setChecked(True)
@@ -44,7 +44,7 @@ def initMenus(mainWin):
     toggleSimpleView.addAction(actionExpertView)
     toggleSimpleView.setExclusive(True)
 
-    menuWin     = menu.addMenu('Views')
+    menuWin     = menu.addMenu(mainWin.tr('Views'))
     menuWin.addAction(actionMinimalView)
     menuWin.addAction(actionSimpleView)
     menuWin.addAction(actionExpertView)
@@ -53,38 +53,38 @@ def initMenus(mainWin):
 
     " configure menu "
 
-    actionConfigureProxy = QAction('Proxy settings', mainWin)
+    actionConfigureProxy = QAction(mainWin.tr('Proxy settings'), mainWin)
     actionConfigureProxy.triggered.connect(mainWin._launchProxySettings)
 
-    menuConf    = menu.addMenu('Configure')
+    menuConf    = menu.addMenu(mainWin.tr('Configure'))
     menuConf.addAction(actionConfigureProxy)
 
     " style menu "
-    nativeAction    = QAction('Native', mainWin)
+    nativeAction    = QAction(mainWin.tr('Native'), mainWin)
     nativeAction.setCheckable(True)
     nativeAction.triggered.connect(partial(mainWin._setStyle, 'Native'))
 
-    plastiqueAction = QAction('plastique', mainWin)
+    plastiqueAction = QAction(mainWin.tr('plastique'), mainWin)
     plastiqueAction.setCheckable(True)
     plastiqueAction.triggered.connect(partial(mainWin._setStyle, 'Plastique'))
 
-    cleanlooksAction = QAction('cleanlooks', mainWin)
+    cleanlooksAction = QAction(mainWin.tr('cleanlooks'), mainWin)
     cleanlooksAction.setCheckable(True)
     cleanlooksAction.triggered.connect(partial(mainWin._setStyle, 'Cleanlooks'))
 
-    cdeAction       = QAction('cde', mainWin)
+    cdeAction       = QAction(mainWin.tr('cde'), mainWin)
     cdeAction.setCheckable(True)
     cdeAction.triggered.connect(partial(mainWin._setStyle, 'CDE'))
 
-    motifAction     = QAction('motif', mainWin)
+    motifAction     = QAction(mainWin.tr('motif'), mainWin)
     motifAction.setCheckable(True)
     motifAction.triggered.connect(partial(mainWin._setStyle, 'Motif'))
 
-    windowAction    = QAction('windows classic', mainWin)
+    windowAction    = QAction(mainWin.tr('windows classic'), mainWin)
     windowAction.setCheckable(True)
     windowAction.triggered.connect(partial(mainWin._setStyle, 'Windows'))
 
-    windowxpAction  = QAction('windows xp', mainWin)
+    windowxpAction  = QAction(mainWin.tr('windows xp'), mainWin)
     windowxpAction.setCheckable(True)
     windowxpAction.triggered.connect(partial(mainWin._setStyle, 'WindowXP'))
 
@@ -116,7 +116,7 @@ def initMenus(mainWin):
     else:
         plastiqueAction.setChecked(True)
 
-    menuStyle = menu.addMenu('Style')
+    menuStyle = menu.addMenu(mainWin.tr('Style'))
     menuStyle.addAction(nativeAction)
     menuStyle.addAction(plastiqueAction)
     menuStyle.addAction(cleanlooksAction)

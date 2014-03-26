@@ -6,7 +6,7 @@ class AddTargetWizard(QWizard):
     def __init__(self, parent=None):
         super(AddTargetWizard, self).__init__(parent)
         self.setModal(False)
-        self.setWindowTitle('Create a target')
+        self.setWindowTitle(self.tr('Create a target'))
         self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetIcon('list-add').pixmap(100,100))
         #self.setPixmap(QWizard.LogoPixmap, TkorderIcons.get('list-add').pixmap(100,100))
         self.setPixmap(QWizard.BannerPixmap, nocapi.nGetIcon('list-add').pixmap(100,100))
@@ -20,9 +20,9 @@ class AddTargetWizard(QWizard):
 
     def stepOne(self):
         page = QWizardPage(self)
-        page.setTitle('Create a new target')
+        page.setTitle(self.tr('Create a new target'))
         page.setSubTitle('blabla')
-        label = QLabel('This wizard will help you to create a new target')
+        label = QLabel(self.tr('This wizard will help you to create a new target'))
         label.setWordWrap(True)
         layout = QVBoxLayout(self)
         layout.addWidget(label)
@@ -31,8 +31,8 @@ class AddTargetWizard(QWizard):
 
     def stepTwo(self):
         page = QWizardPage(self)
-        page.setTitle('step 2')
-        label = QLabel('bla bal bal')
+        page.setTitle(self.tr('step 2'))
+        label = QLabel(self.tr('bla bal bal'))
         label.setWordWrap(True)
         layout = QVBoxLayout(self)
         layout.addWidget(label)
@@ -42,8 +42,8 @@ class AddTargetWizard(QWizard):
     def stepThree(self):
         page = QWizardPage(self)
         page.setFinalPage(True)
-        page.setTitle('step 3')
-        label = QLabel('bla bal bal')
+        page.setTitle(self.tr('step 3'))
+        label = QLabel(self.tr('bla bal bal'))
         label.setWordWrap(True)
         layout = QVBoxLayout(self)
         layout.addWidget(label)
