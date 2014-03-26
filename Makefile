@@ -5,6 +5,8 @@ RELEASE_NAME = noctopus-win32
 RELEASE_VERSION = 0.1
 QT_PLUGINS_DIR  = /cygdrive/c/Python27/Lib/site-packages/PySide/plugins
 
+compile: win32Binary
+
 win32Binary: clean
 	$(PYTHON_EXE) setup.py py2exe
 	cp -r html $(DIST_DIR)
@@ -20,3 +22,16 @@ clean:
 	rm -rf build
 	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
 	rm -f *.pyc
+
+translate: translate-dir
+	@R="`find . -name "*.py" -exec echo -n "{} " \;`"; \
+	echo "SOURCES=$$R" > noctopus.pro; \
+	echo "TRANSLATIONS=translate-dir/fr_FR.ts" >> noctopus.pro
+	pyside-lupdate -verbose noctopus.pro
+
+translate-dir:
+	mkdir translate-dir
+
+translate-clean:
+	rm -rf translate-dir
+	rm -f noctopus.pro

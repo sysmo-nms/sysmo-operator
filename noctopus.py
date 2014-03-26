@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from    PySide.QtGui    import QApplication
-from    PySide.QtCore   import QSettings
+from    PySide.QtCore   import QSettings, QTranslator
 import  sys
 import  re
 import  platform
@@ -25,7 +25,13 @@ if noctopusStyle == None:
 if noctopusStyle != None:
     QApplication.setStyle(noctopusStyle)
 
+translator   = QTranslator()
+translator.load('translate-dir/fr_FR')
+
 noctopusApp  = QApplication(sys.argv)
+noctopusApp.installTranslator(translator)
+
 currentStyle = noctopusApp.style().objectName()
 noctopus     = noctopus_main.NMainWindow(currentStyle)
+
 sys.exit(noctopusApp.exec_())
