@@ -41,17 +41,34 @@ class DashboardControls(NFrameContainer):
         self.buttonGroup.setExclusive(True)
 
 
-        browse  = QPushButton(self.tr('browse'), self)
+        browse = QPushButton(self)
+        browse.setToolTip(self.tr('explore'))
+        browse.setIcon(nocapi.nGetIcon('system-search'))
         browse.setCheckable(True)
-        mdi     = QPushButton(self.tr('mdi'),    self)
+
+        mdi = QPushButton(self)
+        mdi.setToolTip(self.tr('mdi'))
+        mdi.setIcon(nocapi.nGetIcon('preferences-system-windows'))
         mdi.setCheckable(True)
-        graphic = QPushButton(self.tr('graphic'),self)
+
+        graphic = QPushButton(self)
+        graphic.setToolTip(self.tr('graphic'))
+        graphic.setIcon(nocapi.nGetIcon('x-office-drawing'))
         graphic.setCheckable(True)
-        wmap    = QPushButton(self.tr('wmap'),   self)
+
+        wmap = QPushButton(self)
+        wmap.setToolTip(self.tr('wmap'))
+        wmap.setIcon(nocapi.nGetIcon('internet-web-browser'))
         wmap.setCheckable(True)
-        timeline = QPushButton(self.tr('timeline'),   self)
+
+        timeline = QPushButton(self)
+        timeline.setToolTip(self.tr('timeline'))
+        timeline.setIcon(nocapi.nGetIcon('appointment-new'))
         timeline.setCheckable(True)
-        perfs   = QPushButton(self.tr('perfs'),   self)
+
+        perfs = QPushButton(self)
+        perfs.setToolTip(self.tr('perfs'))
+        perfs.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
         perfs.setCheckable(True)
 
         self.buttonGroup.addButton(browse,    0)

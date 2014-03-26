@@ -39,6 +39,12 @@ def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+        'preferences-system-windows': QIcon(os.path.join(iconsPath, "preferences-system-windows.svg")),
+        'appointment-new': QIcon(os.path.join(iconsPath, "appointment-new.svg")),
+        'system-search': QIcon(os.path.join(iconsPath, "system-search.svg")),
+        'x-office-drawing': QIcon(os.path.join(iconsPath, "x-office-drawing.svg")),
+        'internet-web-browser': QIcon(os.path.join(iconsPath, "internet-web-browser.svg")),
+        'folder-saved-search': QIcon(os.path.join(iconsPath, "folder-saved-search.svg")),
         'list-remove': QIcon(os.path.join(iconsPath, "list-remove.svg")),
         'go-up': QIcon(os.path.join(iconsPath, "go-up.svg")),
         'go-down': QIcon(os.path.join(iconsPath, "go-down.svg")),
@@ -112,6 +118,11 @@ def initImages():
         '60-day-trial-banner-reversed': os.path.join(imagesPath, "60-day-trial-banner-reversed.svg"),
         '30-day-trial-banner': os.path.join(imagesPath, "30-day-trial-banner.svg"),
         '30-day-trial-banner-reversed': os.path.join(imagesPath, "30-day-trial-banner-reversed.svg"),
+        'preferences-system-windows': os.path.join(imagesPath, "preferences-system-windows.svg"),
+        'system-search': os.path.join(imagesPath, "system-search.svg"),
+        'appointment-new': os.path.join(imagesPath, "appointment-new.svg"),
+        'internet-web-browser': os.path.join(imagesPath, "internet-web-browser.svg"),
+        'folder-saved-search': os.path.join(imagesPath, "folder-saved-search.svg"),
         'list-remove': os.path.join(imagesPath, "list-remove.svg"),
         'go-up': os.path.join(imagesPath, "go-up.svg"),
         'go-down': os.path.join(imagesPath, "go-down.svg"),
