@@ -66,13 +66,16 @@ class NMainWindow(QMainWindow):
     supercastEnabled = Signal()
     # emit when supercast is enabled
 
-    def __init__(self, parent=None):
+    def __init__(self, style, parent=None):
         super(NMainWindow, self).__init__(parent)
-        NMainWindow.singleton = self
+        NMainWindow.singleton   = self
+        self._noctopusStyle     = style
+        noctopusGraphicsInit()
+
         self.setObjectName('MainWindow')
+        self.setWindowIcon(getIcon('applications-development'))
         self.setWindowTitle('Noctopus')
 
-        noctopusGraphicsInit()
         self._initSupercast()
 
         self._initProxySettings()
@@ -236,9 +239,6 @@ class NMainWindow(QMainWindow):
 
         proxySet = settings.value("NMainWindow/proxySettings")
         if proxySet != None: self.activeProxySettings = proxySet
-
-        noctoStyle = settings.value("NMainWindow/style")
-        if noctoStyle != None: self._noctopusStyle = noctoStyle
 
         #viewMode = settings.value("NMainWindow/viewMode")
         #if viewMode != None: self.activeViewMode = viewMode

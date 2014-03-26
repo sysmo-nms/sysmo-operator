@@ -39,7 +39,7 @@ class ServicesTreeview(QTreeView):
             background-repeat: no-repeat;
             background-color: %s;
             background-attachment: fixed;
-            background-position: botom right}''' % nocapi.nGetRgb('Base'))
+            background-position: bottom right}''' % nocapi.nGetRgb('Base'))
 
 class ServicesActions(NFrameContainer):
     def __init__(self, parent):

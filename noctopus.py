@@ -6,29 +6,26 @@ import  sys
 import  re
 import  platform
 import  noctopus_main
-import  nocapi
 
 
-osType = platform.platform()
-
+osType           = platform.platform()
 noctopusSettings = QSettings("Noctopus NMS", "noctopus-client")
 noctopusStyle    = noctopusSettings.value("NMainWindow/style")
 
+if noctopusStyle == None:
+    if   re.match('^Windows-XP..*',    osType) != None:
+        noctopusStyle = 'plastique'
+    elif re.match('^Linux..*',         osType) != None:
+        noctopusStyle = 'plastique'
+    elif re.match('^Windows-Vista..*', osType) != None: pass # native
+    elif re.match('^Windows-7..*',     osType) != None: pass # native
+    elif re.match('^Windows-8..*',     osType) != None: pass # native
+    elif re.match('^Mac..*',           osType) != None: pass # native
+
 if noctopusStyle != None:
     QApplication.setStyle(noctopusStyle)
-else:
-    if   re.match('^Windows-XP..*',    osType) != None:
-        QApplication.setStyle('plastique')
-    elif re.match('^Windows-Vista..*', osType) != None:
-        #QApplication.setStyle('plastique')
-        # test on vista
-        pass
-    elif re.match('^Windows-7..*',     osType) != None:
-        #QApplication.setStyle('plastique')
-        # test on 7
-        pass
 
-noctopusApp = QApplication(sys.argv)
-noctopus    = noctopus_main.NMainWindow()
-noctopus.setWindowIcon(nocapi.nGetIcon('applications-development'))
+currentStyle = QApplication.style().objectName()
+noctopusApp  = QApplication(sys.argv)
+noctopus     = noctopus_main.NMainWindow(currentStyle)
 sys.exit(noctopusApp.exec_())
