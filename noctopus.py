@@ -24,9 +24,6 @@ if noctopusStyle == None:
     elif re.match('^Windows-8..*',     osType) != None: pass # native
     elif re.match('^Mac..*',           osType) != None: pass # native
 
-print "noctopus%sstyle" % noctopusStyle
-print "noctopus theme", noctopusTheme
-
 if      noctopusStyle == None:      pass
 elif    noctopusStyle == 'native':  pass
 else:
