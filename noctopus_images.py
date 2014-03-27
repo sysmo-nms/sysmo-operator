@@ -39,6 +39,11 @@ def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+        'face-devilish': QIcon(os.path.join(iconsPath, "face-devilish.svg")),
+        'face-smile': QIcon(os.path.join(iconsPath, "face-smile.svg")),
+        'software-update-available': QIcon(os.path.join(iconsPath, "software-update-available.svg")),
+        'software-update-urgent': QIcon(os.path.join(iconsPath, "software-update-urgent.svg")),
+        'system-users': QIcon(os.path.join(iconsPath, "system-users.svg")),
         'preferences-system-windows': QIcon(os.path.join(iconsPath, "preferences-system-windows.svg")),
         'appointment-new': QIcon(os.path.join(iconsPath, "appointment-new.svg")),
         'system-search': QIcon(os.path.join(iconsPath, "system-search.svg")),
@@ -118,6 +123,11 @@ def initImages():
         '60-day-trial-banner-reversed': os.path.join(imagesPath, "60-day-trial-banner-reversed.svg"),
         '30-day-trial-banner': os.path.join(imagesPath, "30-day-trial-banner.svg"),
         '30-day-trial-banner-reversed': os.path.join(imagesPath, "30-day-trial-banner-reversed.svg"),
+        'face-devilish': os.path.join(imagesPath, "face-devilish.svg"),
+        'face-smile': os.path.join(imagesPath, "face-smile.svg"),
+        'software-update-available': os.path.join(imagesPath, "software-update-available.svg"),
+        'software-update-urgent': os.path.join(imagesPath, "software-update-urgent.svg"),
+        'system-users': os.path.join(imagesPath, "system-users.svg"),
         'preferences-system-windows': os.path.join(imagesPath, "preferences-system-windows.svg"),
         'system-search': os.path.join(imagesPath, "system-search.svg"),
         'appointment-new': os.path.join(imagesPath, "appointment-new.svg"),

@@ -27,7 +27,8 @@ from    PySide.QtGui    import (
     QStackedLayout,
     QLabel,
     QToolButton,
-    QMessageBox
+    QMessageBox,
+    QWidgetAction
 )
 
 
@@ -36,6 +37,7 @@ from    noctopus_images     import getIcon, noctopusGraphicsInit
 from    noctopus_dialogs    import Proxy
 from    noctopus_statusbar  import NStatusBar
 from    noctopus_centerwidget   import NCentralFrame
+from    noctopus_widgets    import Community
 
 # supercast
 from  supercast.main    import Supercast
@@ -244,14 +246,38 @@ class NMainWindow(QMainWindow):
     #########
     # MENUS #
     #########
+    def _communityPressed(self):
+        print "community pressed ajouter soumettre bug ou soumettre idee"
+
     def _initMenus(self):
         " Menu bar "
-        "File"
         menu = self.menuBar()
+
+        "top corner widget"
+        communityButton = QPushButton(self)
+        communityButton.setLayoutDirection(Qt.RightToLeft)
+        communityButton.setContentsMargins(0,0,0,0)
+        communityButton.setIcon(getIcon('system-users'))
+        communityButton.setFlat(True)
+        communityAction = QWidgetAction(self)
+        communityAction.setDefaultWidget(Community(self))
+        communityMenu   = QMenu(self)
+        communityMenu.addAction(communityAction)
+        communityButton.setMenu(communityMenu)
+        menu.setCornerWidget(communityButton)
+
+        "File"
         menuFile    = menu.addMenu('Noctopus')
-        exitAction  = QAction(getIcon('system-log-out'), self.tr('&Exit'), self)
+        exitAction      = QAction(getIcon('system-log-out'), self.tr('&Exit'), self)
+        updateAction    = QAction(
+            getIcon('software-update-available'),
+            self.tr('Check for update'),
+            self
+        )
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
+        menuFile.addAction(updateAction)
+        menuFile.addSeparator()
         menuFile.addAction(exitAction)
     
         "Win"
