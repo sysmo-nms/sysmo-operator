@@ -24,12 +24,19 @@ if noctopusStyle == None:
     elif re.match('^Windows-8..*',     osType) != None: pass # native
     elif re.match('^Mac..*',           osType) != None: pass # native
 
-if noctopusStyle != None:
+print "noctopus%sstyle" % noctopusStyle
+print "noctopus theme", noctopusTheme
+
+if      noctopusStyle == None:      pass
+elif    noctopusStyle == 'native':  pass
+else:
     QApplication.setStyle(noctopusStyle)
 
-if noctopusTheme != None:
-    colorPalette = noctopus_colors.getPalette(noctopusTheme)
-    QApplication.setPalette(colorPalette)
+    if      noctopusTheme == None:      pass
+    elif    noctopusTheme == 'native':  pass
+    else:
+        colorPalette = noctopus_colors.getPalette(noctopusTheme)
+        QApplication.setPalette(colorPalette)
 
 translator   = QTranslator()
 translator.load('fr_FR')

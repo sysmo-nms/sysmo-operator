@@ -193,15 +193,6 @@ class NMainWindow(QMainWindow):
             QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
         newDock.setContentsMargins(0,0,0,0)
 
-    ##########
-    # STYLES #
-    ##########
-    def _setStyle(self, style):
-        self._noctopusStyle = style
-        msgBox = QMessageBox(self)
-        msgBox.setText(self.tr('The application must restart to take your modification in consideration'))
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
 
     ###########
     # DIALOGS #
@@ -225,6 +216,7 @@ class NMainWindow(QMainWindow):
         settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
         settings.setValue("NMainWindow/viewMode",       self.activeViewMode)
         settings.setValue("NMainWindow/style",          self._noctopusStyle)
+        settings.setValue("NMainWindow/theme",          self._noctopusTheme)
         self.supercast.supercastClose()
         QMainWindow.closeEvent(self, event)
 
@@ -240,9 +232,31 @@ class NMainWindow(QMainWindow):
         proxySet = settings.value("NMainWindow/proxySettings")
         if proxySet != None: self.activeProxySettings = proxySet
 
+        self._noctopusTheme = settings.value("NMainWindow/theme")
+        self._noctopusStyle = settings.value("NMainWindow/style")
+
         #viewMode = settings.value("NMainWindow/viewMode")
         #if viewMode != None: self.activeViewMode = viewMode
         #activeOpus = ...
+
+    #####################
+    # STYLES AND THEMES #
+    #####################
+    def _setStyle(self, style):
+        self._noctopusStyle = style
+        if style == 'native':   self.menuColor.setDisabled(True)
+        else:                   self.menuColor.setDisabled(False)
+        self._needRestart()
+
+    def _setTheme(self, theme):
+        self._noctopusTheme = theme
+        self._needRestart()
+
+    def _needRestart(self):
+        msgBox = QMessageBox(self)
+        msgBox.setText(self.tr('The application must restart to take your modification in consideration'))
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
 
     #########
     # MENUS #
@@ -328,70 +342,79 @@ class NMainWindow(QMainWindow):
         " style menu "
         nativeAction    = QAction(self.tr('Native'), self)
         nativeAction.setCheckable(True)
-        nativeAction.triggered.connect(partial(self._setStyle, 'Native'))
+        nativeAction.triggered.connect(partial(self._setStyle, 'native'))
     
-        plastiqueAction = QAction(self.tr('plastique'), self)
+        plastiqueAction = QAction(self.tr('Balanced'), self)
         plastiqueAction.setCheckable(True)
-        plastiqueAction.triggered.connect(partial(self._setStyle, 'Plastique'))
+        plastiqueAction.triggered.connect(partial(self._setStyle, 'plastique'))
     
-        cleanlooksAction = QAction(self.tr('cleanlooks'), self)
-        cleanlooksAction.setCheckable(True)
-        cleanlooksAction.triggered.connect(partial(self._setStyle, 'Cleanlooks'))
-    
-        cdeAction       = QAction(self.tr('cde'), self)
-        cdeAction.setCheckable(True)
-        cdeAction.triggered.connect(partial(self._setStyle, 'CDE'))
-    
-        motifAction     = QAction(self.tr('motif'), self)
-        motifAction.setCheckable(True)
-        motifAction.triggered.connect(partial(self._setStyle, 'Motif'))
-    
-        windowAction    = QAction(self.tr('windows classic'), self)
+        windowAction    = QAction(self.tr('Windows classic'), self)
         windowAction.setCheckable(True)
-        windowAction.triggered.connect(partial(self._setStyle, 'Windows'))
-    
-        windowxpAction  = QAction(self.tr('windows xp'), self)
-        windowxpAction.setCheckable(True)
-        windowxpAction.triggered.connect(partial(self._setStyle, 'WindowXP'))
+        windowAction.triggered.connect(partial(self._setStyle, 'windows'))
     
         styleToggle = QActionGroup(self)
         styleToggle.addAction(plastiqueAction)
-        styleToggle.addAction(cleanlooksAction)
         styleToggle.addAction(nativeAction)
-        styleToggle.addAction(cdeAction)
-        styleToggle.addAction(motifAction)
         styleToggle.addAction(windowAction)
-        styleToggle.addAction(windowxpAction)
         styleToggle.setExclusive(True)
-    
-        print "style is ", self._noctopusStyle
-        if self._noctopusStyle == 'Native':
-            nativeAction.setChecked(True)
-        elif self._noctopusStyle == 'Plastique':
-            plastiqueAction.setChecked(True)
-        elif self._noctopusStyle == 'Cleanlooks':
-            cleanlooksAction.setChecked(True)
-        elif self._noctopusStyle == 'CDE':
-            cdeAction.setChecked(True)
-        elif self._noctopusStyle == 'Motif':
-            motifAction.setChecked(True)
-        elif self._noctopusStyle == 'Windows':
-            windowAction.setChecked(True)
-        elif self._noctopusStyle == 'WindowXP':
-            windowxpAction.setChecked(True)
-        else:
-            plastiqueAction.setChecked(True)
     
         menuStyle = menu.addMenu(self.tr('Style'))
         menuStyle.addAction(nativeAction)
         menuStyle.addAction(plastiqueAction)
-        menuStyle.addAction(cleanlooksAction)
-        menuStyle.addAction(cdeAction)
-        menuStyle.addAction(motifAction)
         menuStyle.addAction(windowAction)
-        menuStyle.addAction(windowxpAction)
+
+        "color sub menu"
+        self.menuColor = menuStyle.addMenu(self.tr('Colors'))
+        nativeThemeAction = QAction(self.tr('Native'), self)
+        nativeThemeAction.setCheckable(True)
+        nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))
+
+        deepWaterAction = QAction(self.tr('Deep water'), self)
+        deepWaterAction.setCheckable(True)
+        deepWaterAction.triggered.connect(partial(self._setTheme, 'dark'))
     
+        islandAction = QAction(self.tr('Island'), self)
+        islandAction.setCheckable(True)
+        islandAction.triggered.connect(partial(self._setTheme, 'terra'))
+
+        lagoonAction = QAction(self.tr('Lagoon'), self)
+        lagoonAction.setCheckable(True)
+        lagoonAction.triggered.connect(partial(self._setTheme, 'lagoon'))
+
+        groupColor = QActionGroup(self)
+        groupColor.addAction(nativeThemeAction)
+        groupColor.addAction(deepWaterAction)
+        groupColor.addAction(lagoonAction)
+        groupColor.addAction(islandAction)
+        groupColor.setExclusive(True)
+
+        if self._noctopusTheme == 'lagoon':
+            lagoonAction.setChecked(True)
+        elif self._noctopusTheme == 'dark':
+            deepWaterAction.setChecked(True)
+        elif self._noctopusTheme == 'terra':
+            islandAction.setChecked(True)
+        else:
+            nativeThemeAction.setChecked(True)
+
+        self.menuColor.addAction(nativeThemeAction)
+        self.menuColor.addAction(deepWaterAction)
+        self.menuColor.addAction(islandAction)
+        self.menuColor.addAction(lagoonAction)
+
+        if self._noctopusStyle == 'native':
+            nativeAction.setChecked(True)
+            self.menuColor.setDisabled(True)
+        elif self._noctopusStyle == 'plastique':
+            plastiqueAction.setChecked(True)
+        elif self._noctopusStyle == 'windows':
+            windowAction.setChecked(True)
+        else:
+            nativeAction.setChecked(True)
+
         return
+
+
     def _dumpPalette(self):
         print getPalette('dark')
         #pal = dumpPalette()
