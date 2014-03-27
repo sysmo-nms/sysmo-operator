@@ -225,3 +225,52 @@ def initHexSet():
         (r,g,b,a)       = col.getRgb()
         hexRgbaSet[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
         hexRgbSet[key]  = "#%0.2X%0.2X%0.2X" % (r,g,b)
+
+def dumpPalette():
+    _wid = QWidget()
+    palette  = _wid.palette()
+    _wid.deleteLater()
+
+    colorGroups = dict()
+    colorGroups['QPalette.Disabled'] = QPalette.Disabled
+    colorGroups['QPalette.Active']   = QPalette.Active
+    colorGroups['QPalette.Inactive'] = QPalette.Inactive
+    colorGroups['QPalette.Normal']   = QPalette.Normal
+
+    colorRoles = dict()
+    colorRoles['QPalette.Window']       = QPalette.Window
+    colorRoles['QPalette.Background']   = QPalette.Background
+    colorRoles['QPalette.WindowText']   = QPalette.WindowText
+    colorRoles['QPalette.Foreground']   = QPalette.Foreground
+    colorRoles['QPalette.Base']         = QPalette.Base
+    colorRoles['QPalette.AlternateBase'] = QPalette.AlternateBase
+    colorRoles['QPalette.ToolTipBase']  = QPalette.ToolTipBase
+    colorRoles['QPalette.ToolTipText']  = QPalette.ToolTipText
+    colorRoles['QPalette.Text']         = QPalette.Text
+    colorRoles['QPalette.Button']       = QPalette.Button
+    colorRoles['QPalette.ButtonText']   = QPalette.ButtonText
+    colorRoles['QPalette.BrightText']   = QPalette.BrightText
+    colorRoles['QPalette.Light']        = QPalette.Light
+    colorRoles['QPalette.Midlight']     = QPalette.Midlight
+    colorRoles['QPalette.Dark']         = QPalette.Dark
+    colorRoles['QPalette.Mid']          = QPalette.Mid
+    colorRoles['QPalette.Shadow']       = QPalette.Shadow
+    colorRoles['QPalette.Highlight']    = QPalette.Highlight
+    colorRoles['QPalette.HighlightedText'] = QPalette.HighlightedText
+    colorRoles['QPalette.Link']         = QPalette.Link
+    colorRoles['QPalette.LinkVisited']  = QPalette.LinkVisited
+
+    paletteDump = dict()
+    for group in colorGroups.keys():
+        cGroup = colorGroups[group]
+        paletteDump[cGroup] = dict()
+        for role in colorRoles.keys():
+            cRole = colorRoles[role]
+            color = palette.color(
+                cGroup,
+                cRole
+            )
+            rgb = color.getRgb()
+            paletteDump[cGroup][cRole] = rgb
+
+    return paletteDump

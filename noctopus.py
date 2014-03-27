@@ -6,11 +6,13 @@ import  sys
 import  re
 import  platform
 import  noctopus_main
+import  noctopus_colors
 
 
 osType           = platform.platform()
 noctopusSettings = QSettings("Noctopus NMS", "noctopus-client")
 noctopusStyle    = noctopusSettings.value("NMainWindow/style")
+noctopusTheme    = noctopusSettings.value("NMainWindow/theme")
 
 if noctopusStyle == None:
     if   re.match('^Windows-XP..*',    osType) != None:
@@ -24,6 +26,10 @@ if noctopusStyle == None:
 
 if noctopusStyle != None:
     QApplication.setStyle(noctopusStyle)
+
+if noctopusTheme != None:
+    colorPalette = noctopus_colors.getPalette(noctopusTheme)
+    QApplication.setPalette(colorPalette)
 
 translator   = QTranslator()
 translator.load('fr_FR')

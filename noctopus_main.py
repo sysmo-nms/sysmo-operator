@@ -33,7 +33,8 @@ from    PySide.QtGui    import (
 
 
 # local dependencies
-from    noctopus_images     import getIcon, noctopusGraphicsInit
+from    noctopus_colors     import getPalette
+from    noctopus_images     import getIcon, noctopusGraphicsInit, dumpPalette
 from    noctopus_dialogs    import Proxy
 from    noctopus_statusbar  import NStatusBar
 from    noctopus_centerwidget   import NCentralFrame
@@ -268,6 +269,9 @@ class NMainWindow(QMainWindow):
 
         "File"
         menuFile    = menu.addMenu('Noctopus')
+        _dumpPaletteAction = QAction('dump palette', self)
+        _dumpPaletteAction.triggered.connect(self._dumpPalette)
+
         exitAction      = QAction(getIcon('system-log-out'), self.tr('&Exit'), self)
         updateAction    = QAction(
             getIcon('software-update-available'),
@@ -276,6 +280,7 @@ class NMainWindow(QMainWindow):
         )
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
+        menuFile.addAction(_dumpPaletteAction)
         menuFile.addAction(updateAction)
         menuFile.addSeparator()
         menuFile.addAction(exitAction)
@@ -387,3 +392,7 @@ class NMainWindow(QMainWindow):
         menuStyle.addAction(windowxpAction)
     
         return
+    def _dumpPalette(self):
+        print getPalette('dark')
+        #pal = dumpPalette()
+        #print pal
