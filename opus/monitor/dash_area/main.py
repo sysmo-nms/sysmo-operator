@@ -1,14 +1,17 @@
 from    PySide.QtGui        import (
     QTabWidget,
     QMdiArea,
-    QFrame
+    QFrame,
+    QPushButton
 )
+from    PySide.QtCore       import Qt
 from    noctopus_widgets    import (
     NFrame,
     NGrid
 )
 from    opus.monitor.dash_area.controls import DashActions
 from    opus.monitor.dash_area.dash     import Dashboard
+import  nocapi
 
 class DashContainer(NFrame):
     def __init__(self, parent):
@@ -29,9 +32,23 @@ class DashContainer(NFrame):
 class DashTab(QTabWidget):
     def __init__(self, parent):
         super(DashTab, self).__init__(parent)
-        self.addTab(Dashboard(self), self.tr('Default'))
-        #self.setFrameShape(QFrame.StyledPanel)
-        #self.setContentsMargins(6,4,2,4)
-        #self._grid      = NGrid(self)
-        #self._controls  = DashActions(self)
-        #self._grid.addWidget(self._controls,    0,0)
+        tabBar = self.tabBar()
+        tabBar.setUsesScrollButtons(True)
+        tabBar.setExpanding(True)
+        helpButton = QPushButton(self)
+        helpButton.setIcon(nocapi.nGetIcon('dialog-information'))
+        helpButton.setFlat(True)
+        helpButton.setToolTip(self.tr('Quick overview of the explorer tabs'))
+        addButton = QPushButton(self)
+        addButton.setIcon(nocapi.nGetIcon('list-add'))
+        addButton.setFlat(True)
+        addButton.setToolTip(self.tr('Create a new tab'))
+        self.setElideMode(Qt.ElideRight)
+        self.setMovable(True)
+        self.setCornerWidget(addButton,  corner=Qt.TopLeftCorner)
+        self.setCornerWidget(helpButton, corner=Qt.TopRightCorner)
+        self.addTab(
+            Dashboard(self),
+            nocapi.nGetIcon('applications-development'),
+            self.tr('Default')
+        )
