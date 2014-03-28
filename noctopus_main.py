@@ -267,6 +267,7 @@ class NMainWindow(QMainWindow):
     def _initMenus(self):
         " Menu bar "
         menu = self.menuBar()
+        menu.setAutoFillBackground(True)
 
         "top corner widget"
         communityButton = QPushButton(self)
