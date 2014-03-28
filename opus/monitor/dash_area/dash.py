@@ -1,5 +1,6 @@
 from PySide.QtGui import (
     QLabel,
+    QFrame,
     QPushButton,
     QButtonGroup,
     QStackedLayout
@@ -37,6 +38,22 @@ class DashboardControls(NFrameContainer):
         super(DashboardControls, self).__init__(parent)
         self._grid = NGridContainer(self)
         self._grid.setHorizontalSpacing(4)
+
+        " edit buttons "
+        saveButton = QPushButton(self)
+        saveButton.setToolTip(self.tr('Save modifications'))
+        saveButton.setIcon(nocapi.nGetIcon('document-save-as'))
+        backButton = QPushButton(self)
+        backButton.setToolTip(self.tr('Restore last saved state'))
+        backButton.setIcon(nocapi.nGetIcon('edit-undo'))
+        separator = QFrame(self)
+        separator.setFixedWidth(6)
+        separator.setFrameShape(QFrame.NoFrame)
+        separator.setFrameShadow(QFrame.Plain)
+
+        
+
+        " dash switcher button group"
         self.buttonGroup = QButtonGroup(self)
         self.buttonGroup.setExclusive(True)
 
@@ -79,16 +96,28 @@ class DashboardControls(NFrameContainer):
         self.buttonGroup.addButton(perfs,     5)
         browse.setChecked(True)
 
-        self._grid.addWidget(browse,      0,0)
-        self._grid.addWidget(mdi,         0,1)
-        self._grid.addWidget(graphic,     0,2)
-        self._grid.addWidget(wmap,        0,3)
-        self._grid.addWidget(timeline,    0,4)
-        self._grid.addWidget(perfs,       0,5)
+        " grid "
+        self._grid.addWidget(saveButton,  0,0)
+        self._grid.addWidget(backButton,  0,1)
+        self._grid.addWidget(separator,   0,2)
+        self._grid.addWidget(browse,      0,3)
+        self._grid.addWidget(mdi,         0,4)
+        self._grid.addWidget(graphic,     0,5)
+        self._grid.addWidget(wmap,        0,6)
+        self._grid.addWidget(timeline,    0,7)
+        self._grid.addWidget(perfs,       0,8)
 
         self._grid.setColumnStretch(0,0)
         self._grid.setColumnStretch(1,0)
+        self._grid.setColumnStretch(2,0)
+        self._grid.setColumnStretch(3,0)
+        self._grid.setColumnStretch(4,0)
+        self._grid.setColumnStretch(5,0)
+        self._grid.setColumnStretch(6,0)
+        self._grid.setColumnStretch(7,0)
+        self._grid.setColumnStretch(8,0)
         self._grid.setColumnStretch(9,1)
+
         self.setLayout(self._grid)
 
 class DashboardStack(NFrameContainer):
