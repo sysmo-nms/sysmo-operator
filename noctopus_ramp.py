@@ -207,10 +207,11 @@ class NSelectorButton(QPushButton):
         self.goDown.triggered.connect(partial(self._parent.goDown, self._identifier))
         self.goRemove.triggered.connect(partial(self._parent.goRemove,self._identifier))
     
-    def mousePressEvent(self, event):
-        if event.button() == Qt.RightButton:
-            self._menu.exec_(self.mapToGlobal(event.pos()))
-        QPushButton.mousePressEvent(self, event)
+    # TODO
+    #def mousePressEvent(self, event):
+        #if event.button() == Qt.RightButton:
+            #self._menu.exec_(self.mapToGlobal(event.pos()))
+        #QPushButton.mousePressEvent(self, event)
 
     def isTop(self):
         self.goUp.isDisabled(True)
