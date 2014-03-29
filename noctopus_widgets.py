@@ -1,13 +1,19 @@
 # PySide
 from    PySide.QtSvg    import QSvgWidget
-from    PySide.QtCore   import Qt, QUrl
+from    PySide.QtCore   import (
+    Qt,
+    QUrl,
+    Signal
+)
+
 from    PySide.QtGui    import (
     QFrame,
     QLabel,
     QGridLayout,
     QSplitter,
     QCommandLinkButton,
-    QDesktopServices
+    QDesktopServices,
+    QPushButton
 )
 import noctopus_images
 # SPLITER
@@ -44,6 +50,21 @@ class NGridContainer(QGridLayout):
     def __init__(self, parent=None):
         super(NGridContainer, self).__init__(parent)
         self.setContentsMargins(0,0,0,0)
+
+class NInfoButton(QPushButton):
+    showInfo = Signal(bool)
+    def __init__(self, parent=None):
+        super(NInfoButton, self).__init__(parent)
+        self.setIcon(noctopus_images.getIcon('dialog-information'))
+        self.setFlat(True)
+        self.pressed.connect(self._showInfo)
+        self.released.connect(self._hideInfo)
+
+    def _showInfo(self):
+        self.showInfo.emit(True)
+
+    def _hideInfo(self):
+        self.showInfo.emit(False)
 
 class Community(NFrame):
     def __init__(self, parent=None):

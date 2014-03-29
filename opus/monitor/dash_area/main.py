@@ -7,7 +7,8 @@ from    PySide.QtGui        import (
 from    PySide.QtCore       import Qt
 from    noctopus_widgets    import (
     NFrame,
-    NGrid
+    NGrid,
+    NInfoButton
 )
 from    opus.monitor.dash_area.controls import DashActions
 from    opus.monitor.dash_area.dash     import Dashboard
@@ -35,10 +36,7 @@ class DashTab(QTabWidget):
         tabBar = self.tabBar()
         tabBar.setUsesScrollButtons(True)
         tabBar.setExpanding(True)
-        helpButton = QPushButton(self)
-        helpButton.setIcon(nocapi.nGetIcon('dialog-information'))
-        helpButton.setFlat(True)
-        helpButton.setToolTip(self.tr('Quick overview of the explorer tabs'))
+        helpButton = NInfoButton(self)
         addButton = QPushButton(self)
         addButton.setIcon(nocapi.nGetIcon('list-add'))
         addButton.setFlat(True)
