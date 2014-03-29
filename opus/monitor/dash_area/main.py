@@ -7,11 +7,11 @@ from    PySide.QtGui        import (
 from    PySide.QtCore       import Qt
 from    noctopus_widgets    import (
     NFrame,
-    NGrid,
-    NInfoButton
+    NGrid
 )
 from    opus.monitor.dash_area.controls import DashActions
 from    opus.monitor.dash_area.dash     import Dashboard
+from    noctopus_infobutton             import NInfoButton
 import  nocapi
 
 class DashContainer(NFrame):

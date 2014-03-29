@@ -1,6 +1,7 @@
 import  os, sys, platform
-from    PySide.QtGui import QIcon, QWidget, QPalette
+from    PySide.QtGui import QIcon, QWidget, QPalette, QPixmap
 
+pixmapSet   = dict()
 iconSet     = dict()
 imageSet    = dict()
 hexRgbSet   = dict()
@@ -14,9 +15,14 @@ iconsPath   = os.path.join(currentPath, 'graphics')
 imagesPath  = os.path.join(currentPath, 'graphics')
 
 def noctopusGraphicsInit():
+    initPixmaps()
     initIcons()
     initImages()
     initHexSet()
+
+def getPixmap(pixmap):
+    global pixmapSet
+    return pixmapSet[pixmap]
 
 def getIcon(icon):
     global iconSet
@@ -35,6 +41,13 @@ def getRgba(pal):
     return hexRgbaSet[pal]
 
 # ICONS
+def initPixmaps():
+    global iconsPath
+    global pixmapSet
+    pixmapSet = {
+        'system-search': QPixmap(os.path.join(iconsPath, "system-search.png"))
+    }
+
 def initIcons():
     global iconsPath
     global iconSet

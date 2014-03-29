@@ -1,9 +1,12 @@
 # PySide
+from    PySide.QtCore   import QRect
 from    PySide.QtGui    import (
     QStackedLayout,
-    QGridLayout
+    QGridLayout,
+    QPainter,
+    QColor
 )
-from noctopus_ramp import NSelector
+import noctopus_ramp
 from noctopus_widgets import NFrameContainer, NGrid, NFrame
 
 class NCentralFrame(NFrame):
@@ -12,16 +15,51 @@ class NCentralFrame(NFrame):
 
     def __init__(self, parent):
         super(NCentralFrame, self).__init__(parent)
-        grid = NGrid(self)
-        grid.setHorizontalSpacing(2)
+        NCentralFrame.singleton = self
+        self._grid = NGrid(self)
+        self._grid.setHorizontalSpacing(2)
         self.centralStack   = NCentralStack(self)
-        self.selector       = NSelector(self, self.centralStack)
-        grid.addWidget(self.selector,       0,0,0,1)
-        grid.addWidget(self.centralStack,   0,1,1,1)
-        grid.setColumnStretch(0, 0)
-        grid.setColumnStretch(1, 1)
+        self.selector       = noctopus_ramp.NSelector(self, self.centralStack)
+        self._grid.addWidget(self.selector,       0,0,)
+        self._grid.addWidget(self.centralStack,   0,1,)
+        self._grid.setColumnStretch(0, 0)
+        self._grid.setColumnStretch(1, 1)
         self.selector.connectAll()
-        self.setLayout(grid)
+        self.setLayout(self._grid)
+
+    def showInfo(self, boolean):
+        if boolean == True:
+            print "show info"
+            self._infoFrame = NInfoFrame(self)
+            self._grid.addWidget(self._infoFrame, 0,0,1,2)
+        else:
+            print "hide info"
+            self._grid.removeWidget(self._infoFrame)
+            self._infoFrame.deleteLater()
+
+
+class NInfoFrame(NFrame):
+    def __init__(self, parent):
+        super(NInfoFrame, self).__init__(parent)
+        self.setContentsMargins(0,0,0,0)
+        self.setAcceptDrops(True)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        rect    = event.rect()
+        painter.fillRect(rect, QColor(100,100,100,50))
+        NFrame.paintEvent(self, event)
+
+    def dragEnterEvent(self, event):
+        event.accept()
+        print "drag event! "
+
+    def dropEvent(self, event):
+        print "drop event!", type(event)
+        self.deleteLater()
+
+
+
 
 class NCentralStack(NFrameContainer):
 

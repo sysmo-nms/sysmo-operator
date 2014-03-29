@@ -16,6 +16,7 @@ from    PySide.QtGui    import (
     QPushButton
 )
 import noctopus_images
+
 # SPLITER
 class NSplitter(QSplitter):
     def __init__(self, parent=None):
@@ -55,6 +56,7 @@ class NInfoButton(QPushButton):
     showInfo = Signal(bool)
     def __init__(self, parent=None):
         super(NInfoButton, self).__init__(parent)
+        #self.showInfo.connect(noctopus_centerwidget.NCentralFrame.singleton.showInfo)
         self.setIcon(noctopus_images.getIcon('dialog-information'))
         self.setFlat(True)
         self.pressed.connect(self._showInfo)
