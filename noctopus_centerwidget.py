@@ -4,9 +4,12 @@ from    PySide.QtGui    import (
     QStackedLayout,
     QGridLayout,
     QPainter,
-    QColor
+    QColor,
+    QRadialGradient,
+    QBrush
 )
 import noctopus_ramp
+import noctopus_main
 from noctopus_widgets import NFrameContainer, NGrid, NFrame
 
 class NCentralFrame(NFrame):
@@ -16,47 +19,68 @@ class NCentralFrame(NFrame):
     def __init__(self, parent):
         super(NCentralFrame, self).__init__(parent)
         NCentralFrame.singleton = self
-        self._grid = NGrid(self)
-        self._grid.setHorizontalSpacing(2)
+        self.grid = NGrid(self)
+        self.grid.setHorizontalSpacing(2)
         self.centralStack   = NCentralStack(self)
         self.selector       = noctopus_ramp.NSelector(self, self.centralStack)
-        self._grid.addWidget(self.selector,       0,0,)
-        self._grid.addWidget(self.centralStack,   0,1,)
-        self._grid.setColumnStretch(0, 0)
-        self._grid.setColumnStretch(1, 1)
+        self.grid.addWidget(self.selector,       0,0,)
+        self.grid.addWidget(self.centralStack,   0,1,)
+        self.grid.setColumnStretch(0, 0)
+        self.grid.setColumnStretch(1, 1)
         self.selector.connectAll()
-        self.setLayout(self._grid)
+        self.setLayout(self.grid)
 
     def showInfo(self, boolean):
         if boolean == True:
             print "show info"
             self._infoFrame = NInfoFrame(self)
-            self._grid.addWidget(self._infoFrame, 0,0,1,2)
+            self.grid.addWidget(self._infoFrame, 0,0,1,2)
         else:
             print "hide info"
-            self._grid.removeWidget(self._infoFrame)
+            self.grid.removeWidget(self._infoFrame)
             self._infoFrame.deleteLater()
 
 
 class NInfoFrame(NFrame):
     def __init__(self, parent):
         super(NInfoFrame, self).__init__(parent)
+        self._parent = parent
+        self._mousePos = None
+        self._drawGradient = QRadialGradient()
+        self._drawGradient.setRadius(500)
+        self._drawGradient.setColorAt(0, QColor(100,100,100,0))
+        self._drawGradient.setColorAt(1, QColor(100,100,100,111))
         self.setContentsMargins(0,0,0,0)
         self.setAcceptDrops(True)
 
     def paintEvent(self, event):
-        painter = QPainter(self)
         rect    = event.rect()
-        painter.fillRect(rect, QColor(100,100,100,50))
+        if self._mousePos != None:
+            self._drawGradient.setCenter(self._mousePos)
+            self._drawGradient.setFocalPoint(self._mousePos)
+            brush = QBrush(self._drawGradient)
+            QPainter(self).fillRect(rect, QBrush(self._drawGradient))
+        else:
+            QPainter(self).fillRect(rect, QColor(100,100,100,111))
         NFrame.paintEvent(self, event)
 
     def dragEnterEvent(self, event):
         event.accept()
+        self._mousePos = event.pos()
         print "drag event! "
+        NFrame.dragEnterEvent(self, event)
+
+    def dragMoveEvent(self, event):
+        print "move", type(event)
+        self._mousePos = event.pos()
+        self.update()
+        NFrame.dragMoveEvent(self, event)
 
     def dropEvent(self, event):
         print "drop event!", type(event)
+        self._parent.grid.removeWidget(self)
         self.deleteLater()
+        NFrame.dropEvent(self, event)
 
 
 
