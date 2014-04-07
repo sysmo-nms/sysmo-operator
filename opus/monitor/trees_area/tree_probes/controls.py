@@ -9,6 +9,7 @@ from    noctopus_widgets        import (
     NInfoButton
 )
 
+from    opus.monitor.commands.create_target import Wizard
 import nocapi
 
 class ProbesActions(NFrameContainer):
@@ -21,8 +22,9 @@ class ProbesActions(NFrameContainer):
         self._line.setPlaceholderText('Filter')
         self._line.textChanged.connect(self._lineChanged)
 
-        add   = QPushButton(self)
-        add.setIcon(nocapi.nGetIcon('list-add'))
+        create   = QPushButton(self)
+        create.setIcon(nocapi.nGetIcon('list-add'))
+        create.clicked.connect(self._createTargetWizard)
 
         clear = QPushButton(self)
         clear.setIcon(nocapi.nGetIcon('edit-clear'))
@@ -30,7 +32,7 @@ class ProbesActions(NFrameContainer):
 
         info = NInfoButton(self)
 
-        grid.addWidget(add,         0,0)
+        grid.addWidget(create,      0,0)
         grid.addWidget(clear,       0,1)
         grid.addWidget(self._line,  0,2)
         grid.addWidget(info,        0,3)
@@ -45,3 +47,7 @@ class ProbesActions(NFrameContainer):
         text = self._line.text()
         print text
         #MonitorTreeview.singleton.filterThis(text)
+
+    def _createTargetWizard(self):
+        wizard = Wizard(self)
+        wizard.show()

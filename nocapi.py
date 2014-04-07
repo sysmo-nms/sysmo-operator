@@ -25,6 +25,12 @@ def nGetViewMode():
     '''
     return noctopus_main.NMainWindow.singleton.activeViewMode
 
+def nGetPixmap(pixmapName):
+    ''' return:
+        PySide.QtGui.QPixmap()
+    '''
+    return noctopus_images.getPixmap(pixmapName)
+
 def nGetIcon(iconName):
     ''' return:
         PySide.QtGui.QIcon()

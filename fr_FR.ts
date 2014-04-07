@@ -35,11 +35,64 @@
     </message>
 </context>
 <context>
+    <name>Community</name>
+    <message>
+        <location filename="noctopus_widgets.py" line="77"/>
+        <source>Getting help</source>
+        <translation>Obtenir de l&apos;aide</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="78"/>
+        <source>The documentation did not help you to solve your problem? You may try the forum or the mailing list!</source>
+        <translation>Vous ne resolvez pas votre problème avec la documentation? Essayez le forum ou la liste de diffusion!</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="82"/>
+        <source>Submit an idea</source>
+        <translation>Soumettre une idée</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="83"/>
+        <source>You have an idea to improve user experience? Share it!</source>
+        <translation>Vous avez une idée qui permetrait d&apos;améliorer Noctopus? Partagez la!</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="87"/>
+        <source>Submit a bug</source>
+        <translation>Soumettre un bug</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="88"/>
+        <source>You have found a disfonction in the interface? Please let us known...</source>
+        <translation>S&apos;il vous plait, faites le nous savoir...</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="92"/>
+        <source>Vote for a functionnality</source>
+        <translation>Voter pour une nouvelle fonctionnalité</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="93"/>
+        <source>Take a look at the functionnality planning and vote for the most usefull for you!</source>
+        <translation>Quelle fonctions aimeriez vous voir dans la future release de Noctopus?</translation>
+    </message>
+    <message>
+        <location filename="noctopus_widgets.py" line="105"/>
+        <source>The community side</source>
+        <translation>La communauté Noctopus</translation>
+    </message>
+</context>
+<context>
     <name>DashTab</name>
     <message>
-        <location filename="opus/monitor/dash_area/main.py" line="32"/>
+        <location filename="opus/monitor/dash_area/main.py" line="52"/>
         <source>Default</source>
         <translation>Défaut</translation>
+    </message>
+    <message>
+        <location filename="opus/monitor/dash_area/main.py" line="43"/>
+        <source>Create a new tab</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -47,120 +100,145 @@
     <message>
         <location filename="opus/monitor/dash_area/dash.py" line="44"/>
         <source>browse</source>
-        <translation>Explorer</translation>
+        <translation type="obsolete">Explorer</translation>
     </message>
     <message>
-        <location filename="opus/monitor/dash_area/dash.py" line="46"/>
+        <location filename="opus/monitor/dash_area/dash.py" line="67"/>
         <source>mdi</source>
         <translation>mdi</translation>
     </message>
     <message>
-        <location filename="opus/monitor/dash_area/dash.py" line="48"/>
+        <location filename="opus/monitor/dash_area/dash.py" line="72"/>
         <source>graphic</source>
         <translation>Graphiques</translation>
     </message>
     <message>
-        <location filename="opus/monitor/dash_area/dash.py" line="50"/>
+        <location filename="opus/monitor/dash_area/dash.py" line="77"/>
         <source>wmap</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="opus/monitor/dash_area/dash.py" line="52"/>
+        <location filename="opus/monitor/dash_area/dash.py" line="82"/>
         <source>timeline</source>
         <translation>Frize chronologique</translation>
     </message>
     <message>
-        <location filename="opus/monitor/dash_area/dash.py" line="54"/>
+        <location filename="opus/monitor/dash_area/dash.py" line="87"/>
         <source>perfs</source>
         <translation>Performances</translation>
+    </message>
+    <message>
+        <location filename="opus/monitor/dash_area/dash.py" line="44"/>
+        <source>Save modifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="opus/monitor/dash_area/dash.py" line="47"/>
+        <source>Restore last saved state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="opus/monitor/dash_area/dash.py" line="62"/>
+        <source>explore</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>NMainWindow</name>
     <message>
-        <location filename="noctopus_main.py" line="200"/>
+        <location filename="noctopus_main.py" line="257"/>
         <source>The application must restart to take your modification in consideration</source>
         <translation>Vous devez redémarer l&apos;application pour que les modifications soient prises en compte</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="253"/>
+        <location filename="noctopus_main.py" line="290"/>
         <source>&amp;Exit</source>
         <translation>&amp;Quiter</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="260"/>
+        <location filename="noctopus_main.py" line="305"/>
         <source>&amp;Full screen</source>
         <translation>&amp;Plein écran</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="264"/>
+        <location filename="noctopus_main.py" line="309"/>
         <source>Simplified view</source>
         <translation>Vue simplifiée</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="268"/>
+        <location filename="noctopus_main.py" line="313"/>
         <source>Minimal view</source>
         <translation>Vue minimale</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="272"/>
+        <location filename="noctopus_main.py" line="317"/>
         <source>Expert view</source>
         <translation>Vue experte</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="283"/>
+        <location filename="noctopus_main.py" line="328"/>
         <source>Views</source>
         <translation>Vues</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="292"/>
+        <location filename="noctopus_main.py" line="337"/>
         <source>Proxy settings</source>
         <translation>Configuration du proxy</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="295"/>
+        <location filename="noctopus_main.py" line="340"/>
         <source>Configure</source>
         <translation>Configurer</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="299"/>
+        <location filename="noctopus_main.py" line="369"/>
         <source>Native</source>
         <translation>Native</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="303"/>
-        <source>plastique</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_main.py" line="307"/>
-        <source>cleanlooks</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_main.py" line="311"/>
-        <source>cde</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_main.py" line="315"/>
-        <source>motif</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="noctopus_main.py" line="319"/>
         <source>windows classic</source>
-        <translation>windows classique</translation>
+        <translation type="obsolete">windows classique</translation>
     </message>
     <message>
-        <location filename="noctopus_main.py" line="323"/>
-        <source>windows xp</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_main.py" line="355"/>
+        <location filename="noctopus_main.py" line="362"/>
         <source>Style</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="293"/>
+        <source>Check for update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="348"/>
+        <source>Balanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="352"/>
+        <source>Windows classic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="368"/>
+        <source>Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="373"/>
+        <source>Deep water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="377"/>
+        <source>Island</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="noctopus_main.py" line="381"/>
+        <source>Lagoon</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -335,82 +413,52 @@
     <message>
         <location filename="noctopus_menus.py" line="17"/>
         <source>&amp;Exit</source>
-        <translation>&amp;Quiter</translation>
+        <translation type="obsolete">&amp;Quiter</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="24"/>
         <source>&amp;Full screen</source>
-        <translation>&amp;Plein écran</translation>
+        <translation type="obsolete">&amp;Plein écran</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="28"/>
         <source>Simplified view</source>
-        <translation>Vue simplifiée</translation>
+        <translation type="obsolete">Vue simplifiée</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="32"/>
         <source>Minimal view</source>
-        <translation>Vue minimale</translation>
+        <translation type="obsolete">Vue minimale</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="36"/>
         <source>Expert view</source>
-        <translation>Vue experte</translation>
+        <translation type="obsolete">Vue experte</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="47"/>
         <source>Views</source>
-        <translation>Vues</translation>
+        <translation type="obsolete">Vues</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="56"/>
         <source>Proxy settings</source>
-        <translation>Configuration du proxy</translation>
+        <translation type="obsolete">Configuration du proxy</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="59"/>
         <source>Configure</source>
-        <translation>Configurer</translation>
+        <translation type="obsolete">Configurer</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="63"/>
         <source>Native</source>
-        <translation>Native</translation>
-    </message>
-    <message>
-        <location filename="noctopus_menus.py" line="67"/>
-        <source>plastique</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_menus.py" line="71"/>
-        <source>cleanlooks</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_menus.py" line="75"/>
-        <source>cde</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_menus.py" line="79"/>
-        <source>motif</source>
-        <translation></translation>
+        <translation type="obsolete">Native</translation>
     </message>
     <message>
         <location filename="noctopus_menus.py" line="83"/>
         <source>windows classic</source>
-        <translation>windows classique</translation>
-    </message>
-    <message>
-        <location filename="noctopus_menus.py" line="87"/>
-        <source>windows xp</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="noctopus_menus.py" line="119"/>
-        <source>Style</source>
-        <translation></translation>
+        <translation type="obsolete">windows classique</translation>
     </message>
 </context>
 </TS>

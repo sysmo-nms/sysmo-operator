@@ -45,7 +45,8 @@ def initPixmaps():
     global iconsPath
     global pixmapSet
     pixmapSet = {
-        'system-search': QPixmap(os.path.join(iconsPath, "system-search.png"))
+        'system-search': QPixmap(os.path.join(iconsPath, "system-search.png")),
+        'applications-system': QPixmap(os.path.join(iconsPath, "applications-system.png"))
     }
 
 def initIcons():
