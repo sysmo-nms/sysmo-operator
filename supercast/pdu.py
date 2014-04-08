@@ -251,12 +251,38 @@ class TrackerProbeModuleInfo(univ.Sequence):
 
 class TrackerTargetInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('channel',     char.PrintableString()),
+        namedtype.NamedType('channel',      char.PrintableString()),
         namedtype.NamedType('properties',   TargetProperties()),
         namedtype.NamedType('type',         TargetInfoType())
     )
 
-class TrackerPDU_fromClient(char.PrintableString): pass
+class TrackerCreateTarget(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('ipAdd',        char.PrintableString()),
+        namedtype.NamedType('permConf',     PermConf()),
+        namedtype.NamedType('queryId',      univ.Integer())
+    )
+
+class TrackerReply(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',      univ.Integer()),
+        namedtype.NamedType('status',       univ.Boolean()),
+        namedtype.NamedType('info',         char.PrintableString())
+    )
+
+class TrackerPDU_fromClient(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'createTarget',
+            TrackerCreateTarget().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        )
+    )
 
 class TrackerPDU_fromServer(univ.Choice):
     componentType = namedtype.NamedTypes(
@@ -347,6 +373,16 @@ class TrackerPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     11 
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'trackerReply',
+            TrackerReply().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    12
                 )
             )
         )
@@ -1088,6 +1124,18 @@ def decode(pdu):
                         'keyVals':      keyValsDict
                     }
                 }
+            elif msg3_type == 'trackerReply':
+                queryId = int(msg3.getComponentByName('queryId'))
+                status  = bool(msg3.getComponentByName('status'))
+                info    = str(msg3.getComponentByName('info'))
+                return {
+                    'from':     'trackerReply',
+                    'queryId':  queryId,
+                    'value': {
+                        'status':   status,
+                        'info':     info
+                    }
+                }
             else:
                 print "unknwon message", msg3_type
                 return {}
@@ -1110,8 +1158,64 @@ def encode(pduType, payload):
     elif pduType == 'authResp':
         (userId, password) = payload
         return encode_authResp(userId, password)
+    elif pduType == 'createTarget':
+        (queryId, msg)      = payload
+        (ip, perm)          = msg
+        return encode_create_target(ip, perm, queryId)
+    elif pduType == 'createProbe':
+        print "create probe"
+        return False
     else:
         return False
+
+def encode_create_target(ip, perm, queryId):
+    (read, write)   = perm
+    readGroups      = Groups()
+    for i in range(len(read)):
+        readGroups.setComponentByPosition(i, read[i])
+    writeGroups     = Groups()
+    for i in range(len(write)):
+        writeGroups.setComponentByPosition(i, write[i])
+
+    targetConf      = PermConf()
+    targetConf.setComponentByName('read',         readGroups)
+    targetConf.setComponentByName('write',        writeGroups)
+
+    targetCreate = TrackerCreateTarget().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    targetCreate.setComponentByName('ipAdd',    ip)
+    targetCreate.setComponentByName('queryId',  queryId)
+    targetCreate.setComponentByName('permConf', targetConf)
+
+    fromClient = TrackerPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('createTarget', targetCreate)
+
+    trackerPDU = TrackerPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    trackerPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modTrackerPDU', trackerPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
 
 def encode_unsubscribe(queryId, chanString):
     #chan = SupercastChan(chanString).subtype(

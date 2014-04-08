@@ -53,6 +53,7 @@ def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+        'text-x-generic-template': QIcon(os.path.join(iconsPath, "text-x-generic-template.svg")),
         'face-devilish': QIcon(os.path.join(iconsPath, "face-devilish.svg")),
         'face-smile': QIcon(os.path.join(iconsPath, "face-smile.svg")),
         'software-update-available': QIcon(os.path.join(iconsPath, "software-update-available.svg")),

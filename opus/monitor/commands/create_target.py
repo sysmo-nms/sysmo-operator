@@ -21,6 +21,7 @@ from PySide.QtCore import Qt
 
 from noctopus_widgets import NGrid, NFrame
 import nocapi
+import supercast.main
 
 
 class Wizard(QWizard):
@@ -210,18 +211,28 @@ class CreateNetworkElement(QWizardPage):
         return -1
 
     def validatePage(self):
-        snmpV2Read  = self._snmpV2Read.text()
-        snmpV2Write = self._snmpV2Write.text()
-        ip          = self._ipLine.text()
-        print "validate", ip, " ", snmpV2Read, " ", snmpV2Read
-        self.dial = QMessageBox(self)
-        self.dial.setModal(True)
-        self.dial.setText(self.tr('Waiting for server response'))
+        #snmpV2Read  = self._snmpV2Read.text()
+        #snmpV2Write = self._snmpV2Write.text()
+        #ip          = self._ipLine.text()
+        #snmpV2Read  = self._snmpV2Read.text()
+        #snmpV2Write = self._snmpV2Write.text()
+        ip          = "192.168.0.5"
+        perms       = (["admin"], ["admin"])
+        print "validate", ip, " ", perms
+        ret = supercast.main.send('createTarget', (ip, perms), self.trackerReply)
+        print "ret is ", ret
+
+        #self.dial = QMessageBox(self)
+        #self.dial.setModal(True)
+        #self.dial.setText(self.tr('Waiting for server response'))
         #button = self.dial.buttons()
         #button.setDisabled(True)
-        self.dial.exec_()
+        #self.dial.exec_()
 
         return False
+
+    def trackerReply(self, msg):
+        print "get reply!!!!!!", msg
         
 
 

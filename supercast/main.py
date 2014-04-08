@@ -8,6 +8,9 @@ from    PySide.QtGui        import *
 from    supercast.pdu       import decode, encode
 import  supercast.login
 
+def send(pduType, message, callback):
+    Supercast.singleton.send(pduType, message, callback)
+
 class Supercast(QObject):
 
     eventSignals = Signal(tuple)
@@ -19,6 +22,7 @@ class Supercast(QObject):
 
     def __init__(self, parent, mainwindow=None):
         super(Supercast, self).__init__(parent)
+        Supercast.singleton = self
 
         # parent of dialogs must be a QMainWindow()
         if mainwindow == None:
@@ -57,6 +61,10 @@ class Supercast(QObject):
         queryId = self._getQueryId(callback)
         self.lQueue.emit(('unsubscribe', (queryId, channel)))
 
+    def send(self, pduType, message, callback):
+        queryId = self._getQueryId(callback)
+        self.lQueue.emit((pduType, (queryId, message)))
+
     def _getQueryId(self, pyCallable):
         queryId = 0
         while True:
@@ -79,7 +87,15 @@ class Supercast(QObject):
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])
             if (handler == None):
-                print "unknown destination", payload['from']
+                hasQueryId = False
+                for key in payload.keys(): 
+                    if key == 'queryId':
+                        hasQueryId = True
+                        break
+                if hasQueryId == False:
+                    print "unknown destination", payload['from']
+                else:
+                    self._queryNotify(payload)
             else:
                 handler(payload)
         elif msgType == 'socketConnected':
@@ -261,6 +277,7 @@ class SupercastSocket(QThread):
             pdu = encode('authResp', (name, passw))
             self._sendToServer(pdu)
         else:
+            print "here it is payload ", payload
             pdu = encode(key, payload)
             self._sendToServer(pdu)
 
