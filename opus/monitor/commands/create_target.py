@@ -21,7 +21,7 @@ from PySide.QtCore import Qt
 
 from noctopus_widgets import NGrid, NFrame
 import nocapi
-import supercast.main
+import supercast.main   as supercast
 
 
 class Wizard(QWizard):
@@ -218,9 +218,8 @@ class CreateNetworkElement(QWizardPage):
         #snmpV2Write = self._snmpV2Write.text()
         ip          = "192.168.0.5"
         perms       = (["admin"], ["admin"])
-        print "validate", ip, " ", perms
-        ret = supercast.main.send('createTarget', (ip, perms), self.trackerReply)
-        print "ret is ", ret
+
+        ret = supercast.send('trackerCreateTarget', (ip, perms), self.trackerReply)
 
         #self.dial = QMessageBox(self)
         #self.dial.setModal(True)

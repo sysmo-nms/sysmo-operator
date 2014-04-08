@@ -1158,11 +1158,11 @@ def encode(pduType, payload):
     elif pduType == 'authResp':
         (userId, password) = payload
         return encode_authResp(userId, password)
-    elif pduType == 'createTarget':
+    elif pduType == 'trackerCreateTarget':
         (queryId, msg)      = payload
         (ip, perm)          = msg
         return encode_create_target(ip, perm, queryId)
-    elif pduType == 'createProbe':
+    elif pduType == 'trackerCreateProbe':
         print "create probe"
         return False
     else:
