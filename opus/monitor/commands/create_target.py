@@ -14,7 +14,8 @@ from PySide.QtGui   import (
     QPushButton,
     QGroupBox,
     QListWidget,
-    QListWidgetItem
+    QListWidgetItem,
+    QMessageBox
 )
 from PySide.QtCore import Qt
 
@@ -190,9 +191,11 @@ class CreateNetworkElement(QWizardPage):
         snmpFrame.setTitle(self.tr("&SNMP v2b configuration"))
         snmpLayout = QFormLayout(snmpFrame)
         snmpFrame.setLayout(snmpLayout)
+        self._snmpV2Write = QLineEdit(snmpFrame)
+        self._snmpV2Read  = QLineEdit(snmpFrame)
 
-        snmpLayout.insertRow(0, self.tr('Write community:'), QLineEdit(snmpFrame))
-        snmpLayout.insertRow(1, self.tr('Read community:'), QLineEdit(snmpFrame))
+        snmpLayout.insertRow(0, self.tr('Write community:'), self._snmpV2Write)
+        snmpLayout.insertRow(1, self.tr('Read community:'),  self._snmpV2Read)
         return snmpFrame
 
     def _initProbesFrame(self):
@@ -207,9 +210,18 @@ class CreateNetworkElement(QWizardPage):
         return -1
 
     def validatePage(self):
-        print "validate"
-        return False
+        snmpV2Read  = self._snmpV2Read.text()
+        snmpV2Write = self._snmpV2Write.text()
+        ip          = self._ipLine.text()
+        print "validate", ip, " ", snmpV2Read, " ", snmpV2Read
+        self.dial = QMessageBox(self)
+        self.dial.setModal(True)
+        self.dial.setText(self.tr('Waiting for server response'))
+        #button = self.dial.buttons()
+        #button.setDisabled(True)
+        self.dial.exec_()
 
+        return False
         
 
 
