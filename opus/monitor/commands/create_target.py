@@ -59,8 +59,11 @@ class ChooseType(QWizardPage):
         typeNetElement      = QCommandLinkButton(self)
         typeNetElement.setText('Network element')
         typeNetElement.setDescription(self.tr('''
-            Create a network element target, and get live status and
-            performances graphics
+            Using this wizard will help you to create a network element target.
+            Network elements have the common particularity to support SNMP
+            protocol and the MIB-2 management information base. This allow
+            to fetch interfaces performance informations for example, and then
+            generate nice graphs.
         '''))
         typeNetElement.clicked.connect(self._startNetElement)
 
@@ -68,6 +71,13 @@ class ChooseType(QWizardPage):
         typeNetService.setText('Network server')
         typeNetService.setDescription(self.tr('''
             Create a network server target, and get live status of services.
+            This wizard will help you to create a network server target.
+            The common particularity of a server is that it fullfil one or
+            more services like HTTP, SMTP or others. A network server may
+            have SNMP support for one of his services, but the SNMP query
+            must be configured manualy. If you know that your server support
+            the MIB-2 management information base, you can apply a template
+            configuration common to the network elements.
         '''))
         typeNetService.clicked.connect(self._startNetService)
 
