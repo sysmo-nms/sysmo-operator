@@ -112,7 +112,14 @@ def initIcons():
         'system-log-out': QIcon(os.path.join(iconsPath, "system-log-out.svg")),
         'system-shutdown': QIcon(os.path.join(iconsPath, "system-shutdown.svg")),
         'utilities-system-monitor': QIcon(os.path.join(iconsPath, "utilities-system-monitor.svg")),
-        'utilities-system-monitor-black': QIcon(os.path.join(iconsPath, "utilities-system-monitor-black.svg")),
+        'monitor-black': QIcon(os.path.join(iconsPath, "monitor-black.svg")),
+        'monitor-white': QIcon(os.path.join(iconsPath, "monitor-white.svg")),
+        'locator-black': QIcon(os.path.join(iconsPath, "locator-black.svg")),
+        'locator-white': QIcon(os.path.join(iconsPath, "locator-white.svg")),
+        'iphelper-black': QIcon(os.path.join(iconsPath, "iphelper-black.svg")),
+        'iphelper-white': QIcon(os.path.join(iconsPath, "iphelper-white.svg")),
+        'knowledge-black': QIcon(os.path.join(iconsPath, "knowledge-black.svg")),
+        'knowledge-white': QIcon(os.path.join(iconsPath, "knowledge-white.svg")),
         'utilities-terminal': QIcon(os.path.join(iconsPath, "utilities-terminal.svg")),
         'process-stop': QIcon(os.path.join(iconsPath, "process-stop.svg")),
         'video-display': QIcon(os.path.join(iconsPath, "video-display.svg")),
@@ -202,7 +209,15 @@ def initImages():
         'weather-showers': os.path.join(imagesPath, "weather-showers.svg"),
         'weather-snow': os.path.join(imagesPath, "weather-snow.svg"),
         'weather-storm': os.path.join(imagesPath, "weather-storm.svg"),
-        'Filter': os.path.join(imagesPath, "Filter.svg")
+        'Filter': os.path.join(imagesPath, "Filter.svg"),
+        'monitor-black': os.path.join(imagesPath, "monitor-black.svg"),
+        'monitor-white': os.path.join(imagesPath, "monitor-white.svg"),
+        'locator-black': os.path.join(imagesPath, "locator-black.svg"),
+        'locator-white': os.path.join(imagesPath, "locator-white.svg"),
+        'iphelper-black': os.path.join(imagesPath, "iphelper-black.svg"),
+        'iphelper-white': os.path.join(imagesPath, "iphelper-white.svg"),
+        'knowledge-black': os.path.join(imagesPath, "knowledge-black.svg"),
+        'knowledge-white': os.path.join(imagesPath, "knowledge-white.svg")
     }
 
 def initHexSet():

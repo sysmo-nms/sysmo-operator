@@ -20,10 +20,11 @@ from    PySide.QtGui    import (
     QToolButton,
 )
 
+from PySide.QtSvg   import QSvgWidget
 
 # local dependencies
-from    noctopus_images     import getIcon
-from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame
+from    noctopus_images     import getIcon, getImage
+from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame, NGrid
 
 # opus
 import  opus.monitor.main
@@ -120,26 +121,26 @@ class NSelector(NFrameContainer):
         self._buttons['monitor'] = dict()
         self._buttons['monitor']['row'] = 1
         self._buttons['monitor']['widget'] = NSelectorButton(self, 'monitor')
-        self._buttons['monitor']['widget'].setIcon(
-            getIcon('utilities-system-monitor-black'))
+        self._buttons['monitor']['widget'].setIcon('monitor-black')
+            #getIcon('monitor-black'))
 
         self._buttons['locator'] = dict()
         self._buttons['locator']['row'] = 2
         self._buttons['locator']['widget'] = NSelectorButton(self, 'locator')
-        self._buttons['locator']['widget'].setIcon(
-            getIcon('utilities-system-monitor-black'))
+        self._buttons['locator']['widget'].setIcon('locator-black')
+            #etIcon('locator-black'))
 
         self._buttons['iphelper'] = dict()
         self._buttons['iphelper']['row'] = 3
         self._buttons['iphelper']['widget'] = NSelectorButton(self, 'iphelper')
-        self._buttons['iphelper']['widget'].setIcon(
-            getIcon('utilities-system-monitor-black'))
+        self._buttons['iphelper']['widget'].setIcon('iphelper-black')
+            #getIcon('iphelper-black'))
 
         self._buttons['knowledge'] = dict()
         self._buttons['knowledge']['row'] = 4
         self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
-        self._buttons['knowledge']['widget'].setIcon(
-            getIcon('utilities-system-monitor-black'))
+        self._buttons['knowledge']['widget'].setIcon('knowledge-black')
+            #getIcon('knowledge-black'))
 
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
@@ -196,6 +197,17 @@ class NSelectorButton(QPushButton):
         self._identifier = identifier
         self._parent     = parent
         self._initMenu()
+
+    def setIcon(self, image):
+        grid = NGrid(self)
+        icon = QSvgWidget(getImage(image), self)
+        renderer = icon.renderer()
+        size = renderer.defaultSize()
+        icon.setFixedWidth(size.width() / 2)
+        icon.setFixedHeight(size.height() / 2)
+        grid.addWidget(icon, 0,0)
+        grid.setAlignment(icon, Qt.AlignHCenter)
+        grid.setAlignment(icon, Qt.AlignBottom)
 
     def _initMenu(self):
         self._menu = QMenu(self)
