@@ -15,10 +15,10 @@ class EsnmpPDU(univ.Choice):
 
 ##############################################################################
 ##############################################################################
-#### TRACKER PDU DEF #########################################################
+#### MONITOR PDU DEF #########################################################
 ##############################################################################
 ##############################################################################
-" Tracker PDUs are defined here "
+" Monitor PDUs are defined here "
 
 class Property(univ.Sequence):
     componentType = namedtype.NamedTypes(
@@ -155,16 +155,16 @@ class TargetInfoType(univ.Enumerated):
     )
 
 
-class TrackerRrdFile(univ.Sequence):
+class MonitorRrdFile(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('fileId',   char.PrintableString()),
         namedtype.NamedType('file',     univ.OctetString()),
     )
 
-class TrackerRrdFiles(univ.SequenceOf):
-    componentType = TrackerRrdFile()
+class MonitorRrdFiles(univ.SequenceOf):
+    componentType = MonitorRrdFile()
 
-class TrackerProbeEvent(univ.Sequence):
+class MonitorProbeEvent(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('probeName',    char.PrintableString()),
         namedtype.NamedType('eventId',      univ.Integer()),
@@ -178,26 +178,26 @@ class TrackerProbeEvent(univ.Sequence):
         namedtype.NamedType('userOwner',    char.PrintableString()),
     )
 
-class TrackerProbeEvents(univ.SequenceOf):
-    componentType = TrackerProbeEvent()
+class MonitorProbeEvents(univ.SequenceOf):
+    componentType = MonitorProbeEvent()
 
-class TrackerEventProbeDump(univ.Sequence):
+class MonitorEventProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('target',   char.PrintableString()),
         namedtype.NamedType('probe',    char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
-        namedtype.NamedType('events',   TrackerProbeEvents()),
+        namedtype.NamedType('events',   MonitorProbeEvents()),
     )
 
-class TrackerRrdProbeDump(univ.Sequence):
+class MonitorRrdProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('name',     char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
-        namedtype.NamedType('rrdFiles',     TrackerRrdFiles()),
+        namedtype.NamedType('rrdFiles',     MonitorRrdFiles()),
     )
 
-class TrackerProbeDump(univ.Sequence):
+class MonitorProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('name',     char.PrintableString()),
@@ -205,7 +205,7 @@ class TrackerProbeDump(univ.Sequence):
         namedtype.NamedType('data',     univ.OctetString()),
     )
 
-class TrackerProbeInfo(univ.Sequence):
+class MonitorProbeInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('id',       univ.Integer()),
@@ -223,7 +223,7 @@ class TrackerProbeInfo(univ.Sequence):
         namedtype.NamedType('infoType', ProbeInfoType())
     )
 
-class TrackerProbeActivity(univ.Sequence):
+class MonitorProbeActivity(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('id',       univ.Integer()),
@@ -233,7 +233,7 @@ class TrackerProbeActivity(univ.Sequence):
         namedtype.NamedType('textual',  char.PrintableString())
     )
 
-class TrackerProbeReturn(univ.Sequence):
+class MonitorProbeReturn(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('target',  char.PrintableString()),
         namedtype.NamedType('id',      char.PrintableString()),
@@ -243,38 +243,38 @@ class TrackerProbeReturn(univ.Sequence):
         namedtype.NamedType('keyVals',   TargetProbeReturnKeyVals())
     )
 
-class TrackerProbeModuleInfo(univ.Sequence):
+class MonitorProbeModuleInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('name', char.PrintableString()),
         namedtype.NamedType('info', char.PrintableString())
     )
 
-class TrackerTargetInfo(univ.Sequence):
+class MonitorTargetInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',      char.PrintableString()),
         namedtype.NamedType('properties',   TargetProperties()),
         namedtype.NamedType('type',         TargetInfoType())
     )
 
-class TrackerCreateTarget(univ.Sequence):
+class MonitorCreateTarget(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('ipAdd',        char.PrintableString()),
         namedtype.NamedType('permConf',     PermConf()),
         namedtype.NamedType('queryId',      univ.Integer())
     )
 
-class TrackerReply(univ.Sequence):
+class MonitorReply(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
         namedtype.NamedType('status',       univ.Boolean()),
         namedtype.NamedType('info',         char.PrintableString())
     )
 
-class TrackerPDU_fromClient(univ.Choice):
+class MonitorPDU_fromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
             'createTarget',
-            TrackerCreateTarget().subtype(
+            MonitorCreateTarget().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -284,11 +284,11 @@ class TrackerPDU_fromClient(univ.Choice):
         )
     )
 
-class TrackerPDU_fromServer(univ.Choice):
+class MonitorPDU_fromServer(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
             'targetInfo',
-            TrackerTargetInfo().subtype(
+            MonitorTargetInfo().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -298,7 +298,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'probeInfo',
-            TrackerProbeInfo().subtype(
+            MonitorProbeInfo().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -308,7 +308,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'probeDump',
-            TrackerProbeDump().subtype(
+            MonitorProbeDump().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -318,7 +318,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'probeModInfo',
-            TrackerProbeModuleInfo().subtype(
+            MonitorProbeModuleInfo().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -328,7 +328,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'probeActivity',
-            TrackerProbeActivity().subtype(
+            MonitorProbeActivity().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -338,7 +338,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'probeReturn',
-            TrackerProbeReturn().subtype(
+            MonitorProbeReturn().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -348,7 +348,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'rrdProbeDump',
-            TrackerRrdProbeDump().subtype(
+            MonitorRrdProbeDump().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -358,7 +358,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'eventProbeDump',
-            TrackerEventProbeDump().subtype(
+            MonitorEventProbeDump().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -368,7 +368,7 @@ class TrackerPDU_fromServer(univ.Choice):
         ),
         namedtype.NamedType(
             'probeEventMsg',
-            TrackerProbeEvent().subtype(
+            MonitorProbeEvent().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -377,8 +377,8 @@ class TrackerPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'trackerReply',
-            TrackerReply().subtype(
+            'monitorReply',
+            MonitorReply().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -388,11 +388,11 @@ class TrackerPDU_fromServer(univ.Choice):
         )
     )
 
-class TrackerPDU(univ.Choice):
+class MonitorPDU(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
             'fromServer',
-            TrackerPDU_fromServer().subtype(
+            MonitorPDU_fromServer().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -402,7 +402,7 @@ class TrackerPDU(univ.Choice):
         ),
         namedtype.NamedType(
             'fromClient',
-            TrackerPDU_fromClient().subtype(
+            MonitorPDU_fromClient().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -680,8 +680,8 @@ class NmsPDU(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'modTrackerPDU'  , 
-            TrackerPDU().subtype(
+            'modMonitorPDU'  , 
+            MonitorPDU().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -818,7 +818,7 @@ def decode(pdu):
         else: 
             print "unknwon message", msg2_type
             return {}
-    elif msg1_type == 'modTrackerPDU':
+    elif msg1_type == 'modMonitorPDU':
         msg2        = msg1.getComponent()
         msg2_type   = msg1.getName()
         if msg2_type == 'fromServer':
@@ -1124,12 +1124,12 @@ def decode(pdu):
                         'keyVals':      keyValsDict
                     }
                 }
-            elif msg3_type == 'trackerReply':
+            elif msg3_type == 'monitorReply':
                 queryId = int(msg3.getComponentByName('queryId'))
                 status  = bool(msg3.getComponentByName('status'))
                 info    = str(msg3.getComponentByName('info'))
                 return {
-                    'from':     'trackerReply',
+                    'from':     'monitorReply',
                     'queryId':  queryId,
                     'value': {
                         'status':   status,
@@ -1158,11 +1158,11 @@ def encode(pduType, payload):
     elif pduType == 'authResp':
         (userId, password) = payload
         return encode_authResp(userId, password)
-    elif pduType == 'trackerCreateTarget':
+    elif pduType == 'monitorCreateTarget':
         (queryId, msg)      = payload
         (ip, perm)          = msg
         return encode_create_target(ip, perm, queryId)
-    elif pduType == 'trackerCreateProbe':
+    elif pduType == 'monitorCreateProbe':
         print "create probe"
         return False
     else:
@@ -1181,7 +1181,7 @@ def encode_create_target(ip, perm, queryId):
     targetConf.setComponentByName('read',         readGroups)
     targetConf.setComponentByName('write',        writeGroups)
 
-    targetCreate = TrackerCreateTarget().subtype(
+    targetCreate = MonitorCreateTarget().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
             tag.tagFormatSimple,
@@ -1192,7 +1192,7 @@ def encode_create_target(ip, perm, queryId):
     targetCreate.setComponentByName('queryId',  queryId)
     targetCreate.setComponentByName('permConf', targetConf)
 
-    fromClient = TrackerPDU_fromClient().subtype(
+    fromClient = MonitorPDU_fromClient().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
             tag.tagFormatSimple,
@@ -1201,17 +1201,17 @@ def encode_create_target(ip, perm, queryId):
     )
     fromClient.setComponentByName('createTarget', targetCreate)
 
-    trackerPDU = TrackerPDU().subtype(
+    monitorPDU = MonitorPDU().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
             tag.tagFormatSimple,
             2
         )
     )
-    trackerPDU.setComponentByName('fromClient', fromClient)
+    monitorPDU.setComponentByName('fromClient', fromClient)
 
     pduDef = NmsPDU()
-    pduDef.setComponentByName('modTrackerPDU', trackerPDU)
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
 
     pdu = encoder.encode(pduDef)
     return pdu

@@ -26,7 +26,7 @@ class ChanHandler(QObject):
         self._initSignals()
 
     def _initSupercast(self):
-        nocapi.nSetMessageProcessor('modTrackerPDU', self.handleSupercastMsg)
+        nocapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
 
     def _initChanHandling(self):
         self._masterChan        = 'target-MasterChan'
@@ -175,40 +175,40 @@ class Channel(QObject):
         if self.loggerTextState != None:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
-            dumpMsg['logger']   = 'btracker_logger_text'
+            dumpMsg['logger']   = 'bmonitor_logger_text'
             dumpMsg['data']     = self.loggerTextState
             view.handleProbeEvent(dumpMsg)
         if self.rrdFiles != None:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
-            dumpMsg['logger']   = 'btracker_logger_rrd'
+            dumpMsg['logger']   = 'bmonitor_logger_rrd'
             dumpMsg['data']     = self.rrdFiles
             view.handleProbeEvent(dumpMsg)
         if self.loggerEventState != None:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
-            dumpMsg['logger']   = 'tracker_events'
+            dumpMsg['logger']   = 'monitor_events'
             dumpMsg['data']     = self.loggerEventState
             view.handleProbeEvent(dumpMsg)
         
     def handleDump(self, msg):
         dumpType = msg['value']['logger']
         data     = msg['value']['data']
-        if   dumpType == 'btracker_logger_text':
+        if   dumpType == 'bmonitor_logger_text':
             self.loggerTextState = deque(data.split('\n'))
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
-        elif dumpType == 'tracker_events':
+        elif dumpType == 'monitor_events':
             self.loggerEventState = msg['value']['data']
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
-        elif dumpType == 'btracker_logger_rrd':
+        elif dumpType == 'bmonitor_logger_rrd':
             self.rrdFiles = dict()
             for key in data:
                 rrdFile = QTemporaryFile(self)
@@ -223,8 +223,8 @@ class Channel(QObject):
             dumpMsg['data']     = self.rrdFiles
             self.signal.emit(dumpMsg)
             
-            #self.rrdUpdateString = self.probeDict['loggers']['btracker_logger_rrd']['update']
-            #self.rrdMacroBinds   = self.probeDict['loggers']['btracker_logger_rrd']['binds']
+            #self.rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd']['update']
+            #self.rrdMacroBinds   = self.probeDict['loggers']['bmonitor_logger_rrd']['binds']
             #self.rrdFile = QTemporaryFile(self)
             #self.rrdFile.open()
             #self.rrdFile.write(data)
@@ -252,7 +252,7 @@ class Channel(QObject):
             self.loggerTextState.popleft()
 
     def _updateRrdDb(self, msg):
-        rrdConf   = self.probeDict['loggers']['btracker_logger_rrd']
+        rrdConf   = self.probeDict['loggers']['bmonitor_logger_rrd']
         rrdFiles  = self.rrdFiles
         keyVals   = msg['value']['keyVals']
         for rrd in rrdFiles.keys():
