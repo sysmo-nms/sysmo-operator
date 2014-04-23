@@ -51,7 +51,5 @@ class PerfDelegate(QStyledItemDelegate):
             probar.progress = 50
             st = QApplication.style()
             st.drawControl(QStyle.CE_ProgressBar, probar, painter)
-            QStyledItemDelegate.paint(self, painter, options, index)
         else:
             QStyledItemDelegate.paint(self, painter, options, index)
-        QStyledItemDelegate.paint(self, painter, options, index)
