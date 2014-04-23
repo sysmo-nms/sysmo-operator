@@ -5,7 +5,6 @@
 *.bk
 *.directory
 *.qm
-commercials
 build
 dist
 translate-dir
