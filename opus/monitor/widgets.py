@@ -160,7 +160,9 @@ class OSMView(QFrame):
         self.setContentsMargins(0,0,0,0)
 
         self.osm    = QWebView(self)
-        self.osm.load(QUrl('./html/OpenStreetMap.html'))
+        # XXX Found bug here. QWebView do not properly quit on application
+        # shutdow when he is loading a page.
+        #self.osm.load(QUrl('./html/OpenStreetMap.html'))
 
         self.shade = QFrame(self)
         self.shade.setAutoFillBackground(False)
