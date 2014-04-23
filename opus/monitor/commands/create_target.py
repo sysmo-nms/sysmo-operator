@@ -219,7 +219,7 @@ class CreateNetworkElement(QWizardPage):
         ip          = "192.168.0.5"
         perms       = (["admin"], ["admin"])
 
-        ret = supercast.send('trackerCreateTarget', (ip, perms), self.trackerReply)
+        ret = supercast.send('monitorCreateTarget', (ip, perms), self.monitorReply)
 
         #self.dial = QMessageBox(self)
         #self.dial.setModal(True)
@@ -230,7 +230,7 @@ class CreateNetworkElement(QWizardPage):
 
         return False
 
-    def trackerReply(self, msg):
+    def monitorReply(self, msg):
         print "get reply!!!!!!", msg
         
 
