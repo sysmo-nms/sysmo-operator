@@ -37,7 +37,7 @@ class ProbesTree(NFrame):
 class ProbesTreeview(QTreeView):
     def __init__(self, parent):
         super(ProbesTreeview, self).__init__(parent)
-        ProbesTree.singleton = self
+        ProbesTreeview.singleton = self
         self._initStyle()
         self.model   = ProbeModel(self)
         self.proxy   = QSortFilterProxyModel(self)
@@ -48,6 +48,7 @@ class ProbesTreeview(QTreeView):
         self.setModel(self.proxy)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setDragEnabled(True)
+        self.setDragDropMode(QAbstractItemView.DragOnly)
         self.setDropIndicatorShown(True)
 
         self._initMenus()
@@ -156,6 +157,15 @@ class ProbesTreeview(QTreeView):
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
         #MonitorDashboardArea.Dashboard.singleton.userNewSelection(selectionList)
+
+    def getSelectedElements(self):
+        proxyIndexes = self.selectedIndexes()
+        selectionList = list()
+        for i in range(len(proxyIndexes)):
+            modelIndex = self.proxy.mapToSource(proxyIndexes[i])
+            modelItem  = self.model.itemFromIndex(modelIndex)
+            selectionList.append(modelItem.name)
+        return selectionList
 
     def userActivity(self, index):
         print "clicked!", self.selectedIndexes()
