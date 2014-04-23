@@ -47,6 +47,8 @@ class ProbesTreeview(QTreeView):
         self.proxy.setFilterRole(Qt.UserRole)
         self.setModel(self.proxy)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setDragEnabled(True)
+        self.setDropIndicatorShown(True)
 
         self._initMenus()
         self.contextActions = QAction('test', self)

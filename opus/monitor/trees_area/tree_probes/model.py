@@ -41,6 +41,9 @@ class ProbeModel(QStandardItemModel):
         )
         return itemList
 
+    def supportedDropActions(self):
+        return Qt.MoveAction
+
 class TargetItem(QStandardItem):
     def __init__(self, data):
         super(TargetItem, self).__init__()
@@ -49,8 +52,7 @@ class TargetItem(QStandardItem):
         self.status     = 'UNKNOWN'
         self.searchString   = self.name
         self.targetDict = data
-        #self.setFlags(Qt.ItemIsEnabled)
-        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -129,7 +131,7 @@ class ProbeItem(QStandardItem):
         self.status     = data['value']['status']
         self.searchString = self.name + self.target
         self.probeDict = data
-        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
