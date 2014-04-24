@@ -83,7 +83,6 @@ class Supercast(QObject):
     # from socket
     def _handleThreadMsg(self, msg):
         (msgType, payload) = msg
-        print "socket message is ", payload
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])
             if (handler == None):
@@ -268,7 +267,6 @@ class SupercastSocket(QThread):
 
     def _handleClientMessage(self, msg):
         (key, payload) = msg
-        print "client message is ", payload
         if key == 'tryconnect':
             (server, port) = payload
             self.socket.connectToHost(server, port)
@@ -277,7 +275,6 @@ class SupercastSocket(QThread):
             pdu = encode('authResp', (name, passw))
             self._sendToServer(pdu)
         else:
-            print "here it is payload ", payload
             pdu = encode(key, payload)
             self._sendToServer(pdu)
 

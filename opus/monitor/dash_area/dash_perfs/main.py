@@ -13,7 +13,7 @@ from    noctopus_widgets    import (
     NFrameContainer,
     NGridContainer
 )
-from    opus.monitor.dash_area.dash_perfs.rrds  import RrdArea
+from    opus.monitor.dash_area.dash_perfs.rrds  import RrdArea, RrdAreaTest
 import  opus.monitor.api    as monapi
 
 
@@ -38,7 +38,7 @@ class PerfTree(QTreeWidget):
             it = QTreeWidgetItem(self)
             it.setText(0, stri[i])
             self.insertTopLevelItem(0, it)
-            self.setItemWidget(it, 1, RrdArea(self, stri[i]))
+            self.setItemWidget(it, 1, RrdAreaTest(self, stri[i]))
         event.setDropAction(Qt.IgnoreAction)
         QTreeWidget.dropEvent(self, event)
 

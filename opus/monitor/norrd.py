@@ -8,7 +8,7 @@ from    PySide.QtCore import *
 def init(executable='rrdtool', parent=None):
     RrdtoolLocal(executable, parent)
 
-def cmd(command, callback=None):
+def cmd(command, callback):
     msg = dict()
     msg['callback'] = callback
     msg['command']  = command

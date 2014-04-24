@@ -86,5 +86,4 @@ class Central(NSplitterContainer):
     def _setSplitterSize(self, value):
         self.moveSplitter(value, 1)
 
-    def setViewMode(self, mode):
-        print "set viewwwwwwwww mode ", mode
+    def setViewMode(self, mode): pass

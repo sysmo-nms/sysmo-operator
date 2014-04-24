@@ -106,8 +106,6 @@ class Query(QDialog):
         tryDict['port']     = self.serverPortEdit.value()
         self.callback(tryDict)
 
-    def tcpConnected(self, state):
-        print "tcp conn ", state
+    def tcpConnected(self, state): pass
 
-    def supConnected(self, state):
-        print "sup conn ", state
+    def supConnected(self, state): pass

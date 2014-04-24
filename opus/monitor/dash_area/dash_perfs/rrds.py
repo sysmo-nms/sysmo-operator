@@ -25,6 +25,15 @@ import  re
 import  tempfile
 
 
+class RrdAreaTest(AbstractChannelWidget):
+    def __init__(self, parent, probe):
+        super(RrdAreaTest, self).__init__(parent, probe)
+        self.connectProbe()
+    
+    def handleProbeEvent(self, msg): pass
+
+
+
 class RrdArea(AbstractChannelWidget):
     def __init__(self, parent, probe):
         super(RrdArea, self).__init__(parent, probe)
@@ -214,11 +223,11 @@ class RrdView(QLabel):
 
         if self.isVisible() == False:
             cmd = self._generateThumbCmd(rrdStart, rrdStop, defs, lines, areas, rrdWidth, rrdHeight)
-            monapi.rrdDraw(cmd, self._thumbComplete)
+            monapi.rrdCmd(cmd, self._thumbComplete)
             #ret = norrdQtThreaded.cmd(cmd, self._thumbComplete)
         else:
             cmd = self._generateGraphCmd(rrdStart, rrdStop, defs, lines, areas, rrdWidth, rrdHeight)
-            monapi.rrdDraw(cmd, self._graphComplete)
+            monapi.rrdCmd(cmd, self._graphComplete)
             #ret = norrdQtThreaded.cmd(cmd, self._graphComplete)
 
     def _thumbComplete(self, msg):

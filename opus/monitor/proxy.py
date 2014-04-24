@@ -1,12 +1,14 @@
 from    PySide.QtCore   import (
     QObject,
-    Signal
+    Signal,
+    QTemporaryFile
 )
 from    collections         import deque
 from    noctopus_widgets    import NFrameContainer
-import  re
-import  norrd
 import  nocapi
+import  re
+import  opus.monitor.norrd  as norrd
+
 
 class ChanHandler(QObject):
     
@@ -29,7 +31,6 @@ class ChanHandler(QObject):
         nocapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
 
     def _initChanHandling(self):
-        print "iiiiiiiiiiinit"
         self._masterChan        = 'target-MasterChan'
         self._masterChanRunning = False
         self._subscribedChans   = list()
@@ -202,7 +203,7 @@ class Channel(QObject):
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
-        elif dumpType == 'monitor_events':
+        elif dumpType == 'bmonitor_logger_events':
             self.loggerEventState = msg['value']['data']
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
@@ -235,6 +236,8 @@ class Channel(QObject):
             #dumpMsg['msgType']  = 'probeDump'
             #dumpMsg['logger']   = dumpType
             #dumpMsg['data']     = self.rrdFileName
+        else:
+            print "unknown dump type ", dumpType
 
     def handleReturn(self, msg):
         if self.rrdFiles != None:
@@ -272,7 +275,7 @@ class Channel(QObject):
             rrdvalues   = re.findall(r'N:[^\s]+', updateString)
             rrdvalues   = rrdvalues[0]
             commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
-            norrdQtThreaded.cmd(commandString)
+            norrd.cmd(commandString, None)
 
 
 

@@ -11,5 +11,5 @@ def getProbeSelection():
     singleton = opus.monitor.trees_area.tree_probes.main.ProbesTreeview.singleton
     return singleton.getSelectedElements()
 
-def rrdDraw(cmd, pyCallable):
+def rrdCmd(cmd, pyCallable=None):
     opus.monitor.norrd.cmd(cmd, pyCallable)
