@@ -5,11 +5,17 @@ from    PySide.QtGui        import (
     QStyledItemDelegate,
     QStyleOptionProgressBar,
     QApplication,
-    QStyle
+    QStyle,
+    QLabel
 )
 
-from    noctopus_widgets    import NFrameContainer, NGridContainer
+from    noctopus_widgets    import (
+    NFrameContainer,
+    NGridContainer
+)
+from    opus.monitor.dash_area.dash_perfs.rrds  import RrdArea
 import  opus.monitor.api    as monapi
+
 
 class PerfDash(NFrameContainer):
     def __init__(self, parent):
@@ -25,31 +31,29 @@ class PerfTree(QTreeWidget):
         self.setHeaderLabels([self.tr('Elements'), self.tr('Performances')])
         self.setSortingEnabled(False)
         self.setAcceptDrops(True)
-        self.setItemDelegate(PerfDelegate(self))
 
     def dropEvent(self, event):
         stri  = monapi.getProbeSelection()
-        items = []
         for i in range(len(stri)):
             it = QTreeWidgetItem(self)
             it.setText(0, stri[i])
-            items.append(it)
-        self.insertTopLevelItems(0, items)
+            self.insertTopLevelItem(0, it)
+            self.setItemWidget(it, 1, RrdArea(self, stri[i]))
         event.setDropAction(Qt.IgnoreAction)
         QTreeWidget.dropEvent(self, event)
 
-class PerfDelegate(QStyledItemDelegate):
-    def __init__(self, parent):
-        super(PerfDelegate, self).__init__(parent)
-
-    def paint(self, painter, options, index):
-        if index.column() == 1:
-            probar          = QStyleOptionProgressBar()
-            probar.rect     = options.rect
-            probar.minimum  = 0
-            probar.maximum  = 100
-            probar.progress = 50
-            st = QApplication.style()
-            st.drawControl(QStyle.CE_ProgressBar, probar, painter)
-        else:
-            QStyledItemDelegate.paint(self, painter, options, index)
+# class PerfDelegate(QStyledItemDelegate):
+#     def __init__(self, parent):
+#         super(PerfDelegate, self).__init__(parent)
+# 
+#     def paint(self, painter, options, index):
+#         if index.column() == 1:
+#             probar          = QStyleOptionProgressBar()
+#             probar.rect     = options.rect
+#             probar.minimum  = 0
+#             probar.maximum  = 100
+#             probar.progress = 50
+#             st = QApplication.style()
+#             st.drawControl(QStyle.CE_ProgressBar, probar, painter)
+#         else:
+#             QStyledItemDelegate.paint(self, painter, options, index)

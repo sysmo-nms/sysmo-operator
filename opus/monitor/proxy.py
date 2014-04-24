@@ -29,6 +29,7 @@ class ChanHandler(QObject):
         nocapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
 
     def _initChanHandling(self):
+        print "iiiiiiiiiiinit"
         self._masterChan        = 'target-MasterChan'
         self._masterChanRunning = False
         self._subscribedChans   = list()
@@ -95,21 +96,21 @@ class ChanHandler(QObject):
             print "unknown msg received", msg['msgType']
 
     def subscribe(self, viewObject, channel):
-        if channel in self.subscribedChans:
-            self.chanProxy[channel].synchronizeView(viewObject)
-            self.chanProxy[channel].signal.connect(viewObject.handleProbeEvent)
-        elif channel in self.pendingSubscribe:
-            self.chanProxy[channel].signal.connect(viewObject.handleProbeEvent)
+        if channel in self._subscribedChans:
+            self._chanProxy[channel].synchronizeView(viewObject)
+            self._chanProxy[channel].signal.connect(viewObject.handleProbeEvent)
+        elif channel in self._pendingSubscribe:
+            self._chanProxy[channel].signal.connect(viewObject.handleProbeEvent)
         else:
-            self.chanProxy[channel] = Channel(self, channel)
-            self.chanProxy[channel].signal.connect(viewObject.handleProbeEvent)
+            self._chanProxy[channel] = Channel(self, channel)
+            self._chanProxy[channel].signal.connect(viewObject.handleProbeEvent)
             self._subscribe(channel)
 
     def unsubscribe(self, viewObject, channel):
-        self.chanProxy[channel].signal.disconnect(viewObject.handleProbeEvent)
+        self._chanProxy[channel].signal.disconnect(viewObject.handleProbeEvent)
 
     def _subscribe(self, channel):
-        self.pendingSubscribe.append(channel)
+        self._pendingSubscribe.append(channel)
         nocapi.nSubscribe(self.handleSupercastMsg, channel)
 
     def _unsubscribe(self, channel):
@@ -119,8 +120,8 @@ class ChanHandler(QObject):
     def _handleSubscribeOk(self, msg):
         channel = msg['value']
         if channel == self._masterChan: return
-        self.pendingSubscribe.remove(channel)
-        self.subscribedChans.append(channel)
+        self._pendingSubscribe.remove(channel)
+        self._subscribedChans.append(channel)
 
     def _handleUnsubscribeOk(self, msg):
         channel = msg['value']
@@ -130,15 +131,15 @@ class ChanHandler(QObject):
 
     def _handleProbeDump(self, msg):
         channel = msg['value']['id']
-        self.chanProxy[channel].handleDump(msg)
+        self._chanProxy[channel].handleDump(msg)
 
     def _handleProbeReturn(self, msg):
         channel = msg['value']['id']
-        self.chanProxy[channel].handleReturn(msg)
+        self._chanProxy[channel].handleReturn(msg)
 
     def _handleEventMsg(self, msg):
         channel = msg['value']['id']
-        self.chanProxy[channel].handleEvent(msg)
+        self._chanProxy[channel].handleEvent(msg)
 
     def _handleProbeInfo(self, msg):
         probeInfo   = msg['value']
@@ -165,7 +166,7 @@ class Channel(QObject):
     signal = Signal(dict)
     def __init__(self, parent, probeName):
         super(Channel, self).__init__(parent)
-        self.probeDict = ChannelHandler.singleton.probes[probeName]
+        self.probeDict = ChanHandler.singleton.probes[probeName]
         self.name = probeName
         self.loggerTextState    = None
         self.loggerEventState   = None
@@ -277,17 +278,17 @@ class Channel(QObject):
 
 class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
-        super(AbstractChannelQFrame, self).__init__(parent)
+        super(AbstractChannelWidget, self).__init__(parent)
         self.__channel = channel
 
     def connectProbe(self):
-        ChannelHandler.singleton.subscribe(self, self.__channel)
+        ChanHandler.singleton.subscribe(self, self.__channel)
 
     def handleProbeEvent(self, msg): 
         print self, ":you should handle this message: ", msg['msgType']
 
     def __disconnectProbe(self):
-        ChannelHandler.singleton.unsubscribe(self, self.__channel)
+        ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
         self.__disconnectProbe()
