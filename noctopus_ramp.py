@@ -38,7 +38,7 @@ class NSelector(NFrameContainer):
     " left button ramp container "
 
     appButtonPressed = Signal(str)
-    appButtonToggled = Signal(str)
+    appButtonToggled = Signal(dict)
 
     def __init__(self, parent, stackWidget):
         super(NSelector, self).__init__(parent)
@@ -165,14 +165,16 @@ class NSelector(NFrameContainer):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
         for key in self._buttons.keys():
             but = self._buttons[key]['widget']
-            but.clicked.connect(partial(self._appButtonPressed, key))
+            but.toggle.connect(self._appButtonPressed)
             
-    def _appButtonPressed(self, app):
-        if self.currentView == app:
-            self.appButtonToggled.emit(app)
+    def _appButtonPressed(self, arg):
+        identifier = arg['id']
+        print identifier, arg
+        if self.currentView == identifier:
+            self.appButtonToggled.emit(arg)
         else:
-            self.appButtonPressed.emit(app)
-            self.currentView = app
+            self.appButtonPressed.emit(identifier)
+            self.currentView = identifier
 
     def goUp(self, mod):
         print "go up ", mod
@@ -188,6 +190,7 @@ class NSelector(NFrameContainer):
 
 # SELECTOR BUTTON #############################################################
 class NSelectorButton(QPushButton):
+    toggle = Signal(dict)
     def __init__(self, parent, identifier):
         super(NSelectorButton, self).__init__(parent)
         buttonPol = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
@@ -220,10 +223,17 @@ class NSelectorButton(QPushButton):
         self.goRemove.triggered.connect(partial(self._parent.goRemove,self._identifier))
     
     # TODO
-    #def mousePressEvent(self, event):
-        #if event.button() == Qt.RightButton:
-            #self._menu.exec_(self.mapToGlobal(event.pos()))
-        #QPushButton.mousePressEvent(self, event)
+    def mousePressEvent(self, event):
+        bdict = dict()
+        if event.button() == Qt.RightButton:
+            bdict['id']     = self._identifier
+            bdict['button'] = 'right'
+            self.toggle.emit(bdict)
+        elif event.button() == Qt.LeftButton:
+            bdict['id']     = self._identifier
+            bdict['button'] = 'left'
+            self.toggle.emit(bdict)
+        QPushButton.mousePressEvent(self, event)
 
     def isTop(self):
         self.goUp.isDisabled(True)

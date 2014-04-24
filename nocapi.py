@@ -85,7 +85,7 @@ def nConnectAppToggled(pyCallable):
     Connect every toggle event from the left ramp buttons to pyCallable.
     Trigered when a module button from the ramp is pressed, wille the module
     is already visible.
-    pyCallable will receive: str, when str = module name. Signal(str)
+    pyCallable will receive: {'button': 'left'|'right', 'id': 'appname'}.
     '''
     noctopus_ramp.NSelector.singleton.appButtonToggled.connect(pyCallable)
     return None

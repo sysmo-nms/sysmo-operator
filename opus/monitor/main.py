@@ -24,6 +24,16 @@ class Central(NSplitterContainer):
         self._initToggle()
         self._initViewMode()
         self._readSettings()
+        self._defineSlidePos()
+
+    def _defineSlidePos(self):
+        [left, right] = self.sizes()
+        if left == 0:
+            self._slidePos  = 'left'
+        elif right == 0:
+            self._slidePos  = 'right'
+        else:
+            self._slidePos  = 'center'
 
     def _initViewMode(self):
         nocapi.nConnectViewMode(self.setViewMode)
@@ -56,7 +66,7 @@ class Central(NSplitterContainer):
         settings = QSettings("Noctopus NMS", "monitor")
         self.restoreGeometry(settings.value("monitor/geometry"))
         self.restoreState(settings.value("monitor/state"))
-        oldPosition = settings.value("monitor/oldPosition")
+        oldPosition = int(settings.value("monitor/oldPosition"))
 
         if oldPosition != None:
             self._oldPosition = oldPosition
@@ -72,18 +82,56 @@ class Central(NSplitterContainer):
         # close rrdtool thread (self._rrdtool.quit())
 
     # CALLS from noctopus_* modules
-    def toggleButtonClicked(self, app):
+    def toggleButtonClicked(self, dictArg):
+        app = dictArg['id']
+        but = dictArg['button']
+        
+        self._defineSlidePos()
         if app != 'monitor': return
-        [left, _] = self.sizes()
-        if left != 0:
-            self._oldPosition = left
-            self._collapseTimeline.setFrameRange(left, 0)
+
+        print app, but, self._slidePos
+        if   but == 'right' and self._slidePos == 'right':
+            self._moveLeftFrom('right')
+        elif but == 'left'  and self._slidePos == 'left':
+            self._moveRightFrom('left')
+        elif but == 'right' and self._slidePos == 'left':
+            self._moveRightFrom('left')
+        elif but == 'right' and self._slidePos == 'center':
+            self._moveRightFrom('center')
+        elif but == 'left'  and self._slidePos == 'right':
+            self._moveLeftFrom('right')
+        elif but == 'left'  and self._slidePos == 'center':
+            self._moveLeftFrom('center')
+
+    def _moveLeftFrom(self, fromStr):
+        [left, right] = self.sizes()
+        if fromStr == 'right':
+            self._collapseTimeline.setFrameRange(left + right, self._oldPosition)
             self._collapseTimeline.start()
-        else:
+            self._slidePos = 'center'
+        if fromStr == 'center':
+            self._collapseTimeline.setFrameRange(self._oldPosition, 0)
+            self._collapseTimeline.start()
+            self._slidePos = 'left'
+
+    def _moveRightFrom(self, fromStr):
+        [left, right] = self.sizes()
+        if fromStr == 'left':
             self._collapseTimeline.setFrameRange(0, self._oldPosition)
             self._collapseTimeline.start()
-
+            self._slidePos = 'center'
+        if fromStr == 'center':
+            self._collapseTimeline.setFrameRange(self._oldPosition, left + right)
+            self._collapseTimeline.start()
+            self._slidePos = 'right'
+        
     def _setSplitterSize(self, value):
         self.moveSplitter(value, 1)
 
     def setViewMode(self, mode): pass
+
+
+
+
+
+
