@@ -169,7 +169,6 @@ class NSelector(NFrameContainer):
             
     def _appButtonPressed(self, arg):
         identifier = arg['id']
-        print identifier, arg
         if self.currentView == identifier:
             self.appButtonToggled.emit(arg)
         else:

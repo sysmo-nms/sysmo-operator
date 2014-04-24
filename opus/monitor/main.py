@@ -89,7 +89,6 @@ class Central(NSplitterContainer):
         self._defineSlidePos()
         if app != 'monitor': return
 
-        print app, but, self._slidePos
         if   but == 'right' and self._slidePos == 'right':
             self._moveLeftFrom('right')
         elif but == 'left'  and self._slidePos == 'left':
