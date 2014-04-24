@@ -3,6 +3,7 @@ from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
 from    PySide.QtWebKit     import *
 from    noctopus_widgets    import NFrame
+from    proxy               import AbstractChannelWidget
 import  nocapi
 
 
@@ -311,3 +312,55 @@ class ProbeUnknownButton(QPushButton):
                 stop: 1 #a1d99b,    \
                 stop: 0 #74c476);           \
         }')
+
+class TextLog(AbstractChannelWidget):
+    def __init__(self, parent, probe):
+        super(TextLog, self).__init__(parent, probe)
+        self.setAutoFillBackground(True)
+        logger = QTextEdit(self)
+        logger.setTextInteractionFlags(Qt.NoTextInteraction)        
+        logger.setFixedHeight(80)
+        logger.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        logger.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        logger.setLineWrapMode(QTextEdit.NoWrap)
+        self.logger = logger
+
+        grid = QGridLayout(self)
+        grid.addWidget(self.logger, 0,0)
+        self.setLayout(grid)
+
+        self.connectProbe()
+    
+    def handleProbeEvent(self, msg):
+        if   msg['msgType'] == 'probeDump':
+            if msg['logger'] == 'bmonitor_logger_text':
+                self._dump(msg['data'])
+        elif msg['msgType'] == 'probeReturn':
+            self._append(msg['value'])
+        #print msg['logger']
+        #print msg['msgType']
+
+    def _dump(self, data):
+        for i in range(len(data)):
+            self.logger.append(data[i])
+    
+    def _append(self, value):
+        print value.keys()
+        status = value['status']
+        data   = value['originalRep']
+        ts     = value['timestamp']
+        if status == 'OK':
+            color = '#73d216'
+        elif status == 'WARNING':
+            color = '#fce94f'
+        elif status == 'CRITICAL':
+            color = '#ef2929'
+        elif status == 'UNKNOWN':
+            color = '#888a85'
+
+        print value['originalRep']
+        print value['timestamp']
+        
+        data2 = data.replace('\n', ' ')
+        html = '<p><font color=%s>' % color + str(ts) + '>>>' + data2 + '</font></p>'
+        self.logger.append(html)

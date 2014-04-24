@@ -25,15 +25,6 @@ import  re
 import  tempfile
 
 
-class RrdAreaTest(AbstractChannelWidget):
-    def __init__(self, parent, probe):
-        super(RrdAreaTest, self).__init__(parent, probe)
-        self.connectProbe()
-    
-    def handleProbeEvent(self, msg): pass
-
-
-
 class RrdArea(AbstractChannelWidget):
     def __init__(self, parent, probe):
         super(RrdArea, self).__init__(parent, probe)
