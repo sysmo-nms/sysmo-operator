@@ -218,8 +218,15 @@ class CreateNetworkElement(QWizardPage):
         #snmpV2Write = self._snmpV2Write.text()
         ip          = "192.168.0.5"
         perms       = (["admin"], ["admin"])
+        tpl         = "Generic SNMP element"
+        ro          = "public"
+        rw          = "public"
 
-        ret = supercast.send('monitorCreateTarget', (ip, perms), self.monitorReply)
+        ret = supercast.send(
+            'monitorCreateTarget', 
+            (ip, perms, ro, rw, tpl),
+            self.monitorReply
+        )
 
         #self.dial = QMessageBox(self)
         #self.dial.setModal(True)
