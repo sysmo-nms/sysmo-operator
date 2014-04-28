@@ -52,7 +52,7 @@ class TargetItem(QStandardItem):
         self.status     = 'UNKNOWN'
         self.searchString   = self.name
         self.targetDict = data
-        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
+        self.setFlags(Qt.ItemIsEnabled)
 
     def data(self, role):
         if   role == Qt.DecorationRole:

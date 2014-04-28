@@ -3,7 +3,6 @@ from    PySide.QtCore   import (
     QTimeLine
 )
 
-from    opus.monitor.drop_manager    import DropMan
 from    opus.monitor                 import norrd
 from    opus.monitor.trees_area.main import TreeContainer
 from    opus.monitor.dash_area.main  import DashContainer

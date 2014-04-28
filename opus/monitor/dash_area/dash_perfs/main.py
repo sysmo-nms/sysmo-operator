@@ -1,11 +1,6 @@
 from    PySide.QtCore       import Qt
 from    PySide.QtGui        import (
-    QTreeView,
-    QStyledItemDelegate,
-    QStyleOptionProgressBar,
-    QApplication,
-    QStyle,
-    QLabel
+    QTreeWidget
 )
 
 from    noctopus_widgets    import (
@@ -14,9 +9,9 @@ from    noctopus_widgets    import (
 )
 
 #from    opus.monitor.dash_area.dash_perfs.rrds  import RrdArea, RrdAreaTest
-from    opus.monitor.dash_area.drop_manager import DropModel
-import  opus.monitor.api    as monapi
-from    opus.monitor.widgets    import TextLog
+from    opus.monitor.dash_area.drop_manager import DropMan
+import  opus.monitor.api                    as monapi
+from    opus.monitor.widgets                import TextLog
 
 
 class PerfDash(NFrameContainer):
@@ -26,14 +21,12 @@ class PerfDash(NFrameContainer):
         self._grid.addWidget(PerfTree(self), 0,0)
         self.setLayout(self._grid)
 
-class PerfTree(QTreeView):
+class PerfTree(QTreeWidget):
     def __init__(self, parent):
         super(PerfTree, self).__init__(parent)
-        self._model = DropModel.singleton
-        self.setModel(self._model)
+        self._dropMan = DropMan.singleton
         self.setSortingEnabled(False)
         self.setAcceptDrops(True)
-        self.setItemDelegate(PerfItem(self))
         self.setHeaderHidden(True)
 
 
@@ -41,6 +34,7 @@ class PerfTree(QTreeView):
         self._model.handleDropEvent(event)
         event.setDropAction(Qt.IgnoreAction)
         QTreeView.dropEvent(self, event)
+
 #     def dropEvent(self, event):
 #         stri  = monapi.getProbeSelection()
 #         for i in range(len(stri)):
@@ -51,18 +45,18 @@ class PerfTree(QTreeView):
 #         event.setDropAction(Qt.IgnoreAction)
 #         QTreeWidget.dropEvent(self, event)
 
-class PerfItem(QStyledItemDelegate):
-    def __init__(self, parent):
-        super(PerfItem, self).__init__(parent)
-
-    def paint(self, painter, options, index):
-        if index.column() == 1:
-            probar          = QStyleOptionProgressBar()
-            probar.rect     = options.rect
-            probar.minimum  = 0
-            probar.maximum  = 100
-            probar.progress = 50
-            st = QApplication.style()
-            st.drawControl(QStyle.CE_ProgressBar, probar, painter)
-        else:
-            QStyledItemDelegate.paint(self, painter, options, index)
+# class PerfItem(QStyledItemDelegate):
+#     def __init__(self, parent):
+#         super(PerfItem, self).__init__(parent)
+# 
+#     def paint(self, painter, options, index):
+#         if index.column() == 1:
+#             probar          = QStyleOptionProgressBar()
+#             probar.rect     = options.rect
+#             probar.minimum  = 0
+#             probar.maximum  = 100
+#             probar.progress = 50
+#             st = QApplication.style()
+#             st.drawControl(QStyle.CE_ProgressBar, probar, painter)
+#         else:
+#             QStyledItemDelegate.paint(self, painter, options, index)

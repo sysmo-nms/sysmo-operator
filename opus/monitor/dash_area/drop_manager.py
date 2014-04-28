@@ -1,18 +1,34 @@
-from    PySide.QtGui   import QStandardItemModel, QStandardItem
+from    PySide.QtCore   import QObject, Signal
 import  opus.monitor.api as monapi
 
-class DropModel(QStandardItemModel):
+class DropMan(QObject):
+    selection = Signal(dict)
+
     def __init__(self, parent):
-        super(DropModel, self).__init__(parent)
-        self.setColumnCount(2)
-        #self.setHorizontalHeaderLabels(["target/probe", "datas"]),
-        DropModel.singleton = self
+        super(DropMan, self).__init__(parent)
+        DropMan.singleton   = self
+        self._selection     = list()
 
     def handleDropEvent(self, event):
-        selection = monapi.getProbeSelection()
-        print "handle drop event", selection
-        for i in range(len(selection)):
-            self._maybeAppendRow(selection[i])
+        selection   = monapi.getProbeSelection()
+        probes      = monapi.getProbesDict()
+        newSelection = dict()
 
-    def _maybeAppendRow(self, element):
-        self.appendRow(QStandardItem(element))
+        for element in selection:
+            if element not in self._selection:
+                self._selection.append(element)
+                newSelection[element] = probes[element]
+
+        if len(newSelection) != 0:
+            select = dict()
+            select['action']    = 'add'
+            select['elements']  = newSelection
+            self.selection.emit(select)
+
+    def handleCleanEvent(self):
+        oldselect       = self._selection
+        self._selection = list()
+        select = dict()
+        select['action']    = 'remove'
+        select['elements']  = oldselect
+        self.selection.emit(select)

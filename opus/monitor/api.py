@@ -13,3 +13,10 @@ def getProbeSelection():
 
 def rrdCmd(cmd, pyCallable=None):
     opus.monitor.norrd.cmd(cmd, pyCallable)
+
+def getTargetsDict():
+    return opus.monitor.proxy.ChanHandler.singleton.targets
+
+
+def getProbesDict():
+    return opus.monitor.proxy.ChanHandler.singleton.probes

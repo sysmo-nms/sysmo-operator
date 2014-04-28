@@ -9,7 +9,7 @@ from    noctopus_widgets    import (
     NFrame,
     NGrid
 )
-from    opus.monitor.dash_area.drop_manager import DropModel
+from    opus.monitor.dash_area.drop_manager import DropMan
 from    opus.monitor.dash_area.controls import DashActions
 from    opus.monitor.dash_area.dash     import Dashboard
 from    noctopus_infobutton             import NInfoButton
@@ -20,7 +20,7 @@ class DashContainer(NFrame):
         super(DashContainer, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
         self.setContentsMargins(6,4,2,4)
-        self._dropMan   = DropModel(self)
+        self._dropMan   = DropMan(self)
         self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 
