@@ -9,6 +9,7 @@ from    opus.monitor.dash_area.drop_manager import DropMan
 class DashTreeWidget(QTreeWidget):
     def __init__(self, parent):
         super(DashTreeWidget, self).__init__(parent)
+        self.setAnimated(True)
         self._dropMan   = DropMan.singleton
         self._dropMan.selection.connect(self.dashSelectionChanged)
         self._probes    = dict()
