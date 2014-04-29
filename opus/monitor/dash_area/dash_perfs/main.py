@@ -1,62 +1,79 @@
-from    PySide.QtCore       import Qt
-from    PySide.QtGui        import (
-    QTreeWidget
-)
-
 from    noctopus_widgets    import (
     NFrameContainer,
-    NGridContainer
+    NGridContainer,
+    QLabel
 )
-
-#from    opus.monitor.dash_area.dash_perfs.rrds  import RrdArea, RrdAreaTest
-from    opus.monitor.dash_area.drop_manager import DropMan
-import  opus.monitor.api                    as monapi
-from    opus.monitor.widgets                import TextLog
-
+from    opus.monitor.dash_area.dash_widgets import DashTreeWidget
+from    opus.monitor.proxy  import AbstractChannelWidget
+import  opus.monitor.api    as monapi
 
 class PerfDash(NFrameContainer):
     def __init__(self, parent):
         super(PerfDash, self).__init__(parent)
         self._grid = NGridContainer(self)
-        self._grid.addWidget(PerfTree(self), 0,0)
+        dashWidget = DashTreeWidget(self)
+        dashWidget.setDashLabels('Elements', 'RRDs logs')
+        dashWidget.setItemWidgetClass(RrdLog)
+        self._grid.addWidget(dashWidget, 0,0)
         self.setLayout(self._grid)
 
-class PerfTree(QTreeWidget):
-    def __init__(self, parent):
-        super(PerfTree, self).__init__(parent)
-        self._dropMan = DropMan.singleton
-        self.setSortingEnabled(False)
-        self.setAcceptDrops(True)
-        self.setHeaderHidden(True)
+class RrdLog(AbstractChannelWidget):
+    def __init__(self, parent, probe):
+        super(RrdLog, self).__init__(parent, probe)
+        self._grid = NGridContainer(self)
+        self.setLayout(self._grid)
+        self._rrdElements = dict()
+
+        self.probeName  = probe
+        probes          = monapi.getProbesDict()
+        self._probeConf = probes[probe]
+
+        if 'bmonitor_logger_rrd' in self._probeConf['loggers'].keys():
+            self._continue()
+        else:
+            self._cancel()
+
+    def _continue(self):
+        rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
+        for rrdname in rrdConf.keys():
+            rrdconf = rrdConf[rrdname]
+            self._rrdElements[rrdname] = RrdElement(self, rrdname, rrdconf)
+            self._grid.addWidget(self._rrdElements[rrdname])
+        self.connectProbe()
+        self.goOn = True
+
+    def _cancel(self):
+        self.goOn = False
+
+    def handleProbeEvent(self, msg):
+        if msg['msgType'] == 'probeDump':
+            if msg['logger'] == 'bmonitor_logger_rrd':
+                print "rrd dump: ", msg['data']
+        elif msg['msgType'] == 'probeReturn':
+            print "probe return"
+
+class RrdElement(NFrameContainer):
+    def __init__(self, parent, rrdname, rrdconf):
+        super(RrdElement, self).__init__(parent)
+        self._rrdname = rrdname
+        self._rrdconf = rrdconf
+        self._grid = NGridContainer(self)
+        self._grid.addWidget(QLabel(rrdname, self))
+        self.setLayout(self._grid)
 
 
-    def dropEvent(self, event):
-        self._model.handleDropEvent(event)
-        event.setDropAction(Qt.IgnoreAction)
-        QTreeView.dropEvent(self, event)
 
-#     def dropEvent(self, event):
-#         stri  = monapi.getProbeSelection()
-#         for i in range(len(stri)):
-#             it = QTreeWidgetItem(self)
-#             it.setText(0, stri[i])
-#             self.insertTopLevelItem(0, it)
-#             self.setItemWidget(it, 1, TextLog(self, stri[i]))
-#         event.setDropAction(Qt.IgnoreAction)
-#         QTreeWidget.dropEvent(self, event)
 
-# class PerfItem(QStyledItemDelegate):
-#     def __init__(self, parent):
-#         super(PerfItem, self).__init__(parent)
-# 
-#     def paint(self, painter, options, index):
-#         if index.column() == 1:
-#             probar          = QStyleOptionProgressBar()
-#             probar.rect     = options.rect
-#             probar.minimum  = 0
-#             probar.maximum  = 100
-#             probar.progress = 50
-#             st = QApplication.style()
-#             st.drawControl(QStyle.CE_ProgressBar, probar, painter)
-#         else:
-#             QStyledItemDelegate.paint(self, painter, options, index)
+
+
+
+
+
+
+
+
+
+
+
+
+
