@@ -53,7 +53,7 @@ def nGetRgba(paletteKey):
     ''' return:
         str = "%R%G%B%A"
     '''
-    return noctopus_images.getRbga(paletteKey)
+    return noctopus_images.getRgba(paletteKey)
 
 def nConnectProxySettings(pyCallable):
     ''' return: None
