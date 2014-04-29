@@ -328,7 +328,7 @@ class TextLog(AbstractChannelWidget):
         grid = QGridLayout(self)
         grid.addWidget(self.logger, 0,0)
         self.setLayout(grid)
-
+        self.goOn = True
         self.connectProbe()
     
     def handleProbeEvent(self, msg):
@@ -337,15 +337,12 @@ class TextLog(AbstractChannelWidget):
                 self._dump(msg['data'])
         elif msg['msgType'] == 'probeReturn':
             self._append(msg['value'])
-        #print msg['logger']
-        #print msg['msgType']
 
     def _dump(self, data):
         for i in range(len(data)):
             self.logger.append(data[i])
     
     def _append(self, value):
-        print value.keys()
         status = value['status']
         data   = value['originalRep']
         ts     = value['timestamp']
@@ -358,9 +355,6 @@ class TextLog(AbstractChannelWidget):
         elif status == 'UNKNOWN':
             color = '#888a85'
 
-        print value['originalRep']
-        print value['timestamp']
-        
         data2 = data.replace('\n', ' ')
         html = '<p><font color=%s>' % color + str(ts) + '>>>' + data2 + '</font></p>'
         self.logger.append(html)

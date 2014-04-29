@@ -283,9 +283,11 @@ class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelWidget, self).__init__(parent)
         self.__channel = channel
+        self.__connected = False
 
     def connectProbe(self):
         ChanHandler.singleton.subscribe(self, self.__channel)
+        self.__connected = True
 
     def handleProbeEvent(self, msg): 
         print self, ":you should handle this message: ", msg['msgType']
@@ -294,8 +296,9 @@ class AbstractChannelWidget(NFrameContainer):
         ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
-        self.__disconnectProbe()
-        QFrame.destroy(self)
+        if self.__connected == True: self.__disconnectProbe()
+        self.deleteLater()
+        #QFrame.destroy(self)
 
 
 
