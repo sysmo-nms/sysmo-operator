@@ -57,7 +57,7 @@ class Central(NSplitterContainer):
         self.addWidget(self._rightDash)
 
     def _initRrdtool(self):
-        self._rrdtool = norrd.init(parent=self)
+        self._rrdtool = norrd.Rrdtool(self)
 
     def _initChanProxy(self): 
         self._eventHandler = ChanHandler(self, 5)
