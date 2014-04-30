@@ -36,56 +36,63 @@ class Rrdtool(QObject):
             self._initFour()
 
     def _initOne(self):
-        self.t1 = RrdtoolThread(self._executable, self)
-        self.t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT1.connect(self.t1.cmd, Qt.QueuedConnection)
-        self._workersLinks = collections.deque([self.toT1])
-        self.t1.start()
+        t1 = RrdtoolThread(self._executable, self)
+        t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT1.connect(t1.cmd, Qt.QueuedConnection)
+
+        self._workersLinks  = collections.deque([self.toT1])
+        self._threadList    = [t1]
+
+        t1.start()
 
     def _initTwo(self):
-        self.t1 = RrdtoolThread(self._executable, self)
-        self.t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT1.connect(self.t1.cmd, Qt.QueuedConnection)
-        self.t2 = RrdtoolThread(self._executable, self)
-        self.t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT2.connect(self.t2.cmd, Qt.QueuedConnection)
+        t1 = RrdtoolThread(self._executable, self)
+        t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT1.connect(t1.cmd, Qt.QueuedConnection)
+
+        t2 = RrdtoolThread(self._executable, self)
+        t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT2.connect(t2.cmd, Qt.QueuedConnection)
+
         self._workersLinks = collections.deque([self.toT1, self.toT2])
-        self.t1.start()
-        self.t2.start()
+        self._threadList    = [t1, t2]
+
+        for thread in self._threadList: thread.start()
 
     def _initThree(self):
-        self.t1 = RrdtoolThread(self._executable, self)
-        self.t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT1.connect(self.t1.cmd, Qt.QueuedConnection)
-        self.t2 = RrdtoolThread(self._executable, self)
-        self.t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT2.connect(self.t2.cmd, Qt.QueuedConnection)
-        self.t3 = RrdtoolThread(self._executable, self)
-        self.t3.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT3.connect(self.t3.cmd, Qt.QueuedConnection)
-        self._workersLinks = collections.deque([self.toT1, self.toT2, self.toT3])
-        self.t1.start()
-        self.t2.start()
-        self.t3.start()
+        t1 = RrdtoolThread(self._executable, self)
+        t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT1.connect(t1.cmd, Qt.QueuedConnection)
+
+        t2 = RrdtoolThread(self._executable, self)
+        t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT2.connect(t2.cmd, Qt.QueuedConnection)
+
+        t3 = RrdtoolThread(self._executable, self)
+        t3.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT3.connect(t3.cmd, Qt.QueuedConnection)
+
+        self._workersLinks  = collections.deque([self.toT1, self.toT2, self.toT3])
+        self._threadList    = [t1, t2, t3]
+        for thread in self._threadList: thread.start()
 
     def _initFour(self):
-        self.t1 = RrdtoolThread(self._executable, self)
-        self.t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT1.connect(self.t1.cmd, Qt.QueuedConnection)
-        self.t2 = RrdtoolThread(self._executable, self)
-        self.t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT2.connect(self.t2.cmd, Qt.QueuedConnection)
-        self.t3 = RrdtoolThread(self._executable, self)
-        self.t3.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT3.connect(self.t3.cmd, Qt.QueuedConnection)
-        self.t4 = RrdtoolThread(self._executable, self)
-        self.t4.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        self.toT4.connect(self.t4.cmd, Qt.QueuedConnection)
+        t1 = RrdtoolThread(self._executable, self)
+        t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT1.connect(t1.cmd, Qt.QueuedConnection)
+        t2 = RrdtoolThread(self._executable, self)
+        t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT2.connect(t2.cmd, Qt.QueuedConnection)
+        t3 = RrdtoolThread(self._executable, self)
+        t3.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT3.connect(t3.cmd, Qt.QueuedConnection)
+        t4 = RrdtoolThread(self._executable, self)
+        t4.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        self.toT4.connect(t4.cmd, Qt.QueuedConnection)
+
         self._workersLinks = collections.deque([self.toT1, self.toT2, self.toT3, self.toT4])
-        self.t1.start()
-        self.t2.start()
-        self.t3.start()
-        self.t4.start()
+        self._threadList   = [t1, t2, t3, t4]
+        for thread in self._threadList: thread.start()
 
     def getReply(self, msg):
         callback = msg['callback']
@@ -94,7 +101,9 @@ class Rrdtool(QObject):
     def cmd(self, cmd):
         self._workersLinks[0].emit(cmd)
         self._workersLinks.rotate(1)
-        
+
+    def threadShutdown(self):
+        for thread in self._threadList: thread.quit()
 
 
 

@@ -58,6 +58,8 @@ class Central(NSplitterContainer):
 
     def _initRrdtool(self):
         self._rrdtool = norrd.Rrdtool(self)
+        nocapi.nConnectWillClose(self._rrdtool.threadShutdown)
+
 
     def _initChanProxy(self): 
         self._eventHandler = ChanHandler(self, 5)
