@@ -17,7 +17,7 @@ def cmd(command, callback):
 class RrdtoolExit(Exception): pass
 
 class RrdtoolLocal(QObject):
-    def __init__(self, executable, parent=None):
+    def __init__(self, parent=None, executable='rrdtool'):
         super(RrdtoolLocal, self).__init__(parent)
         RrdtoolLocal.singleton = self
         self._sendQ = Queue()
@@ -106,4 +106,5 @@ class Rrdtool(QObject):
                     responce['status'] = 'ok'
                 break
 
+        print "end rrd"
         return responce

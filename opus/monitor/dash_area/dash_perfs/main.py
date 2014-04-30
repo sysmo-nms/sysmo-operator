@@ -96,7 +96,7 @@ class RrdElement(QLabel):
             self._rrdFileReady = True
 
     def _updateGraph(self):
-        print "update graph"
+        #print "update graph"
         # TODO use re.compile and re.match or re.search using MatchObject
         defs    = re.findall(r'DEF:[^\s]+', self._rrdgraphcmd)
         lines   = re.findall(r'LINE[^\s]+', self._rrdgraphcmd)
@@ -126,7 +126,7 @@ class RrdElement(QLabel):
 
     #def paintEvent(self, event):
         #if self._needRedraw == True:
-            #self._drawGraph()
+        #self._updateGraph()
         #QLabel.paintEvent(self, event)
 
     def handleDump(self, msg):
@@ -143,6 +143,8 @@ class RrdElement(QLabel):
         #opts = '--full-size-mode --disable-rrdtool-tag --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
         opts = '--full-size-mode --disable-rrdtool-tag --slope-mode --tabwidth 1 -W %s ' % self._rrdname
         #opts = '--full-size-mode --disable-rrdtool-tag --border 0 --dynamic-labels --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
+
+
         colors = '--color BACK#00000000 --color CANVAS%s --color GRID%s --color MGRID%s --color FONT%s --color AXIS%s --color FRAME%s --color ARROW%s --font DEFAULT:0:%s ' % (
                 nocapi.nGetRgba('Base'),
                 nocapi.nGetRgba('Dark'),
