@@ -26,8 +26,6 @@ class PerfDash(NFrameContainer):
 class RrdLog(AbstractChannelWidget):
     def __init__(self, parent, probe):
         super(RrdLog, self).__init__(parent, probe)
-        #self.setAutoFillBackground(True)
-        #self.setBackgroundRole(QPalette.Window)
         self._grid = NGridContainer(self)
         self.setLayout(self._grid)
         self._rrdElements = dict()
@@ -66,7 +64,6 @@ class RrdElement(QLabel):
     def __init__(self, parent, rrdname, rrdconf):
         super(RrdElement, self).__init__(parent)
         self._font = QFont().defaultFamily()
-        self.setAutoFillBackground(True)
         self._initGraphState()
         self._initGraphFile()
         self.setText(rrdname)
