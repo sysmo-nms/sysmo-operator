@@ -69,7 +69,10 @@ class RrdElement(QLabel):
         self.setText(rrdname)
         self._rrdname       = rrdname
         self._rrdconf       = rrdconf
-        [rrdgraphcmd]       = rrdconf['graphs']
+        # XXX 
+        print rrdconf['graphs']
+        rrdgraphcmd         = rrdconf['graphs'][0]
+        # XXX 
         self._rrdgraphcmd   = rrdgraphcmd
         self._rrdgraphbinds = rrdconf['binds']
         self.setFixedHeight(100)

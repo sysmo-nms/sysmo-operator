@@ -31,9 +31,9 @@ import  opus.monitor.main
 import  opus.locator.main
 import  opus.iphelper.main
 import  opus.knowledge.main
-import  opus.schedule.main
-import  opus.tickets.main
-import  opus.metro.main
+#import  opus.schedule.main
+#import  opus.tickets.main
+#import  opus.metro.main
 
 # SELECTOR RAMP ###############################################################
 class NSelector(NFrameContainer):
@@ -145,19 +145,19 @@ class NSelector(NFrameContainer):
         self._buttons['knowledge']['widget'].setIcon('knowledge-black')
             #getIcon('knowledge-black'))
 
-        self._buttons['schedule'] = dict()
-        self._buttons['schedule']['row'] = 5
-        self._buttons['schedule']['widget']  = NSelectorButton(self, 'schedule')
-        #self._buttons['schedule']['widget'].setIcon('knowledge-black')
-
-        self._buttons['tickets'] = dict()
-        self._buttons['tickets']['row'] = 6
-        self._buttons['tickets']['widget']  = NSelectorButton(self, 'tickets')
-        #self._buttons['tickets']['widget'].setIcon('knowledge-black')
-
-        self._buttons['metro'] = dict()
-        self._buttons['metro']['row'] = 7
-        self._buttons['metro']['widget']  = NSelectorButton(self, 'metro')
+#         self._buttons['schedule'] = dict()
+#         self._buttons['schedule']['row'] = 5
+#         self._buttons['schedule']['widget']  = NSelectorButton(self, 'schedule')
+#         #self._buttons['schedule']['widget'].setIcon('knowledge-black')
+# 
+#         self._buttons['tickets'] = dict()
+#         self._buttons['tickets']['row'] = 6
+#         self._buttons['tickets']['widget']  = NSelectorButton(self, 'tickets')
+#         #self._buttons['tickets']['widget'].setIcon('knowledge-black')
+# 
+#         self._buttons['metro'] = dict()
+#         self._buttons['metro']['row'] = 7
+#         self._buttons['metro']['widget']  = NSelectorButton(self, 'metro')
 
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
@@ -166,9 +166,9 @@ class NSelector(NFrameContainer):
         self._stackWidget.addLayer(opus.locator.main.Central,    'locator')
         self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
         self._stackWidget.addLayer(opus.iphelper.main.Central,   'iphelper')
-        self._stackWidget.addLayer(opus.schedule.main.Central,   'schedule')
-        self._stackWidget.addLayer(opus.tickets.main.Central,    'tickets')
-        self._stackWidget.addLayer(opus.metro.main.Central,      'metro')
+        #self._stackWidget.addLayer(opus.schedule.main.Central,   'schedule')
+        #self._stackWidget.addLayer(opus.tickets.main.Central,    'tickets')
+        #self._stackWidget.addLayer(opus.metro.main.Central,      'metro')
 ##############################################################################
 ################# EXTENTION CONFIGURATION END ################################
 ##############################################################################
