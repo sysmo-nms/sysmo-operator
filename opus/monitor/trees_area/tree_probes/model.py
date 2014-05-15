@@ -47,6 +47,7 @@ class ProbeModel(QStandardItemModel):
 class TargetItem(QStandardItem):
     def __init__(self, data):
         super(TargetItem, self).__init__()
+        print data['value']['properties']
         self.name       = data['value']['name']
         self.nodeType   = 'target'
         self.status     = 'UNKNOWN'
@@ -127,10 +128,11 @@ class ProbeItem(QStandardItem):
         super(ProbeItem, self).__init__()
         print data['value']['descr']
         self.name       = data['value']['name']
+        self.printableDescr = data['value']['descr']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
         self.status     = data['value']['status']
-        self.searchString = self.name + self.target
+        self.searchString = self.name + self.target + self.printableDescr
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
 
@@ -138,7 +140,7 @@ class ProbeItem(QStandardItem):
         if   role == Qt.DecorationRole:
             return self._getIconStatus()
         elif role == Qt.DisplayRole:
-            return self.name
+            return self.printableDescr
         elif role == Qt.UserRole:
             return self.searchString
         else:

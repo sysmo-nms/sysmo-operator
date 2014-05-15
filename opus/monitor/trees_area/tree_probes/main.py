@@ -96,9 +96,12 @@ class ProbesTreeview(QTreeView):
         targetAction = QAction(self.tr('Suspend all target probes'), self)
         self.targetMenu.addAction(targetAction)
 
-        targetAction = QAction(self.tr('Create a new probe'), self)
+        targetAction = QAction(self.tr('Add entry to the target diary'), self)
         self.targetMenu.addAction(targetAction)
+
+        targetAction = QAction(self.tr('Create a new probe'), self)
         targetAction.triggered[bool].connect(self.createProbe)
+        self.targetMenu.addAction(targetAction)
 
         self.targetMenu.addSeparator()
 
@@ -119,6 +122,9 @@ class ProbesTreeview(QTreeView):
         self.probeMenu.addAction(probeAction)
 
         probeAction = QAction(self.tr('Suspend probe'), self)
+        self.probeMenu.addAction(probeAction)
+
+        probeAction = QAction(self.tr('Add entry to the probe diary'), self)
         self.probeMenu.addAction(probeAction)
 
         probeAction = QAction(self.tr('Force check'), self)
