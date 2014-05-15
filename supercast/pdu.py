@@ -210,6 +210,8 @@ class MonitorProbeInfo(univ.Sequence):
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('id',       univ.Integer()),
         namedtype.NamedType('name',     char.PrintableString()),
+        namedtype.NamedType('descr',    char.PrintableString()),
+        namedtype.NamedType('info',     char.PrintableString()),
         namedtype.NamedType('perm',     PermConf()),
         namedtype.NamedType('probeMod', char.PrintableString()),
         namedtype.NamedType('probeConf',    char.PrintableString()),
@@ -859,6 +861,8 @@ def decode(pdu):
                 target      = str(msg3.getComponentByName('channel'))
                 probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
+                descr       = str(msg3.getComponentByName('descr'))
+                info        = str(msg3.getComponentByName('info'))
                 perm        = msg3.getComponentByName('perm')
                 probeMod    = str(msg3.getComponentByName('probeMod'))
                 probeConf   = str(msg3.getComponentByName('probeConf'))
@@ -960,6 +964,8 @@ def decode(pdu):
                         'target':       target,
                         'id':           int(probeId),
                         'name':         name,
+                        'descr':        descr,
+                        'info':         info,
                         'perm':         permDict,
                         'probeMod':     probeMod,
                         'probeconf':    probeConf,

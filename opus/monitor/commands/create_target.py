@@ -213,10 +213,12 @@ class CreateNetworkElement(QWizardPage):
     def validatePage(self):
         #snmpV2Read  = self._snmpV2Read.text()
         #snmpV2Write = self._snmpV2Write.text()
-        #ip          = self._ipLine.text()
+        ip          = self._ipLine.text()
         #snmpV2Read  = self._snmpV2Read.text()
         #snmpV2Write = self._snmpV2Write.text()
-        ip          = "192.168.0.5"
+        if ip == "":
+            ip          = "192.168.0.5"
+
         perms       = (["admin"], ["admin"])
         tpl         = "Generic SNMP element"
         ro          = "public"

@@ -125,6 +125,7 @@ class TargetItem(QStandardItem):
 class ProbeItem(QStandardItem):
     def __init__(self, data):
         super(ProbeItem, self).__init__()
+        print data['value']['descr']
         self.name       = data['value']['name']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
