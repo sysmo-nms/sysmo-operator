@@ -843,7 +843,16 @@ def decode(pdu):
             elif msg3_type == 'targetInfo':
                 targetId    = str(msg3.getComponentByName('channel'))
                 infoType    = msg3.getComponentByName('type')
+
                 infoProp    = msg3.getComponentByName('properties')
+                propDict    = dict()
+                for i in range(len(infoProp)):
+                    prop = infoProp.getComponentByPosition(i)
+                    key  = str(prop.getComponentByName('key'))
+                    val  = str(prop.getComponentByName('value'))
+                    propDict[key] = val
+                    
+
                 if      infoType == 0: infoT = 'create'
                 elif    infoType == 1: infoT = 'delete'
                 elif    infoType == 2: infoT = 'update'
@@ -853,7 +862,7 @@ def decode(pdu):
                     'msgType':  msg3_type,
                     'value':    {
                         'name':         targetId,
-                        'properties':   infoProp,
+                        'properties':   propDict,
                         'infoType':     infoT
                     }
                 }
