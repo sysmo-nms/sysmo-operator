@@ -46,7 +46,8 @@ def initPixmaps():
     global pixmapSet
     pixmapSet = {
         'system-search': QPixmap(os.path.join(iconsPath, "system-search.png")),
-        'applications-system': QPixmap(os.path.join(iconsPath, "applications-system.png"))
+        'applications-system': QPixmap(os.path.join(iconsPath, "applications-system.png")),
+        'rrdtool-logo': QPixmap(os.path.join(iconsPath, "rrdtool_logo.png"))
     }
 
 def initIcons():
@@ -141,6 +142,7 @@ def initImages():
     global imageSet
     global imagesPath
     imageSet = {
+        'rrdtool-logo': os.path.join(imagesPath, "rrdtool_logo.png"),
         '60-day-trial-banner': os.path.join(imagesPath, "60-day-trial-banner.svg"),
         '60-day-trial-banner-reversed': os.path.join(imagesPath, "60-day-trial-banner-reversed.svg"),
         '30-day-trial-banner': os.path.join(imagesPath, "30-day-trial-banner.svg"),

@@ -9,7 +9,12 @@ from    PySide.QtGui    import (
     QSortFilterProxyModel,
     QAbstractItemView,
     QMenu,
-    QAction
+    QAction,
+    QStyledItemDelegate,
+    QStyleOptionProgressBar,
+    QApplication,
+    QStyle,
+    QImage,
 )
 
 from    noctopus_widgets    import (
@@ -50,6 +55,7 @@ class ProbesTreeview(QTreeView):
         self.setDragEnabled(True)
         self.setDragDropMode(QAbstractItemView.DragOnly)
         self.setDropIndicatorShown(True)
+        self.setItemDelegate(MonitorItemDelegate(self))
 
         self._initMenus()
         self.contextActions = QAction('test', self)
@@ -199,3 +205,28 @@ class ProbesTreeview(QTreeView):
             QTreeView.mousePressEvent(self, pressEvent)
         else:
             QTreeView.mousePressEvent(self, pressEvent)
+
+class MonitorItemDelegate(QStyledItemDelegate):
+    def __init__(self, parent):
+        super(MonitorItemDelegate, self).__init__(parent)
+        self._rrdToolLogo   = QImage(nocapi.nGetImage('rrdtool-logo'))
+        self._rrdToolSize   = QSize(80,25)
+
+    def paint(self, painter, option, index):
+        if index.data(Qt.UserRole + 1) == None:
+            itemRoot = index.sibling(index.row(), 0)
+            if itemRoot.data(Qt.UserRole + 1) == "Probe":
+                if index.column() == 1:
+                    if itemRoot.data(Qt.UserRole + 2) == True:
+                        option.rect.setSize(self._rrdToolSize)
+                        painter.drawImage(option.rect, self._rrdToolLogo)
+                        return
+                if index.column() == 2:
+                    opts = QStyleOptionProgressBar()
+                    opts.rect = option.rect
+                    opts.minimum = 0
+                    opts.maximum = 100
+                    opts.progress = 50
+                    QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
+                    return
+        QStyledItemDelegate.paint(self, painter, option, index)

@@ -10,7 +10,9 @@ import opus.monitor.api as monapi
 class ProbeModel(QStandardItemModel):
     def __init__(self, parent):
         super(ProbeModel, self).__init__(parent)
-        self.setHorizontalHeaderLabels(["Targets/Probes"])
+        self.setHorizontalHeaderLabels(
+            ["Targets/Probes", "Loggers", "Next return"])
+        self.setColumnCount(3)
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
         monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
 
@@ -52,6 +54,7 @@ class TargetItem(QStandardItem):
         self.searchString   = self.name
         self.targetDict = data
         self.setFlags(Qt.ItemIsEnabled)
+        self.setColumnCount(3)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -60,6 +63,8 @@ class TargetItem(QStandardItem):
             return self.targetDict['value']['properties']['sysName']
         elif role == Qt.UserRole:
             return self.searchString
+        elif role == (Qt.UserRole + 1):
+            return "Target"
         else:
             return QStandardItem.data(self, role)
 
@@ -124,6 +129,11 @@ class TargetItem(QStandardItem):
 class ProbeItem(QStandardItem):
     def __init__(self, data):
         super(ProbeItem, self).__init__()
+        if 'bmonitor_logger_rrd' in data['value']['loggers'].keys():
+            self._logsRrd = True
+        else:
+            self._logsRrd = False
+
         self.name       = data['value']['name']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
@@ -131,6 +141,8 @@ class ProbeItem(QStandardItem):
         self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
+        self.setColumnCount(3)
+
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -139,6 +151,10 @@ class ProbeItem(QStandardItem):
             return self.probeDict['value']['descr']
         elif role == Qt.UserRole:
             return self.searchString
+        elif role == (Qt.UserRole + 1):
+            return "Probe"
+        elif role == (Qt.UserRole + 2):
+            return self._logsRrd
         else:
             return QStandardItem.data(self, role)
 
