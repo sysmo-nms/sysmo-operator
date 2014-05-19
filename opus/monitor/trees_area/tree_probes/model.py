@@ -155,6 +155,8 @@ class ProbeItem(QStandardItem):
             return "Probe"
         elif role == (Qt.UserRole + 2):
             return self._logsRrd
+        elif role == (Qt.UserRole + 3):
+            return self.name
         else:
             return QStandardItem.data(self, role)
 

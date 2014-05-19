@@ -5,6 +5,7 @@ from    PySide.QtCore   import (
 
 from    PySide.QtGui    import (
     QTreeView,
+    QHeaderView,
     QFrame,
     QSortFilterProxyModel,
     QAbstractItemView,
@@ -24,6 +25,7 @@ from    noctopus_widgets    import (
 
 from    opus.monitor.trees_area.tree_probes.controls import ProbesActions
 from    opus.monitor.trees_area.tree_probes.model    import ProbeModel
+from    opus.monitor.trees_area.tree_probes.logwin   import LoggerView
 import  nocapi
 
 class ProbesTree(NFrame):
@@ -43,6 +45,7 @@ class ProbesTreeview(QTreeView):
     def __init__(self, parent):
         super(ProbesTreeview, self).__init__(parent)
         ProbesTreeview.singleton = self
+        self._viewDialogs = dict()
         self._initStyle()
         self.model   = ProbeModel(self)
         self.proxy   = QSortFilterProxyModel(self)
@@ -56,14 +59,29 @@ class ProbesTreeview(QTreeView):
         self.setDragDropMode(QAbstractItemView.DragOnly)
         self.setDropIndicatorShown(True)
         self.setItemDelegate(MonitorItemDelegate(self))
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self._initMenus()
         self.contextActions = QAction('test', self)
         self.addAction(self.contextActions)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.test)
+        self.doubleClicked.connect(self._doubleClicked)
 
         self.setSortingEnabled(True)
+
+    def _doubleClicked(self, index):
+        probeItem = index.sibling(index.row(), 0)
+        if probeItem.data(Qt.UserRole + 1) == "Probe":
+            probe = probeItem.data(Qt.UserRole + 3)
+            display = probeItem.data(Qt.DisplayRole)
+            if probe not in self._viewDialogs.keys():
+                self._viewDialogs[probe] = LoggerView(self, probe, display)
+                self._viewDialogs[probe].show()
+            else:
+                self._viewDialogs[probe].show()
+                
+
 
     def _initStyle(self):
         self.setObjectName('backTree')
@@ -199,12 +217,13 @@ class ProbesTreeview(QTreeView):
             self.noneMenu.popup(self.mapToGlobal(point))
 
 
-    def mousePressEvent(self, pressEvent):
-        button = pressEvent.button()
-        if button == Qt.MouseButton.RightButton: 
-            QTreeView.mousePressEvent(self, pressEvent)
-        else:
-            QTreeView.mousePressEvent(self, pressEvent)
+
+    #def mousePressEvent(self, pressEvent):
+        #button = pressEvent.button()
+        #if button == Qt.MouseButton.RightButton: 
+            #QTreeView.mousePressEvent(self, pressEvent)
+        #else:
+            #QTreeView.mousePressEvent(self, pressEvent) 
 
 class MonitorItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):
