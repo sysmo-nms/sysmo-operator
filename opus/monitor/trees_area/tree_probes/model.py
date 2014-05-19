@@ -5,41 +5,40 @@ from    PySide.QtGui    import (
 )
 
 import nocapi
-import opus.monitor.api as mapi
+import opus.monitor.api as monapi
 
 class ProbeModel(QStandardItemModel):
     def __init__(self, parent):
         super(ProbeModel, self).__init__(parent)
         self.setHorizontalHeaderLabels(["Targets/Probes"])
-        mapi.connectToEvent('targetInfo', self._handleTargetInfo)
-        mapi.connectToEvent('probeInfo',  self._handleProbeInfo)
+        monapi.connectToEvent('targetInfo', self._handleTargetInfo)
+        monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
 
     def _handleTargetInfo(self, msg):
-        target = self._itemExist(msg['value']['name'])
-        if self._itemExist(msg['value']['name']) == []:
+        (boo, target) = self._itemExist(msg['value']['name'])
+        if boo == False:
             self.appendRow(TargetItem(msg))
         else:
-            self._updateRow(target.pop(), msg)
+            self._updateRow(target, msg)
 
     def _handleProbeInfo(self, msg):
         target = msg['value']['target']
-        parent = self._itemExist(target)
-        if parent == []:
+        (boo, parent) = self._itemExist(target)
+        if boo == False:
             self.appendRow(ProbeItem(msg))
         else:
-            targetItem = parent.pop()
-            targetItem.handleProbeInfo(msg)
+            parent.handleProbeInfo(msg)
 
     def _updateRow(self, item, msg):
         item.updateState(msg)
 
     def _itemExist(self, itemName):
-        itemList = self.findItems(
-            itemName,
-            flags  = Qt.MatchRecursive,
-            column = 0
-        )
-        return itemList
+        rootItem = self.invisibleRootItem()
+        for row in range(rootItem.rowCount()):
+            child = rootItem.child(row)
+            if child.name == itemName:
+                return (True, child)
+        return (False, None)
 
     def supportedDropActions(self):
         return Qt.MoveAction
@@ -47,7 +46,6 @@ class ProbeModel(QStandardItemModel):
 class TargetItem(QStandardItem):
     def __init__(self, data):
         super(TargetItem, self).__init__()
-        print data['value']['properties']
         self.name       = data['value']['name']
         self.nodeType   = 'target'
         self.status     = 'UNKNOWN'
@@ -59,7 +57,7 @@ class TargetItem(QStandardItem):
         if   role == Qt.DecorationRole:
             return self._getIconStatus()
         elif role == Qt.DisplayRole:
-            return self.name
+            return self.targetDict['value']['properties']['sysName']
         elif role == Qt.UserRole:
             return self.searchString
         else:
@@ -126,13 +124,11 @@ class TargetItem(QStandardItem):
 class ProbeItem(QStandardItem):
     def __init__(self, data):
         super(ProbeItem, self).__init__()
-        print data['value']['descr']
         self.name       = data['value']['name']
-        self.printableDescr = data['value']['descr']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
         self.status     = data['value']['status']
-        self.searchString = self.name + self.target + self.printableDescr
+        self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
 
@@ -140,7 +136,7 @@ class ProbeItem(QStandardItem):
         if   role == Qt.DecorationRole:
             return self._getIconStatus()
         elif role == Qt.DisplayRole:
-            return self.printableDescr
+            return self.probeDict['value']['descr']
         elif role == Qt.UserRole:
             return self.searchString
         else:
