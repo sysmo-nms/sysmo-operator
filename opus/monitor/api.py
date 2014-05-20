@@ -1,6 +1,7 @@
 import  opus.monitor.proxy
 import  opus.monitor.trees_area.tree_probes.main
 import  opus.monitor.norrd
+import  opus.monitor.commands.user_actions
 
 def connectToEvent(eventType, pyCallable):
     "Connect to events emited by the server."
@@ -20,3 +21,7 @@ def getTargetsDict():
 
 def getProbesDict():
     return opus.monitor.proxy.ChanHandler.singleton.probes
+
+def launchUserActionsUI():
+    ua = opus.monitor.commands.user_actions.UserActions.singleton
+    ua.launchConfigurator()

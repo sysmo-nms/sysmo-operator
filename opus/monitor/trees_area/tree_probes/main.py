@@ -26,6 +26,7 @@ from    noctopus_widgets    import (
 from    opus.monitor.trees_area.tree_probes.controls import ProbesActions
 from    opus.monitor.trees_area.tree_probes.model    import ProbeModel
 from    opus.monitor.trees_area.tree_probes.logwin   import LoggerView
+import  opus.monitor.api    as monapi
 import  nocapi
 
 class ProbesTree(NFrame):
@@ -108,6 +109,7 @@ class ProbesTreeview(QTreeView):
         sshAction = QAction(self.tr('Acces SSH'), self)
         phpAction = QAction(self.tr('Acces phpldapadmin HTTP'), self)
         configureAction = QAction(self.tr('Configure new action'), self)
+        configureAction.triggered.connect(monapi.launchUserActionsUI)
         localMenu.addAction(sshAction)
         localMenu.addAction(phpAction)
         localMenu.addSeparator()
