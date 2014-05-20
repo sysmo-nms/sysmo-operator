@@ -55,6 +55,7 @@ class TargetItem(QStandardItem):
         self.targetDict = data
         self.setFlags(Qt.ItemIsEnabled)
         self.setColumnCount(3)
+        self._generateToolTip()
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -92,6 +93,16 @@ class TargetItem(QStandardItem):
 
     def updateState(self, msg):
         self.targetDict = msg
+        self._generateToolTip()
+
+    def _generateToolTip(self):
+        props   = self.targetDict['value']['properties']
+        table = "<table>"
+        for k in props.keys():
+            row = "<tr><td><b>%s</b></td><td>: %s</td></tr>" % (k, props[k])
+            table = table + row
+        table = table + "</table>"
+        self.setToolTip(table)
 
     def __lt__(self, other): pass
 
