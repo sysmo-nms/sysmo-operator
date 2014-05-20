@@ -18,6 +18,7 @@ class ProbeModel(QStandardItemModel):
 
     def _handleTargetInfo(self, msg):
         (boo, target) = self._itemExist(msg['value']['name'])
+        print "add target: ", msg['value']['name']
         if boo == False:
             self.appendRow(TargetItem(msg))
         else:
@@ -27,8 +28,10 @@ class ProbeModel(QStandardItemModel):
         target = msg['value']['target']
         (boo, parent) = self._itemExist(target)
         if boo == False:
+            print "parent did not exist:", target
             self.appendRow(ProbeItem(msg))
         else:
+            print "parent exist:", target
             parent.handleProbeInfo(msg)
 
     def _updateRow(self, item, msg):

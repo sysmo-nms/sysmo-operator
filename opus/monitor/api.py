@@ -22,6 +22,16 @@ def getTargetsDict():
 def getProbesDict():
     return opus.monitor.proxy.ChanHandler.singleton.probes
 
+# UActions
 def launchUserActionsUI():
     ua = opus.monitor.commands.user_actions.UserActions.singleton
     ua.launchConfigurator()
+
+def connectToUActionSettings(pyCallable):
+    ua = opus.monitor.commands.user_actions.UserActions.singleton
+    ua.uactionsSettings.connect(pyCallable)
+
+def getUActionsFor(target):
+    ua = opus.monitor.commands.user_actions.UserActions.singleton
+    ua.getUActionsFor(target)
+    

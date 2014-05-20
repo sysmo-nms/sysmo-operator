@@ -66,7 +66,9 @@ class ProbesTreeview(QTreeView):
         self.contextActions = QAction('test', self)
         self.addAction(self.contextActions)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.test)
+
+        self.customContextMenuRequested.connect(self._showMenu)
+
         self.doubleClicked.connect(self._doubleClicked)
 
         self.setSortingEnabled(True)
@@ -97,25 +99,30 @@ class ProbesTreeview(QTreeView):
             background-position: bottom right}''' % nocapi.nGetRgb('Base'))
 
     def _initMenus(self):
+
+
+        # target menu
         self.targetMenu = QMenu(self)
 
-        targetAction = QAction(self.tr('Add to working view'), self)
-        targetAction.triggered[bool].connect(self.addToWorkingView)
-        self.targetMenu.addAction(targetAction)
+        self.defaultLocalMenu    = QMenu(self.tr('Local Actions'), self)
+        #sshAction = QAction(self.tr('Acces SSH'), self)
+        #phpAction = QAction(self.tr('Acces phpldapadmin HTTP'), self)
 
-        self.targetMenu.addSeparator()
+        self.configureAction = QAction(self.tr('Configure new action'), self)
+        self.configureAction.triggered.connect(monapi.launchUserActionsUI)
 
-        localMenu    = QMenu(self.tr('Local Actions'), self)
-        sshAction = QAction(self.tr('Acces SSH'), self)
-        phpAction = QAction(self.tr('Acces phpldapadmin HTTP'), self)
-        configureAction = QAction(self.tr('Configure new action'), self)
-        configureAction.triggered.connect(monapi.launchUserActionsUI)
-        localMenu.addAction(sshAction)
-        localMenu.addAction(phpAction)
-        localMenu.addSeparator()
-        localMenu.addAction(configureAction)
+        undefAction = QAction('...', self)
+        undefAction.setDisabled(True)
+        self.defaultLocalMenu.addAction(undefAction)
+        self.defaultLocalMenu.addAction(self.configureAction)
+        self.defaultLocalMenu.addSeparator()
+        #self.localMenu.addAction(sshAction)
+        #self.localMenu.addAction(phpAction)
 
-        self.targetMenu.addMenu(localMenu)
+        self.targetMenu.addMenu(self.defaultLocalMenu)
+
+
+
 
         self.targetMenu.addSeparator()
 
@@ -208,16 +215,20 @@ class ProbesTreeview(QTreeView):
     def selectionChanged(self, selected, deselected):
         QTreeView.selectionChanged(self, selected, deselected)
 
-    def test(self, point):
+    def _showMenu(self, point):
         index = self.proxy.mapToSource(self.indexAt(point))
         item  = self.model.itemFromIndex(index)
         if      item.__class__.__name__ == 'ProbeItem':
             self.probeMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'TargetItem':
+            self._prepareMenuFor(item.name)
             self.targetMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'NoneType':
             self.noneMenu.popup(self.mapToGlobal(point))
 
+    def _prepareMenuFor(self, target):
+        ldd = monapi.getUActionsFor(target)
+        print "prepare menu for ", target, " ", ldd
 
 
     #def mousePressEvent(self, pressEvent):
