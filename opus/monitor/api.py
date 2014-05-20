@@ -33,5 +33,5 @@ def connectToUActionSettings(pyCallable):
 
 def getUActionsFor(target):
     ua = opus.monitor.commands.user_actions.UserActions.singleton
-    ua.getUActionsFor(target)
+    return ua.getUActionsFor(target)
     

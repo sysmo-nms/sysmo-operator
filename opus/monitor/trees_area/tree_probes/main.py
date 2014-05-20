@@ -23,6 +23,7 @@ from    noctopus_widgets    import (
     NGrid
 )
 
+from    functools import partial
 from    opus.monitor.trees_area.tree_probes.controls import ProbesActions
 from    opus.monitor.trees_area.tree_probes.model    import ProbeModel
 from    opus.monitor.trees_area.tree_probes.logwin   import LoggerView
@@ -101,25 +102,19 @@ class ProbesTreeview(QTreeView):
     def _initMenus(self):
 
 
-        # target menu
         self.targetMenu = QMenu(self)
 
-        self.defaultLocalMenu    = QMenu(self.tr('Local Actions'), self)
-        #sshAction = QAction(self.tr('Acces SSH'), self)
-        #phpAction = QAction(self.tr('Acces phpldapadmin HTTP'), self)
+        #######################################################################
+        ## DYNAMIC TARGETS MENUS ##############################################
+        #######################################################################
+        self.localMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localMenu.setDisabled(True)
+        #######################################################################
 
         self.configureAction = QAction(self.tr('Configure new action'), self)
         self.configureAction.triggered.connect(monapi.launchUserActionsUI)
-
-        undefAction = QAction('...', self)
-        undefAction.setDisabled(True)
-        self.defaultLocalMenu.addAction(undefAction)
-        self.defaultLocalMenu.addAction(self.configureAction)
-        self.defaultLocalMenu.addSeparator()
-        #self.localMenu.addAction(sshAction)
-        #self.localMenu.addAction(phpAction)
-
-        self.targetMenu.addMenu(self.defaultLocalMenu)
+        self.targetMenu.addMenu(self.localMenu)
+        self.targetMenu.addAction(self.configureAction)
 
 
 
@@ -221,15 +216,26 @@ class ProbesTreeview(QTreeView):
         if      item.__class__.__name__ == 'ProbeItem':
             self.probeMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'TargetItem':
-            self._prepareMenuFor(item.name)
+            self._prepareMenuForTarget(item.name)
             self.targetMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'NoneType':
             self.noneMenu.popup(self.mapToGlobal(point))
 
-    def _prepareMenuFor(self, target):
-        ldd = monapi.getUActionsFor(target)
-        print "prepare menu for ", target, " ", ldd
+    def _prepareMenuForTarget(self, target):
+        uactions = monapi.getUActionsFor(target)
+        if len(uactions) == 0:
+            self.localMenu.setDisabled(True)
+        else:
+            self.localMenu.setDisabled(False)
+            self.localMenu.clear()
+            for i in range(len(uactions)):
+                qa = QAction(uactions[i], self)
+                callback = partial(self._userAction, target, uactions[i])
+                qa.triggered.connect(callback)
+                self.localMenu.addAction(qa)
 
+    def _userAction(self, target, action):
+        print "tt for %s %s" % (target, action)
 
     #def mousePressEvent(self, pressEvent):
         #button = pressEvent.button()
@@ -237,6 +243,7 @@ class ProbesTreeview(QTreeView):
             #QTreeView.mousePressEvent(self, pressEvent)
         #else:
             #QTreeView.mousePressEvent(self, pressEvent) 
+
 
 class MonitorItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):

@@ -35,7 +35,6 @@ class UserActions(QObject):
 
     def getUActionsFor(self, target):
         if target in self._UACfg.keys():
-            print "yess?"
             return self._UACfg[target]
         else:
             return []
@@ -59,9 +58,8 @@ class UserActions(QObject):
         self._settings.setValue('monitor/user_actions_cmds', commandDb)
 
         config = dict()
-        config['target-501661'] = ['Access SSH']
-        config['target-952996'] = ['Access SSH']
-        config['target-959975'] = ['Access SSH']
+        config['target-1021653'] = ['Access SSH']
+        config['target-146610']  = ['Access SSH']
         self._settings.setValue('monitor/user_actions_cfg', config)
 
     def launchConfigurator(self):
@@ -69,7 +67,7 @@ class UserActions(QObject):
         ua.exec_()
 
 class UserActionsUI(QDialog):
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(UserActionsUI, self).__init__(None)
         grid = NGrid(self)
         lab = QLabel('User actions', self)
