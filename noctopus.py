@@ -40,6 +40,9 @@ translator.load('fr_FR')
 
 noctopusApp  = QApplication(sys.argv)
 noctopusApp.installTranslator(translator)
+noctopusApp.setOrganizationName("Noctopus NMS")
+noctopusApp.setOrganizationDomain("noctopus-nms.com")
+noctopusApp.setApplicationName("noctopus-client")
 
 currentStyle = noctopusApp.style().objectName()
 noctopus     = noctopus_main.NMainWindow(currentStyle)

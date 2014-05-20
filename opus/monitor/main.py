@@ -4,6 +4,7 @@ from    PySide.QtCore   import (
 )
 
 from    opus.monitor                 import norrd
+from    opus.monitor.commands.user_actions import UserActions
 from    opus.monitor.trees_area.main import TreeContainer
 from    opus.monitor.dash_area.main  import DashContainer
 from    opus.monitor.proxy           import ChanHandler
@@ -19,6 +20,7 @@ class Central(NSplitterContainer):
         self._initRrdtool()
         self._initChanProxy()
 
+        self._initUserActions()
         self._initLayout()
         self._initDockWidget()
         self._initToggle()
@@ -34,6 +36,9 @@ class Central(NSplitterContainer):
             self._slidePos  = 'right'
         else:
             self._slidePos  = 'center'
+
+    def _initUserActions(self):
+        self._userActions = UserActions(self)
 
     def _initViewMode(self):
         nocapi.nConnectViewMode(self.setViewMode)
@@ -65,19 +70,19 @@ class Central(NSplitterContainer):
         self._eventHandler = ChanHandler(self, 5)
 
     def _readSettings(self):
-        settings = QSettings("Noctopus NMS", "monitor")
+        settings = QSettings()
         self.restoreGeometry(settings.value("monitor/geometry"))
         self.restoreState(settings.value("monitor/state"))
-        oldPosition = int(settings.value("monitor/oldPosition"))
+        oldPosition = settings.value("monitor/oldPosition")
 
         if oldPosition != None:
-            self._oldPosition = oldPosition
+            self._oldPosition = int(oldPosition)
         else:
             self._oldPosition = 300
 
 
     def _willClose(self):
-        settings = QSettings("Noctopus NMS", "monitor")
+        settings = QSettings()
         settings.setValue("monitor/geometry",   self.saveGeometry())
         settings.setValue("monitor/state",      self.saveState())
         settings.setValue("monitor/oldPosition", self._oldPosition)

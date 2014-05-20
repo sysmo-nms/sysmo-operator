@@ -210,7 +210,8 @@ class NMainWindow(QMainWindow):
     #############
     def closeEvent(self, event):
         self.willClose.emit()
-        settings = QSettings("Noctopus NMS", "noctopus-client")
+        #settings = QSettings("Noctopus NMS", "noctopus-client")
+        settings    = QSettings()
         settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
         settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
@@ -224,7 +225,8 @@ class NMainWindow(QMainWindow):
     # SETTINGS #
     ############
     def _restoreSettings(self):
-        settings = QSettings("Noctopus NMS", "noctopus-client")
+        #settings = QSettings("Noctopus NMS", "noctopus-client")
+        settings = QSettings()
 
         self.restoreGeometry(settings.value("NMainWindow/geometry"))
         self.restoreState(settings.value("NMainWindow/windowState"))
