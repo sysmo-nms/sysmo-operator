@@ -11,8 +11,8 @@ from noctopus_widgets import (
     NGridContainer
 )
 
-# TODO possibilité de déclancher un évènement lors de l'execution d'une
-# action. Sera logguée sur le serveur.
+# TODO possibilite de declancher un evenement lors de l'execution d'une
+# action. Sera logguee sur le serveur.
 class UserActions(QObject):
     def __init__(self, parent=None):
         super(UserActions, self).__init__(parent)
