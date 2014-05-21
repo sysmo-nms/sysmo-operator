@@ -235,7 +235,7 @@ class ProbesTreeview(QTreeView):
                 self.localMenu.addAction(qa)
 
     def _userAction(self, target, action):
-        print "tt for %s %s" % (target, action)
+        monapi.execUAction(action, target)
 
     #def mousePressEvent(self, pressEvent):
         #button = pressEvent.button()

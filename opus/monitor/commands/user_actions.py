@@ -13,6 +13,11 @@ from noctopus_widgets import (
     NGridContainer
 )
 
+import shlex
+import re
+import subprocess
+import opus.monitor.proxy
+
 # TODO possibilite de:
 # - declancher un evenement lors de l'execution d'une action.
 # Sera logguee sur le serveur.
@@ -23,8 +28,7 @@ from noctopus_widgets import (
 
 class UserActions(QObject):
     
-    # for UI elements that will need to update themselfes on config move
-    uactionsSettings = Signal()
+    signal = Signal()
 
     def __init__(self, parent=None):
         super(UserActions, self).__init__(parent)
@@ -39,6 +43,22 @@ class UserActions(QObject):
         else:
             return []
             
+    def execUAction(self, action, target):
+        targets = self._getTargetsDict()
+        tprop   = targets[target]['properties']
+
+        cmd     = self._UACmds[action]
+        line    = cmd['cmd']
+        binds   = cmd['binds']
+        for prop in binds:
+            regx = cmd['binds'][prop]
+            line = re.sub(regx, tprop[prop], line)
+
+        args = shlex.split(line)
+        subprocess.Popen(args)
+
+    def _getTargetsDict(self):
+        return opus.monitor.proxy.ChanHandler.singleton.targets
 
     def _loadSettings(self):
         self._UACmds = self._settings.value('monitor/user_actions_cmds')
@@ -47,7 +67,7 @@ class UserActions(QObject):
     def _createConfExample(self):
         binds = dict()
         binds['ip']      = '<IP>'
-        execLine         = 'xterm -e "echo \"hello\"; ssh root@<IP>"'
+        execLine         = ''' xterm -e 'echo "connect to device..."; ssh root@<IP>' '''
 
         command          = dict()
         command['cmd']   = execLine
@@ -60,6 +80,8 @@ class UserActions(QObject):
         config = dict()
         config['target-1021653'] = ['Access SSH']
         config['target-146610']  = ['Access SSH']
+        config['target-902996']  = ['Access SSH']
+        config['target-501661']  = ['Access SSH']
         self._settings.setValue('monitor/user_actions_cfg', config)
 
     def launchConfigurator(self):
