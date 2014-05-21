@@ -107,8 +107,10 @@ class ChooseType(QWizardPage):
 
 
 class CreateNetworkElement(QWizardPage):
-    V2  = 2
-    V3  = 3
+    SNMP_V2  = 0
+    SNMP_V3  = 1
+    IP_V4    = 0
+    IP_V6    = 1
     def __init__(self, parent=None):
         super(CreateNetworkElement, self).__init__(parent)
         self.setTitle(self.tr('Create a network element'))
@@ -132,44 +134,22 @@ class CreateNetworkElement(QWizardPage):
         tempFrame.setLayout(tempLayout)
         self._ipLine    = QLineEdit(self)
         self._ipButton  = QComboBox(self)
-        self._ipButton.addItem('IP version 4:')
-        self._ipButton.addItem('IP version 6:')
+        self._ipButton.insertItem(self.IP_V4, 'IP version 4:')
+        self._ipButton.insertItem(self.IP_V6, 'IP version 6:')
 
         self._snmpButton = QComboBox(self)
-        self._snmpButton.addItem('SNMP version 2b')
-        self._snmpButton.addItem('SNMP version 3')
-        self._snmpButton.addItem('Do not use SNMP')
-        self._tpButton  = QComboBox(self)
-        self._tpButton.addItem('Add a template')
-        self._templateList = self._initTempList()
+        self._snmpButton.insertItem(self.SNMP_V2, 'SNMP version 2b')
+        self._snmpButton.insertItem(self.SNMP_V3, 'SNMP version 3')
 
         tempLayout.addWidget(self._ipButton,                            0,0)
         tempLayout.addWidget(self._ipLine,                              0,1)
         tempLayout.addWidget(self._snmpButton,                          1,0)
         tempLayout.addWidget(self._initSnmpFrame(),                     1,1,2,1)
-        tempLayout.addWidget(self._tpButton,                            3,0)
-        tempLayout.addWidget(self._templateList,                        3,1,2,1)
-
-        tempLayout.addWidget(QPushButton('Show details', self),         5,0)
 
         tempLayout.setAlignment(self._snmpButton, Qt.AlignVCenter)
         tempLayout.setColumnStretch(0,0)
         tempLayout.setColumnStretch(1,1)
         return tempFrame
-
-    def _initTempList(self):
-        listW = QListWidget(self)
-        testItem = QListWidgetItem()
-        testItem.setText('Standard ICMP element')
-        testItem.setIcon(nocapi.nGetIcon('text-x-generic-template'))
-        testItem2 = QListWidgetItem()
-        testItem2.setIcon(nocapi.nGetIcon('text-x-generic-template'))
-        testItem2.setText('Standard SNMP element')
-        listW.insertItem(0,testItem)
-        listW.insertItem(1,testItem2)
-        listW.setAlternatingRowColors(True)
-        return listW
-
 
     def _initPropertiesFrame(self):
         propFrame = QGroupBox(self)
@@ -211,24 +191,36 @@ class CreateNetworkElement(QWizardPage):
         return -1
 
     def validatePage(self):
-        #snmpV2Read  = self._snmpV2Read.text()
-        #snmpV2Write = self._snmpV2Write.text()
-        ip          = self._ipLine.text()
-        #snmpV2Read  = self._snmpV2Read.text()
-        #snmpV2Write = self._snmpV2Write.text()
-        if ip == "":
-            ip          = "192.168.0.5"
+        snmpV2Read  = self._snmpV2Read.text()
+        snmpV2Write = self._snmpV2Write.text()
+        ipAddress   = self._ipLine.text()
+
+        snmpVersion = self._snmpButton.currentIndex()
+        ipVersion   = self._ipButton.currentIndex()
+        print "snmp version is ", snmpVersion, " ip ", ipVersion
 
         perms       = (["admin"], ["admin"])
         tpl         = "Generic SNMP element"
-        ro          = "public"
-        rw          = "public"
 
-        ret = supercast.send(
-            'monitorCreateTarget', 
-            (ip, perms, ro, rw, tpl),
-            self.monitorReply
-        )
+        if self._assertCmd(
+            snmpVersion,
+            ipVersion,
+            snmpV2Read,
+            snmpV2Write,
+            ipAddress
+        ):
+            print "true?"
+            ret = supercast.send(
+                'monitorCreateTarget', 
+                (
+                    ipAddress,
+                    perms,
+                    snmpV2Read,
+                    snmpV2Write,
+                    tpl
+                ),
+                self.monitorReply
+            )
 
         #self.dial = QMessageBox(self)
         #self.dial.setModal(True)
@@ -236,9 +228,9 @@ class CreateNetworkElement(QWizardPage):
         #button = self.dial.buttons()
         #button.setDisabled(True)
         #self.dial.exec_()
-
         return False
 
+    def _assertCmd(self, a,b,c,d,e): return True
     def monitorReply(self, msg):
         print "get reply!!!!!!", msg
         
