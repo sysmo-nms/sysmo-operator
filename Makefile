@@ -17,11 +17,10 @@ win32Binary: clean
 	mv $(DIST_DIR) $(RELEASE_NAME)-$(RELEASE_VERSION)
 
 clean:
-	rm -f *.pyc
 	rm -rf dist
 	rm -rf build
 	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
-	rm -f *.pyc
+	find . -name "*.pyc" -print | xargs rm -f
 
 translate: 
 	@R="`find . -name "*.py" -exec echo -n "{} " \;`"; \

@@ -9,7 +9,6 @@ from    noctopus_widgets    import (
     NFrame,
     NGrid
 )
-from    opus.dashboard.drop_manager import DropMan
 from    opus.dashboard.controls     import DashActions
 from    opus.dashboard.dash         import Dashboard
 from    noctopus_infobutton                 import NInfoButton
@@ -20,7 +19,6 @@ class Central(NFrame):
         super(Central, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
         self.setContentsMargins(6,4,2,4)
-        self._dropMan   = DropMan(self)
         self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 
