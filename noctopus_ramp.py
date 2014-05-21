@@ -29,8 +29,7 @@ from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame, NGri
 # opus
 import  opus.monitor.main
 import  opus.dashboard.main
-import  opus.locator.main
-import  opus.iphelper.main
+import  opus.netman.main
 import  opus.knowledge.main
 #import  opus.schedule.main
 #import  opus.tickets.main
@@ -126,57 +125,29 @@ class NSelector(NFrameContainer):
         self._buttons['monitor']['row'] = 1
         self._buttons['monitor']['widget'] = NSelectorButton(self, 'monitor')
         self._buttons['monitor']['widget'].setIcon('monitor-black')
-            #getIcon('monitor-black'))
 
         self._buttons['dashboard'] = dict()
         self._buttons['dashboard']['row'] = 2
         self._buttons['dashboard']['widget'] = NSelectorButton(self, 'dashboard')
         self._buttons['dashboard']['widget'].setIcon('dashboard-black')
-            #getIcon('monitor-black'))
 
-        self._buttons['locator'] = dict()
-        self._buttons['locator']['row'] = 3
-        self._buttons['locator']['widget'] = NSelectorButton(self, 'locator')
-        self._buttons['locator']['widget'].setIcon('locator-black')
-            #etIcon('locator-black'))
-
-        self._buttons['iphelper'] = dict()
-        self._buttons['iphelper']['row'] = 4
-        self._buttons['iphelper']['widget'] = NSelectorButton(self, 'iphelper')
-        self._buttons['iphelper']['widget'].setIcon('iphelper-black')
-            #getIcon('iphelper-black'))
+        self._buttons['netman'] = dict()
+        self._buttons['netman']['row'] = 3
+        self._buttons['netman']['widget'] = NSelectorButton(self, 'netman')
+        self._buttons['netman']['widget'].setIcon('netman-black')
 
         self._buttons['knowledge'] = dict()
-        self._buttons['knowledge']['row'] = 5
+        self._buttons['knowledge']['row'] = 4
         self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
         self._buttons['knowledge']['widget'].setIcon('knowledge-black')
-            #getIcon('knowledge-black'))
-
-#         self._buttons['schedule'] = dict()
-#         self._buttons['schedule']['row'] = 5
-#         self._buttons['schedule']['widget']  = NSelectorButton(self, 'schedule')
-#         #self._buttons['schedule']['widget'].setIcon('knowledge-black')
-# 
-#         self._buttons['tickets'] = dict()
-#         self._buttons['tickets']['row'] = 6
-#         self._buttons['tickets']['widget']  = NSelectorButton(self, 'tickets')
-#         #self._buttons['tickets']['widget'].setIcon('knowledge-black')
-# 
-#         self._buttons['metro'] = dict()
-#         self._buttons['metro']['row'] = 7
-#         self._buttons['metro']['widget']  = NSelectorButton(self, 'metro')
 
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
 
         self._stackWidget.addLayer(opus.monitor.main.Central,    'monitor')
         self._stackWidget.addLayer(opus.dashboard.main.Central,  'dashboard')
-        self._stackWidget.addLayer(opus.locator.main.Central,    'locator')
+        self._stackWidget.addLayer(opus.netman.main.Central,      'netman')
         self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
-        self._stackWidget.addLayer(opus.iphelper.main.Central,   'iphelper')
-        #self._stackWidget.addLayer(opus.schedule.main.Central,   'schedule')
-        #self._stackWidget.addLayer(opus.tickets.main.Central,    'tickets')
-        #self._stackWidget.addLayer(opus.metro.main.Central,      'metro')
 ##############################################################################
 ################# EXTENTION CONFIGURATION END ################################
 ##############################################################################

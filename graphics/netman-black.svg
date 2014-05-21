@@ -324,14 +324,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
      inkscape:cx="42.256907"
-     inkscape:cy="98.128693"
+     inkscape:cy="104.60229"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:showpageshadow="false"
-     inkscape:window-width="954"
-     inkscape:window-height="1024"
+     inkscape:window-width="800"
+     inkscape:window-height="968"
      inkscape:window-x="960"
      inkscape:window-y="29"
      inkscape:window-maximized="0" />
@@ -351,7 +351,7 @@
         <dc:source>http://jimmac.musichall.cz</dc:source>
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
       <cc:License
          rdf:about="http://creativecommons.org/licenses/publicdomain/">
@@ -487,7 +487,6 @@
          sodipodi:role="line"
          id="tspan3207"
          x="4.627265"
-         y="40.335842"
-         style="fill:#ffffff">Locator</tspan></text>
+         y="40.335842">Netman</tspan></text>
   </g>
 </svg>
