@@ -1,16 +1,22 @@
 from    PySide.QtGui    import (
     QFrame,
-    QGridLayout,
     QPushButton,
     QLabel,
     QLineEdit
 )
+from    noctopus_widgets    import (
+    NFrame,
+    NFrameContainer,
+    NGrid,
+    NGridContainer
+)
+
 from    PySide.QtCore   import QUrl
 from    PySide.QtWebKit import QWebView
 from    PySide.QtSvg    import QSvgWidget
 import    nocapi
 
-class Central(QFrame):
+class Central(NFrameContainer):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         self.enabled = True
@@ -22,17 +28,17 @@ class Central(QFrame):
             widget  = Add(self)
         elif self.enabled == True:
             widget  = App(self)
-        grid    = QGridLayout(self)
+        grid    = NGridContainer(self)
         grid.addWidget(widget, 0,0)
         return grid
 
     def toggleButtonClicked(self):
         print "toggle"
 
-class App(QFrame):
+class App(NFrame):
     def __init__(self, parent):
         super(App, self).__init__(parent)
-        grid = QGridLayout(self)
+        grid = NGrid(self)
         self.setContentsMargins(0,0,0,0)
         grid.setContentsMargins(0,0,0,0)
 
@@ -49,8 +55,8 @@ class App(QFrame):
         self.setLayout(grid)
 
     def initControls(self):
-        cFrame = QFrame(self)
-        cGrid = QGridLayout(cFrame)
+        cFrame = NFrameContainer(self)
+        cGrid = NGrid(cFrame)
 
         forceButton = QPushButton(
             nocapi.nGetIcon('dialog-warning'),
@@ -62,12 +68,12 @@ class App(QFrame):
         cFrame.setLayout(cGrid)
         return cFrame
 
-class Add(QFrame):
+class Add(NFrame):
     def __init__(self, parent):
         super(Add, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
-        grid            = QGridLayout(self)
+        grid            = NGrid(self)
         centralWidget   = self.generateCentralWidget()
         banner          = Banner60(self)
         banner.move(-15,-15)
@@ -83,8 +89,8 @@ class Add(QFrame):
         self.setLayout(grid)
 
     def generateCentralWidget(self):
-        centralFrame    = QFrame(self)
-        centralGrid     = QGridLayout(centralFrame)
+        centralFrame    = NFrame(self)
+        centralGrid     = NGrid(centralFrame)
 
         moreInfoButton      = QPushButton('About Knowledge',  self)
         moreInfoButton.clicked.connect(self.showKnowledgeDescr)
@@ -108,8 +114,8 @@ class Add(QFrame):
         return centralFrame
 
     def generateInsertKeyForm(self):
-        insertFrame = QFrame(self)
-        insertGrid = QGridLayout(insertFrame)
+        insertFrame = NFrame(self)
+        insertGrid = NGrid(insertFrame)
         insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
         insertGrid.addWidget(QLineEdit(self),                       0,1)
         insertGrid.addWidget(QPushButton('Activate', self),         0,2)
@@ -127,10 +133,10 @@ class Add(QFrame):
         url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
         QDesktopServices.openUrl(url)
 
-class Banner60(QFrame):
+class Banner60(NFrame):
     def __init__(self, parent):
         super(Banner60, self).__init__(parent)
-        grid = QGridLayout(self)
+        grid = NGrid(self)
         banner = QSvgWidget(nocapi.nGetImage('60-day-trial-banner'), self)
         banner.setFixedHeight(300)
         banner.setFixedWidth(300)

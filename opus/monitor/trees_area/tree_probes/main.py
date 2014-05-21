@@ -21,6 +21,7 @@ from    PySide.QtGui    import (
 
 from    noctopus_widgets    import (
     NFrame,
+    NFrameContainer,
     NGrid
 )
 

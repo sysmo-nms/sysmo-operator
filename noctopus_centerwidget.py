@@ -20,7 +20,7 @@ class NCentralFrame(NFrame):
         super(NCentralFrame, self).__init__(parent)
         NCentralFrame.singleton = self
         self.grid = NGrid(self)
-        self.grid.setHorizontalSpacing(2)
+        self.grid.setHorizontalSpacing(6)
         self.centralStack   = NCentralStack(self)
         self.selector       = noctopus_ramp.NSelector(self, self.centralStack)
         self.grid.addWidget(self.selector,       0,0,)

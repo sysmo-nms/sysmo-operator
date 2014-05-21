@@ -1,6 +1,5 @@
 from    PySide.QtGui    import (
     QFrame,
-    QGridLayout,
     QPushButton,
     QLineEdit,
     QLabel,
@@ -8,11 +7,17 @@ from    PySide.QtGui    import (
     QTransform
 
 )
+from noctopus_widgets   import (
+    NGridContainer,
+    NFrameContainer,
+    NGrid,
+    NFrame
+)
 from    PySide.QtCore   import QUrl, Qt
 from    PySide.QtSvg    import QSvgWidget
 import    nocapi
 
-class Central(QFrame):
+class Central(NFrameContainer):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         grid = self.initLocator()
@@ -20,18 +25,18 @@ class Central(QFrame):
 
     def initLocator(self):
         ad = Add(self)
-        grid = QGridLayout(self)
+        grid = NGridContainer(self)
         grid.addWidget(ad, 0,0)
 
     def toggleButtonClicked(self):
         print "toggle"
 
-class Add(QFrame):
+class Add(NFrame):
     def __init__(self, parent):
         super(Add, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
-        grid            = QGridLayout(self)
+        grid            = NGrid(self)
         centralWidget   = self.generateCentralWidget()
         banner          = Banner60(self)
         banner.move(-15,-15)
@@ -46,8 +51,8 @@ class Add(QFrame):
         self.setLayout(grid)
 
     def generateCentralWidget(self):
-        centralFrame    = QFrame(self)
-        centralGrid     = QGridLayout(centralFrame)
+        centralFrame    = NFrame(self)
+        centralGrid     = NGrid(centralFrame)
 
         moreInfoButton      = QPushButton('About Locator',  self)
         moreInfoButton.clicked.connect(self.showLocatorDescr)
@@ -67,7 +72,7 @@ class Add(QFrame):
         centralGrid.addWidget(infoLabel,         0,1,6,2)
 
         # separator
-        separator = QFrame(self)
+        separator = NFrame(self)
         separator.setFrameShape(QFrame.HLine)
         separator.setFrameShadow(QFrame.Raised)
         centralGrid.addWidget(separator,            6,0,1,3)
@@ -85,8 +90,8 @@ class Add(QFrame):
         apix = QPixmap('./commercials/snapshot_tko4.png')
         bpix = apix.scaledToHeight(200, Qt.SmoothTransformation)
         cpix = bpix.transformed(QTransform().rotate(3))
-        scFrame = QFrame(self)
-        scGrid  = QGridLayout(scFrame)
+        scFrame = NFrame(self)
+        scGrid  = NGrid(scFrame)
         scLabel1 = QLabel(self)
         scLabel1.setPixmap(cpix)
         scGrid.addWidget(scLabel1,  0,0)
@@ -100,8 +105,8 @@ class Add(QFrame):
         return centralFrame
 
     def generateInsertKeyForm(self):
-        insertFrame = QFrame(self)
-        insertGrid = QGridLayout(insertFrame)
+        insertFrame = NFrame(self)
+        insertGrid = NGrid(insertFrame)
         insertGrid.addWidget(QLabel('Insert license key:', self),   0,0)
         insertGrid.addWidget(QLineEdit(self),                       0,1)
         insertGrid.addWidget(QPushButton('Activate', self),         0,2)
@@ -144,10 +149,10 @@ class Add(QFrame):
         url = QUrl('http://www.qtcentre.org/threads/19616-Set-Position-of-QLabel')
         QDesktopServices.openUrl(url)
     
-class Banner60(QFrame):
+class Banner60(NFrame):
     def __init__(self, parent):
         super(Banner60, self).__init__(parent)
-        grid = QGridLayout(self)
+        grid = NGrid(self)
         banner = QSvgWidget(nocapi.nGetImage('60-day-trial-banner'), self)
         banner.setFixedHeight(300)
         banner.setFixedWidth(300)

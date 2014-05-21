@@ -1,6 +1,6 @@
 from    noctopus_widgets    import (
-    NFrameContainer,
-    NGridContainer
+    NFrameContainer, NFrame,
+    NGridContainer, NGrid
 )
 
 from    opus.monitor.trees_area.tree_probes.main    import ProbesTree
@@ -16,7 +16,7 @@ class TreeContainer(NFrameContainer):
         self._probesTree    = ProbesTree(self)
         self._servicesTree  = ServicesTree(self)
         self._grid = NGridContainer(self)
-        self._grid.setContentsMargins(6,0,2,0)
+        #self._grid.setContentsMargins(6,0,2,0)
         self._grid.setVerticalSpacing(6)
         #self._grid.addWidget(self._commands,           0, 0)
         self._grid.addWidget(self._probesTree,         1, 0)

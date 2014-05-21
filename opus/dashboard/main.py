@@ -18,7 +18,6 @@ class Central(NFrame):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
-        self.setContentsMargins(6,4,2,4)
         self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 
