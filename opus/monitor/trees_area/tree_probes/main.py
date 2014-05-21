@@ -16,6 +16,7 @@ from    PySide.QtGui    import (
     QApplication,
     QStyle,
     QImage,
+    QAbstractItemView
 )
 
 from    noctopus_widgets    import (
@@ -46,6 +47,7 @@ class ProbesTree(NFrame):
 class ProbesTreeview(QTreeView):
     def __init__(self, parent):
         super(ProbesTreeview, self).__init__(parent)
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         ProbesTreeview.singleton = self
         self._viewDialogs = dict()
         self._initStyle()
