@@ -10,9 +10,18 @@ import opus.monitor.api as monapi
 class ProbeModel(QStandardItemModel):
     def __init__(self, parent):
         super(ProbeModel, self).__init__(parent)
-        self.setHorizontalHeaderLabels(
-            ["Targets/Probes", "Loggers", "Next return"])
-        self.setColumnCount(3)
+        self.setHorizontalHeaderLabels([
+                "Targets/Probes",
+                "Loggers",
+                "Next return",
+                "Status",
+                "Description",
+                "Step/Timeout",
+                "State",
+                "Ip address",
+                "Last return"
+        ])
+        self.setColumnCount(9)
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
         monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
 

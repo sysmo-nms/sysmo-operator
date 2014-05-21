@@ -271,4 +271,5 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     opts.progress = 50
                     QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
                     return
+
         QStyledItemDelegate.paint(self, painter, option, index)
