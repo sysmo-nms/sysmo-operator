@@ -28,6 +28,7 @@ from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame, NGri
 
 # opus
 import  opus.monitor.main
+import  opus.dashboard.main
 import  opus.locator.main
 import  opus.iphelper.main
 import  opus.knowledge.main
@@ -127,20 +128,26 @@ class NSelector(NFrameContainer):
         self._buttons['monitor']['widget'].setIcon('monitor-black')
             #getIcon('monitor-black'))
 
+        self._buttons['dashboard'] = dict()
+        self._buttons['dashboard']['row'] = 2
+        self._buttons['dashboard']['widget'] = NSelectorButton(self, 'dashboard')
+        self._buttons['dashboard']['widget'].setIcon('dashboard-black')
+            #getIcon('monitor-black'))
+
         self._buttons['locator'] = dict()
-        self._buttons['locator']['row'] = 2
+        self._buttons['locator']['row'] = 3
         self._buttons['locator']['widget'] = NSelectorButton(self, 'locator')
         self._buttons['locator']['widget'].setIcon('locator-black')
             #etIcon('locator-black'))
 
         self._buttons['iphelper'] = dict()
-        self._buttons['iphelper']['row'] = 3
+        self._buttons['iphelper']['row'] = 4
         self._buttons['iphelper']['widget'] = NSelectorButton(self, 'iphelper')
         self._buttons['iphelper']['widget'].setIcon('iphelper-black')
             #getIcon('iphelper-black'))
 
         self._buttons['knowledge'] = dict()
-        self._buttons['knowledge']['row'] = 4
+        self._buttons['knowledge']['row'] = 5
         self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
         self._buttons['knowledge']['widget'].setIcon('knowledge-black')
             #getIcon('knowledge-black'))
@@ -163,6 +170,7 @@ class NSelector(NFrameContainer):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
 
         self._stackWidget.addLayer(opus.monitor.main.Central,    'monitor')
+        self._stackWidget.addLayer(opus.dashboard.main.Central,  'dashboard')
         self._stackWidget.addLayer(opus.locator.main.Central,    'locator')
         self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
         self._stackWidget.addLayer(opus.iphelper.main.Central,   'iphelper')
