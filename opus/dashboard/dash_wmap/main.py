@@ -1,6 +1,6 @@
 from    PySide.QtGui        import QLabel
 from    noctopus_widgets    import NFrameContainer, NGridContainer
-from    opus.monitor.widgets    import OSMView
+from    opus.dashboard.dash_widgets    import OSMView
 
 class WmapDash(NFrameContainer):
     def __init__(self, parent):
