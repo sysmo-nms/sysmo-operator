@@ -66,7 +66,7 @@ class TargetItem(QStandardItem):
         self.searchString   = self.name
         self.targetDict = data
         self.setFlags(Qt.ItemIsEnabled)
-        self.setColumnCount(3)
+        self.setColumnCount(9)
         self._generateToolTip()
 
     def data(self, role):
@@ -164,7 +164,7 @@ class ProbeItem(QStandardItem):
         self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
-        self.setColumnCount(3)
+        self.setColumnCount(9)
 
 
     def data(self, role):

@@ -256,20 +256,26 @@ class MonitorItemDelegate(QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         if index.data(Qt.UserRole + 1) == None:
+            # it is a column child
+            # get the root item
             itemRoot = index.sibling(index.row(), 0)
             if itemRoot.data(Qt.UserRole + 1) == "Probe":
+                # is is a probe check for columns
                 if index.column() == 1:
                     if itemRoot.data(Qt.UserRole + 2) == True:
                         option.rect.setSize(self._rrdToolSize)
                         painter.drawImage(option.rect, self._rrdToolLogo)
-                        return
-                if index.column() == 2:
+                    else:
+                        QStyledItemDelegate.paint(self, painter, option, index)
+                elif index.column() == 2:
                     opts = QStyleOptionProgressBar()
                     opts.rect = option.rect
                     opts.minimum = 0
                     opts.maximum = 100
                     opts.progress = 50
                     QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
-                    return
-
-        QStyledItemDelegate.paint(self, painter, option, index)
+                else:
+                    print "require print for comun ", index.column()
+                    QStyledItemDelegate.paint(self, painter, option, index)
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
