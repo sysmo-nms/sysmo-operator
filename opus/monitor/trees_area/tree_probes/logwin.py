@@ -122,7 +122,7 @@ class RrdElement(QLabel):
         rrdwidth    = size.width()
         rrdheight   = size.height()
         cmd         = self._generateGraphCmd(
-            'now-3600s', 'now', defs, lines, areas, rrdwidth, rrdheight)
+            'now-2h', 'now', defs, lines, areas, rrdwidth, rrdheight)
         norrd.cmd(cmd, self._drawGraph)
 
     #def _graphComplete(self, rrdreturn):

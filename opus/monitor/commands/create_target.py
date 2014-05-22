@@ -13,13 +13,13 @@ from PySide.QtGui   import (
     QComboBox,
     QPushButton,
     QGroupBox,
-    QListWidget,
-    QListWidgetItem,
+    QTreeWidget,
+    QTreeWidgetItem,
     QMessageBox
 )
 from PySide.QtCore import Qt
 
-from noctopus_widgets import NGrid, NFrame
+from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
 import nocapi
 import supercast.main   as supercast
 
@@ -151,21 +151,6 @@ class CreateNetworkElement(QWizardPage):
         tempLayout.setColumnStretch(1,1)
         return tempFrame
 
-    def _initPropertiesFrame(self):
-        propFrame = QGroupBox(self)
-        propFrame.setTitle(self.tr("&Properties"))
-        propLayout = QGridLayout(propFrame)
-        propLayout.setColumnStretch(0,0)
-        propLayout.setColumnStretch(1,1)
-        propFrame.setLayout(propLayout)
-
-        addButton = QPushButton(self)
-        addButton.setIcon(nocapi.nGetIcon('list-add'))
-        propLayout.addWidget(addButton,             0,0)
-        propLayout.addWidget(QListWidget(self),   1,0,1,2)
-
-        return propFrame
-
     def _initSnmpFrame(self):
         snmpFrame = QGroupBox(self)
         snmpFrame.setContentsMargins(0,0,0,0)
@@ -178,14 +163,6 @@ class CreateNetworkElement(QWizardPage):
         snmpLayout.insertRow(0, self.tr('Write community:'), self._snmpV2Write)
         snmpLayout.insertRow(1, self.tr('Read community:'),  self._snmpV2Read)
         return snmpFrame
-
-    def _initProbesFrame(self):
-        probesFrame = QGroupBox(self)
-        probesFrame.setTitle(self.tr("P&robes"))
-        probesGrid = NGrid(probesFrame)
-        probesGrid.addWidget(QListWidget(probesFrame))
-        probesFrame.setLayout(probesGrid)
-        return probesFrame
 
     def nextId(self):
         return -1
@@ -237,9 +214,116 @@ class CreateNetworkElement(QWizardPage):
 
 
 class CreateNetworkServer(QWizardPage):
+    IP_V4    = 0
+    IP_V6    = 1
+    NAME_MANUAL  = 0
+    NAME_DYNAMIC = 1
     def __init__(self, parent=None):
         super(CreateNetworkServer, self).__init__(parent)
         self.setTitle(self.tr('Create a network server'))
         self.setSubTitle(self.tr('''
             Fill the form and add a network server to the main configuration
         '''))
+        self.setFinalPage(True)
+
+        layout = NGrid(self)
+        layout.setContentsMargins(0,15,0,0)
+        layout.addWidget(self._initMain(),         0,0)
+        self.setLayout(layout)
+
+    def _initMain(self):
+        tempFrame   = NFrame(self)
+        tempLayout  = NGrid(tempFrame)
+        tempLayout.setVerticalSpacing(20)
+        tempLayout.setRowStretch(1,0)
+        tempFrame.setLayout(tempLayout)
+
+        self._ipLine    = QLineEdit(self)
+        self._ipButton  = QComboBox(self)
+        self._ipButton.insertItem(self.IP_V4, 'IP version 4')
+        self._ipButton.insertItem(self.IP_V6, 'IP version 6')
+
+        self._nameButton = QComboBox(self)
+        self._nameButton.insertItem(self.NAME_MANUAL,  'Manual name')
+        self._nameButton.insertItem(self.NAME_DYNAMIC, 'Dynamic DNS name')
+        self._nameLine  = QLineEdit(self)
+
+
+        probeFrame  = NFrameContainer(self)
+        probeGrid   = NGridContainer(probeFrame)
+
+        probeCommFrame  = NFrameContainer(self)
+        probeCommGrid   = NGridContainer(probeCommFrame)
+        probeCommGrid.setColumnStretch(0, 0)
+        probeCommGrid.setColumnStretch(1, 1)
+        probeAdd        = QPushButton(self)
+        probeAdd.setIcon(nocapi.nGetIcon('list-add'))
+        probeCommGrid.addWidget(probeAdd, 0,0)
+        probeCommFrame.setLayout(probeCommGrid)
+
+        probeTable = QTreeWidget(self)
+        probeTable.setColumnCount(5)
+        probeTable.setHeaderLabels(['Active probes', 'Module', 'Raise alerts', 'Set property', 'Description'])
+        go_icmp = QTreeWidgetItem(probeTable)
+        go_icmp.setText(0, 'Generic ICMP check')
+        go_icmp.setText(1, 'go_check_icmp')
+        go_icmp.setText(2, 'Yes')
+        go_icmp.setText(3, 'No')
+        icmp_desc = 'Check icmp reply every 30 seconds and alert on failure'
+        go_icmp.setToolTip(0, icmp_desc)
+        go_icmp.setToolTip(1, icmp_desc)
+        go_icmp.setToolTip(2, icmp_desc)
+        go_icmp.setToolTip(3, icmp_desc)
+        go_icmp.setToolTip(4, icmp_desc)
+        go_icmp.setText(4, icmp_desc)
+
+        go_dns = QTreeWidgetItem(probeTable)
+        go_dns.setText(0, 'Reverse DNS lookup')
+        go_dns.setText(1, 'go_check_dns')
+        go_dns.setText(2, 'Yes')
+        go_dns.setText(3, 'Yes: hostname')
+        dns_desc = '''
+- Set the hostname property of the host accordingly to the
+reverse dns lookup.
+- Alert every time the value returned by the DNS does not
+match the preceding value. 
+- DOES NOT raise an alert on DNS query error or timeout.
+'''
+        go_dns.setToolTip(0, dns_desc)
+        go_dns.setToolTip(1, dns_desc)
+        go_dns.setToolTip(2, dns_desc)
+        go_dns.setToolTip(3, dns_desc)
+        go_dns.setToolTip(4, dns_desc)
+        go_dns.setText(4, dns_desc)
+        #probeList.addItem(QListWidgetItem('go_check_icmp'))
+        #probeList.addItem(QListWidgetItem('go_check_dns'))
+        #probeList.addItem(QListWidgetItem('go_check_tcp'))
+
+        probeGrid.addWidget(probeCommFrame, 0,0)
+        probeGrid.addWidget(probeTable,     1,0)
+
+
+
+
+
+        tempLayout.addWidget(self._ipButton,    0,0)
+        tempLayout.addWidget(self._ipLine,      0,1)
+        tempLayout.addWidget(self._nameButton,  1,0)
+        tempLayout.addWidget(self._nameLine,    1,1)
+        tempLayout.addWidget(probeFrame,        2,0,1,2)
+
+
+        #tempLayout.setAlignment(self._nameButton, Qt.AlignVCenter)
+        tempLayout.setColumnStretch(0,0)
+        tempLayout.setColumnStretch(1,1)
+        return tempFrame
+
+    def nextId(self):
+        return -1
+
+    def validatePage(self): return False
+
+    def _assertCmd(self, a,b,c,d,e): return True
+
+    def monitorReply(self, msg):
+        print "get reply!!!!!!", msg

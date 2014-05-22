@@ -275,7 +275,6 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     opts.progress = 50
                     QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
                 else:
-                    print "require print for comun ", index.column()
                     QStyledItemDelegate.paint(self, painter, option, index)
         else:
             QStyledItemDelegate.paint(self, painter, option, index)
