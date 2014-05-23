@@ -274,6 +274,7 @@ class MonitorQuery(univ.Sequence):
         namedtype.NamedType('query',        char.PrintableString())
     )
 
+
 class MonitorReply(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
@@ -281,6 +282,15 @@ class MonitorReply(univ.Sequence):
         namedtype.NamedType('info',         char.PrintableString())
     )
 
+class CheckInfos(univ.SequenceOf):
+    componentType = univ.OctetString()
+
+class GetCheckReply(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',      univ.Integer()),
+        namedtype.NamedType('status',       univ.Boolean()),
+        namedtype.NamedType('infos',        CheckInfos())
+    )
 
 class MonitorPDU_fromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
@@ -405,6 +415,16 @@ class MonitorPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     12
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'getCheckReply',
+            GetCheckReply().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    13
                 )
             )
         )
@@ -1169,6 +1189,23 @@ def decode(pdu):
                     'value': {
                         'status':   status,
                         'info':     info
+                    }
+                }
+            elif msg3_type == 'getCheckReply':
+                queryId = int(msg3.getComponentByName('queryId'))
+                status  = bool(msg3.getComponentByName('status'))
+                infos   = msg3.getComponentByName('infos')
+                infoList = list()
+                for i in range(len(infos)):
+                    info = str(infos.getComponentByPosition(i))
+                    infoList.append(info)
+
+                return {
+                    'from':     'getCheckReply',
+                    'queryId':  queryId,
+                    'value': {
+                        'status':   status,
+                        'infos':    infoList
                     }
                 }
             else:

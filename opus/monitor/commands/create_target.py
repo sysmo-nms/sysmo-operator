@@ -324,6 +324,7 @@ match the preceding value.
             'getChecksInfo',
             self.monitorReply
         )
+        return False
 
     def _assertCmd(self, a,b,c,d,e): return True
 
