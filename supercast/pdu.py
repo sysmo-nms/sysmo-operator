@@ -1,4 +1,4 @@
-from pyasn1.type        import char,univ,namedtype,tag,namedval
+from pyasn1.type        import char,univ,namedtype,tag,namedval,constraint
 from pyasn1.codec.ber   import encoder, decoder
 
 ##############################################################################
@@ -268,12 +268,19 @@ class MonitorCreateTarget(univ.Sequence):
         namedtype.NamedType('queryId',      univ.Integer())
     )
 
+class MonitorQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',      univ.Integer()),
+        namedtype.NamedType('query',        char.PrintableString())
+    )
+
 class MonitorReply(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
         namedtype.NamedType('status',       univ.Boolean()),
         namedtype.NamedType('info',         char.PrintableString())
     )
+
 
 class MonitorPDU_fromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
@@ -284,6 +291,16 @@ class MonitorPDU_fromClient(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'query',
+            MonitorQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    10
                 )
             )
         )
@@ -1180,11 +1197,49 @@ def encode(pduType, payload):
         (queryId, msg)          = payload
         (ip, perms, ro, rw, tpl) = msg
         return encode_create_target(ip, perms, ro, rw, tpl, queryId)
+    elif pduType == 'query':
+        (queryId, queryString) = payload
+        return encode_query(queryId, queryString)
     elif pduType == 'monitorCreateProbe':
         print "create probe"
         return False
     else:
         return False
+
+def encode_query(queryId, queryString):
+    query = MonitorQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            10
+        )
+    )
+    query.setComponentByName('queryId', queryId)
+    query.setComponentByName('query',   queryString)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('query', query)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
 
 def encode_create_target(ip, perms, ro, rw, tpl, queryId):
     (read, write)   = perms

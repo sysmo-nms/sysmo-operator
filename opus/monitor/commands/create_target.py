@@ -262,8 +262,8 @@ class CreateNetworkServer(QWizardPage):
         probeCommFrame.setLayout(probeCommGrid)
 
         probeTable = QTreeWidget(self)
-        probeTable.setColumnCount(5)
-        probeTable.setHeaderLabels(['Active probes', 'Module', 'Raise alerts', 'Set property', 'Description'])
+        probeTable.setColumnCount(4)
+        probeTable.setHeaderLabels(['Active probes', 'Module', 'Raise alerts', 'Set property'])
         go_icmp = QTreeWidgetItem(probeTable)
         go_icmp.setText(0, 'Generic ICMP check')
         go_icmp.setText(1, 'go_check_icmp')
@@ -274,8 +274,6 @@ class CreateNetworkServer(QWizardPage):
         go_icmp.setToolTip(1, icmp_desc)
         go_icmp.setToolTip(2, icmp_desc)
         go_icmp.setToolTip(3, icmp_desc)
-        go_icmp.setToolTip(4, icmp_desc)
-        go_icmp.setText(4, icmp_desc)
 
         go_dns = QTreeWidgetItem(probeTable)
         go_dns.setText(0, 'Reverse DNS lookup')
@@ -293,8 +291,6 @@ match the preceding value.
         go_dns.setToolTip(1, dns_desc)
         go_dns.setToolTip(2, dns_desc)
         go_dns.setToolTip(3, dns_desc)
-        go_dns.setToolTip(4, dns_desc)
-        go_dns.setText(4, dns_desc)
         #probeList.addItem(QListWidgetItem('go_check_icmp'))
         #probeList.addItem(QListWidgetItem('go_check_dns'))
         #probeList.addItem(QListWidgetItem('go_check_tcp'))
@@ -321,7 +317,13 @@ match the preceding value.
     def nextId(self):
         return -1
 
-    def validatePage(self): return False
+    def validatePage(self):
+        print "send"
+        ret = supercast.send(
+            'query',
+            'getChecksInfo',
+            self.monitorReply
+        )
 
     def _assertCmd(self, a,b,c,d,e): return True
 
