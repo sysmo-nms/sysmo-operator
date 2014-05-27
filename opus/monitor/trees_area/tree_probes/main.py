@@ -124,6 +124,11 @@ class ProbesTreeview(QTreeView):
 
         self.targetMenu.addSeparator()
 
+        targetAction = QAction(self.tr('Open target documentation'), self)
+        self.targetMenu.addAction(targetAction)
+
+        self.targetMenu.addSeparator()
+
         targetAction = QAction(self.tr('Suspend all target probes'), self)
         self.targetMenu.addAction(targetAction)
 
@@ -146,11 +151,15 @@ class ProbesTreeview(QTreeView):
 
         self.probeMenu  = QMenu(self)
 
+        probeAction = QAction(self.tr('Open log viewew'), self)
+        self.probeMenu.addAction(probeAction)
+
         self.probeMenu.addSeparator()
 
-        probeAction = QAction(self.tr('Add to working view'), self)
-        probeAction.triggered[bool].connect(self.addToWorkingView)
+        probeAction = QAction(self.tr('Open probe documentation'), self)
         self.probeMenu.addAction(probeAction)
+
+        self.probeMenu.addSeparator()
 
         probeAction = QAction(self.tr('Suspend probe'), self)
         self.probeMenu.addAction(probeAction)
@@ -185,15 +194,6 @@ class ProbesTreeview(QTreeView):
     def createTarget(self): pass
     def createProbe(self): pass
     def configureProbe(self): pass
-
-    def addToWorkingView(self):
-        proxyIndexes = self.selectedIndexes()
-        selectionList = list()
-        for i in range(len(proxyIndexes)):
-            modelIndex = self.proxy.mapToSource(proxyIndexes[i])
-            modelItem  = self.model.itemFromIndex(modelIndex)
-            selectionList.append(modelItem.name)
-        #MonitorDashboardArea.Dashboard.singleton.userNewSelection(selectionList)
 
     def getSelectedElements(self):
         proxyIndexes = self.selectedIndexes()
