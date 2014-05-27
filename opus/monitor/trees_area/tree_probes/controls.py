@@ -9,7 +9,7 @@ from    noctopus_widgets        import (
     NInfoButton
 )
 
-from    opus.monitor.commands.create_target import Wizard
+from    opus.monitor.commands.wizards import TargetWizard
 import nocapi
 
 class ProbesActions(NFrameContainer):
@@ -49,5 +49,5 @@ class ProbesActions(NFrameContainer):
         #MonitorTreeview.singleton.filterThis(text)
 
     def _createTargetWizard(self):
-        wizard = Wizard(self)
+        wizard = TargetWizard(self)
         wizard.show()
