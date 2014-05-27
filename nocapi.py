@@ -142,3 +142,7 @@ def nUnsubscribe(pyCallable, channel):
         Unsubscribe to a supercast channel.
     '''
     noctopus_main.NMainWindow.singleton.supercast.unsubscribe(pyCallable, channel)
+
+def nQuery(key, callback):
+    sc = noctopus_main.NMainWindow.singleton.supercast
+    sc.send('query', key, callback)

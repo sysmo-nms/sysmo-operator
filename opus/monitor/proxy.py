@@ -8,6 +8,7 @@ from    noctopus_widgets    import NFrameContainer
 import  nocapi
 import  re
 import  opus.monitor.norrd  as norrd
+import  xml.etree.ElementTree as ET
 
 
 class ChanHandler(QObject):
@@ -120,9 +121,10 @@ class ChanHandler(QObject):
 
     def _handleSubscribeOk(self, msg):
         channel = msg['value']
-        if channel == self._masterChan: return
+        if channel == self._masterChan: pass
         self._pendingSubscribe.remove(channel)
         self._subscribedChans.append(channel)
+
 
     def _handleUnsubscribeOk(self, msg):
         channel = msg['value']
@@ -159,9 +161,39 @@ class ChanHandler(QObject):
     def _handleAutoSubscribe(self, msg):
         if msg['msgType'] == 'subscribeOk':
             self._masterchanRunning = True
+            nocapi.nQuery('getChecksInfo', self._handleChecksInfo)
         else:
             print "error: ", msg
 
+    def _handleChecksInfo(self, msg):
+        checkInfos = dict()
+        checkDefs = msg['value']['infos']
+        for i in range(len(checkDefs)):
+            root = ET.fromstring(checkDefs[i])
+            chk  = root.attrib['command']
+            checkInfos[chk] = dict()
+            checkInfos[chk]['path']  = root.find('path').text
+            checkInfos[chk]['descr'] = root.find('descr').text
+
+            mflags = root.find('mandatory_flags')
+            mflist = list()
+            for f in mflags.findall('flag'):
+                mflist.append(f.text)
+            checkInfos[chk]['mandatory'] = mflist
+
+            fdict = dict()
+            finfo = root.find('flags_def')
+            for i in finfo.findall('flag_info'):
+                name = i.attrib['name']
+                fdict[name] = dict()
+                fdict[name]['usage'] = i.find('usage').text
+                fdict[name]['default'] = i.find('default').text
+            checkInfos[chk]['flags_def'] = fdict
+        print checkInfos
+        self.checkInfos = checkInfos
+
+    def getCheckInfos(self):
+        return self.checkInfos
 
 class Channel(QObject):
     signal = Signal(dict)

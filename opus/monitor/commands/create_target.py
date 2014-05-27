@@ -21,6 +21,7 @@ from PySide.QtCore import Qt
 
 from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
 import nocapi
+import opus.monitor.api as monapi
 import supercast.main   as supercast
 
 
@@ -318,12 +319,12 @@ match the preceding value.
         return -1
 
     def validatePage(self):
-        print "send"
-        ret = supercast.send(
-            'query',
-            'getChecksInfo',
-            self.monitorReply
-        )
+        #print "send"
+        #ret = supercast.send(
+            #'query',
+            #'getChecksInfo',
+            #self.monitorReply
+        #)
         return False
 
     def _assertCmd(self, a,b,c,d,e): return True
