@@ -33,6 +33,7 @@ class TargetWizard(QWizard):
     NetService  = 21
     def __init__(self, parent=None):
         super(TargetWizard, self).__init__(parent)
+        self.setModal(True)
         self._configType = None
         pix = nocapi.nGetPixmap('applications-system')
         self.setPixmap(QWizard.LogoPixmap, pix)

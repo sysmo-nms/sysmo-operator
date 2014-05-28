@@ -103,8 +103,10 @@ class Page2(QWizardPage):
 
     def _openProbeConfig(self, key):
         dial = ProbeForm(self._checkDefs, key, self)
-        dial.show()
-        print "open probe config: ", key
+        ret = dial.show()
+
+    def receiveProbeConfig(self, config):
+        print "receive probe config"
 
     def nextId(self):
         return 23
