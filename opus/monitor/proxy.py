@@ -175,19 +175,14 @@ class ChanHandler(QObject):
             checkInfos[chk]['path']  = root.find('path').text
             checkInfos[chk]['descr'] = root.find('descr').text
 
-            mflags = root.find('mandatory_flags')
-            mflist = list()
-            for f in mflags.findall('flag'):
-                mflist.append(f.text)
-            checkInfos[chk]['mandatory'] = mflist
-
             fdict = dict()
             finfo = root.find('flags_def')
             for i in finfo.findall('flag_info'):
                 name = i.attrib['name']
                 fdict[name] = dict()
-                fdict[name]['usage'] = i.find('usage').text
+                fdict[name]['usage']   = i.find('usage').text
                 fdict[name]['default'] = i.find('default').text
+                fdict[name]['role']    = i.find('role').text
             checkInfos[chk]['flags_def'] = fdict
         print checkInfos
         self.checkInfos = checkInfos
