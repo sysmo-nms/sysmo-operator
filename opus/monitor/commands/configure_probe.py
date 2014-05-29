@@ -3,7 +3,8 @@ from PySide.QtGui import (
     QLabel,
     QFormLayout,
     QLineEdit,
-    QDialogButtonBox
+    QDialogButtonBox,
+    QPushButton
 )
 
 from noctopus_widgets import (
@@ -32,7 +33,11 @@ class ProbeForm(QDialog):
 
         layout.addWidget(QLabel(probeKey, self), 0,0)
         layout.addWidget(form,      1,0)
-        layout.addWidget(buttonBox, 2,0)
+        layout.addWidget(QPushButton('Simulate', self), 2,0)
+        d = QLineEdit(self)
+        d.setText('> %s' % probeKey)
+        layout.addWidget(d, 3,0)
+        layout.addWidget(buttonBox, 4,0)
 
 
         self.setLayout(layout)
@@ -47,7 +52,13 @@ class ProbeForm(QDialog):
         pdefs = self._probeDef['flags_def']
         formLayout = QFormLayout(formFrame)
         for pdef in pdefs.keys():
-            formLayout.addRow(pdef, QLineEdit(self))
+            if pdefs[pdef]['role'] == 'mandatory':
+                formLayout.addRow('-%s' % pdef, QLineEdit(self))
+
+        formLayout.addWidget(QLabel('optional', self))
+        for pdef in pdefs.keys():
+            if pdefs[pdef]['role'] == 'optional':
+                formLayout.addRow('-%s' % pdef, QLineEdit(self))
 
         formFrame.setLayout(formLayout)
         return formFrame
