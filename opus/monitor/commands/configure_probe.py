@@ -3,6 +3,7 @@ from PySide.QtGui import (
     QLabel,
     QFormLayout,
     QLineEdit,
+    QTextEdit,
     QDialogButtonBox,
     QPushButton
 )
@@ -12,6 +13,7 @@ from noctopus_widgets import (
     NGridContainer,
     NFrameContainer
 )
+import supercast.main as supercast
 
 class ProbeForm(QDialog):
     def __init__(self, probeDefs, probeKey, parent):
@@ -20,6 +22,8 @@ class ProbeForm(QDialog):
         self._caller    = parent
         self._probeDef  = probeDefs[probeKey]
         self._probeName = probeKey
+        self._config    = dict()
+        self._comline   = ""
 
         form        = self._generateForm()
 
@@ -33,10 +37,12 @@ class ProbeForm(QDialog):
 
         layout.addWidget(QLabel(probeKey, self), 0,0)
         layout.addWidget(form,      1,0)
-        layout.addWidget(QPushButton('Simulate', self), 2,0)
-        d = QLineEdit(self)
-        d.setText('> %s' % probeKey)
-        layout.addWidget(d, 3,0)
+        self._simulateButton = QPushButton(self.tr('Simulate'), self)
+        self._simulateButton.clicked.connect(self._simulateComm)
+        layout.addWidget(self._simulateButton, 2,0)
+        self._comm = QTextEdit(self)
+        self._updateComm('none')
+        layout.addWidget(self._comm, 3,0)
         layout.addWidget(buttonBox, 4,0)
 
 
@@ -46,6 +52,30 @@ class ProbeForm(QDialog):
         print "aaaaaaaaaaaaaccept"
         QDialog.accept(self)
         
+    def _simulateComm(self):
+        args = list()
+        path = self._probeDef['path']
+        for key in self._config.keys():
+            args.append((key, self._config[key].text()))
+        print args
+        supercast.send(
+            'monitorSimulateCheck',
+            (
+                path,
+                args
+            ),
+            self.simulateReply
+        )
+
+    def simulateReply(self, msg):
+        print "reply !!!!!!!!! msg"
+
+    def _updateComm(self, _):
+        comm = '> %s ' % self._probeName
+        for key in self._config.keys():
+            comm = comm + '--%s=%s ' %(key, self._config[key].text())
+        self._comline = comm
+        self._comm.setText(comm)
         
     def _generateForm(self):
         formFrame = NFrameContainer(self)
@@ -53,7 +83,9 @@ class ProbeForm(QDialog):
         formLayout = QFormLayout(formFrame)
         for pdef in pdefs.keys():
             if pdefs[pdef]['role'] == 'mandatory':
-                formLayout.addRow('-%s' % pdef, QLineEdit(self))
+                self._config[pdef] = QLineEdit(self)
+                self._config[pdef].textChanged.connect(self._updateComm)
+                formLayout.addRow('-%s' % pdef, self._config[pdef])
 
         formLayout.addWidget(QLabel('optional', self))
         for pdef in pdefs.keys():

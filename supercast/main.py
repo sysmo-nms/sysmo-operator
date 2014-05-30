@@ -276,7 +276,8 @@ class SupercastSocket(QThread):
             self._sendToServer(pdu)
         else:
             pdu = encode(key, payload)
-            self._sendToServer(pdu)
+            if pdu == False: return
+            else: self._sendToServer(pdu)
 
     def _sendToServer(self, pdu):
         request = QByteArray()

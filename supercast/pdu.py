@@ -282,6 +282,20 @@ class MonitorReply(univ.Sequence):
         namedtype.NamedType('info',         char.PrintableString())
     )
 
+class CheckArg(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('flag',         char.PrintableString()),
+        namedtype.NamedType('value',        char.PrintableString())
+    )
+class CheckArgs(univ.SequenceOf):
+    compnentType = CheckArg()
+class MonitorSimulateCheck(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',      univ.Integer()),
+        namedtype.NamedType('executable',   char.PrintableString()),
+        namedtype.NamedType('args',         CheckArgs())
+    )
+
 class CheckInfos(univ.SequenceOf):
     componentType = univ.OctetString()
 
@@ -301,6 +315,16 @@ class MonitorPDU_fromClient(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'simulateCheck',
+            MonitorSimulateCheck().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    7
                 )
             )
         ),
@@ -1237,11 +1261,60 @@ def encode(pduType, payload):
     elif pduType == 'query':
         (queryId, queryString) = payload
         return encode_query(queryId, queryString)
+    elif pduType == 'monitorSimulateCheck':
+        (queryId, checkConf) = payload
+        return encode_simulateCheck(queryId, checkConf)
     elif pduType == 'monitorCreateProbe':
         print "create probe"
         return False
     else:
         return False
+
+def encode_simulateCheck(queryId, checkConfig):
+    (path, args) = checkConfig
+    argsP  = CheckArgs()
+    for i in range(len(args)):
+        (flag, val) = args[i]
+        argP = CheckArg()
+        argP.setComponentByName('flag',   flag)
+        argP.setComponentByName('value', val)
+        argsP.setComponentByPosition(i, argP)
+
+    checkP = MonitorSimulateCheck().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            7
+        )
+    )
+    checkP.setComponentByName('queryId',    queryId)
+    checkP.setComponentByName('executable', path)
+    checkP.setComponentByName('args',       argsP)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+
+    fromClient.setComponentByName('simulateCheck', checkP)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
 
 def encode_query(queryId, queryString):
     query = MonitorQuery().subtype(
