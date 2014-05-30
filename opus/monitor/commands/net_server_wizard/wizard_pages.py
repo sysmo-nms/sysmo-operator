@@ -16,7 +16,7 @@ from PySide.QtCore import Qt
 from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
 import nocapi
 import opus.monitor.api as monapi
-from opus.monitor.commands.configure_probe import ProbeForm
+import opus.monitor.commands.wizards
 import supercast.main   as supercast
 
 class Page1(QWizardPage):
@@ -82,8 +82,8 @@ class Page1(QWizardPage):
         self.setLayout(layout)
 
     def _openProbeConfig(self, key):
-        dial = ProbeForm(self._checkDefs, key, self)
-        ret = dial.show()
+        wiz = opus.monitor.commands.wizards.ProbeWizard(self._checkDefs, key, self)
+        wiz.show()
 
     def validatePage(self):
         print "validate"

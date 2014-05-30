@@ -26,6 +26,20 @@ import supercast.main   as supercast
 
 import opus.monitor.commands.net_element_wizard.wizard_pages as NetElement
 import opus.monitor.commands.net_server_wizard.wizard_pages  as SrvElement
+import opus.monitor.commands.probe_wizard.wizard_pages       as ProbeElement
+
+
+class ProbeWizard(QWizard):
+    def __init__(self, defs, key, parent):
+        super(ProbeWizard, self).__init__(parent)
+        #self.setFixedWidth(800)
+        self.setModal(True)
+        ppage1 = ProbeElement.Page1(defs, key, self)
+        ppage2 = ProbeElement.Page2(self)
+        self.setPage(1, ppage1)
+        self.setPage(2, ppage2)
+        self.setStartId(1)
+        self.show()
 
 
 class TargetWizard(QWizard):
