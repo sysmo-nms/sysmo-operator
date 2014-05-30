@@ -4,9 +4,11 @@ from PySide.QtGui import (
     QLabel,
     QFormLayout,
     QLineEdit,
+    QSpinBox,
     QTextEdit,
     QPushButton,
-    QGroupBox
+    QGroupBox,
+    QComboBox
 )
 
 from noctopus_widgets import (
@@ -197,15 +199,74 @@ class Page1(QWizardPage):
 class Page2(QWizardPage):
     def __init__(self, parent):
         super(Page2, self).__init__(parent)
-        self.setFinalPage(True)
+        self.setFinalPage(False)
         self.setTitle(self.tr('Configure a new check'))
         self.setSubTitle(self.tr('''
             Set step and alerts configuration.
         '''))
-        frame = NFrame(self)
-        layout = NGrid(frame)
-        layout.addWidget(QLabel('hello', self), 0,0)
-        frame.setLayout(layout)
+        layout = NGrid(self)
+        self.setLayout(layout)
+
+        pageFrame = NFrame(self)
+        layout.addWidget(pageFrame,    1,1)
+        layout.setColumnStretch(0,1)
+        layout.setColumnStretch(1,0)
+        layout.setColumnStretch(2,1)
+        layout.setRowStretch(0,1)
+        layout.setRowStretch(1,0)
+        layout.setRowStretch(2,1)
+
+        pageForm = QFormLayout(pageFrame)
+        pageForm.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        pageForm.setVerticalSpacing(11)
+        pageForm.addRow('Display name:', QLineEdit(pageFrame))
+        step = QSpinBox(self)
+        step.setSuffix(" seconds")
+        step.setMaximum(10000)
+        step.setValue(300)
+        pageForm.addRow('Step:',         step)
+        #pageForm.addRow('On Critical:',  QComboBox(self))
+        #pageForm.addRow('On Warning:',   QComboBox(self))
+        #pageForm.addRow('On Unknown:',   QComboBox(self))
+        #pageForm.addRow('On Ok:',        QComboBox(self))
+        pageForm.addRow('Description:',  QTextEdit(pageFrame))
+        pageFrame.setLayout(pageForm)
+
+    def nextId(self):
+        return 3
+
+    def validatePage(self):
+        print "vvv"
+        return True
+
+class Page3(QWizardPage):
+    def __init__(self, parent):
+        super(Page3, self).__init__(parent)
+        self.setFinalPage(True)
+        self.setTitle(self.tr('Configure a new check'))
+        self.setSubTitle(self.tr('''
+            Alerts configuration.
+        '''))
+        layout = NGrid(self)
+        self.setLayout(layout)
+
+        pageFrame = NFrame(self)
+        layout.addWidget(pageFrame,    1,1)
+        layout.setColumnStretch(0,1)
+        layout.setColumnStretch(1,0)
+        layout.setColumnStretch(2,1)
+        layout.setRowStretch(0,1)
+        layout.setRowStretch(1,0)
+        layout.setRowStretch(2,1)
+
+        pageForm = QFormLayout(pageFrame)
+        pageForm.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        pageForm.setVerticalSpacing(11)
+        pageForm.addRow('On Critical:',  QComboBox(self))
+        pageForm.addRow('On Warning:',   QComboBox(self))
+        pageForm.addRow('On Unknown:',   QComboBox(self))
+        pageForm.addRow('On Ok:',        QComboBox(self))
+        pageFrame.setLayout(pageForm)
 
     def nextId(self):
         return -1

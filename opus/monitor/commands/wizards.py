@@ -36,8 +36,10 @@ class ProbeWizard(QWizard):
         self.setModal(True)
         ppage1 = ProbeElement.Page1(defs, key, self)
         ppage2 = ProbeElement.Page2(self)
+        ppage3 = ProbeElement.Page3(self)
         self.setPage(1, ppage1)
         self.setPage(2, ppage2)
+        self.setPage(3, ppage3)
         self.setStartId(1)
         self.show()
 
