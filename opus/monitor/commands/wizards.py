@@ -51,11 +51,7 @@ class TargetWizard(QWizard):
         self.setPage(11, npage1)
 
         spage1   = SrvElement.Page1(self)
-        spage2   = SrvElement.Page2(self)
-        spage3   = SrvElement.Page3(self)
         self.setPage(21, spage1)
-        self.setPage(22, spage2)
-        self.setPage(23, spage3)
 
         self.setStartId(1)
 
