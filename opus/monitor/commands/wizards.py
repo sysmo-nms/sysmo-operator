@@ -46,7 +46,8 @@ class ProbeWizard(QWizard):
 
 class TargetWizard(QWizard):
     NetElement  = 11
-    NetService  = 21
+    NetServer   = 21
+    NetService  = 31
     def __init__(self, parent=None):
         super(TargetWizard, self).__init__(parent)
         self.setModal(True)
@@ -95,31 +96,33 @@ class ChooseType(QWizardPage):
         typeNetElement.setDescription(self.tr('''
             Using this wizard will help you to create a network element target.
             Network elements have the common particularity to support SNMP
-            protocol and the MIB-2 management information base. This allow
-            to fetch interfaces performance informations for example, and then
-            generate nice graphs.
         '''))
         typeNetElement.clicked.connect(self._startNetElement)
 
+        typeNetServer      = QCommandLinkButton(self)
+        typeNetServer.setMaximumHeight(200)
+        typeNetServer.setText('Network server')
+        typeNetServer.setDescription(self.tr('''
+            Create a network server target, and get live status of services.
+            This wizard will help you to create a network server target.
+        '''))
+        typeNetServer.clicked.connect(self._startNetServer)
+
         typeNetService      = QCommandLinkButton(self)
         typeNetService.setMaximumHeight(200)
-        typeNetService.setText('Network server')
+        typeNetService.setText('Network service')
         typeNetService.setDescription(self.tr('''
             Create a network server target, and get live status of services.
             This wizard will help you to create a network server target.
-            The common particularity of a server is that it fullfil one or
-            more services like HTTP, SMTP or others. A network server may
-            have SNMP support for one of his services, but the SNMP query
-            must be configured manualy. If you know that your server support
-            the MIB-2 management information base, you can apply a template
-            configuration common to the network elements.
         '''))
         typeNetService.clicked.connect(self._startNetService)
 
         chooseTypeLayout.addWidget(typeNetElement, 0,0)
-        chooseTypeLayout.addWidget(typeNetService, 1,0)
+        chooseTypeLayout.addWidget(typeNetServer,  1,0)
+        chooseTypeLayout.addWidget(typeNetService, 2,0)
         chooseTypeLayout.setRowStretch(0,1)
         chooseTypeLayout.setRowStretch(1,1)
+        chooseTypeLayout.setRowStretch(2,1)
 
         self.setLayout(chooseTypeLayout)
 
@@ -127,9 +130,11 @@ class ChooseType(QWizardPage):
         self._configType = TargetWizard.NetElement
         self._parent.next()
 
-    def _startNetService(self):
-        self._configType = TargetWizard.NetService
+    def _startNetServer(self):
+        self._configType = TargetWizard.NetServer
         self._parent.next()
+
+    def _startNetService(self): pass
 
     def nextId(self):
         return self._configType

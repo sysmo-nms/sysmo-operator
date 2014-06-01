@@ -9,9 +9,10 @@ from PySide.QtGui   import (
     QPushButton,
     QTreeWidget,
     QTreeWidgetItem,
+    QGroupBox,
     QMessageBox
 )
-from PySide.QtCore import Qt
+from PySide.QtCore import Qt, QPoint
 
 from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
 import nocapi
@@ -34,6 +35,7 @@ class Page1(QWizardPage):
 
         tempFrame   = NFrame(self)
         tempLayout  = NGrid(tempFrame)
+        tempLayout.setContentsMargins(5,10,5,5)
         tempLayout.setVerticalSpacing(20)
         tempLayout.setRowStretch(1,0)
         tempFrame.setLayout(tempLayout)
@@ -56,6 +58,15 @@ class Page1(QWizardPage):
         #self.registerField('server_name*',      self._nameLine)
         self.registerField('server_name',      self._nameLine)
 
+
+        #########################
+        # treeview probes begin #
+        #########################
+        probeFrame  = QGroupBox(self)
+        probeFrame.setTitle(self.tr('Configure services checks'))
+        probeLay    = NGrid(probeFrame)
+        probeLay.setVerticalSpacing(5)
+
         self._checkDefs = monapi.getCheckInfos()
         checkMenu = QMenu(self)
         for key in self._checkDefs.keys():
@@ -63,18 +74,29 @@ class Page1(QWizardPage):
             action.triggered.connect(partial(self._openProbeConfig, key))
 
         checkAddButton = QPushButton(self)
-        checkAddButton.setText(self.tr('Add a new probe'))
+        #checkAddButton.setText(self.tr('Add a new probe'))
         checkAddButton.setIcon(nocapi.nGetIcon('list-add'))
         checkAddButton.setMenu(checkMenu)
 
         self._checksTree = QTreeWidget(self)
 
+        probeLay.addWidget(checkAddButton,   0,0,1,1)
+        probeLay.addWidget(self._checksTree, 1,0,1,2)
+        probeLay.setColumnStretch(0,0)
+        probeLay.setColumnStretch(1,1)
+        probeLay.setRowStretch(0,1)
+        probeLay.setRowStretch(1,1)
+        probeFrame.setLayout(probeLay)
+        #########################
+        # treeview probes end   #
+        #########################
+
         tempLayout.addWidget(self._ipButton,    0,0)
         tempLayout.addWidget(self._ipLine,      0,1)
         tempLayout.addWidget(self._nameButton,  1,0)
         tempLayout.addWidget(self._nameLine,    1,1)
-        tempLayout.addWidget(checkAddButton,    2,0)
-        tempLayout.addWidget(self._checksTree,  2,1,2,1)
+        tempLayout.addWidget(probeFrame,        2,0,1,2)
+        #tempLayout.addWidget(self._checksTree,  2,1,2,1)
 
         layout = NGridContainer(self)
         layout.addWidget(tempFrame, 0,0)
@@ -92,3 +114,19 @@ class Page1(QWizardPage):
     def nextId(self):
         return -1
 
+class ProbeComboBox(QComboBox):
+    def __init__(self, menu, parent=None):
+        super(ProbeComboBox, self).__init__(parent)
+        self._menu = menu
+
+
+    def showPopup(self):
+        self.hidePopup()
+        p = self.mapToGlobal(self.pos())
+        print self.height()
+        print self.width()
+        p.setY(p.y() - (self.height() + self._menu.height()))
+        self._menu.popup(p)
+
+    def hidePopup(self):
+        self._menu.hide()
