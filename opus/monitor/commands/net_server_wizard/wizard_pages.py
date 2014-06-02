@@ -10,11 +10,20 @@ from PySide.QtGui   import (
     QTreeWidget,
     QTreeWidgetItem,
     QGroupBox,
-    QMessageBox
+    QMessageBox,
+    QRegExpValidator,
+    QIntValidator
 )
-from PySide.QtCore import Qt, QPoint
+from PySide.QtCore import Qt, QPoint, QRegExp
 
-from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
+from noctopus_widgets import (
+    NGrid,
+    NFrame,
+    NGridContainer,
+    NFrameContainer,
+    Nipv4Validator
+)
+
 import nocapi
 import opus.monitor.api as monapi
 import opus.monitor.commands.wizards
@@ -44,7 +53,7 @@ class Page1(QWizardPage):
         self._ipButton.insertItem(self.IP_V4, 'IP version 4')
         self._ipButton.insertItem(self.IP_V6, 'IP version 6')
         self._ipLine    = QLineEdit(self)
-        #self._ipLine.setInputMask('000.000.000.000')
+        self._ipLine.setValidator(Nipv4Validator(self))
 
         self._nameButton = QComboBox(self)
         self._nameButton.insertItem(self.NAME_MANUAL,  'Manual name')
@@ -52,8 +61,8 @@ class Page1(QWizardPage):
         self._nameLine  = QLineEdit(self)
 
         self.registerField('server_ip_version', self._ipButton)
-        #self.registerField('server_ip*',        self._ipLine)
-        self.registerField('server_ip',        self._ipLine)
+        self.registerField('server_ip*',        self._ipLine)
+        #self.registerField('server_ip',        self._ipLine)
         self.registerField('server_name_type',  self._nameButton)
         #self.registerField('server_name*',      self._nameLine)
         self.registerField('server_name',      self._nameLine)
@@ -104,7 +113,9 @@ class Page1(QWizardPage):
         self.setLayout(layout)
 
     def _openProbeConfig(self, key):
-        wiz = opus.monitor.commands.wizards.ProbeWizard(self._checkDefs, key, self)
+        wiz = opus.monitor.commands.wizards.ProbeWizard(
+            self._checkDefs, key, self, self._ipLine.text()
+        )
         wiz.show()
 
     def validatePage(self):
@@ -113,20 +124,3 @@ class Page1(QWizardPage):
 
     def nextId(self):
         return -1
-
-class ProbeComboBox(QComboBox):
-    def __init__(self, menu, parent=None):
-        super(ProbeComboBox, self).__init__(parent)
-        self._menu = menu
-
-
-    def showPopup(self):
-        self.hidePopup()
-        p = self.mapToGlobal(self.pos())
-        print self.height()
-        print self.width()
-        p.setY(p.y() - (self.height() + self._menu.height()))
-        self._menu.popup(p)
-
-    def hidePopup(self):
-        self._menu.hide()

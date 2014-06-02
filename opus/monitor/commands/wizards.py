@@ -30,13 +30,14 @@ import opus.monitor.commands.probe_wizard.wizard_pages       as ProbeElement
 
 
 class ProbeWizard(QWizard):
-    def __init__(self, defs, key, parent):
+    def __init__(self, defs, key, parent, defaultIp=None):
         super(ProbeWizard, self).__init__(parent)
         #self.setFixedWidth(800)
         self.setModal(True)
-        ppage1 = ProbeElement.Page1(defs, key, self)
+        ppage1 = ProbeElement.Page1(defs, key, defaultIp, self)
         ppage2 = ProbeElement.Page2(self)
         ppage3 = ProbeElement.Page3(self)
+        self.setOption(QWizard.NoBackButtonOnStartPage, True)
         self.setPage(1, ppage1)
         self.setPage(2, ppage2)
         self.setPage(3, ppage3)
@@ -55,8 +56,6 @@ class TargetWizard(QWizard):
         pix = nocapi.nGetPixmap('applications-system')
         self.setPixmap(QWizard.LogoPixmap, pix)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
-        self.setOption(QWizard.HaveHelpButton,          True)
-        self.setOption(QWizard.HelpButtonOnRight,       False)
 
         self.setButtonText(QWizard.CancelButton, self.tr("&Close"))
         self.setButtonText(QWizard.FinishButton, self.tr("&Apply"))

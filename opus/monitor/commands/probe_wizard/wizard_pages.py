@@ -20,8 +20,9 @@ from noctopus_widgets import (
 import supercast.main as supercast
 
 class Page1(QWizardPage):
-    def __init__(self, probeDefs, probeKey, parent):
+    def __init__(self, probeDefs, probeKey, defaultIp, parent):
         super(Page1, self).__init__(parent)
+        self._defaultIp = defaultIp
         self.setFinalPage(False)
         self.setTitle(self.tr('Configure a new check'))
         self.setSubTitle(self.tr('''
@@ -36,6 +37,9 @@ class Page1(QWizardPage):
         form        = self._generateFormFrame()
         doc         = self._generateDocFrame()
         sim         = self._generateSimFrame()
+
+        if self._defaultIp != None:
+            self._config['host'].setText(defaultIp)
 
         layout = NGrid(self)
         layout.addWidget(QLabel(probeKey, self), 0,0)
@@ -186,7 +190,7 @@ class Page1(QWizardPage):
         formLayout.addWidget(optionalBox,       1,0)
         #formLayout.addWidget(informationalBox,  2,0)
         formFrame.setLayout(formLayout)
-        
+
         return formFrame
 
     def nextId(self):

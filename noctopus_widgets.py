@@ -13,8 +13,10 @@ from    PySide.QtGui    import (
     QSplitter,
     QCommandLinkButton,
     QDesktopServices,
-    QPushButton
+    QPushButton,
+    QValidator
 )
+
 import noctopus_images
 
 # SPLITER
@@ -67,6 +69,17 @@ class NInfoButton(QPushButton):
 
     def _hideInfo(self):
         self.showInfo.emit(False)
+
+# Validators
+class Nipv4Validator(QValidator):
+    def __init__(self, parent=None):
+        super(Nipv4Validator, self).__init__(parent)
+        self._last = ""
+
+    def fixup(self, text): pass
+
+    def validate(self, text, pos):
+        return QValidator.Intermediate
 
 class Community(NFrame):
     def __init__(self, parent=None):
