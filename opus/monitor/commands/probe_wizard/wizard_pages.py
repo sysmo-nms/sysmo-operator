@@ -8,7 +8,8 @@ from PySide.QtGui import (
     QTextEdit,
     QPushButton,
     QGroupBox,
-    QComboBox
+    QComboBox,
+    QSizePolicy
 )
 
 from noctopus_widgets import (
@@ -23,6 +24,7 @@ class Page1(QWizardPage):
     def __init__(self, probeDefs, probeKey, defaultIp, parent):
         super(Page1, self).__init__(parent)
         self._defaultIp = defaultIp
+        self.completeChanged.connect(self._formComplete)
         self.setFinalPage(False)
         self.setTitle(self.tr('Configure a new check'))
         self.setSubTitle(self.tr('''
@@ -31,15 +33,14 @@ class Page1(QWizardPage):
         self._caller    = parent
         self._probeDef  = probeDefs[probeKey]
         self._probeName = probeKey
-        self._config    = dict()
+        self._mconfig    = dict()
+        self._oconfig    = dict()
         self._comline   = ""
 
         form        = self._generateFormFrame()
         doc         = self._generateDocFrame()
         sim         = self._generateSimFrame()
 
-        if self._defaultIp != None:
-            self._config['host'].setText(defaultIp)
 
         layout = NGrid(self)
         layout.addWidget(QLabel(probeKey, self), 0,0)
@@ -55,6 +56,17 @@ class Page1(QWizardPage):
         layout.setRowStretch(3, 0)
         self.setLayout(layout)
 
+    def initializePage(self):
+        if self._defaultIp != None:
+            self._mconfig['host'].setText(self._defaultIp)
+        self._formComplete()
+
+    def _formComplete(self):
+        if self.isComplete() == True:
+            self._simulateButton.setDisabled(False)
+        else:
+            self._simulateButton.setDisabled(True)
+
     def accept(self):
         print "aaaaaaaaaaaaaccept"
         QDialog.accept(self)
@@ -62,12 +74,14 @@ class Page1(QWizardPage):
     def _generateSimFrame(self):
         simFrame = NFrameContainer(self)
         simLayout   = NGridContainer(simFrame)
-        simulateButton = QPushButton(self.tr('Simulate'), self)
-        simulateButton.clicked.connect(self._simulateComm)
+        self._simulateButton = QPushButton(self.tr('Simulate'), self)
+        self._simulateButton.clicked.connect(self._simulateComm)
+        buttonPol = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self._simulateButton.setSizePolicy(buttonPol)
         self._simComm = QTextEdit(self)
         self._simComm.setFixedHeight(100)
-        simLayout.addWidget(simulateButton, 0,0)
-        simLayout.addWidget(self._simComm,  1,0)
+        simLayout.addWidget(self._simulateButton, 0,0)
+        simLayout.addWidget(self._simComm,  0,1)
         simFrame.setLayout(simLayout)
         self._updateComm('none')
         return simFrame
@@ -75,8 +89,8 @@ class Page1(QWizardPage):
     def _simulateComm(self):
         args = list()
         path = self._probeDef['path']
-        for key in self._config.keys():
-            args.append((key, self._config[key].text()))
+        for key in self._mconfig.keys():
+            args.append((key, self._mconfig[key].text()))
         print args
         supercast.send(
             'monitorSimulateCheck',
@@ -92,11 +106,15 @@ class Page1(QWizardPage):
 
     def _updateComm(self, _):
         comm = '> %s ' % self._probeName
-        for key in self._config.keys():
-            comm = comm + '--%s=%s ' %(key, self._config[key].text())
+        for key in self._mconfig.keys():
+            comm = comm + '--%s=%s ' %(key, self._mconfig[key].text())
+
+        for key in self._oconfig.keys():
+            if self._oconfig[key].text() != "":
+                comm = comm + '--%s=%s ' %(key, self._oconfig[key].text())
         self._comline = comm
         self._simComm.setText(comm)
-        
+
     def _generateDocFrame(self):
         self._generateDoc()
         docBox  = QGroupBox(self)
@@ -154,41 +172,37 @@ class Page1(QWizardPage):
         mandatoryFormLayout = QFormLayout(mandatoryBox)
         for pdef in pdefs.keys():
             if pdefs[pdef]['role'] == 'mandatory':
-                self._config[pdef] = QLineEdit(self)
-                self._config[pdef].textChanged.connect(self._updateComm)
-                mandatoryFormLayout.addRow('-%s' % pdef, self._config[pdef])
+                self._mconfig[pdef] = QLineEdit(self)
+                self._mconfig[pdef].textChanged.connect(self._updateComm)
+                self.registerField(
+                    '%s*' % pdef,
+                    self._mconfig[pdef],
+                    changedSignal=pdef)
+                mandatoryFormLayout.addRow('-%s' % pdef, self._mconfig[pdef])
 
         optionalBox = QGroupBox(self)
         optionalBox.setTitle(self.tr('Optional flags'))
         optionalBoxLay = NGrid(optionalBox)
         optionalBox.setLayout(optionalBoxLay)
 
+
         optionalScroll  = QScrollArea(optionalBox)
-        #optionalScroll.setFixedHeight(160)
         optionalScroll.setFixedWidth(260)
         optionalScrollFrame = NFrame(optionalScroll)
         optionalFormLayout = QFormLayout(optionalScrollFrame)
         for pdef in pdefs.keys():
             if pdefs[pdef]['role'] == 'optional':
-                optionalFormLayout.addRow('-%s' % pdef, QLineEdit(self))
+                self._oconfig[pdef] = QLineEdit(self)
+                self._oconfig[pdef].textChanged.connect(self._updateComm)
+                optionalFormLayout.addRow('-%s' % pdef, self._oconfig[pdef])
         optionalScrollFrame.setLayout(optionalFormLayout)
         optionalScroll.setWidget(optionalScrollFrame)
         optionalBoxLay.addWidget(optionalScroll, 0,0)
-
-
-
-        #informationalBox = QGroupBox(self)
-        #informationalBox.setTitle(self.tr('Informational flags'))
-        #informationalFormLayout = QFormLayout(informationalBox)
-        #for pdef in pdefs.keys():
-            #if pdefs[pdef]['role'] == 'informational':
-                #informationalFormLayout.addRow('-%s' % pdef, QLineEdit(self))
 
         formFrame = NFrameContainer(self)
         formLayout = NGridContainer(formFrame)
         formLayout.addWidget(mandatoryBox,      0,0)
         formLayout.addWidget(optionalBox,       1,0)
-        #formLayout.addWidget(informationalBox,  2,0)
         formFrame.setLayout(formLayout)
 
         return formFrame

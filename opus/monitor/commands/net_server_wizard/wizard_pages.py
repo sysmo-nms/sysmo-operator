@@ -53,7 +53,6 @@ class Page1(QWizardPage):
         self._ipButton.insertItem(self.IP_V4, 'IP version 4')
         self._ipButton.insertItem(self.IP_V6, 'IP version 6')
         self._ipLine    = QLineEdit(self)
-        self._ipLine.setValidator(Nipv4Validator(self))
 
         self._nameButton = QComboBox(self)
         self._nameButton.insertItem(self.NAME_MANUAL,  'Manual name')
@@ -62,18 +61,16 @@ class Page1(QWizardPage):
 
         self.registerField('server_ip_version', self._ipButton)
         self.registerField('server_ip*',        self._ipLine)
-        #self.registerField('server_ip',        self._ipLine)
         self.registerField('server_name_type',  self._nameButton)
-        #self.registerField('server_name*',      self._nameLine)
-        self.registerField('server_name',      self._nameLine)
+        self.registerField('server_name*',      self._nameLine)
 
 
         #########################
         # treeview probes begin #
         #########################
-        probeFrame  = QGroupBox(self)
-        probeFrame.setTitle(self.tr('Configure services checks'))
-        probeLay    = NGrid(probeFrame)
+        self.probeFrame  = QGroupBox(self)
+        self.probeFrame.setTitle(self.tr('Configure services checks'))
+        probeLay    = NGrid(self.probeFrame)
         probeLay.setVerticalSpacing(5)
 
         self._checkDefs = monapi.getCheckInfos()
@@ -83,7 +80,6 @@ class Page1(QWizardPage):
             action.triggered.connect(partial(self._openProbeConfig, key))
 
         checkAddButton = QPushButton(self)
-        #checkAddButton.setText(self.tr('Add a new probe'))
         checkAddButton.setIcon(nocapi.nGetIcon('list-add'))
         checkAddButton.setMenu(checkMenu)
 
@@ -95,7 +91,7 @@ class Page1(QWizardPage):
         probeLay.setColumnStretch(1,1)
         probeLay.setRowStretch(0,1)
         probeLay.setRowStretch(1,1)
-        probeFrame.setLayout(probeLay)
+        self.probeFrame.setLayout(probeLay)
         #########################
         # treeview probes end   #
         #########################
@@ -104,14 +100,23 @@ class Page1(QWizardPage):
         tempLayout.addWidget(self._ipLine,      0,1)
         tempLayout.addWidget(self._nameButton,  1,0)
         tempLayout.addWidget(self._nameLine,    1,1)
-        tempLayout.addWidget(probeFrame,        2,0,1,2)
-        #tempLayout.addWidget(self._checksTree,  2,1,2,1)
+        tempLayout.addWidget(self.probeFrame,        2,0,1,2)
 
         layout = NGridContainer(self)
         layout.addWidget(tempFrame, 0,0)
         
+        self.completeChanged.connect(self._formComplete)
         self.setLayout(layout)
 
+    def initializePage(self):
+        self._formComplete()
+
+    def _formComplete(self):
+        if self.isComplete() == True:
+            self.probeFrame.setDisabled(False)
+        else:
+            self.probeFrame.setDisabled(True)
+            
     def _openProbeConfig(self, key):
         wiz = opus.monitor.commands.wizards.ProbeWizard(
             self._checkDefs, key, self, self._ipLine.text()
