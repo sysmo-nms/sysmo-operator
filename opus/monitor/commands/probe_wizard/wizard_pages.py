@@ -91,7 +91,10 @@ class Page1(QWizardPage):
         path = self._probeDef['path']
         for key in self._mconfig.keys():
             args.append((key, self._mconfig[key].text()))
-        print args
+
+        for key in self._oconfig.keys():
+            if self._oconfig[key].text() != "":
+                args.append((key, self._oconfig[key].text()))
         supercast.send(
             'monitorSimulateCheck',
             (
