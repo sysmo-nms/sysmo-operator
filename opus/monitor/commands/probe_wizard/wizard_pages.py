@@ -92,8 +92,10 @@ class Page1(QWizardPage):
         return simFrame
 
     def _simulateComm(self):
+        self._simulateButton.setDisabled(True)
+        self._updateComm(True)
         args = list()
-        path = self._probeDef['path']
+        check = self._probeName
         for key in self._mconfig.keys():
             args.append((key, self._mconfig[key].text()))
 
@@ -103,14 +105,15 @@ class Page1(QWizardPage):
         supercast.send(
             'monitorSimulateCheck',
             (
-                path,
+                check,
                 args
             ),
             self.simulateReply
         )
 
     def simulateReply(self, msg):
-        print "reply !!!!!!!!! msg"
+        self._simComm.append(msg['value']['info'])
+        self._simulateButton.setDisabled(False)
 
     def _updateComm(self, _):
         comm = '> %s ' % self._probeName
@@ -251,10 +254,6 @@ class Page2(QWizardPage):
         step.setMaximum(10000)
         step.setValue(300)
         pageForm.addRow('Step:',         step)
-        #pageForm.addRow('On Critical:',  QComboBox(self))
-        #pageForm.addRow('On Warning:',   QComboBox(self))
-        #pageForm.addRow('On Unknown:',   QComboBox(self))
-        #pageForm.addRow('On Ok:',        QComboBox(self))
         pageForm.addRow('Description:',  QTextEdit(pageFrame))
         pageFrame.setLayout(pageForm)
 
