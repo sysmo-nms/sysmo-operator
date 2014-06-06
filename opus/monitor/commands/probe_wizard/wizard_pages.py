@@ -9,7 +9,8 @@ from PySide.QtGui import (
     QPushButton,
     QGroupBox,
     QComboBox,
-    QSizePolicy
+    QSizePolicy,
+    QCheckBox
 )
 
 from PySide.QtCore import QSize
@@ -222,7 +223,19 @@ class Page1(QWizardPage):
         return 2
 
     def validatePage(self):
-        print "validate probe wiz"
+        flags = list()
+        for key in self._mconfig.keys():
+            flags.append((key, self._mconfig[key].text()))
+
+        for key in self._oconfig.keys():
+            if self._oconfig[key].text() != "":
+                flags.append((key, self._oconfig[key].text()))
+
+        conf  = dict()
+        conf['check'] = self._probeName
+        conf['flags'] = flags
+        print "validate probe wiz ", conf
+        self._caller.check_config = conf
         return True
 
 class Page2(QWizardPage):
@@ -248,23 +261,31 @@ class Page2(QWizardPage):
         pageForm = QFormLayout(pageFrame)
         pageForm.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         pageForm.setVerticalSpacing(11)
-        pageForm.addRow('Display name:', QLineEdit(pageFrame))
-        step = QSpinBox(self)
-        step.setSuffix(" seconds")
-        step.setMaximum(10000)
-        step.setValue(300)
-        pageForm.addRow('Step:',         step)
-        pageForm.addRow('Description:',  QTextEdit(pageFrame))
+        displayNameLine = QLineEdit(pageFrame)
+        self.registerField('p2_display_name*', displayNameLine)
+        pageForm.addRow('Display name:', displayNameLine)
+        self.step = QSpinBox(self)
+        self.registerField('p2_check_step*', self.step)
+        pageForm.addRow('Step:',         self.step)
+        descrText = QTextEdit(pageFrame)
+        self.registerField('p2_description', descrText)
+        pageForm.addRow('Description:',  descrText)
         pageFrame.setLayout(pageForm)
 
+    def initializePage(self):
+        self.step.setSuffix(" seconds")
+        self.step.setMaximum(10000)
+        self.step.setValue(300)
+        
     def nextId(self):
         return 3
 
     def validatePage(self):
-        print "vvv"
         return True
 
 class Page3(QWizardPage):
+    DO_NOTHING  = 0
+    ALERT       = 1
     def __init__(self, parent):
         super(Page3, self).__init__(parent)
         self.setFinalPage(True)
@@ -276,10 +297,13 @@ class Page3(QWizardPage):
         self.setLayout(layout)
 
         pageFrame = NFrame(self)
+        pageGroup = QGroupBox(self.tr('Alert groups'), self)
         layout.addWidget(pageFrame,    1,1)
+        layout.addWidget(pageGroup,    1,2)
         layout.setColumnStretch(0,1)
         layout.setColumnStretch(1,0)
-        layout.setColumnStretch(2,1)
+        layout.setColumnStretch(2,0)
+        layout.setColumnStretch(3,1)
         layout.setRowStretch(0,1)
         layout.setRowStretch(1,0)
         layout.setRowStretch(2,1)
@@ -287,15 +311,36 @@ class Page3(QWizardPage):
         pageForm = QFormLayout(pageFrame)
         pageForm.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         pageForm.setVerticalSpacing(11)
-        pageForm.addRow('On Critical:',  QComboBox(self))
-        pageForm.addRow('On Warning:',   QComboBox(self))
-        pageForm.addRow('On Unknown:',   QComboBox(self))
-        pageForm.addRow('On Ok:',        QComboBox(self))
+        onCrit = QComboBox(self)
+        onCrit.insertItem(self.DO_NOTHING, 'Do nothing')
+        onCrit.insertItem(self.ALERT,      'Send a mail alert')
+        pageForm.addRow('On Critical:',  onCrit)
+        onWarn = QComboBox(self)
+        onWarn.insertItem(self.DO_NOTHING, 'Do nothing')
+        onWarn.insertItem(self.ALERT,      'Send a mail alert')
+        pageForm.addRow('On Warning:',   onWarn)
+        onUnk = QComboBox(self)
+        onUnk.insertItem(self.DO_NOTHING, 'Do nothing')
+        onUnk.insertItem(self.ALERT,      'Send a mail alert')
+        pageForm.addRow('On Unknown:',   onUnk)
+        onOk = QComboBox(self)
+        onOk.insertItem(self.DO_NOTHING, 'Do nothing')
+        onOk.insertItem(self.ALERT,      'Send a mail alert')
+        pageForm.addRow('On Ok:',        onOk)
         pageFrame.setLayout(pageForm)
+
+        groups  = nocapi.nGetGroups()
+        glay    = NGrid(pageGroup)
+        pageGroup.setLayout(glay)
+        for i in range(len(groups)):
+            glay.addWidget(QCheckBox(groups[i], self), i,0)
+            glay.setRowStretch(i, 0)
+            glay.setRowStretch(i + 1, 1)
+
+        #checkGroup = QGroupBox(self.tr('Alert groups'), pageGroup)
 
     def nextId(self):
         return -1
 
     def validatePage(self):
-        print "vvv"
         return False

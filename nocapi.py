@@ -146,3 +146,7 @@ def nUnsubscribe(pyCallable, channel):
 def nQuery(key, callback):
     sc = noctopus_main.NMainWindow.singleton.supercast
     sc.send('query', key, callback)
+
+def nGetGroups():
+    sc = noctopus_main.NMainWindow.singleton.supercast
+    return sc.groups
