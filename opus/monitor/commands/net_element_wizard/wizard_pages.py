@@ -55,10 +55,12 @@ class Page1(QWizardPage):
         self._ipButton  = QComboBox(self)
         self._ipButton.insertItem(self.IP_V4, 'IP version 4:')
         self._ipButton.insertItem(self.IP_V6, 'IP version 6:')
+        self._ipButton.setFocusPolicy(Qt.ClickFocus)
 
         self._snmpButton = QComboBox(self)
         self._snmpButton.insertItem(self.SNMP_V2, 'SNMP version 2b')
         self._snmpButton.insertItem(self.SNMP_V3, 'SNMP version 3')
+        self._snmpButton.setFocusPolicy(Qt.ClickFocus)
 
         tempLayout.addWidget(self._ipButton,                            0,0)
         tempLayout.addWidget(self._ipLine,                              0,1)

@@ -52,11 +52,13 @@ class Page1(QWizardPage):
         self._ipButton  = QComboBox(self)
         self._ipButton.insertItem(self.IP_V4, 'IP version 4')
         self._ipButton.insertItem(self.IP_V6, 'IP version 6')
+        self._ipButton.setFocusPolicy(Qt.ClickFocus)
         self._ipLine    = QLineEdit(self)
 
         self._nameButton = QComboBox(self)
         self._nameButton.insertItem(self.NAME_MANUAL,  'Manual name')
         self._nameButton.insertItem(self.NAME_DYNAMIC, 'Dynamic DNS name')
+        self._nameButton.setFocusPolicy(Qt.ClickFocus)
         self._nameLine  = QLineEdit(self)
 
         self.registerField('server_ip_version', self._ipButton)
