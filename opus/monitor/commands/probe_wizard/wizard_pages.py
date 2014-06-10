@@ -10,7 +10,8 @@ from PySide.QtGui import (
     QGroupBox,
     QComboBox,
     QSizePolicy,
-    QCheckBox
+    QCheckBox,
+    QButtonGroup
 )
 
 from PySide.QtCore import QSize
@@ -33,7 +34,7 @@ class Page1(QWizardPage):
         self.setSubTitle(self.tr('''
             blabla
         '''))
-        self._caller    = parent
+        self._wizard    = parent
         self._probeDef  = probeDefs[probeKey]
         self._probeName = probeKey
         self._mconfig    = dict()
@@ -71,7 +72,6 @@ class Page1(QWizardPage):
             self._simulateButton.setDisabled(True)
 
     def accept(self):
-        print "aaaaaaaaaaaaaccept"
         QDialog.accept(self)
         
     def _generateSimFrame(self):
@@ -234,8 +234,7 @@ class Page1(QWizardPage):
         conf  = dict()
         conf['check'] = self._probeName
         conf['flags'] = flags
-        print "validate probe wiz ", conf
-        self._caller.check_config = conf
+        self._wizard.page1_config = conf
         return True
 
 class Page2(QWizardPage):
@@ -288,6 +287,7 @@ class Page3(QWizardPage):
     ALERT       = 1
     def __init__(self, parent):
         super(Page3, self).__init__(parent)
+        self._wizard = parent
         self.setFinalPage(True)
         self.setTitle(self.tr('Configure a new check'))
         self.setSubTitle(self.tr('''
@@ -296,9 +296,9 @@ class Page3(QWizardPage):
         layout = NGrid(self)
         self.setLayout(layout)
 
-        pageFrame = NFrame(self)
+        alertGroup = QGroupBox(self.tr('Alert behaviour'), self)
         pageGroup = QGroupBox(self.tr('Alert groups'), self)
-        layout.addWidget(pageFrame,    1,1)
+        layout.addWidget(alertGroup,    1,1)
         layout.addWidget(pageGroup,    1,2)
         layout.setColumnStretch(0,1)
         layout.setColumnStretch(1,0)
@@ -308,7 +308,7 @@ class Page3(QWizardPage):
         layout.setRowStretch(1,0)
         layout.setRowStretch(2,1)
 
-        pageForm = QFormLayout(pageFrame)
+        pageForm = QFormLayout(alertGroup)
         pageForm.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         pageForm.setVerticalSpacing(11)
         onCrit = QComboBox(self)
@@ -327,20 +327,40 @@ class Page3(QWizardPage):
         onOk.insertItem(self.DO_NOTHING, 'Do nothing')
         onOk.insertItem(self.ALERT,      'Send a mail alert')
         pageForm.addRow('On Ok:',        onOk)
-        pageFrame.setLayout(pageForm)
+        alertGroup.setLayout(pageForm)
+
+        self._alertsD = dict()
+        self._alertsD['CRITICAL']   = onCrit
+        self._alertsD['WARNING']    = onWarn
+        self._alertsD['UNKNOWN']    = onUnk
+        self._alertsD['OK']         = onOk
 
         groups  = nocapi.nGetGroups()
         glay    = NGrid(pageGroup)
         pageGroup.setLayout(glay)
+        self._groupsD = dict()
         for i in range(len(groups)):
-            glay.addWidget(QCheckBox(groups[i], self), i,0)
+            groupName = groups[i]
+            self._groupsD[groupName] = QCheckBox(groupName, self)
+            glay.addWidget(self._groupsD[groupName], i,0)
             glay.setRowStretch(i, 0)
             glay.setRowStretch(i + 1, 1)
-
-        #checkGroup = QGroupBox(self.tr('Alert groups'), pageGroup)
 
     def nextId(self):
         return -1
 
     def validatePage(self):
-        return False
+        confDict = dict()
+        confDict['alerts'] = list()
+        for key in self._alertsD.keys():
+            if self._alertsD[key].currentIndex() == Page3.ALERT:
+                confDict['alerts'].append(key)
+
+        confDict['groups'] = list()
+        for key in self._groupsD.keys():
+            if self._groupsD[key].isChecked() == True:
+                confDict['groups'].append(key)
+
+        self._wizard.page3_config = confDict
+        self._wizard.validateConfig() 
+        return True

@@ -30,8 +30,9 @@ import opus.monitor.commands.probe_wizard.wizard_pages       as ProbeElement
 
 
 class ProbeWizard(QWizard):
-    def __init__(self, defs, key, parent, defaultIp=None):
+    def __init__(self, defs, key, parent, pyCall, defaultIp=None):
         super(ProbeWizard, self).__init__(parent)
+        self._callback = pyCall
         #self.setFixedWidth(800)
         self.setModal(True)
         ppage1 = ProbeElement.Page1(defs, key, defaultIp, self)
@@ -42,7 +43,16 @@ class ProbeWizard(QWizard):
         self.setPage(2, ppage2)
         self.setPage(3, ppage3)
         self.setStartId(1)
+        self.check_config = None
         self.show()
+
+    def validateConfig(self):
+        print "page1 config:" , self.page1_config
+        print "page2 config display_name:", self.field('p2_display_name')
+        print "page2 config check_step:", self.field('p2_check_step')
+        print "page2 config descr:", self.field('p2_description')
+        print "page3 config: ", self.page3_config
+        self._callback("hello config probe")
 
 
 class TargetWizard(QWizard):

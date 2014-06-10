@@ -119,9 +119,13 @@ class Page1(QWizardPage):
         else:
             self.probeFrame.setDisabled(True)
             
+    def _probeConfigCallback(self, probeConfig):
+        print "get callback: ", probeConfig
+
     def _openProbeConfig(self, key):
         wiz = opus.monitor.commands.wizards.ProbeWizard(
-            self._checkDefs, key, self, self._ipLine.text()
+            self._checkDefs, key, self, 
+            self._probeConfigCallback, self._ipLine.text()
         )
         wiz.show()
 
