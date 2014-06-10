@@ -184,7 +184,6 @@ class ChanHandler(QObject):
                 fdict[name]['default'] = i.find('default').text
                 fdict[name]['role']    = i.find('role').text
             checkInfos[chk]['flags_def'] = fdict
-        print checkInfos
         self.checkInfos = checkInfos
 
     def getCheckInfos(self):
