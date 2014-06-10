@@ -35,7 +35,10 @@ class ProbeWizard(QWizard):
         self._callback = pyCall
         #self.setFixedWidth(800)
         self.setModal(True)
-        ppage1 = ProbeElement.Page1(defs, key, defaultIp, self)
+        self.probeKey   = key
+        self.defaultIp  = defaultIp
+        self.defs       = defs
+        ppage1 = ProbeElement.Page1(self)
         ppage2 = ProbeElement.Page2(self)
         ppage3 = ProbeElement.Page3(self)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
@@ -43,16 +46,26 @@ class ProbeWizard(QWizard):
         self.setPage(2, ppage2)
         self.setPage(3, ppage3)
         self.setStartId(1)
-        self.check_config = None
+        self.page1_config = None
+        self.page3_config = None
+        # page2 use QWizard.registerField
+        # self.page2_config = None 
         self.show()
 
     def validateConfig(self):
-        print "page1 config:" , self.page1_config
-        print "page2 config display_name:", self.field('p2_display_name')
-        print "page2 config check_step:", self.field('p2_check_step')
-        print "page2 config descr:", self.field('p2_description')
-        print "page3 config: ", self.page3_config
-        self._callback("hello config probe")
+        checkDef = dict()
+        checkDef['def']     = self.page1_config
+        checkDef['display_name'] = self.field('p2_display_name')
+        checkDef['step']    = self.field('p2_check_step')
+        checkDef['alert']   = self.page3_config
+
+        descr   = self.field('p2_description')
+        if descr == None:
+            checkDef['descr'] = ""
+        else:
+            checkDef['descr'] = descr
+
+        self._callback(checkDef)
 
 
 class TargetWizard(QWizard):

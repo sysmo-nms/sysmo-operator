@@ -66,6 +66,8 @@ class Page1(QWizardPage):
         self.registerField('server_name_type',  self._nameButton)
         self.registerField('server_name*',      self._nameLine)
 
+        self._checkConfigs = list()
+
 
         #########################
         # treeview probes begin #
@@ -86,6 +88,8 @@ class Page1(QWizardPage):
         checkAddButton.setMenu(checkMenu)
 
         self._checksTree = QTreeWidget(self)
+        self._checksTree.setColumnCount(2)
+        self._checksTree.setHeaderLabels(["Checks", "Description"])
 
         probeLay.addWidget(checkAddButton,   0,0,1,1)
         probeLay.addWidget(self._checksTree, 1,0,1,2)
@@ -120,6 +124,10 @@ class Page1(QWizardPage):
             self.probeFrame.setDisabled(True)
             
     def _probeConfigCallback(self, probeConfig):
+        self._checkConfigs.append(probeConfig)
+        name        = probeConfig['display_name']
+        descr       = probeConfig['descr']
+        self._checksTree.addTopLevelItem(QTreeWidgetItem(None, [name, descr]))
         print "get callback: ", probeConfig
 
     def _openProbeConfig(self, key):

@@ -25,9 +25,8 @@ import supercast.main as supercast
 import nocapi
 
 class Page1(QWizardPage):
-    def __init__(self, probeDefs, probeKey, defaultIp, parent):
+    def __init__(self, parent):
         super(Page1, self).__init__(parent)
-        self._defaultIp = defaultIp
         self.completeChanged.connect(self._formComplete)
         self.setFinalPage(False)
         self.setTitle(self.tr('Configure a new check'))
@@ -35,8 +34,11 @@ class Page1(QWizardPage):
             blabla
         '''))
         self._wizard    = parent
-        self._probeDef  = probeDefs[probeKey]
-        self._probeName = probeKey
+        print parent.defs
+        self._probeName = parent.probeKey
+        self._probeDef  = parent.defs[self._probeName]
+        self._defaultIp = parent.defaultIp
+
         self._mconfig    = dict()
         self._oconfig    = dict()
         self._comline   = ""
@@ -47,7 +49,7 @@ class Page1(QWizardPage):
 
 
         layout = NGrid(self)
-        layout.addWidget(QLabel(probeKey, self), 0,0)
+        layout.addWidget(QLabel(self._probeName, self), 0,0)
         layout.addWidget(form,      1,0)
         layout.addWidget(doc,       1,1)
         layout.addWidget(sim,       2,0,1,2)
@@ -232,14 +234,17 @@ class Page1(QWizardPage):
                 flags.append((key, self._oconfig[key].text()))
 
         conf  = dict()
-        conf['check'] = self._probeName
-        conf['flags'] = flags
+        conf['check']   = self._probeName
+        conf['flags']   = flags
+        conf['timeout'] = self._mconfig['timeout'].text()
         self._wizard.page1_config = conf
         return True
 
 class Page2(QWizardPage):
     def __init__(self, parent):
         super(Page2, self).__init__(parent)
+        pname = parent.probeKey
+
         self.setFinalPage(False)
         self.setTitle(self.tr('Configure a new check'))
         self.setSubTitle(self.tr('''
@@ -261,6 +266,7 @@ class Page2(QWizardPage):
         pageForm.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         pageForm.setVerticalSpacing(11)
         displayNameLine = QLineEdit(pageFrame)
+        displayNameLine.setText('%s: ' % pname)
         self.registerField('p2_display_name*', displayNameLine)
         pageForm.addRow('Display name:', displayNameLine)
         self.step = QSpinBox(self)
