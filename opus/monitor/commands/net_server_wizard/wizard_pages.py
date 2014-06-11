@@ -128,7 +128,6 @@ class Page1(QWizardPage):
         name        = probeConfig['display_name']
         descr       = probeConfig['descr']
         self._checksTree.addTopLevelItem(QTreeWidgetItem(None, [name, descr]))
-        print "get callback: ", probeConfig
 
     def _openProbeConfig(self, key):
         wiz = opus.monitor.commands.wizards.ProbeWizard(
@@ -138,8 +137,25 @@ class Page1(QWizardPage):
         wiz.show()
 
     def validatePage(self):
-        print "validate"
+        self._createTarget()
         return False
+
+    def createTargetCallback(self, msg):
+        print "received callback ", msg
+
+    def _createTarget(self):
+        supercast.send(
+            'monitorCreateTarget',
+            (
+                self._ipLine.text(),
+                (["admin"], ["admin"]),
+                self._nameLine.text(),
+                "undefined",
+                "undefined",
+                "undefined"
+            ),
+            self.createTargetCallback
+        )
 
     def nextId(self):
         return -1

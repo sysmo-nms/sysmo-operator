@@ -262,6 +262,7 @@ class MonitorCreateTarget(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('ipAdd',        char.PrintableString()),
         namedtype.NamedType('permConf',     PermConf()),
+        namedtype.NamedType('staticName',   char.PrintableString()),
         namedtype.NamedType('snmpv2ro',     char.PrintableString()),
         namedtype.NamedType('snmpv2rw',     char.PrintableString()),
         namedtype.NamedType('template',     char.PrintableString()),
@@ -1256,8 +1257,8 @@ def encode(pduType, payload):
         return encode_authResp(userId, password)
     elif pduType == 'monitorCreateTarget':
         (queryId, msg)          = payload
-        (ip, perms, ro, rw, tpl) = msg
-        return encode_create_target(ip, perms, ro, rw, tpl, queryId)
+        (ip, perms, n, ro, rw, tpl) = msg
+        return encode_create_target(ip, perms, n, ro, rw, tpl, queryId)
     elif pduType == 'query':
         (queryId, queryString) = payload
         return encode_query(queryId, queryString)
@@ -1351,7 +1352,7 @@ def encode_query(queryId, queryString):
     pdu = encoder.encode(pduDef)
     return pdu
 
-def encode_create_target(ip, perms, ro, rw, tpl, queryId):
+def encode_create_target(ip, perms, name, ro, rw, tpl, queryId):
     (read, write)   = perms
     readGroups      = Groups()
     for i in range(len(read)):
@@ -1373,6 +1374,7 @@ def encode_create_target(ip, perms, ro, rw, tpl, queryId):
     )
     targetCreate.setComponentByName('ipAdd',    ip)
     targetCreate.setComponentByName('permConf', targetConf)
+    targetCreate.setComponentByName('staticName', name)
     targetCreate.setComponentByName('snmpv2ro', ro)
     targetCreate.setComponentByName('snmpv2rw', rw)
     targetCreate.setComponentByName('template', tpl)

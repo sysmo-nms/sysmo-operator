@@ -70,7 +70,14 @@ class TargetItem(QStandardItem):
         if   role == Qt.DecorationRole:
             return self._getIconStatus()
         elif role == Qt.DisplayRole:
-            return self.targetDict['value']['properties']['sysName']
+            if self.targetDict['value']['properties']['sysName'] != "undefined":
+                return self.targetDict['value']['properties']['sysName']
+            elif self.targetDict['value']['properties']['dnsName'] != "undefined":
+                return self.targetDict['value']['properties']['dnsName']
+            elif self.targetDict['value']['properties']['staticName'] != "undefined":
+                return self.targetDict['value']['properties']['staticName']
+            else:
+                return self.targetDict['value']['name']
         elif role == Qt.UserRole:
             return self.searchString
         elif role == (Qt.UserRole + 1):

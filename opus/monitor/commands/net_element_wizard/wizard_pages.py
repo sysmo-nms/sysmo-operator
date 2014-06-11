@@ -113,6 +113,7 @@ class Page1(QWizardPage):
                 (
                     ipAddress,
                     perms,
+                    "undefined",
                     snmpV2Read,
                     snmpV2Write,
                     tpl
