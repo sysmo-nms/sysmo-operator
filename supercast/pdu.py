@@ -269,6 +269,19 @@ class MonitorCreateTarget(univ.Sequence):
         namedtype.NamedType('queryId',      univ.Integer())
     )
 
+class MonitorCreateSimpleProbe(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('name',         char.PrintableString()),
+        namedtype.NamedType('description',  char.PrintableString()),
+        namedtype.NamedType('permConf',     PermConf()),
+        namedtype.NamedType('template',     char.PrintableString()),
+        namedtype.NamedType('timeout',      univ.Integer()),
+        namedtype.NamedType('step',         univ.Integer()),
+        namedtype.NamedType('flags',        Properties()),
+        namedtype.NamedType('queryId',      univ.Integer())
+    )
+
 class MonitorQuery(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
@@ -289,7 +302,8 @@ class CheckArg(univ.Sequence):
         namedtype.NamedType('value',        char.PrintableString())
     )
 class CheckArgs(univ.SequenceOf):
-    compnentType = CheckArg()
+    componentType = CheckArg()
+
 class MonitorSimulateCheck(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
@@ -316,6 +330,16 @@ class MonitorPDU_fromClient(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'createSimpleProbe',
+            MonitorCreateSimpleProbe().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    4
                 )
             )
         ),
@@ -1265,11 +1289,12 @@ def encode(pduType, payload):
     elif pduType == 'monitorSimulateCheck':
         (queryId, checkConf) = payload
         return encode_simulateCheck(queryId, checkConf)
-    elif pduType == 'monitorCreateProbe':
-        print "create probe"
-        return False
+    elif pduType == 'monitorCreateSimpleProbe':
+        (queryId, args) = payload
+        return encode_createSimpleProbe(queryId, args)
     else:
         return False
+
 
 def encode_simulateCheck(queryId, checkConfig):
     (path, args) = checkConfig
@@ -1336,6 +1361,72 @@ def encode_query(queryId, queryString):
         )
     )
     fromClient.setComponentByName('query', query)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+def encode_createSimpleProbe(queryId, args):
+    (tname, pname, descr, perms, tpl, timeout, step, flags) = args
+
+    (read, write)   = perms
+    readGroups      = Groups()
+    for i in range(len(read)):
+        readGroups.setComponentByPosition(i, read[i])
+    writeGroups     = Groups()
+    for i in range(len(write)):
+        writeGroups.setComponentByPosition(i, write[i])
+
+    permConf      = PermConf()
+    permConf.setComponentByName('read',         readGroups)
+    permConf.setComponentByName('write',        writeGroups)
+
+    fprops = Properties()
+    for i in range(len(flags)):
+        (f, v) = flags[i]
+        fprop = Property()
+        fprop.setComponentByName('key', f)
+        fprop.setComponentByName('value', v)
+        fprops.setComponentByPosition(i, fprop)
+
+
+    createSP = MonitorCreateSimpleProbe().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            4
+        )
+    )
+
+    createSP.setComponentByName('target',   tname)
+    createSP.setComponentByName('name',     pname)
+    createSP.setComponentByName('description',  descr)
+    createSP.setComponentByName('permConf', permConf)
+    createSP.setComponentByName('template', tpl)
+    createSP.setComponentByName('timeout',  int(timeout))
+    createSP.setComponentByName('step',     int(step))
+    createSP.setComponentByName('flags',    fprops)
+    createSP.setComponentByName('queryId',  queryId)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('createSimpleProbe', createSP)
 
     monitorPDU = MonitorPDU().subtype(
         implicitTag=tag.Tag(

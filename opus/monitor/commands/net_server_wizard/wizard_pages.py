@@ -24,6 +24,7 @@ from noctopus_widgets import (
     Nipv4Validator
 )
 
+import copy
 import nocapi
 import opus.monitor.api as monapi
 import opus.monitor.commands.wizards
@@ -140,8 +141,7 @@ class Page1(QWizardPage):
         self._createTarget()
         return False
 
-    def createTargetCallback(self, msg):
-        print "received callback ", msg
+
 
     def _createTarget(self):
         supercast.send(
@@ -156,6 +156,43 @@ class Page1(QWizardPage):
             ),
             self.createTargetCallback
         )
+
+    def createTargetCallback(self, msg):
+        if msg['value']['status'] == True:
+            self._targetName = msg['value']['info']
+            self._processProbes = copy.deepcopy(self._checkConfigs)
+            self._createProbes()
+
+    def _createProbes(self):
+        if len(self._processProbes) != 0:
+            pconf = self._processProbes.pop()
+
+            for i in range(len(pconf['def']['flags'])):
+                f = pconf['def']['flags'][i]
+                fl,ar = f
+                if fl == 'timeout':
+                    timeout = ar
+                    break
+
+            supercast.send(
+                'monitorCreateSimpleProbe',
+                (
+                    self._targetName,
+                    pconf['display_name'],
+                    pconf['descr'],
+                    (["admin"],["admin"]),
+                    "simple",
+                    timeout,
+                    pconf['step'],
+                    pconf['def']['flags']
+                ),
+                self.createProbesCallback
+            )
+    
+    def createProbesCallback(self, msg):
+        print "next pass ", msg
+        if msg['value']['status'] == True:
+            self._createProbes()
 
     def nextId(self):
         return -1
