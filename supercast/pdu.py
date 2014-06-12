@@ -279,6 +279,7 @@ class MonitorCreateSimpleProbe(univ.Sequence):
         namedtype.NamedType('timeout',      univ.Integer()),
         namedtype.NamedType('step',         univ.Integer()),
         namedtype.NamedType('flags',        Properties()),
+        namedtype.NamedType('exe',          char.PrintableString()),
         namedtype.NamedType('queryId',      univ.Integer())
     )
 
@@ -1378,7 +1379,7 @@ def encode_query(queryId, queryString):
     return pdu
 
 def encode_createSimpleProbe(queryId, args):
-    (tname, pname, descr, perms, tpl, timeout, step, flags) = args
+    (tname, pname, descr, perms, tpl, timeout, step, flags, exe) = args
 
     (read, write)   = perms
     readGroups      = Groups()
@@ -1417,6 +1418,7 @@ def encode_createSimpleProbe(queryId, args):
     createSP.setComponentByName('timeout',  int(timeout))
     createSP.setComponentByName('step',     int(step))
     createSP.setComponentByName('flags',    fprops)
+    createSP.setComponentByName('exe',      exe)
     createSP.setComponentByName('queryId',  queryId)
 
     fromClient = MonitorPDU_fromClient().subtype(

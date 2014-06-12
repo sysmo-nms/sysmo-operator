@@ -184,7 +184,8 @@ class Page1(QWizardPage):
                     "simple",
                     timeout,
                     pconf['step'],
-                    pconf['def']['flags']
+                    pconf['def']['flags'],
+                    pconf['exe']
                 ),
                 self.createProbesCallback
             )

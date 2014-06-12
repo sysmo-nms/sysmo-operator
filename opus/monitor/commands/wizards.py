@@ -58,6 +58,7 @@ class ProbeWizard(QWizard):
         checkDef['display_name'] = self.field('p2_display_name')
         checkDef['step']    = self.field('p2_check_step')
         checkDef['alert']   = self.page3_config
+        checkDef['exe']     = self.probeKey
 
         descr   = self.field('p2_description')
         if descr == None:
