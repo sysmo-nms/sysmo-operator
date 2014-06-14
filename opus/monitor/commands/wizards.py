@@ -27,7 +27,21 @@ import supercast.main   as supercast
 import opus.monitor.commands.net_element_wizard.wizard_pages as NetElement
 import opus.monitor.commands.net_server_wizard.wizard_pages  as SrvElement
 import opus.monitor.commands.probe_wizard.wizard_pages       as ProbeElement
+import opus.monitor.commands.user_actions_wizard.wizard_pages as UActionPages
 
+
+class UserActionsWizard(QWizard):
+    def __init__(self, parent=None):
+        super(UserActionsWizard, self).__init__(parent)
+        self.setModal(True)
+        page1 = UActionPages.Page1(self)
+        self.setPage(1, page1)
+        self.setStartId(1)
+        self.setOption(QWizard.NoBackButtonOnStartPage, True)
+        self.setWizardStyle(QWizard.ModernStyle)
+        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('console'))
+        self.setPixmap(QWizard.LogoPixmap,nocapi.nGetPixmap('applications-system'))
+        self.show()
 
 class ProbeWizard(QWizard):
     def __init__(self, defs, key, parent, pyCall, defaultIp=None):

@@ -29,6 +29,7 @@ from    functools import partial
 from    opus.monitor.trees_area.tree_probes.controls import ProbesActions
 from    opus.monitor.trees_area.tree_probes.model    import ProbeModel
 from    opus.monitor.trees_area.tree_probes.logwin   import LoggerView
+from    opus.monitor.commands.wizards import UserActionsWizard
 import  opus.monitor.api    as monapi
 import  nocapi
 
@@ -115,7 +116,7 @@ class ProbesTreeview(QTreeView):
         #######################################################################
 
         self.configureAction = QAction(self.tr('Configure new action'), self)
-        self.configureAction.triggered.connect(monapi.launchUserActionsUI)
+        self.configureAction.triggered.connect(self._launchUserActionsWiz)
         self.targetMenu.addMenu(self.localMenu)
         self.targetMenu.addAction(self.configureAction)
 
@@ -194,6 +195,9 @@ class ProbesTreeview(QTreeView):
     def createTarget(self): pass
     def createProbe(self): pass
     def configureProbe(self): pass
+
+    def _launchUserActionsWiz(self):
+        ua = UserActionsWizard(self)
 
     def getSelectedElements(self):
         proxyIndexes = self.selectedIndexes()

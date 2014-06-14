@@ -49,7 +49,8 @@ def initPixmaps():
         'applications-system': QPixmap(os.path.join(iconsPath, "applications-system.png")),
         'rrdtool-logo': QPixmap(os.path.join(iconsPath, "rrdtool_logo.png")),
         'server-bay': QPixmap(os.path.join(iconsPath, "server-bay.png")),
-        'network-bay': QPixmap(os.path.join(iconsPath, "network-bay.png"))
+        'network-bay': QPixmap(os.path.join(iconsPath, "network-bay.png")),
+        'console': QPixmap(os.path.join(iconsPath, "console.png"))
     }
 
 def initIcons():
