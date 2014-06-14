@@ -31,7 +31,7 @@ class ProbesActions(NFrameContainer):
 
         self.createMenu = QMenu(self)
         create   = QPushButton(self)
-        create.setFixedWidth(32)
+        create.setFixedWidth(30)
         create.setIcon(nocapi.nGetIcon('list-add'))
         create.setContentsMargins(0,0,0,0)
         createAction = QWidgetAction(self)
@@ -41,7 +41,7 @@ class ProbesActions(NFrameContainer):
         #create.clicked.connect(self._createTargetWizard)
 
         clear = QPushButton(self)
-        clear.setFixedWidth(32)
+        clear.setFixedWidth(30)
         clear.setIcon(nocapi.nGetIcon('edit-clear'))
         clear.clicked.connect(self._line.clear)
 
