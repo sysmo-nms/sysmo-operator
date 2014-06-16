@@ -30,6 +30,7 @@ from    opus.monitor.trees_area.tree_probes.controls import ProbesActions
 from    opus.monitor.trees_area.tree_probes.model    import ProbeModel
 from    opus.monitor.trees_area.tree_probes.logwin   import LoggerView
 from    opus.monitor.commands.wizards import UserActionsWizard
+
 import  opus.monitor.api    as monapi
 import  nocapi
 
@@ -53,6 +54,8 @@ class ProbesTreeview(QTreeView):
         ProbesTreeview.singleton = self
         self._viewDialogs = dict()
         self._initStyle()
+        self._puActionWiz  = None
+        self._tuActionWiz  = None
         self.model   = ProbeModel(self)
         self.proxy   = QSortFilterProxyModel(self)
         self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
@@ -116,7 +119,6 @@ class ProbesTreeview(QTreeView):
         #######################################################################
 
         self.configureAction = QAction(self.tr('Configure new action'), self)
-        self.configureAction.triggered.connect(self._launchUserActionsWiz)
         self.targetMenu.addMenu(self.localMenu)
         self.targetMenu.addAction(self.configureAction)
 
@@ -152,6 +154,21 @@ class ProbesTreeview(QTreeView):
 
         self.probeMenu  = QMenu(self)
 
+
+
+        #######################################################################
+        ## DYNAMIC TARGETS MENUS ##############################################
+        #######################################################################
+        self.localProbeMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localProbeMenu.setDisabled(True)
+
+        self.configureProbeAction = QAction(self.tr('Configure new action'), self)
+        self.probeMenu.addMenu(self.localProbeMenu)
+        self.probeMenu.addAction(self.configureProbeAction)
+        self.probeMenu.addAction(self.configureProbeAction)
+        #######################################################################
+        self.probeMenu.addSeparator()
+
         probeAction = QAction(self.tr('Open log viewew'), self)
         self.probeMenu.addAction(probeAction)
 
@@ -182,22 +199,11 @@ class ProbesTreeview(QTreeView):
         self.probeMenu.addAction(probeAction)
 
 
-        self.noneMenu = QMenu(self)
-
-        noneAction = QAction(self.tr('Create a new target'), self)
-        self.noneMenu.addAction(noneAction)
-        noneAction.triggered[bool].connect(self.createTarget)
-
-        noneAction = QAction(self.tr('Select all'), self)
-        self.noneMenu.addAction(noneAction)
-
-
-    def createTarget(self): pass
     def createProbe(self): pass
     def configureProbe(self): pass
 
-    def _launchUserActionsWiz(self):
-        ua = UserActionsWizard(self)
+    def _launchUserActionsWiz(self, elem):
+        uaWiz = UserActionsWizard(self, element=elem)
 
     def getSelectedElements(self):
         proxyIndexes = self.selectedIndexes()
@@ -218,18 +224,43 @@ class ProbesTreeview(QTreeView):
         QTreeView.selectionChanged(self, selected, deselected)
 
     def _showMenu(self, point):
+        print "showMenu:", point
         index = self.proxy.mapToSource(self.indexAt(point))
         item  = self.model.itemFromIndex(index)
+        print "index: ", item
         if      item.__class__.__name__ == 'ProbeItem':
+            self._prepareMenuForProbe(item.name)
             self.probeMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'TargetItem':
+            print "prepare target menu for: ", item.name
             self._prepareMenuForTarget(item.name)
             self.targetMenu.popup(self.mapToGlobal(point))
-        elif    item.__class__.__name__ == 'NoneType':
-            self.noneMenu.popup(self.mapToGlobal(point))
+        elif    item.__class__.__name__ == 'NoneType': pass
+
+    def _prepareMenuForProbe(self, probe):
+        uactions = monapi.getUActionsFor(probe)
+        if self._puActionWiz != None:
+            self.configureProbeAction.triggered.disconnect(self._puActionWiz)
+        self._puActionWiz = partial(self._launchUserActionsWiz, probe)
+        self.configureProbeAction.triggered.connect(self._puActionWiz)
+        if len(uactions) == 0:
+            self.localProbeMenu.setDisabled(True)
+        else:
+            self.localProbeMenu.setDisabled(False)
+            self.localProbeMenu.clear()
+            for i in range(len(uactions)):
+                qa = QAction(uactions[i], self)
+                callback = partial(self._userAction, probe, uactions[i])
+                qa.triggered.connect(callback)
+                self.localProbeMenu.addAction(qa)
 
     def _prepareMenuForTarget(self, target):
+        print "prepare menu"
         uactions = monapi.getUActionsFor(target)
+        if self._tuActionWiz != None:
+            self.configureAction.triggered.disconnect(self._tuActionWiz)
+        self._tuActionWiz = partial(self._launchUserActionsWiz, target)
+        self.configureAction.triggered.connect(self._tuActionWiz)
         if len(uactions) == 0:
             self.localMenu.setDisabled(True)
         else:
@@ -241,8 +272,8 @@ class ProbesTreeview(QTreeView):
                 qa.triggered.connect(callback)
                 self.localMenu.addAction(qa)
 
-    def _userAction(self, target, action):
-        monapi.execUAction(action, target)
+    def _userAction(self, element, action):
+        monapi.execUAction(action, element)
 
     #def mousePressEvent(self, pressEvent):
         #button = pressEvent.button()

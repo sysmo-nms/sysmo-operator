@@ -31,10 +31,11 @@ import opus.monitor.commands.user_actions_wizard.wizard_pages as UActionPages
 
 
 class UserActionsWizard(QWizard):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, element=None):
         super(UserActionsWizard, self).__init__(parent)
+
         self.setModal(True)
-        page1 = UActionPages.Page1(self)
+        page1 = UActionPages.Page1(self, element)
         self.setPage(1, page1)
         self.setStartId(1)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
@@ -62,6 +63,8 @@ class ProbeWizard(QWizard):
         self.setStartId(1)
         self.page1_config = None
         self.page3_config = None
+        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('radar'))
+        self.setPixmap(QWizard.LogoPixmap,nocapi.nGetPixmap('applications-system'))
         # page2 use QWizard.registerField
         # self.page2_config = None 
         self.show()
