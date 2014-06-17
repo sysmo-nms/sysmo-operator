@@ -37,9 +37,9 @@ class UserActions(QObject):
         self._createConfExample()
         self._loadSettings()
 
-    def getUActionsFor(self, target):
-        if target in self._UACfg.keys():
-            return self._UACfg[target]
+    def getUActionsFor(self, element):
+        if element in self._UACfg.keys():
+            return self._UACfg[element]
         else:
             return []
             
@@ -56,6 +56,12 @@ class UserActions(QObject):
 
         args = shlex.split(line)
         subprocess.Popen(args)
+
+    def getUActionsCmds(self):
+        return self._UACmds
+
+    def getUActionsCfgs(self):
+        return self._UACfg
 
     def _getTargetsDict(self):
         return opus.monitor.proxy.ChanHandler.singleton.targets

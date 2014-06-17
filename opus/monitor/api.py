@@ -1,6 +1,7 @@
 import  opus.monitor.proxy
 import  opus.monitor.trees_area.tree_probes.main
 import  opus.monitor.norrd
+import  opus.monitor.commands.user_actions
 
 def connectToEvent(eventType, pyCallable):
     "Connect to events emited by the server."
@@ -25,9 +26,14 @@ def connectToUActionSettings(pyCallable):
     ua = opus.monitor.commands.user_actions.UserActions.singleton
     ua.uactionsSettings.connect(pyCallable)
 
-def getUActionsFor(target):
+def getUActionsFor(element):
     ua = opus.monitor.commands.user_actions.UserActions.singleton
-    return ua.getUActionsFor(target)
+    return ua.getUActionsFor(element)
+
+def getUActionsCmds(element):
+    sin = opus.monitor.commands.user_actions.UserActions.singleton
+    cmd = sin.getUActionsCmds()
+    return cmd
 
 def execUAction(action, target):
     ua = opus.monitor.commands.user_actions.UserActions.singleton
