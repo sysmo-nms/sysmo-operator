@@ -81,6 +81,10 @@ class ProbesTreeview(QTreeView):
 
         self.setSortingEnabled(True)
 
+    def updateAll(self):
+        print "update"
+        self.update()
+
     def _doubleClicked(self, index):
         probeItem = index.sibling(index.row(), 0)
         if probeItem.data(Qt.UserRole + 1) == "Probe":
@@ -303,11 +307,17 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     else:
                         QStyledItemDelegate.paint(self, painter, option, index)
                 elif index.column() == 2:
+                    maximum  = itemRoot.data(Qt.UserRole + 5)
+                    progress = itemRoot.data(Qt.UserRole + 4)
+                    if progress >= maximum:
+                        progress = maximum
                     opts = QStyleOptionProgressBar()
                     opts.rect = option.rect
+                    opts.textVisible = True
+                    opts.text    = '%s/%s' % (maximum - progress, maximum)
                     opts.minimum = 0
-                    opts.maximum = 100
-                    opts.progress = 50
+                    opts.maximum  = maximum
+                    opts.progress = progress
                     QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
                 else:
                     QStyledItemDelegate.paint(self, painter, option, index)

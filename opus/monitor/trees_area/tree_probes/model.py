@@ -1,4 +1,7 @@
-from    PySide.QtCore   import Qt
+from    PySide.QtCore   import (
+    Qt,
+    QTimer
+)
 from    PySide.QtGui    import (
     QStandardItemModel,
     QStandardItem
@@ -10,6 +13,13 @@ import opus.monitor.api as monapi
 class ProbeModel(QStandardItemModel):
     def __init__(self, parent):
         super(ProbeModel, self).__init__(parent)
+        ProbeModel.singleton = self
+        self._probeView = parent
+        self.ticsignal = QTimer()
+        self.ticsignal.setInterval(1000)
+        self.ticsignal.setSingleShot(False)
+        self.ticsignal.start()
+
         self.setHorizontalHeaderLabels([
                 "Targets/Probes",
                 "Loggers",
@@ -156,6 +166,8 @@ class TargetItem(QStandardItem):
 class ProbeItem(QStandardItem):
     def __init__(self, data):
         super(ProbeItem, self).__init__()
+        self._ticvalue = 0
+        ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
         if 'bmonitor_logger_rrd' in data['value']['loggers'].keys():
             self._logsRrd = True
         else:
@@ -171,6 +183,10 @@ class ProbeItem(QStandardItem):
         self.setColumnCount(9)
 
 
+    def _tictimeout(self):
+        self._ticvalue = self._ticvalue + 1
+        self.emitDataChanged()
+
     def data(self, role):
         if   role == Qt.DecorationRole:
             return self._getIconStatus()
@@ -184,6 +200,10 @@ class ProbeItem(QStandardItem):
             return self._logsRrd
         elif role == (Qt.UserRole + 3):
             return self.name
+        elif role == (Qt.UserRole + 4):
+            return self._ticvalue
+        elif role == (Qt.UserRole + 5):
+            return self.probeDict['value']['step']
         else:
             return QStandardItem.data(self, role)
 

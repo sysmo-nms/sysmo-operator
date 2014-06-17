@@ -40,7 +40,7 @@ class UserActionsWizard(QWizard):
         self.setStartId(1)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
         self.setWizardStyle(QWizard.ModernStyle)
-        #self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('console'))
+        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('console'))
         self.setPixmap(QWizard.LogoPixmap,nocapi.nGetPixmap('applications-system'))
         self.show()
 
