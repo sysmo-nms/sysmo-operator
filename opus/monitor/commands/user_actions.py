@@ -13,6 +13,7 @@ from noctopus_widgets import (
     NGridContainer
 )
 
+import nocapi
 import shlex
 import re
 import subprocess
@@ -34,7 +35,8 @@ class UserActions(QObject):
         super(UserActions, self).__init__(parent)
         self._settings = QSettings()
         UserActions.singleton = self
-        self._createConfExample()
+        #self._createConfExample()
+        nocapi.nConnectWillClose(self._saveSettings)
         self._loadSettings()
 
     def getUActionsFor(self, element):
@@ -60,9 +62,6 @@ class UserActions(QObject):
     def getUActionsCmds(self):
         return self._UACmds
 
-    def getUActionsCfgs(self):
-        return self._UACfg
-
     def _getTargetsDict(self):
         return opus.monitor.proxy.ChanHandler.singleton.targets
 
@@ -70,8 +69,18 @@ class UserActions(QObject):
         self._UACmds = self._settings.value('monitor/user_actions_cmds')
         self._UACfg  = self._settings.value('monitor/user_actions_cfg')
 
+    def _saveSettings(self):
+        self._settings.setValue('monitor/user_actions_cmds', self._UACmds)
+        self._settings.setValue('monitor/user_actions_cfg',  self._UACfg)
+        print "will close"
 
-
+    def addTargetAction(self, action, target):
+        if target in self._UACfg.keys():
+            actionList = self._UACfg[target]
+            actionList.append(action)
+            self._UACfg[target] = actionList
+        else:
+            self._UACfg[target] = [action]
 
 
     def _createConfExample(self):

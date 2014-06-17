@@ -54,6 +54,17 @@ class NGridContainer(QGridLayout):
         super(NGridContainer, self).__init__(parent)
         self.setContentsMargins(0,0,0,0)
 
+class NMenuButton(QPushButton):
+    def __init__(self, parent=None):
+        super(NMenuButton, self).__init__(parent)
+        self.setStyleSheet('''
+            NMenuButton::menu-indicator {
+                subcontrol-position: left bottom;
+                subcontrol-origin:   padding;
+                right: -5px;
+            }
+        ''')
+
 class NInfoButton(QPushButton):
     showInfo = Signal(bool)
     def __init__(self, parent=None):
