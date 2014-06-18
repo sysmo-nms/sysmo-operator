@@ -314,7 +314,7 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     opts = QStyleOptionProgressBar()
                     opts.rect = option.rect
                     opts.textVisible = True
-                    opts.text    = '%s/%s' % (maximum - progress, maximum)
+                    opts.text    = '%s seconds' % (maximum - progress)
                     opts.minimum = 0
                     opts.maximum  = maximum
                     opts.progress = progress

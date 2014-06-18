@@ -124,7 +124,12 @@ class TargetItem(QStandardItem):
         self.emitDataChanged()
 
     def handleProbeActivity(self, msg):
-        print "probe activity!"
+        count = self.rowCount()
+        probe = msg['value']['name']
+        for i in range(count):
+            if self.child(i).name == probe:
+                self.child(i).handleActivity(msg)
+                break
 
     def updateState(self, msg):
         self.targetDict = msg
@@ -182,6 +187,7 @@ class ProbeItem(QStandardItem):
         else:
             self._logsRrd = False
 
+        self._lastReturn = ""
         self.name       = data['value']['name']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
@@ -191,6 +197,11 @@ class ProbeItem(QStandardItem):
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
         self.setColumnCount(9)
 
+
+    def handleActivity(self, msg):
+        self._ticvalue = 0
+        self._lastReturn = msg['value']['textual']
+        self.emitDataChanged()
 
     def _tictimeout(self):
         self._ticvalue = self._ticvalue + 1
