@@ -1,6 +1,7 @@
 from    PySide.QtCore   import (
     Qt,
-    QSize
+    QSize,
+    QTimeLine
 )
 
 from    PySide.QtGui    import (
@@ -16,7 +17,9 @@ from    PySide.QtGui    import (
     QApplication,
     QStyle,
     QImage,
-    QAbstractItemView
+    QAbstractItemView,
+    QPalette,
+    QColor
 )
 
 from    noctopus_widgets    import (
@@ -307,19 +310,59 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     else:
                         QStyledItemDelegate.paint(self, painter, option, index)
                 elif index.column() == 2:
-                    maximum  = itemRoot.data(Qt.UserRole + 5)
-                    progress = itemRoot.data(Qt.UserRole + 4)
-                    if progress >= maximum:
-                        progress = maximum
+                    timeout     = itemRoot.data(Qt.UserRole + 6)
+                    step        = itemRoot.data(Qt.UserRole + 5)
+                    progress    = itemRoot.data(Qt.UserRole + 4)
+
                     opts = QStyleOptionProgressBar()
+                    if progress >= (step + timeout):
+                        prog = timeout
+                        prog = timeout - prog
+                        maxi = timeout
+                        opts.text    = 'Timeout: %s' % prog
+                        opts.palette = PBarRedPalette()
+                    elif progress > step:
+                        prog = progress - step
+                        prog = timeout - prog
+                        maxi = timeout
+                        opts.text    = 'Timeout: %s' % prog
+                        opts.palette = PBarRedPalette()
+                    else:
+                        prog = progress
+                        maxi = step
+                        opts.text    = 'Step: %s' % (step - prog)
+
                     opts.rect = option.rect
                     opts.textVisible = True
-                    opts.text    = '%s seconds' % (maximum - progress)
                     opts.minimum = 0
-                    opts.maximum  = maximum
-                    opts.progress = progress
+                    opts.maximum  = maxi
+                    opts.progress = prog
                     QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
+                elif index.column() == 5:
+                    timeout     = itemRoot.data(Qt.UserRole + 6)
+                    step        = itemRoot.data(Qt.UserRole + 5)
+                    painter.drawText(option.rect, Qt.AlignCenter, '%s/%s' % (step,timeout))
+                elif index.column() == 6:
+                    state       = itemRoot.data(Qt.UserRole + 7)
+                    if state == 1:
+                        s = 'running'
+                    else:
+                        s = 'suspended'
+                    painter.drawText(option.rect, Qt.AlignCenter, '%s' % (s))
+                elif index.column() == 8:
+                    pconf       = itemRoot.data(Qt.UserRole + 8)
+                    painter.drawText(option.rect, Qt.AlignVCenter|Qt.AlignLeft, '%s' % (pconf))
+
                 else:
                     QStyledItemDelegate.paint(self, painter, option, index)
         else:
             QStyledItemDelegate.paint(self, painter, option, index)
+
+class PBarRedPalette(QPalette):
+    def __init__(self):
+        super(PBarRedPalette, self).__init__()
+        red = QColor(204,0,0)
+        self.setColor(QPalette.Highlight, red)
+
+
+

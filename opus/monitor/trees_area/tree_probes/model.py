@@ -25,13 +25,13 @@ class ProbeModel(QStandardItemModel):
         self.setHorizontalHeaderLabels([
                 "Targets/Probes",
                 "Loggers",
-                "Next return",
+                "Progress",
                 "Status",
                 "Description",
                 "Step/Timeout",
                 "State",
                 "Ip address",
-                "Last return"
+                "Check"
         ])
         self.setColumnCount(9)
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
@@ -188,6 +188,7 @@ class ProbeItem(QStandardItem):
             self._logsRrd = False
 
         self._lastReturn = ""
+        self._type      = data['value']['probeMod']
         self.name       = data['value']['name']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
@@ -196,6 +197,7 @@ class ProbeItem(QStandardItem):
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
         self.setColumnCount(9)
+        print self.probeDict
 
 
     def handleActivity(self, msg):
@@ -224,6 +226,15 @@ class ProbeItem(QStandardItem):
             return self._ticvalue
         elif role == (Qt.UserRole + 5):
             return self.probeDict['value']['step']
+        elif role == (Qt.UserRole + 6):
+            return self.probeDict['value']['timeout']
+        elif role == (Qt.UserRole + 7):
+            return self.probeDict['value']['active']
+        elif role == (Qt.UserRole + 8):
+            if self._type == 'bmonitor_probe_ncheck':
+                return self.probeDict['value']['probeconf']
+            else:
+                return ''
         else:
             return QStandardItem.data(self, role)
 
