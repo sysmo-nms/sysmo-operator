@@ -46,6 +46,7 @@ class ChanHandler(QObject):
         self.masterSignalsDict['probeInfo']     = SimpleSignal(self)
         self.masterSignalsDict['targetInfo']    = SimpleSignal(self)
         self.masterSignalsDict['probeModInfo']  = SimpleSignal(self)
+        self.masterSignalsDict['probeActivity'] = SimpleSignal(self)
         self.masterSignalsDict['probeDump']     = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
         self.masterSignalsDict['probeEventMsg'] = SimpleSignal(self)
@@ -82,6 +83,9 @@ class ChanHandler(QObject):
 
         elif    msg['msgType'] == 'probeModInfo':
             self.masterSignalsDict['probeModInfo'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'probeActivity':
+            self.masterSignalsDict['probeActivity'].signal.emit(msg)
 
         elif    msg['msgType'] == 'staticChanInfo':
             chan    = msg['value']

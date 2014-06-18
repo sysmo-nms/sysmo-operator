@@ -15,6 +15,8 @@ class ProbeModel(QStandardItemModel):
         super(ProbeModel, self).__init__(parent)
         ProbeModel.singleton = self
         self._probeView = parent
+        self._probeItems  = dict()
+        self._targetItems = dict()
         self.ticsignal = QTimer()
         self.ticsignal.setInterval(1000)
         self.ticsignal.setSingleShot(False)
@@ -34,6 +36,13 @@ class ProbeModel(QStandardItemModel):
         self.setColumnCount(9)
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
         monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
+        monapi.connectToEvent('probeActivity', self._handleProbeActivity)
+
+    def _handleProbeActivity(self, msg):
+        target = msg['value']['target']
+        (boo,parent) = self._itemExist(target)
+        if boo == False: return
+        parent.handleProbeActivity(msg)
 
     def _handleTargetInfo(self, msg):
         (boo, target) = self._itemExist(msg['value']['name'])
@@ -44,11 +53,8 @@ class ProbeModel(QStandardItemModel):
 
     def _handleProbeInfo(self, msg):
         target = msg['value']['target']
-        (boo, parent) = self._itemExist(target)
-        if boo == False:
-            self.appendRow(ProbeItem(msg))
-        else:
-            parent.handleProbeInfo(msg)
+        (_, parent) = self._itemExist(target)
+        parent.handleProbeInfo(msg)
 
     def _updateRow(self, item, msg):
         item.updateState(msg)
@@ -116,6 +122,9 @@ class TargetItem(QStandardItem):
 
         self._setWorstStatus()
         self.emitDataChanged()
+
+    def handleProbeActivity(self, msg):
+        print "probe activity!"
 
     def updateState(self, msg):
         self.targetDict = msg

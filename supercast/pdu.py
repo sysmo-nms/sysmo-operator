@@ -227,8 +227,8 @@ class MonitorProbeInfo(univ.Sequence):
 
 class MonitorProbeActivity(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('probeName',    char.PrintableString()),
         namedtype.NamedType('timestamp',    univ.Integer()),
         namedtype.NamedType('probeState',   char.PrintableString()),
         namedtype.NamedType('returnStatus', char.PrintableString()),
@@ -1183,8 +1183,8 @@ def decode(pdu):
                     }
                 }
             elif msg3_type == 'probeActivity':
-                channel     = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
+                target      = str(msg3.getComponentByName('target'))
+                probeName   = msg3.getComponentByName('probeName')
                 time        = msg3.getComponentByName('timestamp')
                 probeState  = str(msg3.getComponentByName('probeState'))
                 returnStatus = str(msg3.getComponentByName('returnStatus'))
@@ -1193,12 +1193,12 @@ def decode(pdu):
                     'from': msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'channel':  channel,
-                        'id':       int(probeId),
-                        'timestamp': int(time),
-                        'probeState': probeState,
+                        'target':       target,
+                        'name':         probeName,
+                        'timestamp':    int(time),
+                        'probeState':   probeState,
                         'returnStatus': returnStatus,
-                        'textual': textual
+                        'textual':      textual
 
                     }
                 }
