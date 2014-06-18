@@ -338,21 +338,27 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     opts.maximum  = maxi
                     opts.progress = prog
                     QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
-                elif index.column() == 5:
+                elif index.column() == 4:
                     timeout     = itemRoot.data(Qt.UserRole + 6)
                     step        = itemRoot.data(Qt.UserRole + 5)
-                    painter.drawText(option.rect, Qt.AlignCenter, '%s/%s' % (step,timeout))
-                elif index.column() == 6:
+                    painter.drawText(option.rect, Qt.AlignVCenter, '%s/%s' % (step,timeout))
+                elif index.column() == 5:
                     state       = itemRoot.data(Qt.UserRole + 7)
                     if state == 1:
                         s = 'running'
                     else:
                         s = 'suspended'
                     painter.drawText(option.rect, Qt.AlignCenter, '%s' % (s))
-                elif index.column() == 8:
+                elif index.column() == 7:
                     pconf       = itemRoot.data(Qt.UserRole + 8)
                     painter.drawText(option.rect, Qt.AlignVCenter|Qt.AlignLeft, '%s' % (pconf))
 
+                else:
+                    QStyledItemDelegate.paint(self, painter, option, index)
+            elif itemRoot.data(Qt.UserRole + 1) == "Target":
+                if index.column() == 6:
+                    ip       = itemRoot.data(Qt.UserRole + 2)
+                    painter.drawText(option.rect, Qt.AlignCenter, '%s' % ip)
                 else:
                     QStyledItemDelegate.paint(self, painter, option, index)
         else:

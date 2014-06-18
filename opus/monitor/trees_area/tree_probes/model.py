@@ -27,13 +27,11 @@ class ProbeModel(QStandardItemModel):
                 "Loggers",
                 "Progress",
                 "Status",
-                "Description",
                 "Step/Timeout",
                 "State",
-                "Ip address",
-                "Check"
+                "Ip|Host",
+                "Command"
         ])
-        self.setColumnCount(9)
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
         monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
         monapi.connectToEvent('probeActivity', self._handleProbeActivity)
@@ -79,7 +77,7 @@ class TargetItem(QStandardItem):
         self.searchString   = self.name
         self.targetDict = data
         self.setFlags(Qt.ItemIsEnabled)
-        self.setColumnCount(9)
+        self.setColumnCount(8)
         self._generateToolTip()
 
     def data(self, role):
@@ -98,6 +96,8 @@ class TargetItem(QStandardItem):
             return self.searchString
         elif role == (Qt.UserRole + 1):
             return "Target"
+        elif role == (Qt.UserRole + 2):
+            return self.targetDict['value']['properties']['ip']
         else:
             return QStandardItem.data(self, role)
 
@@ -196,7 +196,7 @@ class ProbeItem(QStandardItem):
         self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
-        self.setColumnCount(9)
+        self.setColumnCount(8)
         print self.probeDict
 
 
