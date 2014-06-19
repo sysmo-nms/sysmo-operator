@@ -2,7 +2,7 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
 from    PySide.QtWebKit     import *
-from    noctopus_widgets    import NFrame
+from    noctopus_widgets    import NFrame, NFrameContainer
 from    proxy               import AbstractChannelWidget
 import  nocapi
 
@@ -155,15 +155,14 @@ class StatusSummary(QPushButton):
 ##############
 # OSM WIDGET #
 ##############
-class OSMView(QFrame):
+class OSMView(NFrameContainer):
     def __init__(self, parent):
         super(OSMView, self).__init__(parent)
-        self.setContentsMargins(0,0,0,0)
 
         self.osm    = QWebView(self)
         # XXX Found bug here. QWebView do not properly quit on application
         # shutdow when he is loading a page.
-        #self.osm.load(QUrl('./html/OpenStreetMap.html'))
+        self.osm.load(QUrl('./html/OpenStreetMap.html'))
 
         self.shade = QFrame(self)
         self.shade.setAutoFillBackground(False)
