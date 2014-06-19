@@ -351,20 +351,14 @@ class NMainWindow(QMainWindow):
         plastiqueAction.setCheckable(True)
         plastiqueAction.triggered.connect(partial(self._setStyle, 'plastique'))
     
-        windowAction    = QAction(self.tr('Windows classic'), self)
-        windowAction.setCheckable(True)
-        windowAction.triggered.connect(partial(self._setStyle, 'windows'))
-    
         styleToggle = QActionGroup(self)
         styleToggle.addAction(plastiqueAction)
         styleToggle.addAction(nativeAction)
-        styleToggle.addAction(windowAction)
         styleToggle.setExclusive(True)
     
         menuStyle = menu.addMenu(self.tr('Style'))
         menuStyle.addAction(nativeAction)
         menuStyle.addAction(plastiqueAction)
-        menuStyle.addAction(windowAction)
 
         "color sub menu"
         self.menuColor = menuStyle.addMenu(self.tr('Colors'))
@@ -410,8 +404,6 @@ class NMainWindow(QMainWindow):
             self.menuColor.setDisabled(True)
         elif self._noctopusStyle == 'plastique':
             plastiqueAction.setChecked(True)
-        elif self._noctopusStyle == 'windows':
-            windowAction.setChecked(True)
         else:
             nativeAction.setChecked(True)
 
