@@ -35,7 +35,7 @@ class UserActions(QObject):
         super(UserActions, self).__init__(parent)
         self._settings = QSettings()
         UserActions.singleton = self
-        #self._createConfExample()
+        self._createConfExample()
         nocapi.nConnectWillClose(self._saveSettings)
         self._loadSettings()
 
@@ -94,10 +94,3 @@ class UserActions(QObject):
         commandDb = dict()
         commandDb['Access SSH'] = command
         self._settings.setValue('monitor/user_actions_cmds', commandDb)
-
-        config = dict()
-        config['target-1021653'] = ['Access SSH']
-        config['target-146610']  = ['Access SSH']
-        config['target-902996']  = ['Access SSH']
-        config['target-501661']  = ['Access SSH']
-        self._settings.setValue('monitor/user_actions_cfg', config)
