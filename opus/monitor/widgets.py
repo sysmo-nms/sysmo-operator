@@ -2,7 +2,12 @@ from    PySide.QtGui        import *
 from    PySide.QtCore       import *
 from    PySide.QtSvg        import *
 from    PySide.QtWebKit     import *
-from    noctopus_widgets    import NFrame, NFrameContainer
+from    noctopus_widgets    import (
+    NFrame,
+    NFrameContainer,
+    NGridContainer,
+    NGrid
+)
 from    proxy               import AbstractChannelWidget
 import  nocapi
 
@@ -169,7 +174,7 @@ class OSMView(NFrameContainer):
         self.shade.hide()
         self._browsable = True
 
-        self.grid = QGridLayout(self)
+        self.grid = NGrid(self)
         self.grid.addWidget(self.osm, 0,0)
         self.setLayout(self.grid)
 
