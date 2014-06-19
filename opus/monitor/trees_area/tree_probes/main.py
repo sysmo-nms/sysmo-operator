@@ -91,7 +91,6 @@ class ProbesTreeview(QTreeView):
         self.setSortingEnabled(True)
 
     def updateAll(self):
-        print "update"
         self.update()
 
     def _doubleClicked(self, index):
@@ -237,15 +236,12 @@ class ProbesTreeview(QTreeView):
         QTreeView.selectionChanged(self, selected, deselected)
 
     def _showMenu(self, point):
-        print "showMenu:", point
         index = self.proxy.mapToSource(self.indexAt(point))
         item  = self.model.itemFromIndex(index)
-        print "index: ", item
         if      item.__class__.__name__ == 'ProbeItem':
             self._prepareMenuForProbe(item.name)
             self.probeMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'TargetItem':
-            print "prepare target menu for: ", item.name
             self._prepareMenuForTarget(item.name)
             self.targetMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'NoneType': pass
@@ -268,7 +264,6 @@ class ProbesTreeview(QTreeView):
                 self.localProbeMenu.addAction(qa)
 
     def _prepareMenuForTarget(self, target):
-        print "prepare menu"
         uactions = monapi.getUActionsFor(target)
         if self._tuActionWiz != None:
             self.configureAction.triggered.disconnect(self._tuActionWiz)
@@ -358,7 +353,6 @@ class MonitorItemDelegate(QStyledItemDelegate):
                 elif index.column() == 7:
                     pconf       = itemRoot.data(Qt.UserRole + 8)
                     painter.drawText(option.rect, Qt.AlignVCenter|Qt.AlignLeft, '%s' % (pconf))
-
                 else:
                     QStyledItemDelegate.paint(self, painter, option, index)
             elif itemRoot.data(Qt.UserRole + 1) == "Target":

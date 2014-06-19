@@ -197,7 +197,6 @@ class ProbeItem(QStandardItem):
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
         self.setColumnCount(8)
-        print self.probeDict
 
 
     def handleActivity(self, msg):
