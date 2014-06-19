@@ -83,8 +83,8 @@ class ProbesTreeview(QTreeView):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self._initMenus()
-        self.contextActions = QAction('test', self)
-        self.addAction(self.contextActions)
+        #self.contextActions = QAction('test', self)
+        #self.addAction(self.contextActions)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
 
         self.customContextMenuRequested.connect(self._showMenu)
@@ -143,10 +143,12 @@ class ProbesTreeview(QTreeView):
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
         self.localMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
         self.localMenu.setDisabled(True)
         #######################################################################
 
         self.configureAction = QAction(self.tr('Configure new action'), self)
+        #self.configureAction.setIcon(nocapi.nGetIcon('applications-system'))
         self.targetMenu.addMenu(self.localMenu)
         self.targetMenu.addAction(self.configureAction)
 
@@ -156,28 +158,35 @@ class ProbesTreeview(QTreeView):
         self.targetMenu.addSeparator()
 
         targetAction = QAction(self.tr('Open target documentation'), self)
+        targetAction.setIcon(nocapi.nGetIcon('folder-saved-search'))
         self.targetMenu.addAction(targetAction)
 
         self.targetMenu.addSeparator()
 
         targetAction = QAction(self.tr('Suspend all target probes'), self)
+        targetAction.setIcon(nocapi.nGetIcon('media-playback-pause'))
         self.targetMenu.addAction(targetAction)
 
         targetAction = QAction(self.tr('Add entry to the target diary'), self)
+        #targetAction.setIcon(nocapi.nGetIcon('accessories-text-editor'))
         self.targetMenu.addAction(targetAction)
 
+
         targetAction = QAction(self.tr('Create a new probe'), self)
+        targetAction.setIcon(nocapi.nGetIcon('list-add'))
         targetAction.triggered[bool].connect(self.createProbe)
         self.targetMenu.addAction(targetAction)
 
         self.targetMenu.addSeparator()
 
         targetAction = QAction(self.tr('Delete this target ans his probes'), self)
+        targetAction.setIcon(nocapi.nGetIcon('process-stop'))
         self.targetMenu.addAction(targetAction)
 
         self.targetMenu.addSeparator()
 
         targetAction = QAction(self.tr('Properties'), self)
+        #targetAction.setIcon(nocapi.nGetIcon('edit-paste'))
         self.targetMenu.addAction(targetAction)
 
         self.probeMenu  = QMenu(self)
@@ -188,6 +197,7 @@ class ProbesTreeview(QTreeView):
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
         self.localProbeMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localProbeMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
         self.localProbeMenu.setDisabled(True)
 
         self.configureProbeAction = QAction(self.tr('Configure new action'), self)
@@ -203,22 +213,26 @@ class ProbesTreeview(QTreeView):
         self.probeMenu.addSeparator()
 
         probeAction = QAction(self.tr('Open probe documentation'), self)
+        probeAction.setIcon(nocapi.nGetIcon('folder-saved-search'))
         self.probeMenu.addAction(probeAction)
 
         self.probeMenu.addSeparator()
 
         probeAction = QAction(self.tr('Suspend probe'), self)
+        probeAction.setIcon(nocapi.nGetIcon('media-playback-pause'))
         self.probeMenu.addAction(probeAction)
 
         probeAction = QAction(self.tr('Add entry to the probe diary'), self)
         self.probeMenu.addAction(probeAction)
 
         probeAction = QAction(self.tr('Force check'), self)
+        probeAction.setIcon(nocapi.nGetIcon('software-update-available'))
         self.probeMenu.addAction(probeAction)
 
         self.probeMenu.addSeparator()
 
         probeAction = QAction(self.tr('Delete this probe'), self)
+        probeAction.setIcon(nocapi.nGetIcon('process-stop'))
         self.probeMenu.addAction(probeAction)
 
         self.probeMenu.addSeparator()

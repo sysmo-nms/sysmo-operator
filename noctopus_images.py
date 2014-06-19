@@ -58,6 +58,9 @@ def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+        'accessories-text-editor': QIcon(os.path.join(iconsPath, "accessories-text-editor.svg")),
+        'edit-paste': QIcon(os.path.join(iconsPath, "edit-paste.svg")),
+        'media-playback-pause': QIcon(os.path.join(iconsPath, "media-playback-pause.svg")),
         'text-x-generic-template': QIcon(os.path.join(iconsPath, "text-x-generic-template.svg")),
         'face-devilish': QIcon(os.path.join(iconsPath, "face-devilish.svg")),
         'face-smile': QIcon(os.path.join(iconsPath, "face-smile.svg")),
@@ -147,6 +150,9 @@ def initImages():
     global imageSet
     global imagesPath
     imageSet = {
+        'accessories-text-editor': os.path.join(imagesPath, "accessories-text-editor.svg"),
+        'edit-paste': os.path.join(imagesPath, "edit-paste.svg"),
+        'media-playback-pause': os.path.join(imagesPath, "media-playback-pause.svg"),
         'rrdtool-logo': os.path.join(imagesPath, "rrdtool_logo.png"),
         '60-day-trial-banner': os.path.join(imagesPath, "60-day-trial-banner.svg"),
         '60-day-trial-banner-reversed': os.path.join(imagesPath, "60-day-trial-banner-reversed.svg"),
