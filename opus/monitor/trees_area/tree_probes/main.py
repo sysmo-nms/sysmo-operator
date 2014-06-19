@@ -1,7 +1,8 @@
 from    PySide.QtCore   import (
     Qt,
     QSize,
-    QTimeLine
+    QTimeLine,
+    QSettings
 )
 
 from    PySide.QtGui    import (
@@ -59,6 +60,8 @@ class ProbesTree(NFrame):
 class ProbesTreeview(QTreeView):
     def __init__(self, parent):
         super(ProbesTreeview, self).__init__(parent)
+        nocapi.nConnectWillClose(self._saveSettings)
+        
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         ProbesTreeview.singleton = self
         self._viewDialogs = dict()
@@ -89,6 +92,19 @@ class ProbesTreeview(QTreeView):
         self.doubleClicked.connect(self._doubleClicked)
 
         self.setSortingEnabled(True)
+        self._loadSettings()
+
+    def _loadSettings(self):
+        settings = QSettings()
+        state   = settings.value('monitor/probe_treeview_header')
+        if state != None:
+            header = self.header()
+            header.restoreState(state)
+
+    def _saveSettings(self):
+        header = self.header()
+        settings = QSettings()
+        settings.setValue('monitor/probe_treeview_header', header.saveState())
 
     def updateAll(self):
         self.update()
@@ -309,7 +325,7 @@ class MonitorItemDelegate(QStyledItemDelegate):
                         option.rect.setSize(self._rrdToolSize)
                         painter.drawImage(option.rect, self._rrdToolLogo)
                     else:
-                        QStyledItemDelegate.paint(self, painter, option, index)
+                        return
                 elif index.column() == 2:
                     timeout     = itemRoot.data(Qt.UserRole + 6)
                     step        = itemRoot.data(Qt.UserRole + 5)
@@ -354,13 +370,13 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     pconf       = itemRoot.data(Qt.UserRole + 8)
                     painter.drawText(option.rect, Qt.AlignVCenter|Qt.AlignLeft, '%s' % (pconf))
                 else:
-                    QStyledItemDelegate.paint(self, painter, option, index)
+                    return
             elif itemRoot.data(Qt.UserRole + 1) == "Target":
                 if index.column() == 6:
                     ip       = itemRoot.data(Qt.UserRole + 2)
                     painter.drawText(option.rect, Qt.AlignCenter, '%s' % ip)
                 else:
-                    QStyledItemDelegate.paint(self, painter, option, index)
+                    return
         else:
             QStyledItemDelegate.paint(self, painter, option, index)
 

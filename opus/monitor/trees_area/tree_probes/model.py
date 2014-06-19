@@ -76,7 +76,7 @@ class TargetItem(QStandardItem):
         self.status     = 'UNKNOWN'
         self.probeSearchStrings = list()
         self.targetDict = data
-        self.setFlags(Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
         self._generateToolTip()
 
@@ -195,7 +195,7 @@ class ProbeItem(QStandardItem):
         self.target     = data['value']['target']
         self.status     = data['value']['status']
         self.probeDict = data
-        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
+        self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
 
 
