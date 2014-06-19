@@ -74,7 +74,7 @@ class TargetItem(QStandardItem):
         self.name       = data['value']['name']
         self.nodeType   = 'target'
         self.status     = 'UNKNOWN'
-        self.searchString   = self.name
+        self.probeSearchStrings = list()
         self.targetDict = data
         self.setFlags(Qt.ItemIsEnabled)
         self.setColumnCount(8)
@@ -93,7 +93,10 @@ class TargetItem(QStandardItem):
             else:
                 return self.targetDict['value']['name']
         elif role == Qt.UserRole:
-            return self.searchString
+            searchString = ""
+            for i in range(self.rowCount()):
+                searchString += self.child(i).descr
+            return self.data(Qt.DisplayRole) + searchString
         elif role == (Qt.UserRole + 1):
             return "Target"
         elif role == (Qt.UserRole + 2):
@@ -112,13 +115,9 @@ class TargetItem(QStandardItem):
                 break
 
         if probeExist == False:
-            self.appendRow(ProbeItem(msg))
+            self.appendRow(ProbeItem(msg, self))
         else:
             child.updateState(msg)
-
-        self.searchString = self.name
-        for i in range(self.rowCount()):
-            self.searchString += self.child(i).name
 
         self._setWorstStatus()
         self.emitDataChanged()
@@ -178,7 +177,7 @@ class TargetItem(QStandardItem):
 
 
 class ProbeItem(QStandardItem):
-    def __init__(self, data):
+    def __init__(self, data, parentItem):
         super(ProbeItem, self).__init__()
         self._ticvalue = 0
         ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
@@ -187,13 +186,14 @@ class ProbeItem(QStandardItem):
         else:
             self._logsRrd = False
 
+        self._parentItem = parentItem
         self._lastReturn = ""
         self._type      = data['value']['probeMod']
         self.name       = data['value']['name']
+        self.descr      = data['value']['descr']
         self.nodeType   = 'probe'
         self.target     = data['value']['target']
         self.status     = data['value']['status']
-        self.searchString = self.name + self.target
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled)
         self.setColumnCount(8)
@@ -215,7 +215,9 @@ class ProbeItem(QStandardItem):
         elif role == Qt.DisplayRole:
             return self.probeDict['value']['descr']
         elif role == Qt.UserRole:
-            return self.searchString
+            target = self._parentItem.data(Qt.DisplayRole)
+            probe  = self.probeDict['value']['descr']
+            return target + probe
         elif role == (Qt.UserRole + 1):
             return "Probe"
         elif role == (Qt.UserRole + 2):

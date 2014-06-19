@@ -44,11 +44,17 @@ class ProbesTree(NFrame):
         self._grid = NGrid(self)
         self._probesActions     = ProbesActions(self)
         self._probesTreeview    = ProbesTreeview(self)
+        self._connectControls()
         self._grid.addWidget(self._probesActions,   0,0)
         self._grid.addWidget(self._probesTreeview,  1,0)
         self._grid.setRowStretch(0,0)
         self._grid.setRowStretch(1,1)
         self.setLayout(self._grid)
+
+    def _connectControls(self):
+        self._probesActions.line.textChanged.connect(
+            self._probesTreeview.filterThis
+        )
 
 class ProbesTreeview(QTreeView):
     def __init__(self, parent):
