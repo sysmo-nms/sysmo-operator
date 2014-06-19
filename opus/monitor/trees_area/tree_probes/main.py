@@ -329,6 +329,8 @@ class MonitorItemDelegate(QStyledItemDelegate):
                     else:
                         return
                 elif index.column() == 2:
+                    testouille = itemRoot.data(Qt.DisplayRole)
+                    print "paint (from dataChanged?): ", testouille
                     timeout     = itemRoot.data(Qt.UserRole + 6)
                     step        = itemRoot.data(Qt.UserRole + 5)
                     progress    = itemRoot.data(Qt.UserRole + 4)

@@ -205,6 +205,7 @@ class ProbeItem(QStandardItem):
         self.emitDataChanged()
 
     def _tictimeout(self):
+        print "tictimeout: ", self.descr
         self._ticvalue = self._ticvalue + 1
         self.emitDataChanged()
 
