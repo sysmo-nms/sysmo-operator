@@ -256,9 +256,11 @@ class ProbesTreeview(QTreeView):
         item  = self.model.itemFromIndex(index)
         if      item.__class__.__name__ == 'ProbeItem':
             self._prepareMenuForProbe(item.name)
+            point.setX(point.x() + 12)
             self.probeMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'TargetItem':
             self._prepareMenuForTarget(item.name)
+            point.setX(point.x() + 12)
             self.targetMenu.popup(self.mapToGlobal(point))
         elif    item.__class__.__name__ == 'NoneType': pass
 
