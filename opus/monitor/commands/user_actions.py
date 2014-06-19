@@ -72,7 +72,6 @@ class UserActions(QObject):
     def _saveSettings(self):
         self._settings.setValue('monitor/user_actions_cmds', self._UACmds)
         self._settings.setValue('monitor/user_actions_cfg',  self._UACfg)
-        print "will close"
 
     def addTargetAction(self, action, target):
         if target in self._UACfg.keys():
