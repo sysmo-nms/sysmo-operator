@@ -7,7 +7,9 @@ from    PySide.QtGui    import (
     QScrollArea,
     QPixmap,
     QPalette,
-    QFont
+    QFont,
+    QStatusBar,
+    QProgressBar
 )
 
 from    noctopus_widgets    import (
@@ -29,16 +31,44 @@ class LoggerView(QWidget):
         super(LoggerView, self).__init__()
         self.setWindowTitle(display)
 
+        self._statusBar = LogStatusBar(self)
         scrollArea  = QScrollArea(self)
-        scrollArea.setWidget(RrdLog(scrollArea, probe))
+        scrollArea.setWidget(RrdLog(self, probe))
+
 
         grid = NGridContainer(self)
-        grid.addWidget(scrollArea)
+        grid.addWidget(scrollArea, 0,0)
+        grid.addWidget(self._statusBar,  1,0)
+        grid.setRowStretch(0,1)
+        grid.setRowStretch(1,0)
+
         self.setLayout(grid)
+
+    def setProgressMax(self, maxi):
+        self._statusBar.progress.setMaximum(maxi)
+
+    def updateProgress(self):
+        self._statusBar.updateProgress()
+
+class LogStatusBar(QStatusBar):
+    def __init__(self, parent):
+        super(LogStatusBar, self).__init__(parent)
+        self.progress = QProgressBar(self)
+        self.progress.setMinimum(0)
+        self.progress.setValue(0)
+        self.progress.setFormat(self.tr('Loading data: %p%'))
+        self.addWidget(self.progress)
+
+    def updateProgress(self):
+        val = self.progress.value()
+        self.progress.setValue(val + 1)
+        if self.progress.maximum() == val + 1:
+            self.removeWidget(self.progress)
 
 class RrdLog(AbstractChannelWidget):
     def __init__(self, parent, probe):
         super(RrdLog, self).__init__(parent, probe)
+        self._parent = parent
         self._grid = NGridContainer(self)
         self.setAutoFillBackground(True)
         self.setLayout(self._grid)
@@ -55,6 +85,7 @@ class RrdLog(AbstractChannelWidget):
 
     def _continue(self):
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
+        self._parent.setProgressMax(len(rrdConf.keys()))
         for rrdname in rrdConf.keys():
             rrdconf = rrdConf[rrdname]
             self._rrdElements[rrdname] = RrdElement(self, rrdname, rrdconf)
@@ -71,6 +102,7 @@ class RrdLog(AbstractChannelWidget):
                 fileId      = msg['data']['fileId']
                 fileName    = msg['data']['file']
                 self._rrdElements[fileId].handleDump(fileName)
+                self._parent.updateProgress()
         elif msg['msgType'] == 'probeReturn':
             for key in self._rrdElements.keys():
                 self._rrdElements[key].handleReturn(msg)
