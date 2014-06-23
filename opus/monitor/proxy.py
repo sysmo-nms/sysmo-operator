@@ -69,7 +69,7 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'probeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'rrdProbeDump':
+        elif    msg['msgType'] == 'rrdFileDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
         elif    msg['msgType'] == 'eventProbeDump':
@@ -201,7 +201,8 @@ class Channel(QObject):
         self.name = probeName
         self.loggerTextState    = None
         self.loggerEventState   = None
-        self.rrdFiles           = None
+        self.rrdFiles           = dict()
+        self.rrdEnabled         = False
 
     def synchronizeView(self, view):
         if self.loggerTextState != None:
@@ -210,7 +211,7 @@ class Channel(QObject):
             dumpMsg['logger']   = 'bmonitor_logger_text'
             dumpMsg['data']     = self.loggerTextState
             view.handleProbeEvent(dumpMsg)
-        if self.rrdFiles != None:
+        if self.rrdEnabled == True:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = 'bmonitor_logger_rrd'
@@ -241,36 +242,27 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
         elif dumpType == 'bmonitor_logger_rrd':
-            self.rrdFiles = dict()
-            for key in data:
-                rrdFile = QTemporaryFile(self)
-                rrdFile.open()
-                rrdFile.write(str(data[key]))
-                rrdFile.close()
-                fileName = rrdFile.fileName()
-                self.rrdFiles[key] = fileName 
+            self.rrdEnabled = True
+            # special dump comme in multiple pieces.
+            fileId = msg['value']['fileId']
+            rrdFile = QTemporaryFile(self)
+            rrdFile.open()
+            rrdFile.write(str(data))
+            rrdFile.close()
+            fileName = rrdFile.fileName()
+            self.rrdFiles[fileId] = fileName
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
-            dumpMsg['logger']   = dumpType
-            dumpMsg['data']     = self.rrdFiles
+            dumpMsg['logger']   = 'bmonitor_logger_rrd'
+            dumpMsg['data']     = dict()
+            dumpMsg['data']['fileId'] = fileId
+            dumpMsg['data']['file']   = fileName
             self.signal.emit(dumpMsg)
-            
-            #self.rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd']['update']
-            #self.rrdMacroBinds   = self.probeDict['loggers']['bmonitor_logger_rrd']['binds']
-            #self.rrdFile = QTemporaryFile(self)
-            #self.rrdFile.open()
-            #self.rrdFile.write(data)
-            #self.rrdFile.close()
-            #self.rrdFileName = self.rrdFile.fileName()
-            #dumpMsg = dict()
-            #dumpMsg['msgType']  = 'probeDump'
-            #dumpMsg['logger']   = dumpType
-            #dumpMsg['data']     = self.rrdFileName
         else:
             print "unknown dump type ", dumpType
 
     def handleReturn(self, msg):
-        if self.rrdFiles != None:
+        if self.rrdEnabled == True:
             self._updateRrdDb(msg)
         if self.loggerTextState != None:
             self._updateLoggerText(msg)

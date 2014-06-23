@@ -155,14 +155,14 @@ class TargetInfoType(univ.Enumerated):
     )
 
 
-class MonitorRrdFile(univ.Sequence):
+class MonitorRrdFileDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('fileId',   char.PrintableString()),
-        namedtype.NamedType('file',     univ.OctetString()),
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('probeName',    char.PrintableString()),
+        namedtype.NamedType('module',       char.PrintableString()),
+        namedtype.NamedType('fileId',       char.PrintableString()),
+        namedtype.NamedType('bin',          univ.OctetString())
     )
-
-class MonitorRrdFiles(univ.SequenceOf):
-    componentType = MonitorRrdFile()
 
 class MonitorProbeEvent(univ.Sequence):
     componentType = namedtype.NamedTypes(
@@ -187,14 +187,6 @@ class MonitorEventProbeDump(univ.Sequence):
         namedtype.NamedType('probe',    char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('events',   MonitorProbeEvents()),
-    )
-
-class MonitorRrdProbeDump(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('name',     char.PrintableString()),
-        namedtype.NamedType('module',   char.PrintableString()),
-        namedtype.NamedType('rrdFiles',     MonitorRrdFiles()),
     )
 
 class MonitorProbeDump(univ.Sequence):
@@ -429,8 +421,8 @@ class MonitorPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'rrdProbeDump',
-            MonitorRrdProbeDump().subtype(
+            'rrdFileDump',
+            MonitorRrdFileDump().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -1160,26 +1152,22 @@ def decode(pdu):
                         'data':   eventsList
                     }
                 }
-            elif msg3_type == 'rrdProbeDump':
-                channel     = str(msg3.getComponentByName('channel'))
-                probeId     = str(msg3.getComponentByName('name'))
-                module      = msg3.getComponentByName('module')
-                files       = msg3.getComponentByName('rrdFiles')
-                rrdFiles = dict()
-                for i in range(len(files)):
-                    rrdFileRecord = files.getComponentByPosition(i)
-                    fileId  = rrdFileRecord.getComponentByName('fileId')
-                    binFile = rrdFileRecord.getComponentByName('file')
-                    rrdFiles[str(fileId)] = binFile
+            elif msg3_type == 'rrdFileDump':
+                target      = str(msg3.getComponentByName('target'))
+                probeName   = str(msg3.getComponentByName('probeName'))
+                fileId      = str(msg3.getComponentByName('fileId'))
+                module      = str(msg3.getComponentByName('module'))
+                binFile     = msg3.getComponentByName('bin')
 
                 return {
-                    'from': msg1_type,
+                    'from':     msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'target': channel,
-                        'id':     probeId,
-                        'logger': module,
-                        'data':  rrdFiles
+                        'target':   target,
+                        'id':       probeName,
+                        'logger':   module,
+                        'fileId':   fileId,
+                        'data':     binFile
                     }
                 }
             elif msg3_type == 'probeActivity':

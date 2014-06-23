@@ -66,11 +66,11 @@ class RrdLog(AbstractChannelWidget):
         self.goOn = False
 
     def handleProbeEvent(self, msg):
-        print "probe event?"
         if msg['msgType'] == 'probeDump':
             if msg['logger'] == 'bmonitor_logger_rrd':
-                for key in self._rrdElements.keys():
-                    self._rrdElements[key].handleDump(msg)
+                fileId      = msg['data']['fileId']
+                fileName    = msg['data']['file']
+                self._rrdElements[fileId].handleDump(fileName)
         elif msg['msgType'] == 'probeReturn':
             for key in self._rrdElements.keys():
                 self._rrdElements[key].handleReturn(msg)
@@ -146,8 +146,8 @@ class RrdElement(QLabel):
         #self._updateGraph()
         #QLabel.paintEvent(self, event)
 
-    def handleDump(self, msg):
-        self._rrdDatabase = msg['data'][self._rrdname]
+    def handleDump(self, fileName):
+        self._rrdDatabase = fileName
         graphcmd = self._rrdgraphcmd
         self._rrdgraphcmd   = re.sub('<FILE>',self._rrdDatabase,graphcmd)
         self._rrdFileReady  = True
