@@ -1,5 +1,5 @@
 import  opus.monitor.proxy
-import  opus.monitor.trees_area.tree_probes.main
+import  opus.monitor.central.tree.main
 import  opus.monitor.norrd
 import  opus.monitor.commands.user_actions
 
@@ -9,7 +9,7 @@ def connectToEvent(eventType, pyCallable):
 
 def getProbeSelection():
     "Return a list of probes actualy selected in the left tree view"
-    singleton = opus.monitor.trees_area.tree_probes.main.ProbesTreeview.singleton
+    singleton = opus.monitor.central.tree.main.ProbesTreeview.singleton
     return singleton.getSelectedElements()
 
 def rrdCmd(cmd, pyCallable=None):

@@ -30,9 +30,9 @@ from    noctopus_widgets    import (
 )
 
 from    functools import partial
-from    opus.monitor.trees_area.tree_probes.controls import ProbesActions
-from    opus.monitor.trees_area.tree_probes.model    import ProbeModel
-from    opus.monitor.trees_area.tree_probes.logwin   import LoggerView
+from    opus.monitor.central.tree.controls import ProbesActions
+from    opus.monitor.central.tree.model    import ProbeModel
+from    opus.monitor.central.tree.logwin   import LoggerView
 from    opus.monitor.commands.wizards import UserActionsWizard
 
 import  opus.monitor.api    as monapi

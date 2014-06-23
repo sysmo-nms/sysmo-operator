@@ -9,9 +9,9 @@ from    PySide.QtGui   import (
 
 from    opus.monitor                 import norrd
 from    opus.monitor.commands.user_actions import UserActions
-from    opus.monitor.trees_area.main import TreeContainer
+from    opus.monitor.central.main    import TreeContainer
+from    opus.monitor.osmap.main      import OSMapContainer
 from    opus.monitor.proxy           import ChanHandler
-from    opus.monitor.widgets         import OSMView
 from    noctopus_widgets             import (
     NFrameContainer,
     NGridContainer
@@ -51,7 +51,7 @@ class Central(NFrameContainer):
     def _initLayout(self):
         self._stack = QStackedWidget(self)
         self._stack.insertWidget(0, TreeContainer(self))
-        self._stack.insertWidget(1, OSMView(self))
+        self._stack.insertWidget(1, OSMapContainer(self))
 
         grid  = NGridContainer(self)
         grid.addWidget(self._stack)

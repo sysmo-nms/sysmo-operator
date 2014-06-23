@@ -167,14 +167,14 @@ class OSMView(NFrameContainer):
         self.osm    = QWebView(self)
         # XXX Found bug here. QWebView do not properly quit on application
         # shutdow when he is loading a page.
-        #self.osm.load(QUrl('./html/OpenStreetMap.html'))
+        self.osm.load(QUrl('./html/OpenStreetMap.html'))
 
         self.shade = QFrame(self)
         self.shade.setAutoFillBackground(False)
         self.shade.hide()
         self._browsable = True
 
-        self.grid = NGrid(self)
+        self.grid = NGridContainer(self)
         self.grid.addWidget(self.osm, 0,0)
         self.setLayout(self.grid)
 
