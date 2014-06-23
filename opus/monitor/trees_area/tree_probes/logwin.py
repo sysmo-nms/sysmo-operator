@@ -47,8 +47,8 @@ class LoggerView(QWidget):
     def setProgressMax(self, maxi):
         self._statusBar.progress.setMaximum(maxi)
 
-    def updateProgress(self):
-        self._statusBar.updateProgress()
+    def updateProgress(self, fileId):
+        self._statusBar.updateProgress(fileId)
 
 class LogStatusBar(QStatusBar):
     def __init__(self, parent):
@@ -56,14 +56,16 @@ class LogStatusBar(QStatusBar):
         self.progress = QProgressBar(self)
         self.progress.setMinimum(0)
         self.progress.setValue(0)
-        self.progress.setFormat(self.tr('Loading data: %p%'))
-        self.addWidget(self.progress)
+        self.addPermanentWidget(self.progress)
 
-    def updateProgress(self):
+    def updateProgress(self, info):
         val = self.progress.value()
         self.progress.setValue(val + 1)
+        self.progress.setFormat('Loading data: %p%')
+        self.showMessage('Loading RRD file for If %s' % info)
         if self.progress.maximum() == val + 1:
             self.removeWidget(self.progress)
+            self.showMessage('Load complete', timeout=2000)
 
 class RrdLog(AbstractChannelWidget):
     def __init__(self, parent, probe):
@@ -102,7 +104,7 @@ class RrdLog(AbstractChannelWidget):
                 fileId      = msg['data']['fileId']
                 fileName    = msg['data']['file']
                 self._rrdElements[fileId].handleDump(fileName)
-                self._parent.updateProgress()
+                self._parent.updateProgress(fileId)
         elif msg['msgType'] == 'probeReturn':
             for key in self._rrdElements.keys():
                 self._rrdElements[key].handleReturn(msg)
