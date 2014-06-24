@@ -19,7 +19,6 @@ class Central(NFrameContainer):
         super(Central, self).__init__(parent)
         Central.singleton = self
         nocapi.nConnectWillClose(self._willClose)
-        #nocapi.nConnectAppToggled(self._toggleStack)
 
         self._initRrdtool()
         self._initChanProxy()
@@ -28,22 +27,9 @@ class Central(NFrameContainer):
         grid  = NGridContainer(self)
         grid.addWidget(TreeContainer(self))
         self.setLayout(grid)
-        self._initDockWidget()
-
-    def _toggleStack(self, msg):
-        if msg['id']        != 'monitor': return
-        if msg['button']    != 'left': return
-
-        if self._stack.currentIndex() == 1:
-            self._stack.setCurrentIndex(0)
-        else:
-            self._stack.setCurrentIndex(1)
 
     def _initUserActions(self):
         self._userActions = UserActions(self)
-
-    def _initDockWidget(self): pass
-#         tko.addTopDockWidget(Summary(self), 'Monitori')
 
     def _initRrdtool(self):
         self._rrdtool = norrd.Rrdtool(self)
