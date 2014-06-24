@@ -3,14 +3,9 @@ from    PySide.QtCore   import (
     QTimeLine
 )
 
-from    PySide.QtGui   import (
-    QStackedWidget
-)
-
 from    opus.monitor                 import norrd
 from    opus.monitor.commands.user_actions import UserActions
 from    opus.monitor.central.main    import TreeContainer
-from    opus.monitor.osmap.main      import OSMapContainer
 from    opus.monitor.proxy           import ChanHandler
 from    noctopus_widgets             import (
     NFrameContainer,
@@ -24,13 +19,15 @@ class Central(NFrameContainer):
         super(Central, self).__init__(parent)
         Central.singleton = self
         nocapi.nConnectWillClose(self._willClose)
-        nocapi.nConnectAppToggled(self._toggleStack)
+        #nocapi.nConnectAppToggled(self._toggleStack)
 
         self._initRrdtool()
         self._initChanProxy()
         self._initUserActions()
 
-        self._initLayout()
+        grid  = NGridContainer(self)
+        grid.addWidget(TreeContainer(self))
+        self.setLayout(grid)
         self._initDockWidget()
 
     def _toggleStack(self, msg):
@@ -47,15 +44,6 @@ class Central(NFrameContainer):
 
     def _initDockWidget(self): pass
 #         tko.addTopDockWidget(Summary(self), 'Monitori')
-
-    def _initLayout(self):
-        self._stack = QStackedWidget(self)
-        self._stack.insertWidget(0, TreeContainer(self))
-        self._stack.insertWidget(1, OSMapContainer(self))
-
-        grid  = NGridContainer(self)
-        grid.addWidget(self._stack)
-        self.setLayout(grid)
 
     def _initRrdtool(self):
         self._rrdtool = norrd.Rrdtool(self)
