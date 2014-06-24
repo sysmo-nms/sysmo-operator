@@ -30,10 +30,11 @@ from    noctopus_widgets    import (
 )
 
 from    functools import partial
-from    opus.monitor.central.tree.controls import ProbesActions
-from    opus.monitor.central.tree.model    import ProbeModel
-from    opus.monitor.central.tree.logwin   import LoggerView
-from    opus.monitor.commands.wizards import UserActionsWizard
+from    opus.monitor.central.tree.controls  import ProbesActions
+from    opus.monitor.central.tree.model     import ProbeModel
+from    opus.monitor.central.tree.logwin    import LoggerView
+from    opus.monitor.commands.wizards       import UserActionsWizard
+from    opus.monitor.central.tree.treewidget import ProbeTreeWidget
 
 import  opus.monitor.api    as monapi
 import  nocapi
@@ -45,6 +46,7 @@ class ProbesTree(NFrame):
         self._grid = NGrid(self)
         self._probesActions     = ProbesActions(self)
         self._probesTreeview    = ProbesTreeview(self)
+        #self._probesTreeview    = ProbeTreeWidget(self)
         self._connectControls()
         self._grid.addWidget(self._probesActions,   0,0)
         self._grid.addWidget(self._probesTreeview,  1,0)
@@ -79,7 +81,7 @@ class ProbesTreeview(QTreeView):
         self.setDragEnabled(True)
         self.setDragDropMode(QAbstractItemView.DragOnly)
         self.setDropIndicatorShown(True)
-        self.setItemDelegate(MonitorItemDelegate(self))
+        #self.setItemDelegate(MonitorItemDelegate(self))
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self._initMenus()

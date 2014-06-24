@@ -30,7 +30,7 @@ class ProbeModel(QStandardItemModel):
                 "Step/Timeout",
                 "State",
                 "Ip|Host",
-                "Command"
+                "Timeline"
         ])
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
         monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
@@ -45,7 +45,10 @@ class ProbeModel(QStandardItemModel):
     def _handleTargetInfo(self, msg):
         (boo, target) = self._itemExist(msg['value']['name'])
         if boo == False:
-            self.appendRow(TargetItem(msg))
+            t = TargetItem(msg)
+            self.appendRow([
+                t, t.row1, t.row2, t.row3_status,
+                t.row4, t.row5, t.row6_ip, t.row7_timeline])
         else:
             self._updateRow(target, msg)
 
@@ -71,6 +74,7 @@ class ProbeModel(QStandardItemModel):
 class TargetItem(QStandardItem):
     def __init__(self, data):
         super(TargetItem, self).__init__()
+
         self.name       = data['value']['name']
         self.nodeType   = 'target'
         self.status     = 'UNKNOWN'
@@ -78,7 +82,22 @@ class TargetItem(QStandardItem):
         self.targetDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
+        self._initColumnItems()
         self._generateToolTip()
+
+    def _initColumnItems(self):
+        self.row1       = QStandardItem()
+        self.row2       = QStandardItem()
+        self.row4       = QStandardItem()
+        self.row5       = QStandardItem()
+
+        self.row3_status    = QStandardItem()
+        self.row6_ip        = QStandardItem()
+        self.row7_timeline  = QStandardItem()
+
+        self.row3_status.setData('status', role=Qt.DisplayRole)
+        self.row6_ip.setData(self.targetDict['value']['properties']['ip'], role=Qt.DisplayRole)
+        self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -97,10 +116,10 @@ class TargetItem(QStandardItem):
             for i in range(self.rowCount()):
                 searchString += self.child(i).descr
             return self.data(Qt.DisplayRole) + searchString
-        elif role == (Qt.UserRole + 1):
-            return "Target"
-        elif role == (Qt.UserRole + 2):
-            return self.targetDict['value']['properties']['ip']
+        #elif role == (Qt.UserRole + 1):
+            #return "Target"
+        #elif role == (Qt.UserRole + 2):
+            #return self.targetDict['value']['properties']['ip']
         else:
             return QStandardItem.data(self, role)
 
@@ -115,7 +134,10 @@ class TargetItem(QStandardItem):
                 break
 
         if probeExist == False:
-            self.appendRow(ProbeItem(msg, self))
+            p = ProbeItem(msg, self)
+            self.appendRow([
+                p, p.row1_log, p.row2_progress, p.row3_status, 
+                p.row4_trigger, p.row5_state, p.row6_host, p.row7_time])
         else:
             child.updateState(msg)
 
@@ -129,6 +151,7 @@ class TargetItem(QStandardItem):
             if self.child(i).name == probe:
                 self.child(i).handleActivity(msg)
                 break
+        self.emitDataChanged()
 
     def updateState(self, msg):
         self.targetDict = msg
@@ -175,16 +198,45 @@ class TargetItem(QStandardItem):
             self.status = 'UNKNOWN'
             return
 
+class ProgressItem(QStandardItem):
+    TimeoutRole = Qt.UserRole + 1
+    StepRole    = Qt.UserRole + 2
+    ProgressRole = Qt.UserRole + 3
+    def __init__(self, data):
+        super(ProgressItem, self).__init__()
+        step, timeout   = data
+        self._progress  = 0
+        self._step      = step
+        self._timeout   = timeout
+        ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
+        self._updateData()
+
+    def _initData(self):
+        display = '%s/%s' % (self._progress, self._step)
+        self.setData(display, role=Qt.DisplayRole)
+        self.setData(self._step,     ProgressItem.StepRole)
+        self.setData(self._timeout,  ProgressItem.TimeoutRole)
+        self.setData(self._progress, ProgressItem.ProgressRole)
+
+    def _updateData(self):
+        display = '%s/%s' % (self._progress, self._step)
+        self.setData(display, role=Qt.DisplayRole)
+        self.setData(self._progress, ProgressItem.ProgressRole)
+
+    def _tictimeout(self):
+        self._progress = self._progress + 1
+        self._updateData()
+
+    def reset(self):
+        self._progress = 0
+        self._updateData()
 
 class ProbeItem(QStandardItem):
     def __init__(self, data, parentItem):
         super(ProbeItem, self).__init__()
         self._ticvalue = 0
-        ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
-        if 'bmonitor_logger_rrd' in data['value']['loggers'].keys():
-            self._logsRrd = True
-        else:
-            self._logsRrd = False
+        #ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
+
 
         self._parentItem = parentItem
         self._lastReturn = ""
@@ -197,17 +249,42 @@ class ProbeItem(QStandardItem):
         self.probeDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
+        self._initColumnItems()
+
+    def _initColumnItems(self):
+        self.row1_log   = QStandardItem()
+        if 'bmonitor_logger_rrd' in self.probeDict['value']['loggers'].keys():
+            self.row1_log.setData('RRD', role=Qt.DisplayRole)
+
+        timeout = self.probeDict['value']['timeout']
+        step    = self.probeDict['value']['step']
+        self.row2_progress = ProgressItem((step, timeout))
+
+        self.row3_status = QStandardItem('b')
+        self.row3_status.setData(self.probeDict['value']['status'], role=Qt.DisplayRole)
+
+        self.row4_trigger = QStandardItem()
+        string = '%s/%s' % (self.probeDict['value']['step'], self.probeDict['value']['timeout'])
+        self.row4_trigger.setData(string, role=Qt.DisplayRole)
+
+        self.row5_state = QStandardItem()
+        if self.probeDict['value']['active']:
+            state = 'running'
+        else:
+            state = 'stopped'
+        self.row5_state.setData(state, role=Qt.DisplayRole)
+
+        self.row6_host  = QStandardItem()
+        self.row6_host.setData('host or ip', role=Qt.DisplayRole)
+
+        self.row7_time  = QStandardItem()
+        self.row7_time.setData('timeline', role=Qt.DisplayRole)
+
 
 
     def handleActivity(self, msg):
-        self._ticvalue = 0
+        self.row2_progress.reset()
         self._lastReturn = msg['value']['textual']
-        self.emitDataChanged()
-
-    def _tictimeout(self):
-        print "tictimeout: ", self.descr
-        self._ticvalue = self._ticvalue + 1
-        self.emitDataChanged()
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -242,6 +319,7 @@ class ProbeItem(QStandardItem):
 
     def updateState(self, data):
         self.status     = data['value']['status']
+        self.row3_status.setData(self.status, role=Qt.DisplayRole)
         self.probeDict  = data
         self.emitDataChanged()
 
