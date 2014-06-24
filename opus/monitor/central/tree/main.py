@@ -330,10 +330,13 @@ class MonitorItemDelegate(QStyledItemDelegate):
         self._rrdToolSize   = QSize(80,25)
 
     def paint(self, painter, option, index):
+
+        print "paint: ", index.data(Qt.UserRole + 1), " ", index.column()
         if index.data(Qt.UserRole + 1) == None:
             # it is a column child
             # get the root item
             itemRoot = index.sibling(index.row(), 0)
+            print "paint itemroot"
             if itemRoot.data(Qt.UserRole + 1) == "Probe":
                 # is is a probe check for columns
                 if index.column() == 1:
@@ -344,7 +347,7 @@ class MonitorItemDelegate(QStyledItemDelegate):
                         return
                 elif index.column() == 2:
                     testouille = itemRoot.data(Qt.DisplayRole)
-                    #print "paint (from dataChanged?): ", testouille
+                    print "paint (from dataChanged?): ", testouille
                     timeout     = itemRoot.data(Qt.UserRole + 6)
                     step        = itemRoot.data(Qt.UserRole + 5)
                     progress    = itemRoot.data(Qt.UserRole + 4)

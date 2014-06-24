@@ -18,7 +18,6 @@ class TreeContainer(NFrameContainer):
         self._grid.addWidget(self._probesTree,         1, 0)
         self._grid.addWidget(self._timeline,           2, 0)
 
-        self._grid.setRowStretch(0,0)
-        self._grid.setRowStretch(1,2)
-        self._grid.setRowStretch(2,1)
+        self._grid.setRowStretch(1,1)
+        self._grid.setRowStretch(2,0)
         self.setLayout(self._grid)
