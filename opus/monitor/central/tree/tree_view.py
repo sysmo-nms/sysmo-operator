@@ -3,7 +3,7 @@ from    PySide.QtCore   import (
     QSize,
     QSettings
 )
-# 
+
 from    PySide.QtGui    import (
     QTreeView,
     QSortFilterProxyModel,
@@ -24,13 +24,35 @@ class ProbesTreeview(QTreeView):
     def __init__(self, parent):
         super(ProbesTreeview, self).__init__(parent)
         nocapi.nConnectWillClose(self._saveSettings)
-        
-        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         ProbesTreeview.singleton = self
         self._viewDialogs = dict()
-        self._initStyle()
         self._puActionWiz  = None
         self._tuActionWiz  = None
+        
+        # QTreeView conf
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setDragEnabled(True)
+        self.setDragDropMode(QAbstractItemView.DragOnly)
+        self.setDropIndicatorShown(True)
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self._showMenu)
+        self.setObjectName('backTree')
+        self.setIconSize(QSize(25, 25)) 
+        self.setAnimated(True)
+        self.setAlternatingRowColors(True)
+        self.setStyleSheet('''QFrame#backTree { 
+            background-image: url(./graphics/hover_info_files.png);
+            background-repeat: no-repeat;
+            background-color: %s;
+            background-attachment: fixed; 
+            background-position: bottom right}''' % nocapi.nGetRgb('Base'))
+        self.setSortingEnabled(True)
+        self.doubleClicked.connect(self._doubleClicked)
+
+
+        # model conf
         self.model   = ProbeModel(self)
         self.proxy   = QSortFilterProxyModel(self)
         self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
@@ -38,24 +60,9 @@ class ProbesTreeview(QTreeView):
         self.proxy.setSourceModel(self.model)
         self.proxy.setFilterRole(Qt.UserRole)
         self.setModel(self.proxy)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setDragEnabled(True)
-        self.setDragDropMode(QAbstractItemView.DragOnly)
-        self.setDropIndicatorShown(True)
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        self._initMenus()
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
 
-        self.customContextMenuRequested.connect(self._showMenu)
-
-        self.doubleClicked.connect(self._doubleClicked)
-
-        self.setSortingEnabled(True)
-        self._loadSettings()
-        self._initDelegates()
-
-    def _initDelegates(self):
+        # delegates
         self.setItemDelegateForColumn(1, pdelegate.LoggerItemDelegate(self))
         self.setItemDelegateForColumn(2, pdelegate.ProgressItemDelegate(self))
         self.setItemDelegateForColumn(3, pdelegate.StatusItemDelegate(self))
@@ -64,20 +71,20 @@ class ProbesTreeview(QTreeView):
         self.setItemDelegateForColumn(6, pdelegate.HostItemDelegate(self))
         self.setItemDelegateForColumn(7, pdelegate.TimelineItemDelegate(self))
 
-    def _loadSettings(self):
+        # setings
         settings = QSettings()
         state   = settings.value('monitor/probe_treeview_header')
         if state != None:
             header = self.header()
             header.restoreState(state)
 
+        # various init
+        self._initMenus()
+
     def _saveSettings(self):
         header = self.header()
         settings = QSettings()
         settings.setValue('monitor/probe_treeview_header', header.saveState())
-
-    def updateAll(self):
-        self.update()
 
     def _doubleClicked(self, index):
         probeItem = index.sibling(index.row(), 0)
@@ -89,24 +96,11 @@ class ProbesTreeview(QTreeView):
                 self._viewDialogs[probe].show()
             else:
                 self._viewDialogs[probe].show()
+
+    def filterThis(self, text):
+        self.proxy.setFilterFixedString(text)
                 
-
-
-    def _initStyle(self):
-        self.setObjectName('backTree')
-        self.setIconSize(QSize(25, 25)) 
-        self.setAnimated(True)
-        self.setAlternatingRowColors(True)
-        self.setStyleSheet('''QFrame#backTree { 
-            background-image: url(./graphics/hover_info_files.png);
-            background-repeat: no-repeat;
-            background-color: %s;
-            background-attachment: fixed; 
-            background-position: bottom right}''' % nocapi.nGetRgb('Base'))
-
     def _initMenus(self):
-
-
         self.targetMenu = QMenu(self)
 
         #######################################################################
@@ -222,15 +216,6 @@ class ProbesTreeview(QTreeView):
             modelItem  = self.model.itemFromIndex(modelIndex)
             selectionList.append(modelItem.name)
         return selectionList
-
-    def userActivity(self, index):
-        print "clicked!", self.selectedIndexes()
-
-    def filterThis(self, text):
-        self.proxy.setFilterFixedString(text)
-
-    def selectionChanged(self, selected, deselected):
-        QTreeView.selectionChanged(self, selected, deselected)
 
     def _showMenu(self, point):
         index = self.proxy.mapToSource(self.indexAt(point))
