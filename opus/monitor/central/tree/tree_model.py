@@ -199,17 +199,18 @@ class TargetItem(QStandardItem):
             return
 
 class ProgressItem(QStandardItem):
-    TimeoutRole = Qt.UserRole + 1
-    StepRole    = Qt.UserRole + 2
-    ProgressRole = Qt.UserRole + 3
+    TimeoutRole     = Qt.UserRole + 1
+    StepRole        = Qt.UserRole + 2
+    ProgressRole    = Qt.UserRole + 3
     def __init__(self, data):
         super(ProgressItem, self).__init__()
         step, timeout   = data
         self._progress  = 0
         self._step      = step
         self._timeout   = timeout
+        self.setToolTip('Time to wait before a new check')
         ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
-        self._updateData()
+        self._initData()
 
     def _initData(self):
         display = '%s/%s' % (self._progress, self._step)
@@ -230,6 +231,16 @@ class ProgressItem(QStandardItem):
     def reset(self):
         self._progress = 0
         self._updateData()
+
+class LoggerItem(QStandardItem):
+    LoggersRole = Qt.UserRole + 1
+    def __init__(self, loggers):
+        super(LoggerItem, self).__init__()
+        self.setData(loggers, LoggerItem.LoggersRole)
+        display = ''
+        for i in range(len(loggers)):
+            display = display + " " + loggers[i] 
+        self.setData(display, Qt.DisplayRole)
 
 class ProbeItem(QStandardItem):
     def __init__(self, data, parentItem):
@@ -252,9 +263,8 @@ class ProbeItem(QStandardItem):
         self._initColumnItems()
 
     def _initColumnItems(self):
-        self.row1_log   = QStandardItem()
-        if 'bmonitor_logger_rrd' in self.probeDict['value']['loggers'].keys():
-            self.row1_log.setData('RRD', role=Qt.DisplayRole)
+        loggers = self.probeDict['value']['loggers'].keys()
+        self.row1_log   = LoggerItem(loggers)
 
         timeout = self.probeDict['value']['timeout']
         step    = self.probeDict['value']['step']
