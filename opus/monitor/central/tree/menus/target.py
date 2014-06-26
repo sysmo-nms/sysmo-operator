@@ -1,11 +1,13 @@
 from    PySide.QtGui    import (
     QMenu,
+    QFont,
     QAction
 )
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
 from    opus.monitor.central.tree.logwin        import LoggerView
+from    noctopus_widgets                        import NAction
 import  opus.monitor.api                        as monapi
 import  nocapi
 
@@ -19,49 +21,40 @@ class TargetMenu(QMenu):
         #######################################################################
         self.localMenu    = QMenu(self.tr('Local Actions'), self)
         self.localMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
-        self.localMenu.setDisabled(True)
 
-        self.configureAction = QAction(self.tr('Configure new action'), self)
+        self.configureAction = NAction(self.tr('Configure new action'), self)
+        self.configureAction.setPriority(QAction.HighPriority)
         self.addMenu(self.localMenu)
         self.addAction(self.configureAction)
         #######################################################################
 
         self.addSeparator()
 
-        action = QAction(self.tr('Suspend all target probes'), self)
-        action.setIcon(nocapi.nGetIcon('media-playback-pause'))
+        action = NAction(self.tr('Locate on map'), self)
         self.addAction(action)
 
-        action = QAction(self.tr('Add entry to the target diary'), self)
-        self.addAction(action)
-
-
-        action = QAction(self.tr('Create a new probe'), self)
-        action.setIcon(nocapi.nGetIcon('list-add'))
-        action.triggered[bool].connect(self._createProbeAction)
-        self.addAction(action)
-
-        self.addSeparator()
-
-        action = QAction(self.tr('Delete this target ans his probes'), self)
+        action = NAction(self.tr('Delete this target ans his probes'), self)
         action.setIcon(nocapi.nGetIcon('process-stop'))
         self.addAction(action)
 
         self.addSeparator()
 
-
-        action = QAction(self.tr('Documentation'), self)
+        action = NAction(self.tr('Documentation'), self)
         action.setIcon(nocapi.nGetIcon('folder-saved-search'))
         self.addAction(action)
 
-        action = QAction(self.tr('History'), self)
+        self.addSeparator()
+
+        action = NAction(self.tr('Properties'), self)
+        action.setIcon(nocapi.nGetIcon('edit-paste'))
         self.addAction(action)
 
-        action = QAction(self.tr('Performances'), self)
-        self.addAction(action)
+        self.addSeparator()
 
-        action = QAction(self.tr('Properties'), self)
-        self.addAction(action)
+
+
+
+
 
     def showMenuFor(self, target, point):
         uactions = monapi.getUActionsFor(target)
@@ -74,8 +67,14 @@ class TargetMenu(QMenu):
         else:
             self.localMenu.setDisabled(False)
             self.localMenu.clear()
+            bold = True
+            bfont = QFont()
+            bfont.setUnderline(True)
             for i in range(len(uactions)):
-                qa = QAction(uactions[i], self)
+                qa = NAction(uactions[i], self)
+                if bold == True:
+                    qa.setFont(bfont)
+                    bold = False
                 callback = partial(self._userAction, target, uactions[i])
                 qa.triggered.connect(callback)
                 self.localMenu.addAction(qa)
@@ -91,3 +90,5 @@ class TargetMenu(QMenu):
 
     def _userAction(self, element, action):
         monapi.execUAction(action, element)
+
+

@@ -14,7 +14,8 @@ from    PySide.QtGui    import (
     QCommandLinkButton,
     QDesktopServices,
     QPushButton,
-    QValidator
+    QValidator,
+    QAction
 )
 
 import noctopus_images
@@ -161,3 +162,8 @@ class Community(NFrame):
     def _goFun(self):
         url = QUrl('http://fr.wikipedia.fr')
         QDesktopServices.openUrl(url)
+
+class NAction(QAction):
+    def __init__(self, text, parent=None):
+        super(NAction, self).__init__(text, parent)
+        self.setIconVisibleInMenu(True)

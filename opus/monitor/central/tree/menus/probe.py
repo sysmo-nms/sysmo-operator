@@ -12,6 +12,7 @@ class ProbeMenu(QMenu):
     def __init__(self, parent):
         super(ProbeMenu, self).__init__(parent)
         self._puActionWiz  = None
+        self.setIcon(nocapi.nGetIcon('folder-saved-search'))
         #######################################################################
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
