@@ -31,33 +31,33 @@ class TargetMenu(QMenu):
         self.addSeparator()
 
         action = NAction(self.tr('Locate on map'), self)
+        action.triggered.connect(self._locateOnMap)
         self.addAction(action)
 
         action = NAction(self.tr('Delete this target ans his probes'), self)
+        action.triggered.connect(self._deleteTarget)
         action.setIcon(nocapi.nGetIcon('process-stop'))
         self.addAction(action)
 
         self.addSeparator()
 
         action = NAction(self.tr('Documentation'), self)
+        action.triggered.connect(self._openDocumentation)
         action.setIcon(nocapi.nGetIcon('folder-saved-search'))
         self.addAction(action)
 
         self.addSeparator()
 
         action = NAction(self.tr('Properties'), self)
+        action.triggered.connect(self._openProperties)
         action.setIcon(nocapi.nGetIcon('edit-paste'))
         self.addAction(action)
 
         self.addSeparator()
 
-
-
-
-
-
     def showMenuFor(self, target, point):
         uactions = monapi.getUActionsFor(target)
+        self._currentTarget = target
         if self._tuActionWiz != None:
             self.configureAction.triggered.disconnect(self._tuActionWiz)
         self._tuActionWiz = partial(self._launchUserActionsWiz, target)
@@ -82,6 +82,9 @@ class TargetMenu(QMenu):
         point.setX(point.x() + 12)
         self.popup(self.parent().mapToGlobal(point))
 
+    #######
+    # API #
+    #######
     def _launchUserActionsWiz(self, elem):
         uaWiz = UserActionsWizard(self, element=elem)
 
@@ -91,4 +94,14 @@ class TargetMenu(QMenu):
     def _userAction(self, element, action):
         monapi.execUAction(action, element)
 
+    def _deleteTarget(self):
+        print "delete: ", self._currentTarget
 
+    def _openDocumentation(self):
+        print "documentation: ", self._currentTarget
+
+    def _openProperties(self):
+        print "properties: ", self._currentTarget
+
+    def _locateOnMap(self):
+        print "locate on map: ", self._currentTarget
