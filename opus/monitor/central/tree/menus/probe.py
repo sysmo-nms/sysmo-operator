@@ -5,6 +5,7 @@ from    PySide.QtGui    import (
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
+import  opus.monitor.api    as monapi
 import  nocapi
 
 class ProbeMenu(QMenu):
@@ -59,6 +60,7 @@ class ProbeMenu(QMenu):
         self.addAction(action)
 
     def showMenuFor(self, probe, point):
+        print "show menu!"
         uactions = monapi.getUActionsFor(probe)
         if self._puActionWiz != None:
             self.configureProbeAction.triggered.disconnect(self._puActionWiz)
