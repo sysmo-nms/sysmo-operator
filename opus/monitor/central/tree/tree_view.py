@@ -16,6 +16,8 @@ from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
 from    opus.monitor.central.tree.logwin        import LoggerView
 from    opus.monitor.central.tree.tree_model    import ProbeModel
+from    opus.monitor.central.tree.menus.probe   import ProbeMenu
+from    opus.monitor.central.tree.menus.target  import TargetMenu
 import  opus.monitor.central.tree.tree_delegate as pdelegate
 import  opus.monitor.api                        as monapi
 import  nocapi
@@ -26,8 +28,6 @@ class ProbesTreeview(QTreeView):
         nocapi.nConnectWillClose(self._saveSettings)
         ProbesTreeview.singleton = self
         self._viewDialogs = dict()
-        self._puActionWiz  = None
-        self._tuActionWiz  = None
         
         # QTreeView conf
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
@@ -79,7 +79,9 @@ class ProbesTreeview(QTreeView):
             header.restoreState(state)
 
         # various init
-        self._initMenus()
+        self.targetMenu = TargetMenu(self)
+        self.probeMenu  = ProbeMenu(self)
+        #self._initMenus()
 
     def _saveSettings(self):
         header = self.header()
@@ -100,114 +102,6 @@ class ProbesTreeview(QTreeView):
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)
                 
-    def _initMenus(self):
-        self.targetMenu = QMenu(self)
-
-        #######################################################################
-        ## DYNAMIC TARGETS MENUS ##############################################
-        #######################################################################
-        self.localMenu    = QMenu(self.tr('Local Actions'), self)
-        self.localMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
-        self.localMenu.setDisabled(True)
-        #######################################################################
-
-        self.configureAction = QAction(self.tr('Configure new action'), self)
-        self.targetMenu.addMenu(self.localMenu)
-        self.targetMenu.addAction(self.configureAction)
-
-
-
-
-        self.targetMenu.addSeparator()
-
-        targetAction = QAction(self.tr('Open target documentation'), self)
-        targetAction.setIcon(nocapi.nGetIcon('folder-saved-search'))
-        self.targetMenu.addAction(targetAction)
-
-        self.targetMenu.addSeparator()
-
-        targetAction = QAction(self.tr('Suspend all target probes'), self)
-        targetAction.setIcon(nocapi.nGetIcon('media-playback-pause'))
-        self.targetMenu.addAction(targetAction)
-
-        targetAction = QAction(self.tr('Add entry to the target diary'), self)
-        self.targetMenu.addAction(targetAction)
-
-
-        targetAction = QAction(self.tr('Create a new probe'), self)
-        targetAction.setIcon(nocapi.nGetIcon('list-add'))
-        targetAction.triggered[bool].connect(self.createProbe)
-        self.targetMenu.addAction(targetAction)
-
-        self.targetMenu.addSeparator()
-
-        targetAction = QAction(self.tr('Delete this target ans his probes'), self)
-        targetAction.setIcon(nocapi.nGetIcon('process-stop'))
-        self.targetMenu.addAction(targetAction)
-
-        self.targetMenu.addSeparator()
-
-        targetAction = QAction(self.tr('Properties'), self)
-        self.targetMenu.addAction(targetAction)
-
-        self.probeMenu  = QMenu(self)
-
-
-
-        #######################################################################
-        ## DYNAMIC TARGETS MENUS ##############################################
-        #######################################################################
-        self.localProbeMenu    = QMenu(self.tr('Local Actions'), self)
-        self.localProbeMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
-        self.localProbeMenu.setDisabled(True)
-
-        self.configureProbeAction = QAction(self.tr('Configure new action'), self)
-        self.probeMenu.addMenu(self.localProbeMenu)
-        self.probeMenu.addAction(self.configureProbeAction)
-        self.probeMenu.addAction(self.configureProbeAction)
-        #######################################################################
-        self.probeMenu.addSeparator()
-
-        probeAction = QAction(self.tr('Open log viewew'), self)
-        self.probeMenu.addAction(probeAction)
-
-        self.probeMenu.addSeparator()
-
-        probeAction = QAction(self.tr('Open probe documentation'), self)
-        probeAction.setIcon(nocapi.nGetIcon('folder-saved-search'))
-        self.probeMenu.addAction(probeAction)
-
-        self.probeMenu.addSeparator()
-
-        probeAction = QAction(self.tr('Suspend probe'), self)
-        probeAction.setIcon(nocapi.nGetIcon('media-playback-pause'))
-        self.probeMenu.addAction(probeAction)
-
-        probeAction = QAction(self.tr('Add entry to the probe diary'), self)
-        self.probeMenu.addAction(probeAction)
-
-        probeAction = QAction(self.tr('Force check'), self)
-        probeAction.setIcon(nocapi.nGetIcon('software-update-available'))
-        self.probeMenu.addAction(probeAction)
-
-        self.probeMenu.addSeparator()
-
-        probeAction = QAction(self.tr('Delete this probe'), self)
-        probeAction.setIcon(nocapi.nGetIcon('process-stop'))
-        self.probeMenu.addAction(probeAction)
-
-        self.probeMenu.addSeparator()
-
-        probeAction = QAction(self.tr('Properties'), self)
-        self.probeMenu.addAction(probeAction)
-
-
-    def createProbe(self): pass
-    def configureProbe(self): pass
-
-    def _launchUserActionsWiz(self, elem):
-        uaWiz = UserActionsWizard(self, element=elem)
-
     def getSelectedElements(self):
         proxyIndexes = self.selectedIndexes()
         selectionList = list()
@@ -221,16 +115,147 @@ class ProbesTreeview(QTreeView):
         index = self.proxy.mapToSource(self.indexAt(point))
         item  = self.model.itemFromIndex(index)
         if      item.__class__.__name__ == 'ProbeItem':
-            self._prepareMenuForProbe(item.name)
-            point.setX(point.x() + 12)
-            self.probeMenu.popup(self.mapToGlobal(point))
+            self.probeMenu.showMenuFor(item.name, point)
         elif    item.__class__.__name__ == 'TargetItem':
-            self._prepareMenuForTarget(item.name)
-            point.setX(point.x() + 12)
-            self.targetMenu.popup(self.mapToGlobal(point))
+            self.targetMenu.showMenuFor(item.name, point)
         elif    item.__class__.__name__ == 'NoneType': pass
 
-    def _prepareMenuForProbe(self, probe):
+
+class TargetMenu(QMenu):
+    def __init__(self, parent):
+        super(TargetMenu, self).__init__(parent)
+        self._tuActionWiz  = None
+        #######################################################################
+        ## DYNAMIC TARGETS MENUS ##############################################
+        #######################################################################
+        self.localMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        self.localMenu.setDisabled(True)
+
+        self.configureAction = QAction(self.tr('Configure new action'), self)
+        self.addMenu(self.localMenu)
+        self.addAction(self.configureAction)
+        #######################################################################
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Suspend all target probes'), self)
+        action.setIcon(nocapi.nGetIcon('media-playback-pause'))
+        self.addAction(action)
+
+        action = QAction(self.tr('Add entry to the target diary'), self)
+        self.addAction(action)
+
+
+        action = QAction(self.tr('Create a new probe'), self)
+        action.setIcon(nocapi.nGetIcon('list-add'))
+        action.triggered[bool].connect(self._createProbeAction)
+        self.addAction(action)
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Delete this target ans his probes'), self)
+        action.setIcon(nocapi.nGetIcon('process-stop'))
+        self.addAction(action)
+
+        self.addSeparator()
+
+
+        action = QAction(self.tr('Documentation'), self)
+        action.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        self.addAction(action)
+
+        action = QAction(self.tr('History'), self)
+        self.addAction(action)
+
+        action = QAction(self.tr('Performances'), self)
+        self.addAction(action)
+
+        action = QAction(self.tr('Properties'), self)
+        self.addAction(action)
+
+    def showMenuFor(self, target, point):
+        uactions = monapi.getUActionsFor(target)
+        if self._tuActionWiz != None:
+            self.configureAction.triggered.disconnect(self._tuActionWiz)
+        self._tuActionWiz = partial(self._launchUserActionsWiz, target)
+        self.configureAction.triggered.connect(self._tuActionWiz)
+        if len(uactions) == 0:
+            self.localMenu.setDisabled(True)
+        else:
+            self.localMenu.setDisabled(False)
+            self.localMenu.clear()
+            for i in range(len(uactions)):
+                qa = QAction(uactions[i], self)
+                callback = partial(self._userAction, target, uactions[i])
+                qa.triggered.connect(callback)
+                self.localMenu.addAction(qa)
+
+        point.setX(point.x() + 12)
+        self.popup(self.parent().mapToGlobal(point))
+
+    def _launchUserActionsWiz(self, elem):
+        uaWiz = UserActionsWizard(self, element=elem)
+
+    def _createProbeAction(self, msg):
+        print "create prboe ", msg
+
+    def _userAction(self, element, action):
+        monapi.execUAction(action, element)
+
+
+class ProbeMenu(QMenu):
+    def __init__(self, parent):
+        super(ProbeMenu, self).__init__(parent)
+        self._puActionWiz  = None
+        #######################################################################
+        ## DYNAMIC TARGETS MENUS ##############################################
+        #######################################################################
+        self.localProbeMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localProbeMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        self.localProbeMenu.setDisabled(True)
+
+        self.configureProbeAction = QAction(self.tr('Configure new action'), self)
+        self.addMenu(self.localProbeMenu)
+        self.addAction(self.configureProbeAction)
+        #######################################################################
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Open log viewew'), self)
+        self.addAction(action)
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Open probe documentation'), self)
+        action.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        self.addAction(action)
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Suspend probe'), self)
+        action.setIcon(nocapi.nGetIcon('media-playback-pause'))
+        self.addAction(action)
+
+        action = QAction(self.tr('Add entry to the probe diary'), self)
+        self.addAction(action)
+
+        action = QAction(self.tr('Force check'), self)
+        action.setIcon(nocapi.nGetIcon('software-update-available'))
+        self.addAction(action)
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Delete this probe'), self)
+        action.setIcon(nocapi.nGetIcon('process-stop'))
+        self.addAction(action)
+
+        self.addSeparator()
+
+        action = QAction(self.tr('Properties'), self)
+        self.addAction(action)
+
+    def showMenuFor(self, probe, point):
         uactions = monapi.getUActionsFor(probe)
         if self._puActionWiz != None:
             self.configureProbeAction.triggered.disconnect(self._puActionWiz)
@@ -247,22 +272,11 @@ class ProbesTreeview(QTreeView):
                 qa.triggered.connect(callback)
                 self.localProbeMenu.addAction(qa)
 
-    def _prepareMenuForTarget(self, target):
-        uactions = monapi.getUActionsFor(target)
-        if self._tuActionWiz != None:
-            self.configureAction.triggered.disconnect(self._tuActionWiz)
-        self._tuActionWiz = partial(self._launchUserActionsWiz, target)
-        self.configureAction.triggered.connect(self._tuActionWiz)
-        if len(uactions) == 0:
-            self.localMenu.setDisabled(True)
-        else:
-            self.localMenu.setDisabled(False)
-            self.localMenu.clear()
-            for i in range(len(uactions)):
-                qa = QAction(uactions[i], self)
-                callback = partial(self._userAction, target, uactions[i])
-                qa.triggered.connect(callback)
-                self.localMenu.addAction(qa)
+        point.setX(point.x() + 12)
+        self.popup(self.parent().mapToGlobal(point))
+
+    def _launchUserActionsWiz(self, elem):
+        uaWiz = UserActionsWizard(self, element=elem)
 
     def _userAction(self, element, action):
         monapi.execUAction(action, element)
