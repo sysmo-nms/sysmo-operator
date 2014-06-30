@@ -1,6 +1,7 @@
 
 from    PySide.QtCore   import (
-    QTemporaryFile
+    QTemporaryFile,
+    QSettings
 )
 from    PySide.QtGui    import (
     QWidget,
@@ -32,17 +33,16 @@ def openLoggerFor(probe, display):
         #p = opus.monitor.main.Central.singleton
         v = LoggerView(probe, display)
         LoggerView.Elements[probe] = v
-        LoggerView.Elements[probe].show()
-        LoggerView.Elements[probe].activateWindow()
     else:
         print "exists !!"
         LoggerView.Elements[probe].show()
-        LoggerView.Elements[probe].activateWindow()
     
 class LoggerView(QDialog):
     Elements = dict()
     def __init__(self, probe, display, parent=None):
         super(LoggerView, self).__init__(parent)
+        nocapi.nConnectWillClose(self._willClose)
+        self._element = probe
         self.setWindowTitle(display)
 
         self._statusBar = LogStatusBar(self)
@@ -57,12 +57,38 @@ class LoggerView(QDialog):
         grid.setRowStretch(1,0)
 
         self.setLayout(grid)
+        self.show()
 
     def setProgressMax(self, maxi):
         self._statusBar.progress.setMaximum(maxi)
 
     def updateProgress(self, fileId):
         self._statusBar.updateProgress(fileId)
+
+    def _restoreSettings(self):
+        settings = QSettings()
+        settingsString = 'monitor/element_perf_geometry/%s' % self._element
+        geometry = settings.value(settingsString)
+        if geometry != None:
+            self.restoreGeometry(geometry)
+
+    def _saveSettings(self):
+        settings = QSettings()
+        settingsString = 'monitor/element_perf_geometry/%s' % self._element
+        settings.setValue(settingsString, self.saveGeometry())
+
+    def _willClose(self):
+        self._saveSettings()
+        self.close()
+
+    def show(self):
+        self._restoreSettings()
+        self.raise_()
+        QDialog.show(self)
+
+    def closeEvent(self, event):
+        self._saveSettings()
+        QDialog.closeEvent(self, event)
 
 class LogStatusBar(QStatusBar):
     def __init__(self, parent):
