@@ -4,6 +4,7 @@ from    PySide.QtCore   import (
 )
 from    PySide.QtGui    import (
     QWidget,
+    QDialog,
     QScrollArea,
     QPixmap,
     QPalette,
@@ -21,22 +22,27 @@ from    noctopus_widgets    import (
 from    opus.monitor.proxy  import AbstractChannelWidget
 import  opus.monitor.api    as monapi
 import  opus.monitor.norrd  as norrd
+#import  opus.monitor.main
 import  nocapi
 import  platform
 import  re
 
 def openLoggerFor(probe, display):
     if probe not in LoggerView.Elements.keys():
+        #p = opus.monitor.main.Central.singleton
         v = LoggerView(probe, display)
         LoggerView.Elements[probe] = v
+        LoggerView.Elements[probe].show()
+        LoggerView.Elements[probe].activateWindow()
     else:
         print "exists !!"
         LoggerView.Elements[probe].show()
+        LoggerView.Elements[probe].activateWindow()
     
-class LoggerView(QWidget):
+class LoggerView(QDialog):
     Elements = dict()
     def __init__(self, probe, display, parent=None):
-        super(LoggerView, self).__init__()
+        super(LoggerView, self).__init__(parent)
         self.setWindowTitle(display)
 
         self._statusBar = LogStatusBar(self)
@@ -51,7 +57,6 @@ class LoggerView(QWidget):
         grid.setRowStretch(1,0)
 
         self.setLayout(grid)
-        self.show()
 
     def setProgressMax(self, maxi):
         self._statusBar.progress.setMaximum(maxi)

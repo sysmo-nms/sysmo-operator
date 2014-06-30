@@ -7,6 +7,7 @@ from    PySide.QtGui    import (
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
 from    opus.monitor.central.tree.logwin        import LoggerView
+from    opus.monitor.central.tree.toolbox       import openPropertiesFor
 from    noctopus_widgets                        import NAction
 import  opus.monitor.api                        as monapi
 import  nocapi
@@ -101,6 +102,7 @@ class TargetMenu(QMenu):
         print "documentation: ", self._currentTarget
 
     def _openProperties(self):
+        openPropertiesFor(self._currentTarget)
         print "properties: ", self._currentTarget
 
     def _locateOnMap(self):

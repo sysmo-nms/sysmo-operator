@@ -6,6 +6,7 @@ from    PySide.QtGui    import (
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
 from    opus.monitor.central.tree.logwin        import openLoggerFor
+from    opus.monitor.central.tree.toolbox       import openPropertiesFor
 import  opus.monitor.api    as monapi
 import  nocapi
 
@@ -114,12 +115,10 @@ class ProbeMenu(QMenu):
         print "delete probe ", self._currentProbe
 
     def _openProperties(self):
-        print "open properties: ", self._currentProbe
+        openPropertiesFor(self._currentProbe)
 
     def _openPerformances(self):
         openLoggerFor(self._currentProbe, 'performances')
-
-        #print "open performances: ", self._currentProbe
 
     def _openDocumentation(self):
         print "open documentation: ", self._currentProbe
