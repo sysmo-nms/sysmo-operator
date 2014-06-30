@@ -25,9 +25,17 @@ import  nocapi
 import  platform
 import  re
 
-
+def openLoggerFor(probe, display):
+    if probe not in LoggerView.Elements.keys():
+        v = LoggerView(probe, display)
+        LoggerView.Elements[probe] = v
+    else:
+        print "exists !!"
+        LoggerView.Elements[probe].show()
+    
 class LoggerView(QWidget):
-    def __init__(self, parent, probe, display):
+    Elements = dict()
+    def __init__(self, probe, display, parent=None):
         super(LoggerView, self).__init__()
         self.setWindowTitle(display)
 
@@ -43,6 +51,7 @@ class LoggerView(QWidget):
         grid.setRowStretch(1,0)
 
         self.setLayout(grid)
+        self.show()
 
     def setProgressMax(self, maxi):
         self._statusBar.progress.setMaximum(maxi)
@@ -121,7 +130,7 @@ class RrdElement(QLabel):
         self._rrdname       = rrdname
         self._rrdconf       = rrdconf
         # XXX 
-        print rrdconf['graphs']
+        #print rrdconf['graphs']
         rrdgraphcmd         = rrdconf['graphs'][0]
         # XXX 
         self._rrdgraphcmd   = rrdgraphcmd

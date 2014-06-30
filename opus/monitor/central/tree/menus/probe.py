@@ -5,13 +5,15 @@ from    PySide.QtGui    import (
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
+from    opus.monitor.central.tree.logwin        import openLoggerFor
 import  opus.monitor.api    as monapi
 import  nocapi
 
 class ProbeMenu(QMenu):
     def __init__(self, parent):
         super(ProbeMenu, self).__init__(parent)
-        self._puActionWiz  = None
+        self._puActionWiz   = None
+        self._showPerfs     = None
         self.setIcon(nocapi.nGetIcon('folder-saved-search'))
         #######################################################################
         ## DYNAMIC TARGETS MENUS ##############################################
@@ -56,10 +58,10 @@ class ProbeMenu(QMenu):
 
         self.addSeparator()
 
-        action = QAction(self.tr('Performances'), self)
-        action.triggered.connect(self._openPerformances)
-        action.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
-        self.addAction(action)
+        self._performances = QAction(self.tr('Performances'), self)
+        self._performances.triggered.connect(self._openPerformances)
+        self._performances.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
+        self.addAction(self._performances)
 
         self.addSeparator()
 
@@ -75,6 +77,7 @@ class ProbeMenu(QMenu):
             self.configureProbeAction.triggered.disconnect(self._puActionWiz)
         self._puActionWiz = partial(self._launchUserActionsWiz, probe)
         self.configureProbeAction.triggered.connect(self._puActionWiz)
+
         if len(uactions) == 0:
             self.localProbeMenu.setDisabled(True)
         else:
@@ -114,7 +117,9 @@ class ProbeMenu(QMenu):
         print "open properties: ", self._currentProbe
 
     def _openPerformances(self):
-        print "open performances: ", self._currentProbe
+        openLoggerFor(self._currentProbe, 'performances')
+
+        #print "open performances: ", self._currentProbe
 
     def _openDocumentation(self):
         print "open documentation: ", self._currentProbe

@@ -14,7 +14,7 @@ from    PySide.QtGui    import (
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.central.tree.logwin        import LoggerView
+from    opus.monitor.central.tree.logwin        import openLoggerFor
 from    opus.monitor.central.tree.tree_model    import ProbeModel
 from    opus.monitor.central.tree.menus.probe   import ProbeMenu
 from    opus.monitor.central.tree.menus.target  import TargetMenu
@@ -93,11 +93,7 @@ class ProbesTreeview(QTreeView):
         if probeItem.data(Qt.UserRole + 1) == "Probe":
             probe = probeItem.data(Qt.UserRole + 3)
             display = probeItem.data(Qt.DisplayRole)
-            if probe not in self._viewDialogs.keys():
-                self._viewDialogs[probe] = LoggerView(self, probe, display)
-                self._viewDialogs[probe].show()
-            else:
-                self._viewDialogs[probe].show()
+            openLoggerFor(probe, display)
 
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)

@@ -104,7 +104,7 @@ class StatusItemDelegate(QStyledItemDelegate):
         super(StatusItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
-        print "paint from status delegate!"
+        #print "paint from status delegate!"
         QStyledItemDelegate.paint(self, painter, option, index)
 
 class TriggerItemDelegate(QStyledItemDelegate):
@@ -112,7 +112,7 @@ class TriggerItemDelegate(QStyledItemDelegate):
         super(TriggerItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
-        print "paint from trigger delegate!"
+        #print "paint from trigger delegate!"
         QStyledItemDelegate.paint(self, painter, option, index)
 
 class StateItemDelegate(QStyledItemDelegate):
@@ -120,7 +120,7 @@ class StateItemDelegate(QStyledItemDelegate):
         super(StateItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
-        print "paint from state delegate!"
+        #print "paint from state delegate!"
         QStyledItemDelegate.paint(self, painter, option, index)
 
 class HostItemDelegate(QStyledItemDelegate):
@@ -128,7 +128,7 @@ class HostItemDelegate(QStyledItemDelegate):
         super(HostItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
-        print "paint from host delegate!"
+        #print "paint from host delegate!"
         QStyledItemDelegate.paint(self, painter, option, index)
 
 class TimelineItemDelegate(QStyledItemDelegate):
@@ -136,7 +136,7 @@ class TimelineItemDelegate(QStyledItemDelegate):
         super(TimelineItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
-        print "paint from timeline delegate!"
+        #print "paint from timeline delegate!"
         QStyledItemDelegate.paint(self, painter, option, index)
 
 
