@@ -1,5 +1,5 @@
 from PySide.QtGui import QSplitter
-from PySide.QtCore import QSettings
+from PySide.QtCore import QSettings, QTimeLine
 from    noctopus_widgets    import (
     NFrameContainer, NFrame,
     NGridContainer, NGrid
@@ -12,7 +12,6 @@ from    opus.monitor.central.osmap.main         import OSMapContainer
 import  nocapi
 
 class TreeContainer(NFrameContainer):
-    
     def __init__(self, parent):
         super(TreeContainer, self).__init__(parent)
         TreeContainer.singleton = self
@@ -31,6 +30,9 @@ class TreeContainer(NFrameContainer):
 class TreeStack(QSplitter):
     def __init__(self, parent):
         super(TreeStack, self).__init__(parent)
+        self._timeline = QTimeLine(100, self)
+        self._timeline.setUpdateInterval(20)
+        self._timeline.frameChanged[int].connect(self._resize)
         nocapi.nConnectAppToggled(self._toggleSplitter)
         nocapi.nConnectWillClose(self._saveSettings)
         self._osmap = OSMapContainer(self)
@@ -57,12 +59,25 @@ class TreeStack(QSplitter):
             if visible == 'false':
                 self._osmap.hide()
         
-
     def _toggleSplitter(self, msg):
         if msg['id']        != 'monitor': return
         if msg['button']    != 'left': return
-        print self._osmap.isVisible()
         if self._osmap.isVisible() == True:
-            self._osmap.hide()
+            width = self._osmap.width()
+            self._tstop = 0
+            self._timeline.setFrameRange(width, 0)
+            self._timeline.start()
         else:
+            width = 400
+            self._tstop = 400
+            self._timeline.setFrameRange(0, width)
+            self._timeline.start()
             self._osmap.show()
+
+    def _resize(self, size):
+        print "resize: ", size
+        self._osmap.setFixedWidth(size)
+        if self._tstop == size:
+            if self._tstop == 0:
+                self._osmap.hide()
+            

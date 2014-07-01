@@ -1,7 +1,9 @@
 
 from    PySide.QtCore   import (
     QTemporaryFile,
-    QSettings
+    QSettings,
+    QSize,
+    QTimeLine
 )
 from    PySide.QtGui    import (
     QWidget,
@@ -11,19 +13,21 @@ from    PySide.QtGui    import (
     QPalette,
     QFont,
     QStatusBar,
-    QProgressBar
+    QProgressBar,
+    QPushButton
 )
 
 from    noctopus_widgets    import (
     NFrameContainer,
     NGridContainer,
+    NFrame,
+    NGrid,
     QLabel
 )
 
 from    opus.monitor.proxy  import AbstractChannelWidget
 import  opus.monitor.api    as monapi
 import  opus.monitor.norrd  as norrd
-#import  opus.monitor.main
 import  nocapi
 import  platform
 import  re
@@ -46,13 +50,17 @@ class LoggerView(QDialog):
         self.setWindowTitle(display)
 
         self._statusBar = LogStatusBar(self)
+
+        menus       = ProbeMenus(self)
+
         scrollArea  = QScrollArea(self)
         scrollArea.setWidget(RrdLog(self, probe))
+        scrollArea.setWidgetResizable(True)
 
-
-        grid = NGridContainer(self)
-        grid.addWidget(scrollArea, 0,0)
-        grid.addWidget(self._statusBar,  1,0)
+        grid = NGrid(self)
+        grid.addWidget(scrollArea, 0,1)
+        grid.addWidget(menus,      0,0)
+        grid.addWidget(self._statusBar,  1,0,1,2)
         grid.setRowStretch(0,1)
         grid.setRowStretch(1,0)
 
@@ -90,6 +98,43 @@ class LoggerView(QDialog):
         self._saveSettings()
         QDialog.closeEvent(self, event)
 
+class ProbeMenus(NFrameContainer):
+    def __init__(self, parent):
+        super(ProbeMenus, self).__init__(parent)
+        self._force = QPushButton(self)
+        self._force.setIconSize(QSize(30,30))
+        self._force.setIcon(nocapi.nGetIcon('software-update-available'))
+        self._pause = QPushButton(self)
+        self._pause.setIconSize(QSize(30,30))
+        self._pause.setIcon(nocapi.nGetIcon('media-playback-pause'))
+        self._pause.setCheckable(True)
+        self._pause.setChecked(False)
+        self._action = QPushButton(self)
+        self._action.setIconSize(QSize(30,30))
+        self._action.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        self._docu = QPushButton(self)
+        self._docu.setIconSize(QSize(30,30))
+        self._docu.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        self._prop = QPushButton(self)
+        self._prop.setIconSize(QSize(30,30))
+        self._prop.setIcon(nocapi.nGetIcon('edit-paste'))
+
+        grid = NGridContainer(self)
+        grid.setVerticalSpacing(4)
+        grid.addWidget(self._force, 0,1,1,1)
+        grid.addWidget(self._pause, 1,1)
+        grid.addWidget(self._action, 2,1)
+        grid.addWidget(self._docu,  4,1)
+        grid.addWidget(self._prop,  5,1)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,0)
+        grid.setRowStretch(2,0)
+        grid.setRowStretch(3,1)
+        grid.setRowStretch(4,0)
+        grid.setRowStretch(5,0)
+        self.setLayout(grid)
+
+
 class LogStatusBar(QStatusBar):
     def __init__(self, parent):
         super(LogStatusBar, self).__init__(parent)
@@ -110,9 +155,13 @@ class LogStatusBar(QStatusBar):
 class RrdLog(AbstractChannelWidget):
     def __init__(self, parent, probe):
         super(RrdLog, self).__init__(parent, probe)
+        self._resizeTimeline = QTimeLine(50, self)
+        self._resizeTimeline.setUpdateInterval(100)
+        self._resizeTimeline.setCurveShape(QTimeLine.LinearCurve)
+        self._resizeTimeline.finished.connect(self._updateGraphs)
+
         self._parent = parent
         self._grid = NGridContainer(self)
-        self.setAutoFillBackground(True)
         self.setLayout(self._grid)
         self._rrdElements = dict()
 
@@ -125,6 +174,16 @@ class RrdLog(AbstractChannelWidget):
         else:
             self._cancel()
 
+    def resizeEvent(self, event):
+        if self._resizeTimeline.state() == QTimeLine.NotRunning:
+            self._resizeTimeline.start()
+        else:
+            self._resizeTimeline.setCurrentTime(0)
+
+    def _updateGraphs(self):
+        for key in self._rrdElements.keys():
+            self._rrdElements[key].resizeEnding()
+
     def _continue(self):
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
         self._parent.setProgressMax(len(rrdConf.keys()))
@@ -132,6 +191,9 @@ class RrdLog(AbstractChannelWidget):
             rrdconf = rrdConf[rrdname]
             self._rrdElements[rrdname] = RrdElement(self, rrdname, rrdconf)
             self._grid.addWidget(self._rrdElements[rrdname])
+            rcount = self._grid.rowCount()
+            self._grid.setRowStretch(rcount - 1, 0)
+            self._grid.setRowStretch(rcount,     1)
         self.connectProbe()
         self.goOn = True
 
@@ -152,8 +214,8 @@ class RrdLog(AbstractChannelWidget):
 class RrdElement(QLabel):
     def __init__(self, parent, rrdname, rrdconf):
         super(RrdElement, self).__init__(parent)
-        self.setFixedWidth(400)
-        self.setFixedHeight(40)
+        self.setMinimumWidth(400)
+        self.setMinimumHeight(100)
         self._font = QFont().defaultFamily()
         self._initGraphState()
         self._initGraphFile()
@@ -166,7 +228,9 @@ class RrdElement(QLabel):
         # XXX 
         self._rrdgraphcmd   = rrdgraphcmd
         self._rrdgraphbinds = rrdconf['binds']
-        self.setFixedHeight(100)
+
+    def resizeEnding(self):
+        self._updateGraph()
 
     def _initGraphState(self):
         self._rrdFileReady  = False
@@ -210,7 +274,8 @@ class RrdElement(QLabel):
     def _drawGraph(self, rrdreturn):
         self.setPixmap(QPixmap(self._rrdGraphFile))
 
-    #def resizeEvent(self, event):
+#    def resizeEvent(self, event):
+#        print "resize event"
         #if self._rrdFileReady == True:
             #self._needRedraw = True
         #QLabel.resizeEvent(self, event)
