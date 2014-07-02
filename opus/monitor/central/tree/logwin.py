@@ -42,7 +42,6 @@ def openLoggerFor(probe, display):
         v = LoggerView(probe, display)
         LoggerView.Elements[probe] = v
     else:
-        print "exists !!"
         LoggerView.Elements[probe].show()
     
 class LoggerView(QDialog):
@@ -58,10 +57,6 @@ class LoggerView(QDialog):
         menus       = ProbeMenus(self)
 
         scrollArea  = RrdArea(self, probe)
-        #scrollArea  = QScrollArea(self)
-        #scrollArea.setWidget(RrdLog(self, probe))
-        #scrollArea.setWidgetResizable(True)
-        
 
         grid = NGrid(self)
         grid.addWidget(scrollArea, 0,1)
@@ -299,7 +294,6 @@ class RrdTimelineControl(NFrameContainer):
         self.setLayout(grid)
 
     def _timelineMove(self, index):
-        print "timeline move: ", index
         if index == 0:
             start   = 'now-2hours'
             end     = 'now'
@@ -347,6 +341,7 @@ class RrdTimelineControl(NFrameContainer):
 class RrdLog(AbstractChannelWidget):
     sizeMove = Signal(int)
     timeMove = Signal(tuple)
+    upGraph  = Signal()
     def __init__(self, parent, probe, master):
         super(RrdLog, self).__init__(parent, probe)
         self._resizeTimeline = QTimeLine(50, self)
@@ -355,6 +350,7 @@ class RrdLog(AbstractChannelWidget):
         self._resizeTimeline.finished.connect(self._updateGraphs)
 
         self._master = master
+        # XXX try NGrid() in a QThred()
         self._grid = NGrid(self)
         self.setLayout(self._grid)
         self._rrdElements = dict()
@@ -381,8 +377,7 @@ class RrdLog(AbstractChannelWidget):
             self._resizeTimeline.setCurrentTime(0)
 
     def _updateGraphs(self):
-        for key in self._rrdElements.keys():
-            self._rrdElements[key].resizeEnding()
+        self.upGraph.emit()
 
     def _continue(self):
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
@@ -416,6 +411,7 @@ class RrdElement(QLabel):
         super(RrdElement, self).__init__(parent)
         parent.sizeMove.connect(self.setHeight,     Qt.QueuedConnection)
         parent.timeMove.connect(self.setTimeline,   Qt.QueuedConnection)
+        parent.upGraph.connect(self.upGraph,        Qt.QueuedConnection)
         self.setMinimumWidth(400)
         self._font = QFont().defaultFamily()
         self._initGraphState()
@@ -444,9 +440,8 @@ class RrdElement(QLabel):
     def setHeight(self, size):
         self._graphHeight = size
         self._updateGraph()
-        print "ssssssssssset height: ", size
 
-    def resizeEnding(self):
+    def upGraph(self):
         self._updateGraph()
 
     def _initGraphState(self):
@@ -487,32 +482,15 @@ class RrdElement(QLabel):
         else:
             cmd = self._generateGraphCmd(
                 start, end, defs, lines, areas, rrdwidth, height)
-        norrd.cmd(cmd, self._drawGraph)
-
-    #def _graphComplete(self, rrdreturn):
-        #self._needRedraw = True
-        #if self.isVisible() == True:
-            #self._drawGraph()
+        norrd.cmd(cmd, callback=self._drawGraph, special='returnPixmap', data=self._rrdGraphFile)
 
     def showEvent(self, event):
         print "show event"
 
-    def _drawGraph(self, rrdreturn):
-        print "visible? ", self.isVisible()
-        # XXX performances problems for main event loop are here for
-        # 100+ interfaces to graph
-        self.setPixmap(QPixmap(self._rrdGraphFile))
-
-#    def resizeEvent(self, event):
-#        print "resize event"
-        #if self._rrdFileReady == True:
-            #self._needRedraw = True
-        #QLabel.resizeEvent(self, event)
-
-    #def paintEvent(self, event):
-        #if self._needRedraw == True:
-        #self._updateGraph()
-        #QLabel.paintEvent(self, event)
+    def _drawGraph(self, rrdreturn): pass
+        # rrdgraph return a QPixmap()
+        pix = rrdreturn['data']
+        self.setPixmap(pix)
 
     def handleDump(self, fileName):
         self._rrdDatabase = fileName
