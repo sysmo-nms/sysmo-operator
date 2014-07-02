@@ -2,7 +2,9 @@ from    PySide.QtCore   import (
     QTemporaryFile,
     QSettings,
     QSize,
-    QTimeLine
+    QTimeLine,
+    Signal,
+    Qt
 )
 
 from    PySide.QtGui    import (
@@ -37,7 +39,6 @@ import  re
 
 def openLoggerFor(probe, display):
     if probe not in LoggerView.Elements.keys():
-        #p = opus.monitor.main.Central.singleton
         v = LoggerView(probe, display)
         LoggerView.Elements[probe] = v
     else:
@@ -344,6 +345,8 @@ class RrdTimelineControl(NFrameContainer):
 
 
 class RrdLog(AbstractChannelWidget):
+    sizeMove = Signal(int)
+    timeMove = Signal(tuple)
     def __init__(self, parent, probe, master):
         super(RrdLog, self).__init__(parent, probe)
         self._resizeTimeline = QTimeLine(50, self)
@@ -366,12 +369,10 @@ class RrdLog(AbstractChannelWidget):
             self._cancel()
 
     def setTimeline(self, start, end):
-        for element in self._rrdElements.keys():
-            self._rrdElements[element].setTimeline(start, end)
+        self.timeMove.emit((start,end))
 
     def setGraphHeight(self, size):
-        for element in self._rrdElements.keys():
-            self._rrdElements[element].setHeight(size)
+        self.sizeMove.emit(size)
 
     def resizeEvent(self, event):
         if self._resizeTimeline.state() == QTimeLine.NotRunning:
@@ -413,8 +414,9 @@ class RrdLog(AbstractChannelWidget):
 class RrdElement(QLabel):
     def __init__(self, parent, rrdname, rrdconf):
         super(RrdElement, self).__init__(parent)
+        parent.sizeMove.connect(self.setHeight,     Qt.QueuedConnection)
+        parent.timeMove.connect(self.setTimeline,   Qt.QueuedConnection)
         self.setMinimumWidth(400)
-        #self.setMinimumHeight(100)
         self._font = QFont().defaultFamily()
         self._initGraphState()
         self._initGraphFile()
@@ -433,7 +435,8 @@ class RrdElement(QLabel):
         self._timelineEnd   = 'now'
         self._graphHeight   = 100
 
-    def setTimeline(self, start, end):
+    def setTimeline(self, time):
+        start, end = time
         self._timelineStart = start
         self._timelineEnd   = end
         self._updateGraph()
@@ -495,6 +498,9 @@ class RrdElement(QLabel):
         print "show event"
 
     def _drawGraph(self, rrdreturn):
+        print "visible? ", self.isVisible()
+        # XXX performances problems for main event loop are here for
+        # 100+ interfaces to graph
         self.setPixmap(QPixmap(self._rrdGraphFile))
 
 #    def resizeEvent(self, event):
