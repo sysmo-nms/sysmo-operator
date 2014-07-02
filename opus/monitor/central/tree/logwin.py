@@ -1,10 +1,10 @@
-
 from    PySide.QtCore   import (
     QTemporaryFile,
     QSettings,
     QSize,
     QTimeLine
 )
+
 from    PySide.QtGui    import (
     QWidget,
     QDialog,
@@ -14,7 +14,10 @@ from    PySide.QtGui    import (
     QFont,
     QStatusBar,
     QProgressBar,
-    QPushButton
+    QPushButton,
+    QComboBox,
+    QCheckBox,
+    QLineEdit
 )
 
 from    noctopus_widgets    import (
@@ -53,9 +56,11 @@ class LoggerView(QDialog):
 
         menus       = ProbeMenus(self)
 
-        scrollArea  = QScrollArea(self)
-        scrollArea.setWidget(RrdLog(self, probe))
-        scrollArea.setWidgetResizable(True)
+        scrollArea  = RrdArea(self, probe)
+        #scrollArea  = QScrollArea(self)
+        #scrollArea.setWidget(RrdLog(self, probe))
+        #scrollArea.setWidgetResizable(True)
+        
 
         grid = NGrid(self)
         grid.addWidget(scrollArea, 0,1)
@@ -152,16 +157,202 @@ class LogStatusBar(QStatusBar):
             self.removeWidget(self.progress)
             self.showMessage('Load complete', timeout=2000)
 
-class RrdLog(AbstractChannelWidget):
+
+class RrdArea(NFrameContainer):
     def __init__(self, parent, probe):
+        super(RrdArea, self).__init__(parent)
+        self._rrdFrame = RrdLog(self, probe, parent)
+        rrdScroll = QScrollArea(self)
+        rrdScroll.setWidget(self._rrdFrame)
+        rrdScroll.setWidgetResizable(True)
+
+        rrdControls = RrdControls(self)
+        grid = NGridContainer(self)
+        grid.setVerticalSpacing(4)
+        grid.addWidget(rrdControls,          0,0)
+        grid.addWidget(rrdScroll,            1,0)
+        self.setLayout(grid)
+
+    def timelineMove(self, start, end):
+        self._rrdFrame.setTimeline(start, end)
+
+    def heightMove(self, size):
+        self._rrdFrame.setGraphHeight(size)
+
+class RrdControls(NFrameContainer):
+    def __init__(self, parent):
+        super(RrdControls, self).__init__(parent)
+        grid = NGridContainer(self)
+        grid.setHorizontalSpacing(20)
+        grid.setContentsMargins(20,0,20,0)
+        lo   = RrdLocateControl(self)
+        tl   = RrdTimelineControl(self, parent)
+        rh   = RrdHeightControl(self, parent)
+        un   = RrdUnifyControl(self)
+        la   = RrdLayoutControl(self)
+
+        grid.addWidget(lo,          0,0)
+        grid.addWidget(tl,          0,1)
+        grid.addWidget(rh,          0,2)
+        grid.addWidget(un,          0,3)
+        grid.addWidget(la,          0,4)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,0)
+        grid.setColumnStretch(2,0)
+        grid.setColumnStretch(3,0)
+        grid.setColumnStretch(4,0)
+        grid.setColumnStretch(5,1)
+        self.setLayout(grid)
+
+
+class RrdLayoutControl(NFrameContainer):
+    def __init__(self, parent):
+        super(RrdLayoutControl, self).__init__(parent)
+        grid = NGridContainer(self)
+        grid.setHorizontalSpacing(2)
+        heightLab = QLabel('Layout:', self)
+        height = QComboBox(self)
+        height.addItem('1 column')
+        height.addItem('2 columns')
+        height.addItem('3 columns')
+        height.addItem('4 columns')
+        grid.addWidget(heightLab,   0,0)
+        grid.addWidget(height,      0,1)
+        self.setLayout(grid)
+
+class RrdLocateControl(NFrameContainer):
+    def __init__(self, parent):
+        super(RrdLocateControl, self).__init__(parent)
+        grid = NGridContainer(self)
+        grid.setHorizontalSpacing(2)
+        locateOr = QComboBox(self)
+        locateOr.addItem('Locate:')
+        locateOr.addItem('Filter:')
+        line = QLineEdit(self)
+        line.setMinimumWidth(150)
+        grid.addWidget(locateOr, 0,0)
+        grid.addWidget(line,     0,1)
+        self.setLayout(grid)
+
+class RrdUnifyControl(NFrameContainer):
+    def __init__(self, parent):
+        super(RrdUnifyControl, self).__init__(parent)
+        grid = NGridContainer(self)
+        unify = QCheckBox('Unify Y axis', self)
+        grid.addWidget(unify, 0,0)
+        self.setLayout(grid)
+
+class RrdHeightControl(NFrameContainer):
+    def __init__(self, parent, master):
+        super(RrdHeightControl, self).__init__(parent)
+        self._master = master
+        grid = NGridContainer(self)
+        grid.setHorizontalSpacing(2)
+        heightLab = QLabel('Graph height:', self)
+        height = QComboBox(self)
+        height.insertItem(0, 'Thumbnail')
+        height.insertItem(1, 'Small')
+        height.insertItem(2, 'Normal')
+        height.insertItem(3, 'Large')
+        height.insertItem(4, 'Huge')
+        height.currentIndexChanged[int].connect(self._heightMove)
+        grid.addWidget(heightLab,   0,0)
+        grid.addWidget(height,      0,1)
+        self.setLayout(grid)
+
+    def _heightMove(self, index):
+        if index == 0:
+            self._master.heightMove('31')
+        elif index == 1:
+            self._master.heightMove(80)
+        elif index == 2:
+            self._master.heightMove(100)
+        elif index == 3:
+            self._master.heightMove(130)
+        elif index == 4:
+            self._master.heightMove(180)
+
+
+
+class RrdTimelineControl(NFrameContainer):
+    def __init__(self, parent, master):
+        super(RrdTimelineControl, self).__init__(parent)
+        self._master = master
+        grid = NGridContainer(self)
+        grid.setHorizontalSpacing(2)
+        timeLineLab = QLabel('Timeline:', self)
+        timeLine = QComboBox(self)
+        timeLine.insertItem(0, '2h  from now')
+        timeLine.insertItem(1, '12h from now')
+        timeLine.insertItem(2, '2d  from now')
+        timeLine.insertItem(3, '7d  from now')
+        timeLine.insertItem(4, '2w  from now')
+        timeLine.insertItem(5, '1m  from now')
+        timeLine.insertItem(6, '6m  from now')
+        timeLine.insertItem(7, '1y  from now')
+        timeLine.insertItem(8, '3y  from now')
+        timeLine.insertItem(9, '10y from now')
+        timeLine.currentIndexChanged[int].connect(self._timelineMove)
+        grid.addWidget(timeLineLab, 0,0)
+        grid.addWidget(timeLine,    0,1)
+        self.setLayout(grid)
+
+    def _timelineMove(self, index):
+        print "timeline move: ", index
+        if index == 0:
+            start   = 'now-2hours'
+            end     = 'now'
+            self._master.timelineMove(start, end)
+        if index == 1:
+            start   = 'now-12hours'
+            end     = 'now'
+            self._master.timelineMove(start, end)
+        elif index == 2:
+            end     = 'now'
+            start   = 'now-2days'
+            self._master.timelineMove(start, end)
+        elif index == 3:
+            end     = 'now'
+            start   = 'now-7days'
+            self._master.timelineMove(start, end)
+        elif index == 4:
+            end     = 'now'
+            start   = 'now-2weeks'
+            self._master.timelineMove(start, end)
+        elif index == 5:
+            end     = 'now'
+            start   = 'now-1month'
+            self._master.timelineMove(start, end)
+        elif index == 6:
+            end     = 'now'
+            start   = 'now-6months'
+            self._master.timelineMove(start, end)
+        elif index == 7:
+            end     = 'now'
+            start   = 'now-1year'
+            self._master.timelineMove(start, end)
+        elif index == 8:
+            end     = 'now'
+            start   = 'now-3years'
+            self._master.timelineMove(start, end)
+        elif index == 9:
+            end     = 'now'
+            start   = 'now-10years'
+            self._master.timelineMove(start, end)
+
+
+
+
+class RrdLog(AbstractChannelWidget):
+    def __init__(self, parent, probe, master):
         super(RrdLog, self).__init__(parent, probe)
         self._resizeTimeline = QTimeLine(50, self)
         self._resizeTimeline.setUpdateInterval(100)
         self._resizeTimeline.setCurveShape(QTimeLine.LinearCurve)
         self._resizeTimeline.finished.connect(self._updateGraphs)
 
-        self._parent = parent
-        self._grid = NGridContainer(self)
+        self._master = master
+        self._grid = NGrid(self)
         self.setLayout(self._grid)
         self._rrdElements = dict()
 
@@ -173,6 +364,14 @@ class RrdLog(AbstractChannelWidget):
             self._continue()
         else:
             self._cancel()
+
+    def setTimeline(self, start, end):
+        for element in self._rrdElements.keys():
+            self._rrdElements[element].setTimeline(start, end)
+
+    def setGraphHeight(self, size):
+        for element in self._rrdElements.keys():
+            self._rrdElements[element].setHeight(size)
 
     def resizeEvent(self, event):
         if self._resizeTimeline.state() == QTimeLine.NotRunning:
@@ -186,7 +385,7 @@ class RrdLog(AbstractChannelWidget):
 
     def _continue(self):
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
-        self._parent.setProgressMax(len(rrdConf.keys()))
+        self._master.setProgressMax(len(rrdConf.keys()))
         for rrdname in rrdConf.keys():
             rrdconf = rrdConf[rrdname]
             self._rrdElements[rrdname] = RrdElement(self, rrdname, rrdconf)
@@ -206,7 +405,7 @@ class RrdLog(AbstractChannelWidget):
                 fileId      = msg['data']['fileId']
                 fileName    = msg['data']['file']
                 self._rrdElements[fileId].handleDump(fileName)
-                self._parent.updateProgress(fileId)
+                self._master.updateProgress(fileId)
         elif msg['msgType'] == 'probeReturn':
             for key in self._rrdElements.keys():
                 self._rrdElements[key].handleReturn(msg)
@@ -215,7 +414,7 @@ class RrdElement(QLabel):
     def __init__(self, parent, rrdname, rrdconf):
         super(RrdElement, self).__init__(parent)
         self.setMinimumWidth(400)
-        self.setMinimumHeight(100)
+        #self.setMinimumHeight(100)
         self._font = QFont().defaultFamily()
         self._initGraphState()
         self._initGraphFile()
@@ -228,6 +427,21 @@ class RrdElement(QLabel):
         # XXX 
         self._rrdgraphcmd   = rrdgraphcmd
         self._rrdgraphbinds = rrdconf['binds']
+
+        # 
+        self._timelineStart = 'now-2h'
+        self._timelineEnd   = 'now'
+        self._graphHeight   = 100
+
+    def setTimeline(self, start, end):
+        self._timelineStart = start
+        self._timelineEnd   = end
+        self._updateGraph()
+
+    def setHeight(self, size):
+        self._graphHeight = size
+        self._updateGraph()
+        print "ssssssssssset height: ", size
 
     def resizeEnding(self):
         self._updateGraph()
@@ -258,9 +472,18 @@ class RrdElement(QLabel):
         areas   = re.findall(r'AREA[^\s]+', self._rrdgraphcmd)
         size    = self.size()
         rrdwidth    = size.width()
-        rrdheight   = size.height()
-        cmd         = self._generateGraphCmd(
-            'now-2h', 'now', defs, lines, areas, rrdwidth, rrdheight)
+        #rrdheight   = size.height()
+        height      = self._graphHeight
+        start       = self._timelineStart
+        end         = self._timelineEnd
+        #cmd         = self._generateGraphCmd(
+        #    start, end, defs, lines, areas, rrdwidth, rrdheight)
+        if int(height) < 32:
+            cmd = self._generateThumbCmd(
+                start, end, defs, lines, areas, rrdwidth, height)
+        else:
+            cmd = self._generateGraphCmd(
+                start, end, defs, lines, areas, rrdwidth, height)
         norrd.cmd(cmd, self._drawGraph)
 
     #def _graphComplete(self, rrdreturn):
@@ -302,6 +525,35 @@ class RrdElement(QLabel):
         #opts = '--full-size-mode --disable-rrdtool-tag --border 0 --dynamic-labels --slope-mode --tabwidth 40 --watermark %s' % 'watermark '
 
 
+        colors = '--color BACK#00000000 --color CANVAS%s --color GRID%s --color MGRID%s --color FONT%s --color AXIS%s --color FRAME%s --color ARROW%s --font DEFAULT:0:%s ' % (
+                nocapi.nGetRgba('Base'),
+                nocapi.nGetRgba('Dark'),
+                nocapi.nGetRgba('Shadow'),
+                nocapi.nGetRgba('WindowText'),
+                nocapi.nGetRgba('Dark'),
+                nocapi.nGetRgba('Window'),
+                nocapi.nGetRgba('Shadow'),
+                self._font
+            )
+        time = '--start %s --end %s ' % (rrdStart, rrdStop)
+        defsC = ''
+        for i in range(len(defs)):
+            defsC += ' %s ' % defs[i]
+
+        linesC = ''
+        for i in range(len(lines)):
+            linesC += ' %s ' % lines[i]
+
+        areasC = ''
+        for i in range(len(areas)):
+            areasC += ' %s ' % areas[i]
+
+        cmd = head + time + opts + colors + time + defsC + linesC + areasC
+        return cmd
+
+    def _generateThumbCmd(self, rrdStart, rrdStop, defs, lines, areas, w, h):
+        head = 'graph %s --imgformat PNG --width %s --height %s --border 0 ' % (self._rrdGraphFile, w, h)
+        opts = '--only-graph --disable-rrdtool-tag --slope-mode --tabwidth 1 '
         colors = '--color BACK#00000000 --color CANVAS%s --color GRID%s --color MGRID%s --color FONT%s --color AXIS%s --color FRAME%s --color ARROW%s --font DEFAULT:0:%s ' % (
                 nocapi.nGetRgba('Base'),
                 nocapi.nGetRgba('Dark'),
