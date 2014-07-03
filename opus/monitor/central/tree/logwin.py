@@ -341,14 +341,8 @@ class RrdTimelineControl(NFrameContainer):
 class RrdLog(AbstractChannelWidget):
     sizeMove = Signal(int)
     timeMove = Signal(tuple)
-    upGraph  = Signal()
     def __init__(self, parent, probe, master):
         super(RrdLog, self).__init__(parent, probe)
-        self._resizeTimeline = QTimeLine(50, self)
-        self._resizeTimeline.setUpdateInterval(100)
-        self._resizeTimeline.setCurveShape(QTimeLine.LinearCurve)
-        self._resizeTimeline.finished.connect(self._updateGraphs)
-
         self._master = master
         # XXX try NGrid() in a QThred()
         self._grid = NGrid(self)
@@ -369,15 +363,6 @@ class RrdLog(AbstractChannelWidget):
 
     def setGraphHeight(self, size):
         self.sizeMove.emit(size)
-
-    def resizeEvent(self, event):
-        if self._resizeTimeline.state() == QTimeLine.NotRunning:
-            self._resizeTimeline.start()
-        else:
-            self._resizeTimeline.setCurrentTime(0)
-
-    def _updateGraphs(self):
-        self.upGraph.emit()
 
     def _continue(self):
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
@@ -409,12 +394,17 @@ class RrdLog(AbstractChannelWidget):
 class RrdElement(QLabel):
     def __init__(self, parent, rrdname, rrdconf):
         super(RrdElement, self).__init__(parent)
+        self.setMinimumWidth(400)
+
+        self._resizeTimeline = QTimeLine(100, self)
+        self._resizeTimeline.setUpdateInterval(1000)
+        self._resizeTimeline.setCurveShape(QTimeLine.LinearCurve)
+        self._resizeTimeline.finished.connect(self._resizeEventEnd)
+
         parent.sizeMove.connect(self.setHeight,     Qt.QueuedConnection)
         parent.timeMove.connect(self.setTimeline,   Qt.QueuedConnection)
-        parent.upGraph.connect(self.upGraph,        Qt.QueuedConnection)
-        self.setMinimumWidth(400)
+
         self._font = QFont().defaultFamily()
-        self._initGraphState()
         self._initGraphFile()
         self.setText(rrdname)
         self._rrdname       = rrdname
@@ -426,28 +416,52 @@ class RrdElement(QLabel):
         self._rrdgraphcmd   = rrdgraphcmd
         self._rrdgraphbinds = rrdconf['binds']
 
+        self._rrdFileReady  = False
+        self._needRedraw    = True
+
         # 
         self._timelineStart = 'now-2h'
         self._timelineEnd   = 'now'
         self._graphHeight   = 100
 
+    def handleReturn(self, msg):
+        if self.isVisible() == True: self._updateGraph()
+
+    def handleDump(self, fileName):
+        self._rrdDatabase = fileName
+        graphcmd = self._rrdgraphcmd
+        self._rrdgraphcmd   = re.sub('<FILE>',self._rrdDatabase,graphcmd)
+        self._rrdFileReady  = True
+        self._stateUpdate()
+
+    def resizeEvent(self, event):
+        if self._resizeTimeline.state() == QTimeLine.NotRunning:
+            self._sizeOrigin = event.size().width()
+            self._resizeTimeline.start()
+        else:
+            self._resizeTimeline.setCurrentTime(0)
+
+    def _resizeEventEnd(self):
+        if self.size().width() != self._sizeOrigin:
+            self._needRedraw = True
+            self._stateUpdate()
+
     def setTimeline(self, time):
         start, end = time
         self._timelineStart = start
         self._timelineEnd   = end
-        self._updateGraph()
+        self._needRedraw = True
+        self._stateUpdate()
 
     def setHeight(self, size):
         self._graphHeight = size
-        self._updateGraph()
+        self._needRedraw = True
+        self._stateUpdate()
 
-    def upGraph(self):
-        self._updateGraph()
+    def _updateRequired(self):
+        self._needRedraw = True
+        self._stateUpdate()
 
-    def _initGraphState(self):
-        self._rrdFileReady  = False
-        self._needRedraw    = False
-        self._needRegraph   = False
 
     def _initGraphFile(self):
         self._rrdGraphFile  = QTemporaryFile(self)
@@ -484,23 +498,19 @@ class RrdElement(QLabel):
                 start, end, defs, lines, areas, rrdwidth, height)
         norrd.cmd(cmd, callback=self._drawGraph, special='returnPixmap', data=self._rrdGraphFile)
 
-    def showEvent(self, event):
-        print "show event"
-
     def _drawGraph(self, rrdreturn):
-        # rrdgraph return a QPixmap()
         pix = rrdreturn['data']
         self.setPixmap(pix)
 
-    def handleDump(self, fileName):
-        self._rrdDatabase = fileName
-        graphcmd = self._rrdgraphcmd
-        self._rrdgraphcmd   = re.sub('<FILE>',self._rrdDatabase,graphcmd)
-        self._rrdFileReady  = True
-        self._updateGraph()
 
-    def handleReturn(self, msg):
-        if self.isVisible() == True: self._updateGraph()
+    def _stateUpdate(self):
+        print "stateupdate: ", self, self._needRedraw, self._rrdFileReady
+        if self._needRedraw == True:
+            if self._rrdFileReady == True:
+                self._updateGraph()
+                self._needRedraw = False
+
+
 
     def _generateGraphCmd(self, rrdStart, rrdStop, defs, lines, areas, w, h):
         head = 'graph %s --imgformat PNG --width %s --height %s --border 0 ' % (self._rrdGraphFile, w, h)
