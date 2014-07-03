@@ -150,3 +150,7 @@ def nQuery(key, callback):
 def nGetGroups():
     sc = noctopus_main.NMainWindow.singleton.supercast
     return sc.groups
+
+def nAddMainMenu(menu):
+    mw = noctopus_main.NMainWindow.singleton
+    mw.setApplicationMenu(menu)

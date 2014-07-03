@@ -86,8 +86,8 @@ class NMainWindow(QMainWindow):
 
         self._initStatusBar()
         self._restoreSettings()
-        self._initLayout()
         self._initMenus()
+        self._initLayout()
 
 
     #########
@@ -297,8 +297,11 @@ class NMainWindow(QMainWindow):
         )
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
+        actionConfigureProxy = QAction(self.tr('Proxy settings'), self)
+        actionConfigureProxy.triggered.connect(self._launchProxySettings)
         menuFile.addAction(_dumpPaletteAction)
         menuFile.addAction(updateAction)
+        menuFile.addAction(actionConfigureProxy)
         menuFile.addSeparator()
         menuFile.addAction(exitAction)
     
@@ -334,13 +337,6 @@ class NMainWindow(QMainWindow):
         menuWin.addSeparator()
         menuWin.addAction(fullScreenAction)
     
-        " configure menu "
-    
-        actionConfigureProxy = QAction(self.tr('Proxy settings'), self)
-        actionConfigureProxy.triggered.connect(self._launchProxySettings)
-    
-        menuConf    = menu.addMenu(self.tr('Configure'))
-        menuConf.addAction(actionConfigureProxy)
     
         " style menu "
         nativeAction    = QAction(self.tr('Native'), self)
@@ -407,8 +403,15 @@ class NMainWindow(QMainWindow):
         else:
             nativeAction.setChecked(True)
 
+        " application menu defined by the differents extentions"
+        menu.addSeparator()
+
+        self._mainMenu = menu
         return
 
+    def setApplicationMenu(self, menu):
+        print "add application menu", menu
+        self._mainMenu.addMenu(menu)
 
     def _dumpPalette(self):
         print getPalette('dark')
