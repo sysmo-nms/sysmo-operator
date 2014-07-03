@@ -33,7 +33,6 @@ from    noctopus_widgets    import (
 from    functools import partial
 from    opus.monitor.central.tree.controls      import ProbesActions
 from    opus.monitor.central.tree.tree_model    import ProbeModel
-from    opus.monitor.central.tree.logwin        import LoggerView
 from    opus.monitor.commands.wizards           import UserActionsWizard
 from    opus.monitor.central.tree.treewidget    import ProbeTreeWidget
 

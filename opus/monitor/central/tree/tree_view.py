@@ -14,7 +14,7 @@ from    PySide.QtGui    import (
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.central.tree.logwin        import openLoggerFor
+from    opus.monitor.logwin.main                import openLoggerFor
 from    opus.monitor.central.tree.tree_model    import ProbeModel
 from    opus.monitor.central.tree.menus.probe   import ProbeMenu
 from    opus.monitor.central.tree.menus.target  import TargetMenu
