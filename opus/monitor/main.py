@@ -1,10 +1,12 @@
 from    PySide.QtCore   import (
     QSettings,
-    QTimeLine
+    QTimeLine,
 )
 
+from PySide.QtGui import QMenu, QAction
 from    opus.monitor                 import norrd
 from    opus.monitor.commands.user_actions import UserActions
+from    opus.monitor.commands.doc_conf      import DocConfigurator
 from    opus.monitor.central.main    import TreeContainer
 from    opus.monitor.proxy           import ChanHandler
 from    noctopus_widgets             import (
@@ -19,6 +21,13 @@ class Central(NFrameContainer):
         super(Central, self).__init__(parent)
         Central.singleton = self
         nocapi.nConnectWillClose(self._willClose)
+        menu = QMenu('monitor', self)
+        menu.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
+        wikiConf = QAction('Configure documentation engine', self)
+        wikiConf.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        wikiConf.triggered.connect(self._configureDoc)
+        menu.addAction(wikiConf)
+        nocapi.nAddMainMenu(menu)
 
         self._initRrdtool()
         self._initChanProxy()
@@ -34,6 +43,10 @@ class Central(NFrameContainer):
     def _initRrdtool(self):
         self._rrdtool = norrd.Rrdtool(self)
         nocapi.nConnectWillClose(self._rrdtool.threadShutdown)
+
+    def _configureDoc(self):
+        ret = DocConfigurator(self)
+        print 'configure wiki url ', ret
 
 
     def _initChanProxy(self): 

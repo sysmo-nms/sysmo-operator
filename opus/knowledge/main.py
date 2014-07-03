@@ -2,7 +2,8 @@ from    PySide.QtGui    import (
     QFrame,
     QPushButton,
     QLabel,
-    QLineEdit
+    QLineEdit,
+    QMenu
 )
 from    noctopus_widgets    import (
     NFrame,
@@ -20,6 +21,9 @@ class Central(NFrameContainer):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         self.enabled = True
+        menu = QMenu('knowledge', self)
+        menu.setIcon(nocapi.nGetIcon('accessories-text-editor'))
+        nocapi.nAddMainMenu(menu)
         grid = self._initKnowledgeLayout()
         self.setLayout(grid)
 

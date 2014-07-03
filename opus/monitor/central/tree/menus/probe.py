@@ -5,7 +5,7 @@ from    PySide.QtGui    import (
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.central.tree.logwin        import openLoggerFor
+from    opus.monitor.logwin.main                import openLoggerFor
 from    opus.monitor.central.tree.toolbox       import openProbePropertiesFor
 import  opus.monitor.api    as monapi
 import  nocapi

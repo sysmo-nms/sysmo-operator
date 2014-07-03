@@ -39,6 +39,13 @@ import  nocapi
 import  platform
 import  re
 
+# TODO
+# - graphs in a QTreeView (filtre, classer par interface speed)
+# - ajouter "next return"
+# - ajouter QTimeLine: move/redraw
+# - ajouter indicateur "redrawing"
+
+
 def openLoggerFor(probe, display):
     if probe not in LoggerView.Elements.keys():
         v = LoggerView(probe, display)
@@ -189,6 +196,11 @@ class RrdControls(NFrameContainer):
         un   = RrdUnifyControl(self)
         la   = RrdLayoutControl(self)
 
+        #
+        lo.setDisabled(True)
+        un.setDisabled(True)
+        la.setDisabled(True)
+        #
         grid.addWidget(lo,          0,0)
         grid.addWidget(tl,          0,1)
         grid.addWidget(rh,          0,2)

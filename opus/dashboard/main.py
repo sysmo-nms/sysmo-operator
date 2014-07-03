@@ -2,7 +2,8 @@ from    PySide.QtGui        import (
     QTabWidget,
     QMdiArea,
     QFrame,
-    QPushButton
+    QPushButton,
+    QMenu
 )
 from    PySide.QtCore       import Qt
 from    noctopus_widgets    import (
@@ -18,6 +19,9 @@ class Central(NFrame):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
+        menu = QMenu('dashboard',self)
+        menu.setIcon(nocapi.nGetIcon('preferences-system-session'))
+        nocapi.nAddMainMenu(menu)
         self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 

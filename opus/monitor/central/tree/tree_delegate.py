@@ -34,7 +34,6 @@ from    functools import partial
 from    opus.monitor.central.tree.controls      import ProbesActions
 from    opus.monitor.central.tree.tree_model    import ProbeModel
 from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.central.tree.treewidget    import ProbeTreeWidget
 
 import opus.monitor.central.tree.tree_model as treemod
 

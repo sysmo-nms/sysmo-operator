@@ -6,7 +6,7 @@ from    PySide.QtGui    import (
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.central.tree.logwin        import LoggerView
+#from    opus.monitor.central.tree.logwin        import LoggerView
 from    opus.monitor.central.tree.toolbox       import openTargetPropertiesFor
 from    noctopus_widgets                        import NAction
 import  opus.monitor.api                        as monapi

@@ -4,7 +4,8 @@ from    PySide.QtGui    import (
     QLineEdit,
     QLabel,
     QPixmap,
-    QTransform
+    QTransform,
+    QMenu
 
 )
 from noctopus_widgets   import (
@@ -22,6 +23,9 @@ class Central(NFrameContainer):
         super(Central, self).__init__(parent)
         grid = self.initLocator()
         self.setLayout(grid)
+        menu = QMenu('netman', self)
+        menu.setIcon(nocapi.nGetIcon('network-wired'))
+        nocapi.nAddMainMenu(menu)
 
     def initLocator(self):
         ad = Add(self)
