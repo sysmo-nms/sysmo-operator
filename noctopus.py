@@ -50,10 +50,11 @@ def main():
     
     sys.exit(noctopusApp.exec_())
 
-import profile
-import pstats
-profile.run('import noctopus_main; main()', 'profile.tmp')
-p = pstats.Stats('profile.tmp')
-p.sort_stats('time', 'cum').print_stats(10)
-p.print_callers('norrd')
-p.sort_stats('call').print_stats('norrd')
+# import profile
+# import pstats
+# profile.run('import noctopus_main; main()', 'profile.tmp')
+# p = pstats.Stats('profile.tmp')
+# p.sort_stats('time', 'cum').print_stats(10)
+# p.print_callers('norrd')
+# p.sort_stats('call').print_stats('norrd')
+main()
