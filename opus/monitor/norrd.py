@@ -9,10 +9,15 @@ from    PySide.QtCore import (
     Signal
 )
 
-def cmd(command, callback=None):
+from PySide.QtGui   import (
+    QPixmap
+)
+def cmd(command, callback=None, special=None, data=None):
     msg = dict()
     msg['callback'] = callback
     msg['command']  = command
+    msg['special']  = special
+    msg['data']     = data
     Rrdtool.singleton.cmd(msg)
 
 class Rrdtool(QObject):
@@ -142,6 +147,12 @@ class RrdtoolThread(QThread):
         command = cmd['command']
         reply   = self._rrdtoolExec(command)
         cmd['reply'] = reply
+
+        special = cmd['special']
+        if special == 'returnPixmap':
+            pixFile = cmd['data']
+            cmd['data']  = QPixmap(pixFile)
+
         self.upSignal.emit(cmd)
 
     def _rrdtoolExec(self, command):

@@ -487,7 +487,7 @@ class RrdElement(QLabel):
     def showEvent(self, event):
         print "show event"
 
-    def _drawGraph(self, rrdreturn): pass
+    def _drawGraph(self, rrdreturn):
         # rrdgraph return a QPixmap()
         pix = rrdreturn['data']
         self.setPixmap(pix)
@@ -532,7 +532,7 @@ class RrdElement(QLabel):
         for i in range(len(areas)):
             areasC += ' %s ' % areas[i]
 
-        cmd = head + time + opts + colors + time + defsC + linesC + areasC
+        cmd = '%s%s%s%s%s%s%s%s' % (head, time, opts, colors, time, defsC, linesC, areasC)
         return cmd
 
     def _generateThumbCmd(self, rrdStart, rrdStop, defs, lines, areas, w, h):
@@ -561,5 +561,5 @@ class RrdElement(QLabel):
         for i in range(len(areas)):
             areasC += ' %s ' % areas[i]
 
-        cmd = head + time + opts + colors + time + defsC + linesC + areasC
+        cmd = '%s%s%s%s%s%s%s%s' % (head, time, opts, colors, time, defsC, linesC, areasC)
         return cmd
