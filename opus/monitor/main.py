@@ -5,8 +5,8 @@ from    PySide.QtCore   import (
 
 from PySide.QtGui import QMenu, QAction
 from    opus.monitor                 import norrd
-from    opus.monitor.commands.user_actions import UserActions
-from    opus.monitor.commands.doc_conf      import DocConfigurator
+from    opus.monitor.commands.user_actions  import UserActions
+from    opus.monitor.commands.doc_engine    import DocConfigurator
 from    opus.monitor.central.main    import TreeContainer
 from    opus.monitor.proxy           import ChanHandler
 from    noctopus_widgets             import (
@@ -46,8 +46,6 @@ class Central(NFrameContainer):
 
     def _configureDoc(self):
         ret = DocConfigurator(self)
-        print 'configure wiki url ', ret
-
 
     def _initChanProxy(self): 
         self._eventHandler = ChanHandler(self, 5)

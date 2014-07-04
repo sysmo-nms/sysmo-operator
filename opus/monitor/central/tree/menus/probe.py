@@ -52,13 +52,6 @@ class ProbeMenu(QMenu):
 
         self.addSeparator()
 
-        action = QAction(self.tr('Documentation'), self)
-        action.triggered.connect(self._openDocumentation)
-        action.setIcon(nocapi.nGetIcon('folder-saved-search'))
-        self.addAction(action)
-
-        self.addSeparator()
-
         self._performances = QAction(self.tr('Performances'), self)
         self._performances.triggered.connect(self._openPerformances)
         self._performances.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
@@ -119,6 +112,3 @@ class ProbeMenu(QMenu):
 
     def _openPerformances(self):
         openLoggerFor(self._currentProbe, 'performances')
-
-    def _openDocumentation(self):
-        print "open documentation: ", self._currentProbe

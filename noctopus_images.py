@@ -51,13 +51,15 @@ def initPixmaps():
         'server-bay': QPixmap(os.path.join(iconsPath, "server-bay.png")),
         'network-bay': QPixmap(os.path.join(iconsPath, "network-bay.png")),
         'console': QPixmap(os.path.join(iconsPath, "console.png")),
-        'radar': QPixmap(os.path.join(iconsPath, "radar.png"))
+        'radar': QPixmap(os.path.join(iconsPath, "radar.png")),
+        'document-stack': QPixmap(os.path.join(iconsPath, "document-stack.png"))
     }
 
 def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+        'document-save': QIcon(os.path.join(iconsPath, "document-save.svg")),
         'accessories-text-editor': QIcon(os.path.join(iconsPath, "accessories-text-editor.svg")),
         'edit-paste': QIcon(os.path.join(iconsPath, "edit-paste.svg")),
         'media-playback-pause': QIcon(os.path.join(iconsPath, "media-playback-pause.svg")),
@@ -150,6 +152,7 @@ def initImages():
     global imageSet
     global imagesPath
     imageSet = {
+        'document-save': os.path.join(imagesPath, "document-save.svg"),
         'accessories-text-editor': os.path.join(imagesPath, "accessories-text-editor.svg"),
         'edit-paste': os.path.join(imagesPath, "edit-paste.svg"),
         'media-playback-pause': os.path.join(imagesPath, "media-playback-pause.svg"),

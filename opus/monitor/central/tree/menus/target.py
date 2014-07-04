@@ -1,8 +1,10 @@
 from    PySide.QtGui    import (
     QMenu,
     QFont,
-    QAction
+    QAction,
+    QDesktopServices
 )
+from PySide.QtCore import QUrl
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
@@ -43,7 +45,7 @@ class TargetMenu(QMenu):
         self.addSeparator()
 
         action = NAction(self.tr('Documentation'), self)
-        action.triggered.connect(self._openDocumentation)
+        action.triggered.connect(self._openDocEngine)
         action.setIcon(nocapi.nGetIcon('folder-saved-search'))
         self.addAction(action)
 
@@ -55,6 +57,7 @@ class TargetMenu(QMenu):
         self.addAction(action)
 
         self.addSeparator()
+
 
     def showMenuFor(self, target, point):
         uactions = monapi.getUActionsFor(target)
@@ -95,11 +98,12 @@ class TargetMenu(QMenu):
     def _userAction(self, element, action):
         monapi.execUAction(action, element)
 
+    def _openDocEngine(self):
+        url = QUrl('http://www.wikipedia.org/wiki/%s' % self._currentTarget)
+        QDesktopServices.openUrl(url)
+
     def _deleteTarget(self):
         print "delete: ", self._currentTarget
-
-    def _openDocumentation(self):
-        print "documentation: ", self._currentTarget
 
     def _openProperties(self):
         openTargetPropertiesFor(self._currentTarget)

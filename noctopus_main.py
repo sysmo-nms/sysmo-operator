@@ -410,7 +410,6 @@ class NMainWindow(QMainWindow):
         return
 
     def setApplicationMenu(self, menu):
-        print "add application menu", menu
         self._mainMenu.addMenu(menu)
 
     def _dumpPalette(self):
