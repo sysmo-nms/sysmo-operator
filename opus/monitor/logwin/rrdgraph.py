@@ -95,7 +95,6 @@ class RrdGraph(QLabel):
         self.setMinimumWidth(400)
 
         self._resizeTimeline = QTimeLine(100, self)
-        self._resizeTimeline.setUpdateInterval(1000)
         self._resizeTimeline.setCurveShape(QTimeLine.LinearCurve)
         self._resizeTimeline.finished.connect(self._resizeEventEnd)
 
@@ -139,7 +138,6 @@ class RrdGraph(QLabel):
         self._stateUpdate()
 
     def resizeEvent(self, event):
-        print "resize rrdgraph"
         if self._resizeTimeline.state() == QTimeLine.NotRunning:
             self._sizeOrigin = event.oldSize().width()
             self._resizeTimeline.start()

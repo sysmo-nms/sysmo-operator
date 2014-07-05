@@ -137,7 +137,6 @@ class RrdtoolThread(QThread):
         self._endOfCommandRe    = re.compile('^OK.*|^ERROR.*')
         self._okReturnRe        = re.compile('^OK.*')
         self._includeNewlineRe  = re.compile('.*\n$')
-        print "start thread: ", self
 
     def run(self):
         executable = self._executable
@@ -156,11 +155,9 @@ class RrdtoolThread(QThread):
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE
             )
-        print "rrd process: ", self, self._rrdProcess
         QThread.run(self)
 
     def cmd(self, cmd):
-        print "cmd: ", self, self._rrdProcess
         command = cmd['command']
         reply   = self._rrdtoolExec(command)
         cmd['reply'] = reply
