@@ -40,6 +40,7 @@ class UserActions(QObject):
         self._loadSettings()
 
     def getUActionsFor(self, element):
+        if self._UACfg == None: return []
         if element in self._UACfg.keys():
             return self._UACfg[element]
         else:
