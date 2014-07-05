@@ -40,9 +40,6 @@ class UserActions(QObject):
         self._loadSettings()
 
     def getUActionsFor(self, element):
-        if self._UACfg == None:
-            self._UACfg == dict()
-            return []
         if element in self._UACfg.keys():
             return self._UACfg[element]
         else:
@@ -69,8 +66,17 @@ class UserActions(QObject):
         return opus.monitor.proxy.ChanHandler.singleton.targets
 
     def _loadSettings(self):
-        self._UACmds = self._settings.value('monitor/user_actions_cmds')
-        self._UACfg  = self._settings.value('monitor/user_actions_cfg')
+        UACmds = self._settings.value('monitor/user_actions_cmds')
+        if UACmds == None:
+            self._createConfExample()
+            self._UACmds = self._settings.value('monitor/user_actions_cmds')
+        else:
+            self._UACmds = UACmds
+
+        UACfg = self._settings.value('monitor/user_actions_cfg')
+        if UACfg == None:
+            UACfg = dict()
+        self._UACfg  = UACfg
 
     def _saveSettings(self):
         self._settings.setValue('monitor/user_actions_cmds', self._UACmds)
