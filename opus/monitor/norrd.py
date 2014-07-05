@@ -49,6 +49,8 @@ class Rrdtool(QObject):
         self._threadList    = [t1]
 
         t1.start()
+        if t1.isRunning() != True:
+            print "thread failed to start", ret
 
     def _initTwo(self):
         t1 = RrdtoolThread(self._executable, self)
@@ -62,7 +64,10 @@ class Rrdtool(QObject):
         self._workersLinks = collections.deque([self.toT1, self.toT2])
         self._threadList    = [t1, t2]
 
-        for thread in self._threadList: thread.start()
+        for thread in self._threadList:
+            ret = thread.start()
+            if thread.isRunning() != True:
+                print "thread failed to start", ret
 
     def _initThree(self):
         t1 = RrdtoolThread(self._executable, self)
@@ -79,25 +84,34 @@ class Rrdtool(QObject):
 
         self._workersLinks  = collections.deque([self.toT1, self.toT2, self.toT3])
         self._threadList    = [t1, t2, t3]
-        for thread in self._threadList: thread.start()
+        for thread in self._threadList:
+            ret = thread.start()
+            if thread.isRunning() != True:
+                print "thread failed to start", ret
 
     def _initFour(self):
         t1 = RrdtoolThread(self._executable, self)
         t1.upSignal.connect(self.getReply, Qt.QueuedConnection)
         self.toT1.connect(t1.cmd, Qt.QueuedConnection)
+
         t2 = RrdtoolThread(self._executable, self)
         t2.upSignal.connect(self.getReply, Qt.QueuedConnection)
         self.toT2.connect(t2.cmd, Qt.QueuedConnection)
+
         t3 = RrdtoolThread(self._executable, self)
         t3.upSignal.connect(self.getReply, Qt.QueuedConnection)
         self.toT3.connect(t3.cmd, Qt.QueuedConnection)
+
         t4 = RrdtoolThread(self._executable, self)
         t4.upSignal.connect(self.getReply, Qt.QueuedConnection)
         self.toT4.connect(t4.cmd, Qt.QueuedConnection)
 
         self._workersLinks = collections.deque([self.toT1, self.toT2, self.toT3, self.toT4])
         self._threadList   = [t1, t2, t3, t4]
-        for thread in self._threadList: thread.start()
+        for thread in self._threadList: 
+            ret = thread.start()
+            if thread.isRunning() != True:
+                print "thread failed to start", ret
 
     def getReply(self, msg):
         callback = msg['callback']
@@ -123,6 +137,7 @@ class RrdtoolThread(QThread):
         self._endOfCommandRe    = re.compile('^OK.*|^ERROR.*')
         self._okReturnRe        = re.compile('^OK.*')
         self._includeNewlineRe  = re.compile('.*\n$')
+        print "start thread: ", self
 
     def run(self):
         executable = self._executable
@@ -141,9 +156,11 @@ class RrdtoolThread(QThread):
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE
             )
+        print "rrd process: ", self, self._rrdProcess
         QThread.run(self)
 
     def cmd(self, cmd):
+        print "cmd: ", self, self._rrdProcess
         command = cmd['command']
         reply   = self._rrdtoolExec(command)
         cmd['reply'] = reply
