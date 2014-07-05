@@ -37,7 +37,7 @@ class Rrdtool(QObject):
             self._initTwo()
         elif threads == 3:
             self._initThree()
-        elif threads == 4:
+        else:
             self._initFour()
 
     def _initOne(self):
