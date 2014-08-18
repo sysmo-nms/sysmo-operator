@@ -10,6 +10,12 @@ from    PySide.QtCore   import (
     Signal
 )
 
+def start(parent):
+    Rrdtool(parent)
+    
+def stop():
+    Rrdtool.singleton.shutDown()
+
 def cmd(command, callback=None, special=None, data=None):
     msg = dict()
     msg['callback'] = callback
@@ -52,7 +58,7 @@ class Rrdtool(QObject):
         self._signalList[0].downSignal.emit(cmd)
         self._signalList.rotate(1)
 
-    def shutdown(self):
+    def shutDown(self):
         for thread in self._threadList:
             thread.quit()
 

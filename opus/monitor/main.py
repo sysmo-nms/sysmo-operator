@@ -41,8 +41,8 @@ class Central(NFrameContainer):
         self._userActions = UserActions(self)
 
     def _initRrdtool(self):
-        self._rrdtool = norrd.Rrdtool(self)
-        nocapi.nConnectWillClose(self._rrdtool.shutdown)
+        norrd.start(self)
+        nocapi.nConnectWillClose(norrd.stop)
 
     def _configureDoc(self):
         ret = DocConfigurator(self)
