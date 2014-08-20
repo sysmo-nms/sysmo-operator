@@ -243,17 +243,17 @@ class SupercastSocket(QThread):
             self._handleClientMessage,
             Qt.QueuedConnection
         )
+        self.started.connect(self._initializeSocket)
 
         self._nextBlockSize = 0
         self._headerLen     = 4
         self._errorHandler  = None
 
-    def start(self):
+    def _initializeSocket(self):
         self.socket = QTcpSocket(self)
         self.socket.connected.connect(self._socketConnected)
         self.socket.readyRead.connect(self._socketReadyRead)
         self.socket.error.connect(self._socketErrorEvent)
-        QThread.start(self)
 
     def _handleServerMessage(self, payload):
         message = decode(payload)
