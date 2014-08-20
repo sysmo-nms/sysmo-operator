@@ -29,8 +29,8 @@ from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame, NGri
 # opus
 import  opus.monitor.main
 import  opus.dashboard.main
-import  opus.netman.main
-import  opus.knowledge.main
+#import  opus.netman.main
+#import  opus.knowledge.main
 #import  opus.schedule.main
 #import  opus.tickets.main
 #import  opus.metro.main
@@ -131,23 +131,23 @@ class NSelector(NFrameContainer):
         self._buttons['dashboard']['widget'] = NSelectorButton(self, 'dashboard')
         self._buttons['dashboard']['widget'].setIcon('dashboard-black')
 
-        self._buttons['netman'] = dict()
-        self._buttons['netman']['row'] = 3
-        self._buttons['netman']['widget'] = NSelectorButton(self, 'netman')
-        self._buttons['netman']['widget'].setIcon('netman-black')
+        #self._buttons['netman'] = dict()
+        #self._buttons['netman']['row'] = 3
+        #self._buttons['netman']['widget'] = NSelectorButton(self, 'netman')
+        #self._buttons['netman']['widget'].setIcon('netman-black')
 
-        self._buttons['knowledge'] = dict()
-        self._buttons['knowledge']['row'] = 4
-        self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
-        self._buttons['knowledge']['widget'].setIcon('knowledge-black')
+        #self._buttons['knowledge'] = dict()
+        #self._buttons['knowledge']['row'] = 4
+        #self._buttons['knowledge']['widget']  = NSelectorButton(self, 'knowledge')
+        #self._buttons['knowledge']['widget'].setIcon('knowledge-black')
 
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
 
         self._stackWidget.addLayer(opus.monitor.main.Central,    'monitor')
         self._stackWidget.addLayer(opus.dashboard.main.Central,  'dashboard')
-        self._stackWidget.addLayer(opus.netman.main.Central,      'netman')
-        self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
+        #self._stackWidget.addLayer(opus.netman.main.Central,      'netman')
+        #self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
 ##############################################################################
 ################# EXTENTION CONFIGURATION END ################################
 ##############################################################################
