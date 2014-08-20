@@ -8,7 +8,7 @@ from    PySide.QtGui        import (
 from    PySide.QtCore       import Qt
 from    noctopus_widgets    import (
     NFrame,
-    NGrid
+    NGridContainer
 )
 from    opus.dashboard.controls     import DashActions
 from    opus.dashboard.dash         import Dashboard
@@ -18,19 +18,19 @@ import  nocapi
 class Central(NFrame):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
-        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShape(QFrame.NoFrame)
         menu = QMenu('dashboard',self)
         menu.setIcon(nocapi.nGetIcon('preferences-system-session'))
         nocapi.nAddMainMenu(menu)
-        self._controls  = DashActions(self)
+        #self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 
-        self._grid      = NGrid(self)
-        self._grid.setVerticalSpacing(6)
-        self._grid.addWidget(self._controls,    0,0)
+        self._grid      = NGridContainer(self)
+        #self._grid.setVerticalSpacing(6)
+        #self._grid.addWidget(self._controls,    0,0)
         self._grid.addWidget(self._tabs,        1,0)
-        self._grid.setRowStretch(0,0)
-        self._grid.setRowStretch(1,1)
+        #self._grid.setRowStretch(0,0)
+        #self._grid.setRowStretch(1,1)
         self.setLayout(self._grid)
 
 class DashTab(QTabWidget):
