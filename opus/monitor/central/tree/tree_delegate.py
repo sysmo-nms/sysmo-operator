@@ -1,33 +1,16 @@
 from    PySide.QtCore   import (
     Qt,
-    QSize,
-    QTimeLine,
-    QSettings
+    QSize
 )
 
 from    PySide.QtGui    import (
-    QTreeView,
-    QHeaderView,
-    QFrame,
-    QSortFilterProxyModel,
-    QAbstractItemView,
-    QMenu,
-    QAction,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionProgressBar,
     QApplication,
-    QStyle,
     QImage,
-    QAbstractItemView,
     QPalette,
     QColor
-)
-
-from    noctopus_widgets    import (
-    NFrame,
-    NFrameContainer,
-    NGrid
 )
 
 from    functools import partial
