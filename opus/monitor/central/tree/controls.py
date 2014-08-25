@@ -66,14 +66,14 @@ class ProbesAdd(NFrameContainer):
         self.setFixedWidth(300)
         grid = NGrid(self)
         grid.setVerticalSpacing(0)
-        addNetServerButton = QCommandLinkButton(
-            self.tr('Add a network server'),
-            self.tr('A network server offer services like HTTP, IMAP...'),
-            self
-        )
         addNetElementButton = QCommandLinkButton(
             self.tr('Add a network element'),
             self.tr('A network element must responde to SNMP and implement the MIB2 tree.'),
+            self
+        )
+        addNetServerButton = QCommandLinkButton(
+            self.tr('Add a network server'),
+            self.tr('A network server offer services like HTTP, IMAP...'),
             self
         )
         addNetServiceButton = QCommandLinkButton(
@@ -81,18 +81,19 @@ class ProbesAdd(NFrameContainer):
             self.tr('A service offer user functionnality depending on multiple network server services or elements'),
             self
         )
+        addNetServerButton.setDisabled(True)
         addNetServiceButton.setDisabled(True)
 
-        addNetServerButton.setIcon(nocapi.nGetIcon('applications-system'))
         addNetElementButton.setIcon(nocapi.nGetIcon('network-wired'))
+        addNetServerButton.setIcon(nocapi.nGetIcon('applications-system'))
         addNetServiceButton.setIcon(nocapi.nGetIcon('system-users'))
 
-        addNetServerButton.clicked.connect(self._addServer)
         addNetElementButton.clicked.connect(self._addElement)
+        addNetServerButton.clicked.connect(self._addServer)
         addNetServiceButton.clicked.connect(self._addService)
 
-        grid.addWidget(addNetServerButton,  0,0)
-        grid.addWidget(addNetElementButton, 1,0)
+        grid.addWidget(addNetElementButton, 0,0)
+        grid.addWidget(addNetServerButton,  1,0)
         grid.addWidget(addNetServiceButton, 2,0)
         grid.setRowStretch(0,1)
         grid.setRowStretch(1,1)
@@ -111,9 +112,3 @@ class ProbesAdd(NFrameContainer):
 
     def _addService(self):
         self._createMenu.hide()
-
-
-
-
-
-
