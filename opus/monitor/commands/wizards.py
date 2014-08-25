@@ -91,14 +91,15 @@ class NetworkElementWizard(QWizard):
 
         self.setWizardStyle(QWizard.ModernStyle)
         self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('network-bay'))
-        #QWizard.ExtendedWatermarkPixmap
 
         self.setModal(True)
         pix = nocapi.nGetPixmap('applications-system')
         self.setPixmap(QWizard.LogoPixmap, pix)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
-        npage1   = NetElement.Page1(self)
+        npage1  = NetElement.Page1(self)
+        npage2  = NetElement.Page2(self)
         self.setPage(1, npage1)
+        self.setPage(2, npage2)
         self.setStartId(1)
         
 class NetworkServerWizard(QWizard):

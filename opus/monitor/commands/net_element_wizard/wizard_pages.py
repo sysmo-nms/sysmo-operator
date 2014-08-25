@@ -15,8 +15,9 @@ from PySide.QtGui   import (
     QGroupBox,
     QTreeWidget,
     QTreeWidgetItem,
-    QMessageBox,
-    QStackedWidget
+    QProgressDialog,
+    QStackedWidget,
+    QProgressBar
 )
 from PySide.QtCore import Qt
 
@@ -33,19 +34,19 @@ import nocapi
 import opus.monitor.api as monapi
 import supercast.main   as supercast
 
+SNMP_V3  = 0
+SNMP_V2  = 1
+IP_V4    = 0
+IP_V6    = 1
 
 class Page1(QWizardPage):
-    SNMP_V3  = 0
-    SNMP_V2  = 1
-    IP_V4    = 0
-    IP_V6    = 1
     def __init__(self, parent=None):
         super(Page1, self).__init__(parent)
         self.setTitle(self.tr('Create a network element'))
         self.setSubTitle(self.tr('''
             Fill the form and add a network element to the main configuration
         '''))
-        self.setFinalPage(True)
+        #self.setFinalPage(True)
         self._initLayout()
 
     def _initLayout(self):
@@ -68,12 +69,12 @@ class Page1(QWizardPage):
         self._ip6 = NIpv6Form(self)
         self._ipLine = QStackedWidget(self)
         self._ipLine.setFixedHeight(20)
-        self._ipLine.insertWidget(self.IP_V4, self._ip4)
-        self._ipLine.insertWidget(self.IP_V6, self._ip6)
+        self._ipLine.insertWidget(IP_V4, self._ip4)
+        self._ipLine.insertWidget(IP_V6, self._ip6)
         self._ipButton  = QComboBox(self)
         self._ipButton.currentIndexChanged[int].connect(self._ipLine.setCurrentIndex)
-        self._ipButton.insertItem(self.IP_V4, 'IP version 4')
-        self._ipButton.insertItem(self.IP_V6, 'IP version 6')
+        self._ipButton.insertItem(IP_V4, 'IP version 4')
+        self._ipButton.insertItem(IP_V6, 'IP version 6')
         self._ipButton.setFocusPolicy(Qt.ClickFocus)
 
 
@@ -103,12 +104,12 @@ class Page1(QWizardPage):
         self._snmp3Lay.insertRow(4, 'Sec name',     self._snmp3SecName)
 
         self._snmpLay = QStackedWidget(self)
-        self._snmpLay.insertWidget(self.SNMP_V3, self._snmp3)
-        self._snmpLay.insertWidget(self.SNMP_V2, self._snmp2b)
+        self._snmpLay.insertWidget(SNMP_V3, self._snmp3)
+        self._snmpLay.insertWidget(SNMP_V2, self._snmp2b)
 
         self._snmpButton = QComboBox(self)
-        self._snmpButton.insertItem(self.SNMP_V3, 'SNMP version 3')
-        self._snmpButton.insertItem(self.SNMP_V2, 'SNMP version 2b')
+        self._snmpButton.insertItem(SNMP_V3, 'SNMP version 3')
+        self._snmpButton.insertItem(SNMP_V2, 'SNMP version 2b')
         self._snmpButton.currentIndexChanged[int].connect(self._snmpLay.setCurrentIndex)
         self._snmpButton.setFocusPolicy(Qt.ClickFocus)
 
@@ -142,49 +143,79 @@ class Page1(QWizardPage):
         return snmpFrame
 
     def nextId(self):
-        return -1
+        return 2
 
     def validatePage(self):
-        snmpV2Read  = self._snmpV2Read.text()
-        snmpV2Write = self._snmpV2Write.text()
-        ipAddress   = self._ipLine.text()
-
-        snmpVersion = self._snmpButton.currentIndex()
-        ipVersion   = self._ipButton.currentIndex()
-        print "snmp version is ", snmpVersion, " ip ", ipVersion
-
-        perms       = (["admin"], ["admin"])
-        tpl         = "Generic SNMP element"
-
-        if self._assertCmd(
-            snmpVersion,
-            ipVersion,
-            snmpV2Read,
-            snmpV2Write,
-            ipAddress
-        ):
-            print "true?"
-            ret = supercast.send(
-                'monitorCreateTarget', 
-                (
-                    ipAddress,
-                    perms,
-                    "undefined",
-                    snmpV2Read,
-                    snmpV2Write,
-                    tpl
-                ),
-                self.monitorReply
-            )
-
-        #self.dial = QMessageBox(self)
+#         snmpV2Read  = self._snmpV2Read.text()
+#         snmpV2Write = self._snmpV2Write.text()
+#         ipAddress   = self._ipLine.text()
+# 
+#         snmpVersion = self._snmpButton.currentIndex()
+#         ipVersion   = self._ipButton.currentIndex()
+#         print "snmp version is ", snmpVersion, " ip ", ipVersion
+# 
+#         perms       = (["admin"], ["admin"])
+#         tpl         = "Generic SNMP element"
+# 
+#         if self._assertCmd(
+#             snmpVersion,
+#             ipVersion,
+#             snmpV2Read,
+#             snmpV2Write,
+#             ipAddress
+#         ):
+#             print "true?"
+#             ret = supercast.send(
+#                 'monitorCreateTarget', 
+#                 (
+#                     ipAddress,
+#                     perms,
+#                     "undefined",
+#                     snmpV2Read,
+#                     snmpV2Write,
+#                     tpl
+#                 ),
+#                 self.monitorReply
+#             )
+# 
+        self.dial = WaitBox(self)
         #self.dial.setModal(True)
         #self.dial.setText(self.tr('Waiting for server response'))
         #button = self.dial.buttons()
-        #button.setDisabled(True)
         #self.dial.exec_()
         return False
 
     def _assertCmd(self, a,b,c,d,e): return True
+
     def monitorReply(self, msg):
         print "get reply!!!!!!", msg
+
+class WaitBox(QProgressDialog):
+    def __init__(self, parent=None):
+        super(WaitBox, self).__init__(parent)
+
+        ip_ver   = parent._snmpButton.currentIndex()
+        snmp_ver = parent._ipButton.currentIndex()
+        if snmp_ver == SNMP_V2:
+            snmpV2Read  = parent._snmp2bRead.text()
+            snmpV2Write = parent._snmp2bWrite.text()
+            if ip_ver == IP_V4:
+                ip4 = parent._ip4.text()
+                # TODO build monitorQuerySnmpElement PDU
+            else:
+                ip6 = parent._ip6.text()
+                # TODO build monitorQuerySnmpElement PDU
+
+        # TODO send PDU and receive reply
+
+        self.setMinimum(0)
+        self.setMaximum(0)
+        self.setLabelText('Waiting server reply')
+        self.exec_()
+
+
+
+class Page2(QWizardPage):
+    def __init__(self, parent=None):
+        super(Page2, self).__init__(parent)
+        self.setTitle(self.tr('Create a network element'))
