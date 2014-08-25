@@ -16,19 +16,20 @@ class ProbeMenu(QMenu):
         self._puActionWiz   = None
         self._showPerfs     = None
         self.setIcon(nocapi.nGetIcon('folder-saved-search'))
+
         #######################################################################
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
-        self.localProbeMenu    = QMenu(self.tr('Local Actions'), self)
-        self.localProbeMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
-        self.localProbeMenu.setDisabled(True)
+        #self.localProbeMenu    = QMenu(self.tr('Local Actions'), self)
+        #self.localProbeMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        #self.localProbeMenu.setDisabled(True)
 
-        self.configureProbeAction = QAction(self.tr('Configure actions'), self)
-        self.addMenu(self.localProbeMenu)
-        self.addAction(self.configureProbeAction)
+        #self.configureProbeAction = QAction(self.tr('Configure actions'), self)
+        #self.addMenu(self.localProbeMenu)
+        #self.addAction(self.configureProbeAction)
         #######################################################################
 
-        self.addSeparator()
+        #self.addSeparator()
 
         action = QAction(self.tr('Force check'), self)
         action.triggered.connect(self._forceCheck)
@@ -40,10 +41,10 @@ class ProbeMenu(QMenu):
         #action.setIcon(nocapi.nGetIcon('media-playback-pause'))
         self.addAction(action)
 
-        action = QAction(self.tr('Locate on map'), self)
-        action.triggered.connect(self._locateOnMap)
+        #action = QAction(self.tr('Locate on map'), self)
+        #action.triggered.connect(self._locateOnMap)
         #action.setIcon(nocapi.nGetIcon('media-playback-pause'))
-        self.addAction(action)
+        #self.addAction(action)
 
         action = QAction(self.tr('Delete this probe'), self)
         action.triggered.connect(self._deleteProbe)
@@ -66,22 +67,22 @@ class ProbeMenu(QMenu):
 
     def showMenuFor(self, probe, point):
         self._currentProbe = probe
-        uactions = monapi.getUActionsFor(probe)
-        if self._puActionWiz != None:
-            self.configureProbeAction.triggered.disconnect(self._puActionWiz)
-        self._puActionWiz = partial(self._launchUserActionsWiz, probe)
-        self.configureProbeAction.triggered.connect(self._puActionWiz)
+        #uactions = monapi.getUActionsFor(probe)
+        #if self._puActionWiz != None:
+        #    self.configureProbeAction.triggered.disconnect(self._puActionWiz)
+        #self._puActionWiz = partial(self._launchUserActionsWiz, probe)
+        #self.configureProbeAction.triggered.connect(self._puActionWiz)
 
-        if len(uactions) == 0:
-            self.localProbeMenu.setDisabled(True)
-        else:
-            self.localProbeMenu.setDisabled(False)
-            self.localProbeMenu.clear()
-            for i in range(len(uactions)):
-                qa = QAction(uactions[i], self)
-                callback = partial(self._userAction, probe, uactions[i])
-                qa.triggered.connect(callback)
-                self.localProbeMenu.addAction(qa)
+        #if len(uactions) == 0:
+        #    self.localProbeMenu.setDisabled(True)
+        #else:
+        #    self.localProbeMenu.setDisabled(False)
+        #    self.localProbeMenu.clear()
+        #    for i in range(len(uactions)):
+        #        qa = QAction(uactions[i], self)
+        #        callback = partial(self._userAction, probe, uactions[i])
+        #        qa.triggered.connect(callback)
+        #        self.localProbeMenu.addAction(qa)
 
         point.setX(point.x() + 12)
         self.popup(self.parent().mapToGlobal(point))

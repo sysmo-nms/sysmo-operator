@@ -3,7 +3,8 @@ from    PySide.QtSvg    import QSvgWidget
 from    PySide.QtCore   import (
     Qt,
     QUrl,
-    Signal
+    Signal,
+    QRegExp
 )
 
 from    PySide.QtGui    import (
@@ -14,8 +15,10 @@ from    PySide.QtGui    import (
     QCommandLinkButton,
     QDesktopServices,
     QPushButton,
+    QRegExpValidator,
     QValidator,
-    QAction
+    QAction,
+    QLineEdit
 )
 
 import noctopus_images
@@ -82,16 +85,30 @@ class NInfoButton(QPushButton):
     def _hideInfo(self):
         self.showInfo.emit(False)
 
-# Validators
-class Nipv4Validator(QValidator):
+class NIpv4Validator(QRegExpValidator):
     def __init__(self, parent=None):
-        super(Nipv4Validator, self).__init__(parent)
-        self._last = ""
+        super(NIpv4Validator, self).__init__(parent)
+        rx = QRegExp("0*(2(5[0-5]|[0-4]\d)|1?\d{1,2})(\.0*(2(5[0-5]|[0-4]\d)|1?\d{1,2})){3}")
+        self.setRegExp(rx)
 
-    def fixup(self, text): pass
+class NIpv4Form(QLineEdit):
+    def __init__(self, parent=None):
+        super(NIpv4Form, self).__init__(parent)
+        self.setPlaceholderText('example: 172.16.0.1')
+        self.setValidator(NIpv4Validator(self))
 
-    def validate(self, text, pos):
-        return QValidator.Intermediate
+class NIpv6Validator(QRegExpValidator):
+    def __init__(self, parent=None):
+        super(NIpv6Validator, self).__init__(parent)
+        rx = QRegExp("\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*")
+        self.setRegExp(rx)
+
+class NIpv6Form(QLineEdit):
+    def __init__(self, parent=None):
+        super(NIpv6Form, self).__init__(parent)
+        self.setPlaceholderText('example: 2001::A:1')
+        self.setValidator(NIpv6Validator(self))
+
 
 class Community(NFrame):
     def __init__(self, parent=None):

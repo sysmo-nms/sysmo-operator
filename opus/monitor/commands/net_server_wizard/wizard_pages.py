@@ -21,7 +21,7 @@ from noctopus_widgets import (
     NFrame,
     NGridContainer,
     NFrameContainer,
-    Nipv4Validator
+    NIpv4Validator
 )
 
 import copy
