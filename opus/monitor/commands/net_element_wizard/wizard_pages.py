@@ -183,7 +183,7 @@ class Page1(QWizardPage):
         #self.dial.setText(self.tr('Waiting for server response'))
         #button = self.dial.buttons()
         #self.dial.exec_()
-        return False
+        return True
 
     def _assertCmd(self, a,b,c,d,e): return True
 
@@ -193,6 +193,7 @@ class Page1(QWizardPage):
 class WaitBox(QProgressDialog):
     def __init__(self, parent=None):
         super(WaitBox, self).__init__(parent)
+        self.setModal(True)
 
         ip_ver   = parent._snmpButton.currentIndex()
         snmp_ver = parent._ipButton.currentIndex()
@@ -210,7 +211,7 @@ class WaitBox(QProgressDialog):
 
         self.setMinimum(0)
         self.setMaximum(0)
-        self.setLabelText('Waiting server reply')
+        self.setLabelText('Probing element...')
         self.exec_()
 
 
@@ -218,4 +219,4 @@ class WaitBox(QProgressDialog):
 class Page2(QWizardPage):
     def __init__(self, parent=None):
         super(Page2, self).__init__(parent)
-        self.setTitle(self.tr('Create a network element'))
+        self.setTitle(self.tr('Select the interfaces you want to monitor'))
