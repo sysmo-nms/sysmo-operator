@@ -60,23 +60,6 @@ class Page1(QWizardPage):
         self.setSubTitle(self.tr('''
             Fill the form and add a network element to the main configuration
         '''))
-        #self.setFinalPage(True)
-        self._initLayout()
-
-    def _initLayout(self):
-        layout = NGrid(self)
-
-        layout.addWidget(self._initMain(),         0,0)
-        self.setLayout(layout)
-
-    def _initMain(self):
-        tempFrame   = NFrameContainer(self)
-        tempLayout  = NGridContainer(tempFrame)
-        tempLayout.setContentsMargins(0,8,0,8)
-        tempLayout.setVerticalSpacing(20)
-        tempLayout.setRowStretch(1,0)
-        tempFrame.setLayout(tempLayout)
-
 
         # ipv4/6 selection and edition
         self._ip4 = NIpv4Form(self)
@@ -91,12 +74,21 @@ class Page1(QWizardPage):
         self._ipButton.insertItem(IP_V6, 'IP version 6')
         self._ipButton.setFocusPolicy(Qt.ClickFocus)
 
+
         # port selection and edition
         self._portLabel = QLabel('Port:', self)
         self._port = QSpinBox(self)
         self._port.setMinimum(1)
         self._port.setMaximum(65535)
         self._port.setValue(161)
+
+        # timeout selection and edition
+        self._timeoutLabel = QLabel('Timeout:', self)
+        self._timeout = QSpinBox(self)
+        self._timeout.setToolTip('Snmp timeout in milliseconds')
+        self._timeout.setMinimum(100)
+        self._timeout.setMaximum(20000)
+        self._timeout.setValue(2500)
 
         # snmpv2 form
         self._snmp2b = QGroupBox(self)
@@ -107,6 +99,7 @@ class Page1(QWizardPage):
         self._snmp2b.setLayout(self._snmp2bLay)
         self._snmp2bLay.insertRow(0, 'Read community',  self._snmp2bRead)
         self._snmp2bLay.insertRow(1, 'Write community', self._snmp2bWrite)
+
 
         # snmpv3 form
         self._snmp3 = QGroupBox(self)
@@ -160,6 +153,7 @@ class Page1(QWizardPage):
         self._snmp3Lay.setRowStretch(4,0)
         self._snmp3Lay.setRowStretch(10,1)
 
+
         # snmpv2/3 stacked layout
         self._snmpLay = QStackedWidget(self)
         self._snmpLay.insertWidget(SNMP_V3, self._snmp3)
@@ -171,23 +165,42 @@ class Page1(QWizardPage):
         self._snmpButton.currentIndexChanged[int].connect(self._snmpLay.setCurrentIndex)
         self._snmpButton.setFocusPolicy(Qt.ClickFocus)
 
+        # register fields
+        self.registerField('ip_version',        self._ipButton)
+        self.registerField('ip6_value',         self._ip6)
+        self.registerField('ip4_value',         self._ip4)
+        self.registerField('ip_port',           self._port)
+        self.registerField('snmp_timeout',      self._timeout)
+        self.registerField('snmp_version',      self._snmpButton)
+        self.registerField('snmp_v2_read',      self._snmp2bRead)
+        self.registerField('snmp_v2_write',     self._snmp2bWrite)
+        self.registerField('snmp_v3_sec_level', self._snmp3SecLevel)
+        self.registerField('snmp_v3_auth_alg',  self._snmp3Auth)
+        self.registerField('snmp_v3_auth_val',  self._snmp3AuthVal)
+        self.registerField('snmp_v3_priv_alg',  self._snmp3Priv)
+        self.registerField('snmp_v3_priv_val',  self._snmp3PrivVal)
 
         # final layout
-        tempLayout.addWidget(self._ipButton,                            0,0)
-        tempLayout.addWidget(self._ipLine,                              0,1)
-        tempLayout.addWidget(self._portLabel,                           0,2)
-        tempLayout.addWidget(self._port,                                0,3)
-        tempLayout.addWidget(self._snmpButton,                          1,0)
-        tempLayout.addWidget(self._snmpLay,                             1,1,2,3)
-
-        tempLayout.setAlignment(self._snmpButton, Qt.AlignVCenter)
-        tempLayout.setColumnStretch(0,0)
-        tempLayout.setColumnStretch(1,1)
-        tempLayout.setRowStretch(0,0)
-        tempLayout.setRowStretch(1,0)
-        tempLayout.setRowStretch(2,1)
-        tempLayout.setRowStretch(3,9)
-        return tempFrame
+        grid  = NGrid(self)
+        grid.setContentsMargins(10,18,10,18)
+        grid.setVerticalSpacing(25)
+        grid.setRowStretch(1,0)
+        grid.addWidget(self._ipButton,                            0,0)
+        grid.addWidget(self._ipLine,                              0,1)
+        grid.addWidget(self._portLabel,                           0,2)
+        grid.addWidget(self._port,                                0,3)
+        grid.addWidget(self._timeoutLabel,                        0,4)
+        grid.addWidget(self._timeout,                             0,5)
+        grid.addWidget(self._snmpButton,                          1,0)
+        grid.addWidget(self._snmpLay,                             1,1,2,5)
+        grid.setAlignment(self._snmpButton, Qt.AlignVCenter)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,0)
+        grid.setRowStretch(2,1)
+        grid.setRowStretch(3,9)
+        self.setLayout(grid)
 
     def _setSecLevel(self, index):
         if index == NO_AUTH_NO_PRIV:
@@ -217,19 +230,6 @@ class Page1(QWizardPage):
             self._snmp3PrivVal.setDisabled(False)
             self._snmp3PrivLab.setDisabled(False)
             self._snmp3PrivValLab.setDisabled(False)
-
-    def _initSnmpFrame(self):
-        snmpFrame = QGroupBox(self)
-        snmpFrame.setContentsMargins(0,0,0,0)
-        snmpFrame.setTitle(self.tr("&SNMP v2b configuration"))
-        snmpLayout = QFormLayout(snmpFrame)
-        snmpFrame.setLayout(snmpLayout)
-        self._snmpV2Write = QLineEdit(snmpFrame)
-        self._snmpV2Read  = QLineEdit(snmpFrame)
-
-        snmpLayout.insertRow(0, self.tr('Write community:'), self._snmpV2Write)
-        snmpLayout.insertRow(1, self.tr('Read community:'),  self._snmpV2Read)
-        return snmpFrame
 
     def nextId(self):
         return 2
