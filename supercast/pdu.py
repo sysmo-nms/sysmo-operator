@@ -275,6 +275,61 @@ class MonitorCreateSimpleProbe(univ.Sequence):
         namedtype.NamedType('queryId',      univ.Integer())
     )
 
+
+
+
+
+
+
+# extendedquery msg BEGIN
+class IpInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('version',      univ.Integer()),
+        namedtype.NamedType('stringVal',    char.PrintableString())
+    )
+
+class SnmpElementInfoQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('ip',           IpInfo()),
+        namedtype.NamedType('port',         univ.Integer()),
+        namedtype.NamedType('timeout',      univ.Integer()),
+        namedtype.NamedType('snmpVer',      char.PrintableString()),
+        namedtype.NamedType('v2RCommunity', char.PrintableString()),
+        namedtype.NamedType('v2WCommunity', char.PrintableString()),
+        namedtype.NamedType('v3SecLevel',   char.PrintableString()),
+        namedtype.NamedType('v3User',       char.PrintableString()),
+        namedtype.NamedType('v3AuthAlgo',   char.PrintableString()),
+        namedtype.NamedType('v3AuthKey',    char.PrintableString()),
+        namedtype.NamedType('v3PrivAlgo',   char.PrintableString()),
+        namedtype.NamedType('v3PrivKey',    char.PrintableString())
+    )
+
+class MonitorExtendedQuery(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'snmpElementInfoQuery',
+            SnmpElementInfoQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    0
+                )
+            )
+        )
+    )
+
+class MonitorExtendedQueryMsg(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',      univ.Integer()),
+        namedtype.NamedType('query',        MonitorExtendedQuery())
+    )
+# extendedquery msg END
+
+
+
+
+
+
 class MonitorQuery(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
@@ -353,6 +408,16 @@ class MonitorPDU_fromClient(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     10
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'extendedQueryMsg',
+            MonitorExtendedQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    20
                 )
             )
         )
@@ -1281,6 +1346,9 @@ def encode(pduType, payload):
     elif pduType == 'monitorCreateSimpleProbe':
         (queryId, args) = payload
         return encode_createSimpleProbe(queryId, args)
+    elif pduType == 'monitorSnmpElementInfoQuery':
+        (queryId, args) = payload
+        return encode_monitorSnmpElementInfoQuery(queryId, args)
     else:
         return False
 
@@ -1315,6 +1383,71 @@ def encode_simulateCheck(queryId, checkConfig):
     )
 
     fromClient.setComponentByName('simulateCheck', checkP)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+def encode_monitorSnmpElementInfoQuery(queryId, args):
+    (ipv, ip, port, timeout, snmpVer, snmpV2R, snmpV2W, v3SecL, v3User, 
+            v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey) = args
+    print "encoding for ", ip
+    ipinfo = IpInfo()
+    ipinfo.setComponentByName('version', int(ipv))
+    ipinfo.setComponentByName('stringVal', ip)
+
+    snmpElementInfoQuery = SnmpElementInfoQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            0
+        )
+    )
+    snmpElementInfoQuery.setComponentByName('ip',       ipinfo)
+    snmpElementInfoQuery.setComponentByName('port',     int(port))
+    snmpElementInfoQuery.setComponentByName('timeout',  int(timeout))
+    snmpElementInfoQuery.setComponentByName('snmpVer',  snmpVer)
+    snmpElementInfoQuery.setComponentByName('v2RCommunity',  snmpV2R)
+    snmpElementInfoQuery.setComponentByName('v2WCommunity',  snmpV2W)
+    snmpElementInfoQuery.setComponentByName('v3SecLevel',   v3SecL)
+    snmpElementInfoQuery.setComponentByName('v3User',       v3User)
+    snmpElementInfoQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
+    snmpElementInfoQuery.setComponentByName('v3AuthKey',    v3AuthKey)
+    snmpElementInfoQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
+    snmpElementInfoQuery.setComponentByName('v3PrivKey',    v3AuthKey)
+
+    extendedQuery   = MonitorExtendedQuery()
+    extendedQuery.setComponentByName('snmpElementInfoQuery', snmpElementInfoQuery)
+
+    extendedQueryMsg = MonitorExtendedQueryMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryMsg.setComponentByName('queryId', queryId)
+    extendedQueryMsg.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryMsg', extendedQueryMsg)
 
     monitorPDU = MonitorPDU().subtype(
         implicitTag=tag.Tag(

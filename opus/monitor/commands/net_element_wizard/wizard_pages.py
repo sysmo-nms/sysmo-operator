@@ -56,6 +56,7 @@ IP_V6    = 1
 class Page1(QWizardPage):
     def __init__(self, parent=None):
         super(Page1, self).__init__(parent)
+        self._wizard = parent
         self.setTitle(self.tr('Create a network element'))
         self.setSubTitle(self.tr('''
             Fill the form and add a network element to the main configuration
@@ -174,11 +175,25 @@ class Page1(QWizardPage):
         self.registerField('snmp_version',      self._snmpButton)
         self.registerField('snmp_v2_read',      self._snmp2bRead)
         self.registerField('snmp_v2_write',     self._snmp2bWrite)
+        self.registerField('snmp_v3_user',      self._snmp3User)
         self.registerField('snmp_v3_sec_level', self._snmp3SecLevel)
         self.registerField('snmp_v3_auth_alg',  self._snmp3Auth)
         self.registerField('snmp_v3_auth_val',  self._snmp3AuthVal)
         self.registerField('snmp_v3_priv_alg',  self._snmp3Priv)
         self.registerField('snmp_v3_priv_val',  self._snmp3PrivVal)
+
+        # update complete
+        self._ipButton.currentIndexChanged[int].connect(self._updateComplete)
+        self._ip6.textChanged.connect(self._updateComplete)
+        self._ip4.textChanged.connect(self._updateComplete)
+        self._port.valueChanged.connect(self._updateComplete)
+        self._timeout.valueChanged.connect(self._updateComplete)
+        self._snmpButton.currentIndexChanged[int].connect(self._updateComplete)
+        self._snmp2bRead.textChanged.connect(self._updateComplete)
+        self._snmp2bWrite.textChanged.connect(self._updateComplete)
+        self._snmp3SecLevel.currentIndexChanged[int].connect(self._updateComplete)
+        self._snmp3AuthVal.textChanged.connect(self._updateComplete)
+        self._snmp3PrivVal.textChanged.connect(self._updateComplete)
 
         # final layout
         grid  = NGrid(self)
@@ -201,6 +216,35 @@ class Page1(QWizardPage):
         grid.setRowStretch(2,1)
         grid.setRowStretch(3,9)
         self.setLayout(grid)
+
+    # VALIDATION SYSTEM
+    def _updateComplete(self, _):
+        self.completeChanged.emit()
+
+    def isComplete(self):
+        # ip is complete?
+        if self._wizard.field('ip_version') == IP_V4:
+            if self._ip4.hasAcceptableInput() != True: return False
+        else:
+            if self._ip6.hasAcceptableInput() != True: return False
+
+        # snmp is complete?
+        if self._wizard.field('snmp_version') == SNMP_V2:
+            read    = self._wizard.field('snmp_v2_read')
+            write   = self._wizard.field('snmp_v2_write')
+            if read == "" or write == "": return False
+        else:
+            user = self._wizard.field('snmp_v3_user')
+            auth = self._wizard.field('snmp_v3_auth_val')
+            priv = self._wizard.field('snmp_v3_priv_val')
+            if user == "": return False
+            if self._wizard.field('snmp_v3_sec_level') == AUTH_NO_PRIV:
+                if auth == "": return False
+            if self._wizard.field('snmp_v3_sec_level') == AUTH_PRIV:
+                if auth == "" or priv == "": return False
+
+
+        return True
 
     def _setSecLevel(self, index):
         if index == NO_AUTH_NO_PRIV:
@@ -235,6 +279,9 @@ class Page1(QWizardPage):
         return 2
 
     def validatePage(self):
+        self.dial = WaitSnmpInfoBox(self)
+        return False
+
 #         snmpV2Read  = self._snmpV2Read.text()
 #         snmpV2Write = self._snmpV2Write.text()
 #         ipAddress   = self._ipLine.text()
@@ -267,12 +314,10 @@ class Page1(QWizardPage):
 #                 self.monitorReply
 #             )
 # 
-        self.dial = WaitSnmpInfoBox(self)
         #self.dial.setModal(True)
         #self.dial.setText(self.tr('Waiting for server response'))
         #button = self.dial.buttons()
         #self.dial.exec_()
-        return True
 
     def _assertCmd(self, a,b,c,d,e): return True
 
@@ -282,26 +327,88 @@ class Page1(QWizardPage):
 class WaitSnmpInfoBox(QProgressDialog):
     def __init__(self, parent=None):
         super(WaitSnmpInfoBox, self).__init__(parent)
-        self.setModal(True)
-
-        ip_ver   = parent._snmpButton.currentIndex()
-        snmp_ver = parent._ipButton.currentIndex()
-        if snmp_ver == SNMP_V2:
-            snmpV2Read  = parent._snmp2bRead.text()
-            snmpV2Write = parent._snmp2bWrite.text()
-            if ip_ver == IP_V4:
-                ip4 = parent._ip4.text()
-                # TODO build monitorQuerySnmpElement PDU
-            else:
-                ip6 = parent._ip6.text()
-                # TODO build monitorQuerySnmpElement PDU
-
-        # TODO send PDU and receive reply
-
+        self._wizard = parent._wizard
         self.setMinimum(0)
         self.setMaximum(0)
         self.setLabelText('Probing element...')
-        self.exec_()
+
+        self._executeInfo()
+        self.setModal(True)
+        self.show()
+
+    def _executeInfo(self):
+        ipv = self._wizard.field('ip_version')
+        if ipv == IP_V4:
+            ipv = 4
+            ip  = self._wizard.field('ip4_value')
+        else:
+            ipv = 6
+            ip  = self._wizard.field('ip6_value')
+
+        port    = self._wizard.field('ip_port')
+        timeout = self._wizard.field('snmp_timeout')
+        snmpVer = self._wizard.field('snmp_version')
+        if snmpVer == SNMP_V2:
+            snmpV2R = self._wizard.field('snmp_v2_read')
+            snmpV2W = self._wizard.field('snmp_v2_write')
+            snmpVer = 2
+            v3SecL  = ""
+            v3User  = ""
+            v3AuthAlg = ""
+            v3AuthKey = ""
+            v3PrivAlg = ""
+            v3PrivKey = ""
+        else:
+            v3SecLevel = self._wizard.field('snmp_v3_sec_level')
+            if v3SecLevel == NO_AUTH_NO_PRIV:
+                v3SecL = 'noAuthNoPriv'
+            elif v3SecLevel == AUTH_NO_PRIV:
+                v3SecL = 'authNoPriv'
+            elif v3SecLevel == AUTH_PRIV:
+                v3SecL = 'authPriv'
+
+            v3AuthAlgo = self._wizard.field('snmp_v3_auth_alg')
+            if v3AuthAlgo == AUTH_SHA1:
+                v3AuthAlg = 'sha1'
+            if v3AuthAlgo == AUTH_MD5:
+                v3AuthAlg = 'md5'
+
+            v3PrivAlgo = self._wizard.field('snmp_v3_priv_alg')
+            if v3PrivAlgo == PRIV_AES:
+                v3PrivAlg = 'aes'
+            if v3PrivAlgo == PRIV_DES:
+                v3PrivAlg = 'des'
+
+            snmpV2R = ""
+            snmpV2W = ""
+            snmpVer = 3
+            v3User  = self._wizard.field('snmp_v3_user')
+            v3AuthKey = self._wizard.field('snmp_v3_auth_val')
+            v3PrivKey = self._wizard.field('snmp_v3_priv_val')
+
+        supercast.send(
+            'monitorSnmpElementInfoQuery',
+            (
+                ipv,
+                ip,
+                port,
+                timeout,
+                snmpVer,
+                snmpV2R,
+                snmpV2W,
+                v3SecL,
+                v3User,
+                v3AuthAlg,
+                v3AuthKey,
+                v3PrivAlg,
+                v3PrivKey
+            ),
+            self._elementInfoReply
+        )
+
+    def _elementInfoReply(self, reply):
+        print "reply!"
+
 
 
 
