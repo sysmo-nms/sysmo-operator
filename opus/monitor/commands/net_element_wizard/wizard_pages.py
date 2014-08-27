@@ -93,13 +93,14 @@ class Page1(QWizardPage):
 
         # snmpv2 form
         self._snmp2b = QGroupBox(self)
-        self._snmp2b.setContentsMargins(0,0,0,0)
+        self._snmp2b.setContentsMargins(15,15,15,15)
         self._snmp2bWrite   = QLineEdit(self)
         self._snmp2bRead    = QLineEdit(self)
         self._snmp2bLay     = QFormLayout(self._snmp2b)
+        self._snmp2bLay.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self._snmp2b.setLayout(self._snmp2bLay)
-        self._snmp2bLay.insertRow(0, 'Read community',  self._snmp2bRead)
-        self._snmp2bLay.insertRow(1, 'Write community', self._snmp2bWrite)
+        self._snmp2bLay.insertRow(1, 'Read community',  self._snmp2bRead)
+        self._snmp2bLay.insertRow(2, 'Write community', self._snmp2bWrite)
 
 
         # snmpv3 form
@@ -281,48 +282,6 @@ class Page1(QWizardPage):
     def validatePage(self):
         self.dial = WaitSnmpInfoBox(self)
         return False
-
-#         snmpV2Read  = self._snmpV2Read.text()
-#         snmpV2Write = self._snmpV2Write.text()
-#         ipAddress   = self._ipLine.text()
-# 
-#         snmpVersion = self._snmpButton.currentIndex()
-#         ipVersion   = self._ipButton.currentIndex()
-#         print "snmp version is ", snmpVersion, " ip ", ipVersion
-# 
-#         perms       = (["admin"], ["admin"])
-#         tpl         = "Generic SNMP element"
-# 
-#         if self._assertCmd(
-#             snmpVersion,
-#             ipVersion,
-#             snmpV2Read,
-#             snmpV2Write,
-#             ipAddress
-#         ):
-#             print "true?"
-#             ret = supercast.send(
-#                 'monitorCreateTarget', 
-#                 (
-#                     ipAddress,
-#                     perms,
-#                     "undefined",
-#                     snmpV2Read,
-#                     snmpV2Write,
-#                     tpl
-#                 ),
-#                 self.monitorReply
-#             )
-# 
-        #self.dial.setModal(True)
-        #self.dial.setText(self.tr('Waiting for server response'))
-        #button = self.dial.buttons()
-        #self.dial.exec_()
-
-    def _assertCmd(self, a,b,c,d,e): return True
-
-    def monitorReply(self, msg):
-        print "get reply!!!!!!", msg
 
 class WaitSnmpInfoBox(QProgressDialog):
     def __init__(self, parent=None):
