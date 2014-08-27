@@ -294,8 +294,8 @@ class SnmpElementInfoQuery(univ.Sequence):
         namedtype.NamedType('port',         univ.Integer()),
         namedtype.NamedType('timeout',      univ.Integer()),
         namedtype.NamedType('snmpVer',      char.PrintableString()),
-        namedtype.NamedType('v2RCommunity', char.PrintableString()),
-        namedtype.NamedType('v2WCommunity', char.PrintableString()),
+        namedtype.NamedType('v2RoCommunity', char.PrintableString()),
+        namedtype.NamedType('v2RwCommunity', char.PrintableString()),
         namedtype.NamedType('v3SecLevel',   char.PrintableString()),
         namedtype.NamedType('v3User',       char.PrintableString()),
         namedtype.NamedType('v3AuthAlgo',   char.PrintableString()),
@@ -1400,7 +1400,7 @@ def encode_simulateCheck(queryId, checkConfig):
     return pdu
 
 def encode_monitorSnmpElementInfoQuery(queryId, args):
-    (ipv, ip, port, timeout, snmpVer, snmpV2R, snmpV2W, v3SecL, v3User, 
+    (ipv, ip, port, timeout, snmpVer, snmpV2Ro, snmpV2Rw, v3SecL, v3User, 
             v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey) = args
     print "encoding for ", ip
     ipinfo = IpInfo()
@@ -1418,8 +1418,8 @@ def encode_monitorSnmpElementInfoQuery(queryId, args):
     snmpElementInfoQuery.setComponentByName('port',     int(port))
     snmpElementInfoQuery.setComponentByName('timeout',  int(timeout))
     snmpElementInfoQuery.setComponentByName('snmpVer',  snmpVer)
-    snmpElementInfoQuery.setComponentByName('v2RCommunity',  snmpV2R)
-    snmpElementInfoQuery.setComponentByName('v2WCommunity',  snmpV2W)
+    snmpElementInfoQuery.setComponentByName('v2RoCommunity',  snmpV2Ro)
+    snmpElementInfoQuery.setComponentByName('v2RwCommunity',  snmpV2Rw)
     snmpElementInfoQuery.setComponentByName('v3SecLevel',   v3SecL)
     snmpElementInfoQuery.setComponentByName('v3User',       v3User)
     snmpElementInfoQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)

@@ -94,13 +94,13 @@ class Page1(QWizardPage):
         # snmpv2 form
         self._snmp2b = QGroupBox(self)
         self._snmp2b.setContentsMargins(15,15,15,15)
-        self._snmp2bWrite   = QLineEdit(self)
-        self._snmp2bRead    = QLineEdit(self)
+        self._snmp2bRw   = QLineEdit(self)
+        self._snmp2bRo    = QLineEdit(self)
         self._snmp2bLay     = QFormLayout(self._snmp2b)
         self._snmp2bLay.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self._snmp2b.setLayout(self._snmp2bLay)
-        self._snmp2bLay.insertRow(1, 'Read community',  self._snmp2bRead)
-        self._snmp2bLay.insertRow(2, 'Write community', self._snmp2bWrite)
+        self._snmp2bLay.insertRow(1, 'Read only community',  self._snmp2bRo)
+        self._snmp2bLay.insertRow(2, 'Read/write community', self._snmp2bRw)
 
 
         # snmpv3 form
@@ -174,8 +174,8 @@ class Page1(QWizardPage):
         self.registerField('ip_port',           self._port)
         self.registerField('snmp_timeout',      self._timeout)
         self.registerField('snmp_version',      self._snmpButton)
-        self.registerField('snmp_v2_read',      self._snmp2bRead)
-        self.registerField('snmp_v2_write',     self._snmp2bWrite)
+        self.registerField('snmp_v2_ro',      self._snmp2bRo)
+        self.registerField('snmp_v2_rw',     self._snmp2bRw)
         self.registerField('snmp_v3_user',      self._snmp3User)
         self.registerField('snmp_v3_sec_level', self._snmp3SecLevel)
         self.registerField('snmp_v3_auth_alg',  self._snmp3Auth)
@@ -190,8 +190,8 @@ class Page1(QWizardPage):
         self._port.valueChanged.connect(self._updateComplete)
         self._timeout.valueChanged.connect(self._updateComplete)
         self._snmpButton.currentIndexChanged[int].connect(self._updateComplete)
-        self._snmp2bRead.textChanged.connect(self._updateComplete)
-        self._snmp2bWrite.textChanged.connect(self._updateComplete)
+        self._snmp2bRo.textChanged.connect(self._updateComplete)
+        self._snmp2bRw.textChanged.connect(self._updateComplete)
         self._snmp3SecLevel.currentIndexChanged[int].connect(self._updateComplete)
         self._snmp3AuthVal.textChanged.connect(self._updateComplete)
         self._snmp3PrivVal.textChanged.connect(self._updateComplete)
@@ -231,8 +231,8 @@ class Page1(QWizardPage):
 
         # snmp is complete?
         if self._wizard.field('snmp_version') == SNMP_V2:
-            read    = self._wizard.field('snmp_v2_read')
-            write   = self._wizard.field('snmp_v2_write')
+            read    = self._wizard.field('snmp_v2_ro')
+            write   = self._wizard.field('snmp_v2_rw')
             if read == "" or write == "": return False
         else:
             user = self._wizard.field('snmp_v3_user')
@@ -308,8 +308,8 @@ class WaitSnmpInfoBox(QProgressDialog):
         timeout = self._wizard.field('snmp_timeout')
         snmpVer = self._wizard.field('snmp_version')
         if snmpVer == SNMP_V2:
-            snmpV2R = self._wizard.field('snmp_v2_read')
-            snmpV2W = self._wizard.field('snmp_v2_write')
+            snmpV2Ro = self._wizard.field('snmp_v2_ro')
+            snmpV2Rw = self._wizard.field('snmp_v2_rw')
             snmpVer = 2
             v3SecL  = ""
             v3User  = ""
@@ -338,8 +338,8 @@ class WaitSnmpInfoBox(QProgressDialog):
             if v3PrivAlgo == PRIV_DES:
                 v3PrivAlg = 'des'
 
-            snmpV2R = ""
-            snmpV2W = ""
+            snmpV2Ro = ""
+            snmpV2Rw = ""
             snmpVer = 3
             v3User  = self._wizard.field('snmp_v3_user')
             v3AuthKey = self._wizard.field('snmp_v3_auth_val')
@@ -353,8 +353,8 @@ class WaitSnmpInfoBox(QProgressDialog):
                 port,
                 timeout,
                 snmpVer,
-                snmpV2R,
-                snmpV2W,
+                snmpV2Ro,
+                snmpV2Rw,
                 v3SecL,
                 v3User,
                 v3AuthAlg,
