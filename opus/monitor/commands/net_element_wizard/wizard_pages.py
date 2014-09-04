@@ -127,7 +127,7 @@ class Page1(QWizardPage):
         priv.insertSeparator(2)  
         priv.insertItem(PRIV_AES192, 'AES 192')
         priv.insertItem(PRIV_AES256, 'AES 256')
-        priv.insertItem(PRIV_3DES,   '3DES (DESEDE)')
+        priv.insertItem(PRIV_3DES,   '3DES')
         self._snmp3PrivLab  = QLabel('Priv algorithm:', self)
         self._snmp3Priv     = priv
         self._snmp3PrivValLab  = QLabel('Priv key:', self)
