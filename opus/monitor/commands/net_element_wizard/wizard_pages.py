@@ -40,11 +40,14 @@ import supercast.main   as supercast
 SNMP_V3  = 0
 SNMP_V2  = 1
 
-AUTH_SHA1 = 0
+AUTH_SHA  = 0
 AUTH_MD5  = 1
 
-PRIV_AES    = 0
+PRIV_AES128 = 0
 PRIV_DES    = 1
+PRIV_AES192 = 3
+PRIV_AES256 = 4
+PRIV_3DES   = 5
 
 AUTH_PRIV       = 0
 AUTH_NO_PRIV    = 1
@@ -112,15 +115,19 @@ class Page1(QWizardPage):
         self._snmp3SecLevel.insertItem(NO_AUTH_NO_PRIV, 'noAuthNoPriv')
         self._snmp3SecLevel.currentIndexChanged[int].connect(self._setSecLevel)
         auth = QComboBox(self)
-        auth.insertItem(AUTH_SHA1, 'SHA1')
+        auth.insertItem(AUTH_SHA,  'SHA')
         auth.insertItem(AUTH_MD5,  'MD5')
         self._snmp3AuthLab  = QLabel('Auth algorithm:', self)
         self._snmp3Auth     = auth
         self._snmp3AuthValLab  = QLabel('Auth key:', self)
         self._snmp3AuthVal  = QLineEdit(self)
         priv = QComboBox(self)
-        priv.insertItem(PRIV_AES, 'AES')
-        priv.insertItem(PRIV_DES, 'DES')
+        priv.insertItem(PRIV_AES128, 'AES (128)')
+        priv.insertItem(PRIV_DES,    'DES')
+        priv.insertSeparator(2)  
+        priv.insertItem(PRIV_AES192, 'AES 192')
+        priv.insertItem(PRIV_AES256, 'AES 256')
+        priv.insertItem(PRIV_3DES,   '3DES (DESEDE)')
         self._snmp3PrivLab  = QLabel('Priv algorithm:', self)
         self._snmp3Priv     = priv
         self._snmp3PrivValLab  = QLabel('Priv key:', self)
@@ -327,16 +334,22 @@ class WaitSnmpInfoBox(QProgressDialog):
                 v3SecL = 'authPriv'
 
             v3AuthAlgo = self._wizard.field('snmp_v3_auth_alg')
-            if v3AuthAlgo == AUTH_SHA1:
-                v3AuthAlg = 'sha1'
-            if v3AuthAlgo == AUTH_MD5:
-                v3AuthAlg = 'md5'
+            if v3AuthAlgo == AUTH_SHA:
+                v3AuthAlg = 'SHA'
+            elif v3AuthAlgo == AUTH_MD5:
+                v3AuthAlg = 'MD5'
 
             v3PrivAlgo = self._wizard.field('snmp_v3_priv_alg')
-            if v3PrivAlgo == PRIV_AES:
-                v3PrivAlg = 'aes'
-            if v3PrivAlgo == PRIV_DES:
-                v3PrivAlg = 'des'
+            if v3PrivAlgo == PRIV_AES128:
+                v3PrivAlg = 'AES'
+            elif v3PrivAlgo == PRIV_AES192:
+                v3PrivAlg = 'AES192'
+            elif v3PrivAlgo == PRIV_AES256:
+                v3PrivAlg = 'AES256'
+            elif v3PrivAlgo == PRIV_DES:
+                v3PrivAlg = 'DES'
+            elif v3PrivAlgo == PRIV_3DES:
+                v3PrivAlg = '3DES'
 
             snmpV2Ro = ""
             snmpV2Rw = ""
