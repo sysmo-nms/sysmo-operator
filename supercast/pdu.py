@@ -1458,7 +1458,7 @@ def encode_monitorSnmpElementInfoQuery(queryId, args):
     snmpElementInfoQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
     snmpElementInfoQuery.setComponentByName('v3AuthKey',    v3AuthKey)
     snmpElementInfoQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
-    snmpElementInfoQuery.setComponentByName('v3PrivKey',    v3AuthKey)
+    snmpElementInfoQuery.setComponentByName('v3PrivKey',    v3PrivKey)
 
     extendedQuery   = MonitorExtendedQuery()
     extendedQuery.setComponentByName('snmpElementInfoQuery', snmpElementInfoQuery)

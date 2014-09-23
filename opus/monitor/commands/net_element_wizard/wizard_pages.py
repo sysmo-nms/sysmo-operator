@@ -20,7 +20,8 @@ from PySide.QtGui   import (
     QProgressBar,
     QSpinBox,
     QFrame,
-    QGridLayout
+    QGridLayout,
+    QMessageBox
 )
 from PySide.QtCore import Qt
 
@@ -300,14 +301,20 @@ class Page1(QWizardPage):
 class WaitSnmpInfoBox(QProgressDialog):
     def __init__(self, parent=None):
         super(WaitSnmpInfoBox, self).__init__(parent)
+
+        self._elementName        = ""
+        self._elementEgineId     = ""
+        self._elementInterfaces  = ""
+
         self._wizard = parent._wizard
         self.setMinimum(0)
-        self.setMaximum(0)
+        self.setMaximum(3)
+        self.setValue(0)
         self.setLabelText('Probing element...')
 
-        self._executeInfo()
         self.setModal(True)
         self.show()
+        self._executeInfo()
 
     def _executeInfo(self):
         ipv = self._wizard.field('ip_version')
@@ -325,12 +332,12 @@ class WaitSnmpInfoBox(QProgressDialog):
             snmpV2Ro = self._wizard.field('snmp_v2_ro')
             snmpV2Rw = self._wizard.field('snmp_v2_rw')
             snmpVer = "2c"
-            v3SecL  = ""
-            v3User  = ""
-            v3AuthAlg = ""
-            v3AuthKey = ""
-            v3PrivAlg = ""
-            v3PrivKey = ""
+            v3SecL  = "noAuthNoPriv"
+            v3User  = "undefined"
+            v3AuthAlg = "SHA"
+            v3AuthKey = "undefined"
+            v3PrivAlg = "AES"
+            v3PrivKey = "undefined"
         else:
             v3SecLevel = self._wizard.field('snmp_v3_sec_level')
             if v3SecLevel == NO_AUTH_NO_PRIV:
@@ -358,9 +365,9 @@ class WaitSnmpInfoBox(QProgressDialog):
             elif v3PrivAlgo == PRIV_3DES:
                 v3PrivAlg = '3DES'
 
-            snmpV2Ro = ""
-            snmpV2Rw = ""
-            snmpVer = 3
+            snmpV2Ro = "undefined"
+            snmpV2Rw = "undefined"
+            snmpVer = "3"
             v3User  = self._wizard.field('snmp_v3_user')
             v3AuthKey = self._wizard.field('snmp_v3_auth_val')
             v3PrivKey = self._wizard.field('snmp_v3_priv_val')
@@ -374,13 +381,13 @@ class WaitSnmpInfoBox(QProgressDialog):
                 161,
                 2000,
                 "3",
-                "",
+                "public",
                 "authPriv",
                 "asterix",
                 "SHA",
                 "password123",
                 "AES",
-                "seckey321"
+                "enckey123"
             ),
             self._elementInfoReply
         )
@@ -408,9 +415,34 @@ class WaitSnmpInfoBox(QProgressDialog):
 #         )
 
     def _elementInfoReply(self, reply):
-        self.setLabelText(reply)
+        if reply['value']['status'] == False:
+            err = QMessageBox(self)
+            err.setModal(True)
+            err.setIconPixmap(nocapi.nGetPixmap('dialog-information'))
+            err.setText("Snmp manager failed to get information for element:")
+            err.setInformativeText("ERROR: " + reply['value']['reply'])
+            err.finished[int].connect(self._closeMe)
+            err.open()
+            return
 
+        self.setValue(self.value() + 1)
 
+        if (self.value()  == 1):
+            self._elementEngineId = reply['value']['reply']
+            self.setLabelText("Getting element name...")
+        elif (self.value() == 2):
+            self._elementName   = reply['value']['reply']
+            self.setLabelText("Getting element interfaces infos...")
+        elif (self.value() == 3):
+            self._elementInterfaces = reply['value']['reply']
+
+        print "!!!!!!!!!!!!!!!! " + reply['value']['reply']
+        if reply['lastPdu'] == True:
+            self.deleteLater()
+            return
+
+    def _closeMe(self, int):
+        self.deleteLater()
 
 
 class Page2(QWizardPage):
