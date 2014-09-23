@@ -81,8 +81,6 @@ class ProbesAdd(NFrameContainer):
             self.tr('A service offer user functionnality depending on multiple network server services or elements'),
             self
         )
-        addNetServerButton.setDisabled(True)
-        addNetServiceButton.setDisabled(True)
 
         addNetElementButton.setIcon(nocapi.nGetIcon('network-wired'))
         addNetServerButton.setIcon(nocapi.nGetIcon('applications-system'))

@@ -108,10 +108,7 @@ class Page1(QWizardPage):
 
         # snmpv3 form
         self._snmp3 = QGroupBox(self)
-        #self._snmp3User = QLineEdit(self)
-        self._snmp3User = QComboBox(self)
-        self._snmp3User.setEditable(True)
-        
+        self._snmp3User = QLineEdit(self)
         self._snmp3SecLevel = QComboBox(self)
         self._snmp3SecLevel.insertItem(AUTH_PRIV, 'authPriv')
         self._snmp3SecLevel.insertItem(AUTH_NO_PRIV, 'authNoPriv')
@@ -227,10 +224,6 @@ class Page1(QWizardPage):
         grid.setRowStretch(2,1)
         grid.setRowStretch(3,9)
         self.setLayout(grid)
-    
-        # TEST
-        self.validatePage()
-        # TEST END
 
     # VALIDATION SYSTEM
     def _updateComplete(self, _):
@@ -312,10 +305,10 @@ class WaitSnmpInfoBox(QProgressDialog):
     def _executeInfo(self):
         ipv = self._wizard.field('ip_version')
         if ipv == IP_V4:
-            ipv = "v4"
+            ipv = 4
             ip  = self._wizard.field('ip4_value')
         else:
-            ipv = "v6"
+            ipv = 6
             ip  = self._wizard.field('ip6_value')
 
         port    = self._wizard.field('ip_port')
@@ -324,7 +317,7 @@ class WaitSnmpInfoBox(QProgressDialog):
         if snmpVer == SNMP_V2:
             snmpV2Ro = self._wizard.field('snmp_v2_ro')
             snmpV2Rw = self._wizard.field('snmp_v2_rw')
-            snmpVer = "2c"
+            snmpVer = 2
             v3SecL  = ""
             v3User  = ""
             v3AuthAlg = ""
@@ -365,50 +358,28 @@ class WaitSnmpInfoBox(QProgressDialog):
             v3AuthKey = self._wizard.field('snmp_v3_auth_val')
             v3PrivKey = self._wizard.field('snmp_v3_priv_val')
 
-        # TEST
         supercast.send(
             'monitorSnmpElementInfoQuery',
             (
-                "v4",
-                "192.168.0.5",
-                161,
-                2000,
-                "3",
-                "",
-                "authPriv",
-                "asterix",
-                "SHA",
-                "password123",
-                "AES",
-                "seckey321"
+                ipv,
+                ip,
+                port,
+                timeout,
+                snmpVer,
+                snmpV2Ro,
+                snmpV2Rw,
+                v3SecL,
+                v3User,
+                v3AuthAlg,
+                v3AuthKey,
+                v3PrivAlg,
+                v3PrivKey
             ),
             self._elementInfoReply
         )
-        # TEST END
-
-
-#         supercast.send(
-#             'monitorSnmpElementInfoQuery',
-#             (
-#                 ipv,
-#                 ip,
-#                 port,
-#                 timeout,
-#                 snmpVer,
-#                 snmpV2Ro,
-#                 snmpV2Rw,
-#                 v3SecL,
-#                 v3User,
-#                 v3AuthAlg,
-#                 v3AuthKey,
-#                 v3PrivAlg,
-#                 v3PrivKey
-#             ),
-#             self._elementInfoReply
-#         )
 
     def _elementInfoReply(self, reply):
-        self.setLabelText(reply)
+        print "reply!"
 
 
 

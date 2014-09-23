@@ -74,6 +74,15 @@ class Supercast(QObject):
             else:
                 queryId = queryId + 1
 
+    def _extendedQueryNotify(self, msg):
+        queryId = msg['queryId']
+        caller  = self._queries[queryId]
+        caller(msg)
+        print "last pdu ", lastPdu
+        lastPdu = msg['lastPdu']
+        if (lastPdu == True):
+            del self._queries[queryId]
+
     def _queryNotify(self, msg):
         queryId = msg['queryId']
         caller  = self._queries[queryId]
@@ -86,15 +95,14 @@ class Supercast(QObject):
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])
             if (handler == None):
-                hasQueryId = False
-                for key in payload.keys(): 
-                    if key == 'queryId':
-                        hasQueryId = True
-                        break
-                if hasQueryId == False:
-                    print "unknown destination", payload['from']
+                if 'queryId' in payload:
+                    if 'lastPdu' in payload:
+                        self._extendedQueryNotify(payload)
+                    else:
+                        self._queryNotify(payload)
                 else:
-                    self._queryNotify(payload)
+                    print "unknown destination", payload['from']
+
             else:
                 handler(payload)
         elif msgType == 'socketConnected':

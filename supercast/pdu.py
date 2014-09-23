@@ -284,7 +284,7 @@ class MonitorCreateSimpleProbe(univ.Sequence):
 # extendedquery msg BEGIN
 class IpInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('version',      univ.Integer()),
+        namedtype.NamedType('version',      char.PrintableString()),
         namedtype.NamedType('stringVal',    char.PrintableString())
     )
 
@@ -294,8 +294,7 @@ class SnmpElementInfoQuery(univ.Sequence):
         namedtype.NamedType('port',         univ.Integer()),
         namedtype.NamedType('timeout',      univ.Integer()),
         namedtype.NamedType('snmpVer',      char.PrintableString()),
-        namedtype.NamedType('v2RoCommunity', char.PrintableString()),
-        namedtype.NamedType('v2RwCommunity', char.PrintableString()),
+        namedtype.NamedType('community',    char.PrintableString()),
         namedtype.NamedType('v3SecLevel',   char.PrintableString()),
         namedtype.NamedType('v3User',       char.PrintableString()),
         namedtype.NamedType('v3AuthAlgo',   char.PrintableString()),
@@ -367,6 +366,14 @@ class GetCheckReply(univ.Sequence):
         namedtype.NamedType('queryId',      univ.Integer()),
         namedtype.NamedType('status',       univ.Boolean()),
         namedtype.NamedType('infos',        CheckInfos())
+    )
+
+class ExtendedReplyMsg(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('queryId',      univ.Integer()),
+        namedtype.NamedType('status',       univ.Boolean()),
+        namedtype.NamedType('lastPdu',      univ.Boolean()),
+        namedtype.NamedType('reply',        char.PrintableString())
     )
 
 class MonitorPDU_fromClient(univ.Choice):
@@ -534,7 +541,18 @@ class MonitorPDU_fromServer(univ.Choice):
                     13
                 )
             )
+        ),
+        namedtype.NamedType(
+            'extendedReplyMsg',
+            ExtendedReplyMsg().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    20
+                )
+            )
         )
+ 
     )
 
 class MonitorPDU(univ.Choice):
@@ -1311,6 +1329,22 @@ def decode(pdu):
                         'infos':    infoList
                     }
                 }
+            elif msg3_type == 'extendedReplyMsg':
+                queryId = int(msg3.getComponentByName('queryId'))
+                status  = bool(msg3.getComponentByName('status'))
+                lastPdu = bool(msg3.getComponentByName('lastPdu'))
+                reply   = str(msg3.getComponentByName('reply'))
+                return {
+                    'from':     'extendedReplyMsg',
+                    'queryId':  queryId,
+                    'lastPdu':  lastPdu,
+                    'value': {
+                            'status': status,
+                            'lastPdu': lastPdu,
+                            'reply': reply
+                        }
+                    }
+
             else:
                 print "unknwon message", msg3_type
                 return {}
@@ -1400,11 +1434,11 @@ def encode_simulateCheck(queryId, checkConfig):
     return pdu
 
 def encode_monitorSnmpElementInfoQuery(queryId, args):
-    (ipv, ip, port, timeout, snmpVer, snmpV2Ro, snmpV2Rw, v3SecL, v3User, 
+    (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
             v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey) = args
     print "encoding for ", ip
     ipinfo = IpInfo()
-    ipinfo.setComponentByName('version', int(ipv))
+    ipinfo.setComponentByName('version', ipv)
     ipinfo.setComponentByName('stringVal', ip)
 
     snmpElementInfoQuery = SnmpElementInfoQuery().subtype(
@@ -1418,8 +1452,7 @@ def encode_monitorSnmpElementInfoQuery(queryId, args):
     snmpElementInfoQuery.setComponentByName('port',     int(port))
     snmpElementInfoQuery.setComponentByName('timeout',  int(timeout))
     snmpElementInfoQuery.setComponentByName('snmpVer',  snmpVer)
-    snmpElementInfoQuery.setComponentByName('v2RoCommunity',  snmpV2Ro)
-    snmpElementInfoQuery.setComponentByName('v2RwCommunity',  snmpV2Rw)
+    snmpElementInfoQuery.setComponentByName('community',community)
     snmpElementInfoQuery.setComponentByName('v3SecLevel',   v3SecL)
     snmpElementInfoQuery.setComponentByName('v3User',       v3User)
     snmpElementInfoQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
