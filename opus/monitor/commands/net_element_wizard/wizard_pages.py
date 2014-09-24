@@ -308,9 +308,9 @@ class WaitSnmpInfoBox(QProgressDialog):
 
         self._wizard = parent._wizard
         self.setMinimum(0)
-        self.setMaximum(3)
+        self.setMaximum(4)
         self.setValue(0)
-        self.setLabelText('Probing element...')
+        self.setLabelText('Acquire lock...')
 
         self.setModal(True)
         self.show()
@@ -427,13 +427,15 @@ class WaitSnmpInfoBox(QProgressDialog):
 
         self.setValue(self.value() + 1)
 
-        if (self.value()  == 1):
+        if (self.value() == 1):
+            self.setLabelText("Get engine ID...")
+        if (self.value()  == 2):
             self._elementEngineId = reply['value']['reply']
-            self.setLabelText("Getting element name...")
-        elif (self.value() == 2):
-            self._elementName   = reply['value']['reply']
-            self.setLabelText("Getting element interfaces infos...")
+            self.setLabelText("Get system infos...")
         elif (self.value() == 3):
+            self._elementName   = reply['value']['reply']
+            self.setLabelText("Get interfaces infos...")
+        elif (self.value() == 4):
             self._elementInterfaces = reply['value']['reply']
 
         print "!!!!!!!!!!!!!!!! " + reply['value']['reply']
