@@ -321,4 +321,6 @@ def dumpPalette():
             rgb = color.getRgb()
             paletteDump[cGroup][cRole] = rgb
 
-    return paletteDump
+    f = open('palette.dump', 'w')
+    f.write(str(paletteDump))
+    f.close()

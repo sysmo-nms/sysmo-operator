@@ -374,11 +374,31 @@ class NMainWindow(QMainWindow):
         lagoonAction.setCheckable(True)
         lagoonAction.triggered.connect(partial(self._setTheme, 'lagoon'))
 
+        kritaAction = QAction(self.tr('Krita'), self)
+        kritaAction.setCheckable(True)
+        kritaAction.triggered.connect(partial(self._setTheme, 'krita'))
+
+        desertAction = QAction(self.tr('Desert'), self)
+        desertAction.setCheckable(True)
+        desertAction.triggered.connect(partial(self._setTheme, 'desert'))
+
+        honeyAction = QAction(self.tr('Honey'), self)
+        honeyAction.setCheckable(True)
+        honeyAction.triggered.connect(partial(self._setTheme, 'honey'))
+
+        snowAction = QAction(self.tr('Snow'), self)
+        snowAction.setCheckable(True)
+        snowAction.triggered.connect(partial(self._setTheme, 'snow'))
+
         groupColor = QActionGroup(self)
         groupColor.addAction(nativeThemeAction)
         groupColor.addAction(deepWaterAction)
         groupColor.addAction(lagoonAction)
         groupColor.addAction(islandAction)
+        groupColor.addAction(kritaAction)
+        groupColor.addAction(desertAction)
+        groupColor.addAction(honeyAction)
+        groupColor.addAction(snowAction)
         groupColor.setExclusive(True)
 
         if self._noctopusTheme == 'lagoon':
@@ -387,6 +407,14 @@ class NMainWindow(QMainWindow):
             deepWaterAction.setChecked(True)
         elif self._noctopusTheme == 'terra':
             islandAction.setChecked(True)
+        elif self._noctopusTheme == 'krita':
+            kritaAction.setChecked(True)
+        elif self._noctopusTheme == 'desert':
+            desertAction.setChecked(True)
+        elif self._noctopusTheme == 'honey':
+            honeyAction.setChecked(True)
+        elif self._noctopusTheme == 'snow':
+            snowAction.setChecked(True)
         else:
             nativeThemeAction.setChecked(True)
 
@@ -394,6 +422,10 @@ class NMainWindow(QMainWindow):
         self.menuColor.addAction(deepWaterAction)
         self.menuColor.addAction(islandAction)
         self.menuColor.addAction(lagoonAction)
+        self.menuColor.addAction(kritaAction)
+        self.menuColor.addAction(desertAction)
+        self.menuColor.addAction(honeyAction)
+        self.menuColor.addAction(snowAction)
 
         if self._noctopusStyle == 'native':
             nativeAction.setChecked(True)
@@ -413,6 +445,4 @@ class NMainWindow(QMainWindow):
         self._mainMenu.addMenu(menu)
 
     def _dumpPalette(self):
-        print getPalette('dark')
-        #pal = dumpPalette()
-        #print pal
+        dumpPalette()
