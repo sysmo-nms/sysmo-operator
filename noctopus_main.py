@@ -346,15 +346,22 @@ class NMainWindow(QMainWindow):
         plastiqueAction = QAction(self.tr('Balanced'), self)
         plastiqueAction.setCheckable(True)
         plastiqueAction.triggered.connect(partial(self._setStyle, 'plastique'))
+
+        cdeAction = QAction(self.tr('CDE'), self)
+        cdeAction.setCheckable(True)
+        cdeAction.triggered.connect(partial(self._setStyle, 'cde'))
+
     
         styleToggle = QActionGroup(self)
         styleToggle.addAction(plastiqueAction)
+        styleToggle.addAction(cdeAction)
         styleToggle.addAction(nativeAction)
         styleToggle.setExclusive(True)
     
         menuStyle = menu.addMenu(self.tr('Style'))
         menuStyle.addAction(nativeAction)
         menuStyle.addAction(plastiqueAction)
+        menuStyle.addAction(cdeAction)
 
         "color sub menu"
         self.menuColor = menuStyle.addMenu(self.tr('Colors'))
@@ -432,6 +439,8 @@ class NMainWindow(QMainWindow):
             self.menuColor.setDisabled(True)
         elif self._noctopusStyle == 'plastique':
             plastiqueAction.setChecked(True)
+        elif self._noctopusStyle == 'cde':
+            cdeAction.setChecked(True)
         else:
             nativeAction.setChecked(True)
 
