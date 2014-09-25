@@ -1413,12 +1413,11 @@ def decode(pdu):
                     replyPayload['sysServices']      = int(rep.getComponentByName('sysServices'))
                     replyPayload['sysORLastChange'] = str(rep.getComponentByName('sysORLastChange'))
                 elif repType == 'snmpInterfacesInfo':
-                    replyPayload = dict()
+                    replyPayload = list()
                     for i in range(len(rep)):
                         element = rep.getComponentByPosition(i)
-                        index = int(element.getComponentByName('ifIndex'))
                         anIf = dict()
-                        anIf['ifIndex'] = index
+                        anIf['ifIndex'] = int(element.getComponentByName('ifIndex'))
                         anIf['ifDescr'] = str(element.getComponentByName('ifDescr'))
                         anIf['ifType']  = int(element.getComponentByName('ifType'))
                         anIf['ifMTU']   = int(element.getComponentByName('ifMTU'))
@@ -1427,7 +1426,7 @@ def decode(pdu):
                         anIf['ifAdminStatus'] = int(element.getComponentByName('ifAdminStatus'))
                         anIf['ifOperStatus'] = int(element.getComponentByName('ifOperStatus'))
                         anIf['ifLastChange'] = str(element.getComponentByName('ifLastChange'))
-                        replyPayload[index] = anIf
+                        replyPayload.append(anIf)
 
                 return {
                     'from':     'extendedReplyMsg',

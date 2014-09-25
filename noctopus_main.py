@@ -360,6 +360,7 @@ class NMainWindow(QMainWindow):
     
         menuStyle = menu.addMenu(self.tr('Style'))
         menuStyle.addAction(nativeAction)
+        menuStyle.addSeparator()
         menuStyle.addAction(plastiqueAction)
         menuStyle.addAction(cdeAction)
 
@@ -369,11 +370,11 @@ class NMainWindow(QMainWindow):
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))
 
-        deepWaterAction = QAction(self.tr('Deep water'), self)
+        deepWaterAction = QAction(self.tr('Dark'), self)
         deepWaterAction.setCheckable(True)
         deepWaterAction.triggered.connect(partial(self._setTheme, 'dark'))
     
-        islandAction = QAction(self.tr('Island'), self)
+        islandAction = QAction(self.tr('Inland'), self)
         islandAction.setCheckable(True)
         islandAction.triggered.connect(partial(self._setTheme, 'terra'))
 
@@ -381,7 +382,7 @@ class NMainWindow(QMainWindow):
         lagoonAction.setCheckable(True)
         lagoonAction.triggered.connect(partial(self._setTheme, 'lagoon'))
 
-        kritaAction = QAction(self.tr('Krita'), self)
+        kritaAction = QAction(self.tr('Greys'), self)
         kritaAction.setCheckable(True)
         kritaAction.triggered.connect(partial(self._setTheme, 'krita'))
 
@@ -426,6 +427,7 @@ class NMainWindow(QMainWindow):
             nativeThemeAction.setChecked(True)
 
         self.menuColor.addAction(nativeThemeAction)
+        self.menuColor.addSeparator()
         self.menuColor.addAction(deepWaterAction)
         self.menuColor.addAction(islandAction)
         self.menuColor.addAction(lagoonAction)
