@@ -368,12 +368,74 @@ class GetCheckReply(univ.Sequence):
         namedtype.NamedType('infos',        CheckInfos())
     )
 
+class SnmpSystemInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('sysDescr',     char.PrintableString()),
+        namedtype.NamedType('sysObjectId',  char.PrintableString()),
+        namedtype.NamedType('sysUpTime',    char.PrintableString()),
+        namedtype.NamedType('sysContact',   char.PrintableString()),
+        namedtype.NamedType('sysName',      char.PrintableString()),
+        namedtype.NamedType('sysLocation',  char.PrintableString()),
+        namedtype.NamedType('sysServices',  univ.Integer()),
+        namedtype.NamedType('sysORLastChange', char.PrintableString())
+    )
+
+class SnmpInterfaceInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('ifIndex',      univ.Integer()),
+        namedtype.NamedType('ifDescr',      char.PrintableString()),
+        namedtype.NamedType('ifType',       univ.Integer()),
+        namedtype.NamedType('ifMTU',        univ.Integer()),
+        namedtype.NamedType('ifSpeed',      univ.Integer()),
+        namedtype.NamedType('ifPhysAddress',char.PrintableString()),
+        namedtype.NamedType('ifAdminStatus',univ.Integer()),
+        namedtype.NamedType('ifOperStatus', univ.Integer()),
+        namedtype.NamedType('ifLastChange', char.PrintableString())
+    )
+
+class SnmpInterfacesInfo(univ.SequenceOf):
+    componentType = SnmpInterfaceInfo()
+
+class ReplyChoice(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'string',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    0
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'snmpSystemInfo',
+            SnmpSystemInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'snmpInterfacesInfo',
+            SnmpInterfacesInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    2
+                )
+            )
+        )
+    )
+
 class ExtendedReplyMsg(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
         namedtype.NamedType('status',       univ.Boolean()),
         namedtype.NamedType('lastPdu',      univ.Boolean()),
-        namedtype.NamedType('reply',        char.PrintableString())
+        namedtype.NamedType('reply',        ReplyChoice())
     )
 
 class MonitorPDU_fromClient(univ.Choice):
@@ -1333,15 +1395,49 @@ def decode(pdu):
                 queryId = int(msg3.getComponentByName('queryId'))
                 status  = bool(msg3.getComponentByName('status'))
                 lastPdu = bool(msg3.getComponentByName('lastPdu'))
-                reply   = str(msg3.getComponentByName('reply'))
+
+                reply   = msg3.getComponentByName('reply')
+                rep     = reply.getComponent()
+                repType = reply.getName()
+
+                if repType == 'string':
+                    replyPayload = str(rep)
+                elif repType == 'snmpSystemInfo':
+                    replyPayload = dict()
+                    replyPayload['sysDescr']        = str(rep.getComponentByName('sysDescr'))
+                    replyPayload['sysObjectId']     = str(rep.getComponentByName('sysObjectId'))
+                    replyPayload['sysUpTime']       = str(rep.getComponentByName('sysUpTime'))
+                    replyPayload['sysContact']      = str(rep.getComponentByName('sysContact'))
+                    replyPayload['sysName']         = str(rep.getComponentByName('sysName'))
+                    replyPayload['sysLocation']     = str(rep.getComponentByName('sysLocation'))
+                    replyPayload['sysServices']      = int(rep.getComponentByName('sysServices'))
+                    replyPayload['sysORLastChange'] = str(rep.getComponentByName('sysORLastChange'))
+                elif repType == 'snmpInterfacesInfo':
+                    replyPayload = dict()
+                    for i in range(len(rep)):
+                        element = rep.getComponentByPosition(i)
+                        index = int(element.getComponentByName('ifIndex'))
+                        anIf = dict()
+                        anIf['ifIndex'] = index
+                        anIf['ifDescr'] = str(element.getComponentByName('ifDescr'))
+                        anIf['ifType']  = int(element.getComponentByName('ifType'))
+                        anIf['ifMTU']   = int(element.getComponentByName('ifMTU'))
+                        anIf['ifSpeed'] = int(element.getComponentByName('ifSpeed'))
+                        anIf['ifPhysaddress'] = str(element.getComponentByName('ifPhysAddress'))
+                        anIf['ifAdminStatus'] = int(element.getComponentByName('ifAdminStatus'))
+                        anIf['ifOperStatus'] = int(element.getComponentByName('ifOperStatus'))
+                        anIf['ifLastChange'] = str(element.getComponentByName('ifLastChange'))
+                        replyPayload[index] = anIf
+
                 return {
                     'from':     'extendedReplyMsg',
                     'queryId':  queryId,
                     'lastPdu':  lastPdu,
                     'value': {
-                            'status': status,
-                            'lastPdu': lastPdu,
-                            'reply': reply
+                            'status':       status,
+                            'lastPdu':      lastPdu,
+                            'replyType':    repType,
+                            'reply':        replyPayload
                         }
                     }
 

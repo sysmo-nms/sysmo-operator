@@ -438,7 +438,7 @@ class WaitSnmpInfoBox(QProgressDialog):
         elif (self.value() == 4):
             self._elementInterfaces = reply['value']['reply']
 
-        print "!!!!!!!!!!!!!!!! " + reply['value']['reply']
+        print reply['value']['reply']
         if reply['lastPdu'] == True:
             self.deleteLater()
             return
