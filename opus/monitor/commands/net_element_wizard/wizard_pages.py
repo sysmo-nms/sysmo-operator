@@ -40,6 +40,7 @@ import supercast.main   as supercast
 
 SNMP_V3  = 0
 SNMP_V2  = 1
+SNMP_V1  = 2
 
 AUTH_SHA  = 0
 AUTH_MD5  = 1
@@ -95,23 +96,33 @@ class Page1(QWizardPage):
         self._timeout.setMaximum(20000)
         self._timeout.setValue(2500)
 
+
+        # snmpv1 form
+        self._snmp1Community   = QLineEdit(self)
+        self._snmp1Community.setPlaceholderText("v1 community string")
+        self._snmp1    = NFrameContainer(self)
+        self._snmp1Lay = NGridContainer(self._snmp1)
+        self._snmp1Lay.setRowStretch(0,0)
+        self._snmp1Lay.setRowStretch(1,1)
+        self._snmp1Lay.addWidget(QLabel('Community:',self), 0,0)
+        self._snmp1Lay.addWidget(self._snmp1Community,     0,1)
+
         # snmpv2 form
-        self._snmp2b = QGroupBox(self)
-        self._snmp2b.setContentsMargins(15,15,15,15)
-        self._snmp2bRw   = QLineEdit(self)
-        self._snmp2bRo    = QLineEdit(self)
-        self._snmp2bLay     = QFormLayout(self._snmp2b)
-        self._snmp2bLay.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        self._snmp2b.setLayout(self._snmp2bLay)
-        self._snmp2bLay.insertRow(1, 'Read only community',  self._snmp2bRo)
-        self._snmp2bLay.insertRow(2, 'Read/write community', self._snmp2bRw)
+        self._snmp2Community   = QLineEdit(self)
+        self._snmp2Community.setPlaceholderText("v2c community string")
+        self._snmp2    = NFrameContainer(self)
+        self._snmp2Lay = NGridContainer(self._snmp2)
+        self._snmp2Lay.setRowStretch(0,0)
+        self._snmp2Lay.setRowStretch(1,1)
+        self._snmp2Lay.addWidget(QLabel('Community:',self), 0,0)
+        self._snmp2Lay.addWidget(self._snmp2Community,     0,1)
+
+
 
 
         # snmpv3 form
         self._snmp3 = QGroupBox(self)
-        #self._snmp3User = QLineEdit(self)
-        self._snmp3User = QComboBox(self)
-        self._snmp3User.setEditable(True)
+        self._snmp3User = QLineEdit(self)
         
         self._snmp3SecLevel = QComboBox(self)
         self._snmp3SecLevel.insertItem(AUTH_PRIV, 'authPriv')
@@ -167,14 +178,16 @@ class Page1(QWizardPage):
         self._snmp3Lay.setRowStretch(10,1)
 
 
-        # snmpv2/3 stacked layout
+        # snmpv1/2/3 stacked layout
         self._snmpLay = QStackedWidget(self)
         self._snmpLay.insertWidget(SNMP_V3, self._snmp3)
-        self._snmpLay.insertWidget(SNMP_V2, self._snmp2b)
+        self._snmpLay.insertWidget(SNMP_V2, self._snmp2)
+        self._snmpLay.insertWidget(SNMP_V1, self._snmp1)
 
         self._snmpButton = QComboBox(self)
         self._snmpButton.insertItem(SNMP_V3, 'SNMP version 3')
-        self._snmpButton.insertItem(SNMP_V2, 'SNMP version 2b')
+        self._snmpButton.insertItem(SNMP_V2, 'SNMP version 2c')
+        self._snmpButton.insertItem(SNMP_V1, 'SNMP version 1')
         self._snmpButton.currentIndexChanged[int].connect(self._snmpLay.setCurrentIndex)
         self._snmpButton.setFocusPolicy(Qt.ClickFocus)
 
@@ -185,8 +198,8 @@ class Page1(QWizardPage):
         self.registerField('ip_port',           self._port)
         self.registerField('snmp_timeout',      self._timeout)
         self.registerField('snmp_version',      self._snmpButton)
-        self.registerField('snmp_v2_ro',      self._snmp2bRo)
-        self.registerField('snmp_v2_rw',     self._snmp2bRw)
+        self.registerField('snmp_v1_community', self._snmp1Community)
+        self.registerField('snmp_v2_community', self._snmp2Community)
         self.registerField('snmp_v3_user',      self._snmp3User)
         self.registerField('snmp_v3_sec_level', self._snmp3SecLevel)
         self.registerField('snmp_v3_auth_alg',  self._snmp3Auth)
@@ -201,8 +214,8 @@ class Page1(QWizardPage):
         self._port.valueChanged.connect(self._updateComplete)
         self._timeout.valueChanged.connect(self._updateComplete)
         self._snmpButton.currentIndexChanged[int].connect(self._updateComplete)
-        self._snmp2bRo.textChanged.connect(self._updateComplete)
-        self._snmp2bRw.textChanged.connect(self._updateComplete)
+        self._snmp1Community.textChanged.connect(self._updateComplete)
+        self._snmp2Community.textChanged.connect(self._updateComplete)
         self._snmp3SecLevel.currentIndexChanged[int].connect(self._updateComplete)
         self._snmp3AuthVal.textChanged.connect(self._updateComplete)
         self._snmp3PrivVal.textChanged.connect(self._updateComplete)
@@ -245,10 +258,13 @@ class Page1(QWizardPage):
             if self._ip6.hasAcceptableInput() != True: return False
 
         # snmp is complete?
-        if self._wizard.field('snmp_version') == SNMP_V2:
-            read    = self._wizard.field('snmp_v2_ro')
-            write   = self._wizard.field('snmp_v2_rw')
-            if read == "" or write == "": return False
+        snmpver = self._wizard.field('snmp_version')
+        if  snmpver == SNMP_V1:
+            community = self._wizard.field('snmp_v1_community')
+            if community == "": return False
+        if  snmpver == SNMP_V2:
+            community = self._wizard.field('snmp_v2_community')
+            if community == "": return False
         else:
             user = self._wizard.field('snmp_v3_user')
             auth = self._wizard.field('snmp_v3_auth_val')
@@ -329,8 +345,7 @@ class WaitSnmpInfoBox(QProgressDialog):
         timeout = self._wizard.field('snmp_timeout')
         snmpVer = self._wizard.field('snmp_version')
         if snmpVer == SNMP_V2:
-            snmpV2Ro = self._wizard.field('snmp_v2_ro')
-            snmpV2Rw = self._wizard.field('snmp_v2_rw')
+            community = self._wizard.field('snmp_community')
             snmpVer = "2c"
             v3SecL  = "noAuthNoPriv"
             v3User  = "undefined"
@@ -365,8 +380,7 @@ class WaitSnmpInfoBox(QProgressDialog):
             elif v3PrivAlgo == PRIV_3DES:
                 v3PrivAlg = '3DES'
 
-            snmpV2Ro = "undefined"
-            snmpV2Rw = "undefined"
+            community = "undefined"
             snmpVer = "3"
             v3User  = self._wizard.field('snmp_v3_user')
             v3AuthKey = self._wizard.field('snmp_v3_auth_val')
