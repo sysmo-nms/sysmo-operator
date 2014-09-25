@@ -32,7 +32,7 @@ entries of the treeview).
 - animate central stack
     (QGraphicScene->QGraphicsProxyWidget->QWidget)
 - double clic sur la rample inverse le toggle (vue max de la liste)
-- rrdjtool (search java rrdtool jni)
+- python rrd
 
 ESTHETIC:
 - higlight selection in treeview
