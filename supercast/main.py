@@ -79,7 +79,6 @@ class Supercast(QObject):
         caller  = self._queries[queryId]
         caller(msg)
         lastPdu = msg['lastPdu']
-        print "last pdu ", lastPdu
         if (lastPdu == True):
             del self._queries[queryId]
 

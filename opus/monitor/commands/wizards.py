@@ -89,6 +89,10 @@ class NetworkElementWizard(QWizard):
     def __init__(self, parent=None):
         super(NetworkElementWizard, self).__init__(parent)
 
+        self._sysInfo   = None
+        self._ifInfo    = None
+        self._engineId  = None
+
         self.setWizardStyle(QWizard.ModernStyle)
         self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('network-bay'))
 
@@ -98,9 +102,21 @@ class NetworkElementWizard(QWizard):
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
         npage1  = NetElement.Page1(self)
         npage2  = NetElement.Page2(self)
+        npage3  = NetElement.Page3(self)
         self.setPage(1, npage1)
         self.setPage(2, npage2)
+        self.setPage(3, npage3)
         self.setStartId(1)
+
+    def setSysInfo(self, info):
+        self._sysInfo = info
+
+    def setIfInfo(self, info):
+        self._ifInfo = info
+
+    def setEngineId(self, info):
+        self._engineId = info
+
         
 class NetworkServerWizard(QWizard):
     def __init__(self, parent=None):
