@@ -117,6 +117,9 @@ class NetworkElementWizard(QWizard):
     def setEngineId(self, info):
         self._engineId = info
 
+    def setIfSelection(self, selection):
+        self._ifSelection = selection
+
         
 class NetworkServerWizard(QWizard):
     def __init__(self, parent=None):
