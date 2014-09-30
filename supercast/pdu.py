@@ -1567,7 +1567,6 @@ def encode_simulateCheck(queryId, checkConfig):
     return pdu
 
 def encode_monitorSnmpUpdateElementQuery(queryId, args):
-    print "encode?"
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
             v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey,
                 engineId, ifSelection) = args
