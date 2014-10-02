@@ -103,29 +103,23 @@ class Page1(QWizardPage):
         self._timeout.setMaximum(20000)
         self._timeout.setValue(2500)
 
-
         # snmpv1 form
         self._snmp1Community   = QLineEdit(self)
-        self._snmp1Community.setPlaceholderText("v1 community string")
+        self._snmp1Community.setPlaceholderText("Community string")
         self._snmp1    = NFrameContainer(self)
         self._snmp1Lay = NGridContainer(self._snmp1)
         self._snmp1Lay.setRowStretch(0,0)
         self._snmp1Lay.setRowStretch(1,1)
-        self._snmp1Lay.addWidget(QLabel('Community name:',self), 0,0)
-        self._snmp1Lay.addWidget(self._snmp1Community,     0,1)
+        self._snmp1Lay.addWidget(self._snmp1Community,     0,0)
 
         # snmpv2 form
         self._snmp2Community   = QLineEdit(self)
-        self._snmp2Community.setPlaceholderText("v2c community string")
+        self._snmp2Community.setPlaceholderText("Community string")
         self._snmp2    = NFrameContainer(self)
         self._snmp2Lay = NGridContainer(self._snmp2)
         self._snmp2Lay.setRowStretch(0,0)
         self._snmp2Lay.setRowStretch(1,1)
-        self._snmp2Lay.addWidget(QLabel('Community name:',self), 0,0)
-        self._snmp2Lay.addWidget(self._snmp2Community,     0,1)
-
-
-
+        self._snmp2Lay.addWidget(self._snmp2Community,     0,0)
 
         # snmpv3 form
         self._snmp3 = QGroupBox(self)
@@ -701,6 +695,3 @@ class WaitRegisterElementBox(QProgressDialog):
 
     def _elementInfoReply(self, value):
         print "reply!", value
-
-
-
