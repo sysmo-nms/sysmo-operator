@@ -200,7 +200,6 @@ class MonitorProbeDump(univ.Sequence):
 class MonitorProbeInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
         namedtype.NamedType('name',     char.PrintableString()),
         namedtype.NamedType('descr',    char.PrintableString()),
         namedtype.NamedType('info',     char.PrintableString()),
@@ -1126,7 +1125,6 @@ def decode(pdu):
                 }
             elif msg3_type == 'probeInfo':
                 target      = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
                 descr       = str(msg3.getComponentByName('descr'))
                 info        = str(msg3.getComponentByName('info'))
@@ -1229,7 +1227,6 @@ def decode(pdu):
                     'msgType':  msg3_type,
                     'value':    {
                         'target':       target,
-                        'id':           int(probeId),
                         'name':         name,
                         'descr':        descr,
                         'info':         info,
