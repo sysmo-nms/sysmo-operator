@@ -297,7 +297,7 @@ class NMainWindow(QMainWindow):
         )
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
-        actionConfigureProxy = QAction(self.tr('Proxy settings'), self)
+        actionConfigureProxy = QAction(self.tr('Proxy settings...'), self)
         actionConfigureProxy.triggered.connect(self._launchProxySettings)
         menuFile.addAction(_dumpPaletteAction)
         menuFile.addAction(updateAction)

@@ -44,14 +44,14 @@ class TargetMenu(QMenu):
 
         self.addSeparator()
 
-        action = NAction(self.tr('Documentation'), self)
+        action = NAction(self.tr('Documentation...'), self)
         action.triggered.connect(self._openDocEngine)
         action.setIcon(nocapi.nGetIcon('folder-saved-search'))
         self.addAction(action)
 
         self.addSeparator()
 
-        action = NAction(self.tr('Properties'), self)
+        action = NAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
         action.setIcon(nocapi.nGetIcon('edit-paste'))
         self.addAction(action)

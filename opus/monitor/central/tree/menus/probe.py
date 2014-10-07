@@ -53,14 +53,14 @@ class ProbeMenu(QMenu):
 
         self.addSeparator()
 
-        self._performances = QAction(self.tr('Performances'), self)
+        self._performances = QAction(self.tr('Performances...'), self)
         self._performances.triggered.connect(self._openPerformances)
         self._performances.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
         self.addAction(self._performances)
 
         self.addSeparator()
 
-        action = QAction(self.tr('Properties'), self)
+        action = QAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
         action.setIcon(nocapi.nGetIcon('edit-paste'))
         self.addAction(action)

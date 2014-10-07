@@ -53,6 +53,13 @@ class LoggerRrdConfig(univ.Sequence):
 class LoggerRrdConfigs(univ.SequenceOf):
     componentType = LoggerRrdConfig()
 
+class LoggerRrd2(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('config',   char.PrintableString())
+    )
+
+
 class LoggerRrd(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('module',   char.PrintableString()),
@@ -102,7 +109,18 @@ class Logger(univ.Choice):
                     2
                 )
             )
+        ),
+        namedtype.NamedType(
+            'loggerRrd2',
+            LoggerRrd2().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    3
+                )
+            )
         )
+
     )
 
 
@@ -1178,6 +1196,11 @@ def decode(pdu):
                     ####################
                     # IF LOGGER IS RRD #
                     ####################
+                    elif ltype == 'loggerRrd2':
+                        logger2 = logger.getComponent()
+                        mod     = logger2.getComponentByName('module')
+                        conf    = logger2.getComponentByName('config')
+                        loggersDict[str(mod)] = str(conf)
                     elif ltype == 'loggerRrd':
                         logger2 = logger.getComponent()
                         mod     = logger2.getComponentByName('module')
