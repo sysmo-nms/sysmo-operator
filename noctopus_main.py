@@ -365,7 +365,7 @@ class NMainWindow(QMainWindow):
         menuStyle.addAction(cdeAction)
 
         "color sub menu"
-        self.menuColor = menuStyle.addMenu(self.tr('Colors'))
+        self.menuColor = menuStyle.addMenu(getIcon('preferences-desktop-theme'),self.tr('Colors'))
         nativeThemeAction = QAction(self.tr('Native'), self)
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))
