@@ -53,10 +53,20 @@ class LoggerRrdConfig(univ.Sequence):
 class LoggerRrdConfigs(univ.SequenceOf):
     componentType = LoggerRrdConfig()
 
+class RrdGraphs(univ.SequenceOf):
+    componentType = char.PrintableString()
+
+class RrdIndexes(univ.SequenceOf):
+    componentType = univ.Integer()
+
 class LoggerRrd2(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('module',   char.PrintableString()),
-        namedtype.NamedType('config',   char.PrintableString())
+        namedtype.NamedType('type',     char.PrintableString()),
+        namedtype.NamedType('rrdCreate',char.PrintableString()),
+        namedtype.NamedType('rrdUpdate',char.PrintableString()),
+        namedtype.NamedType('rrdGraphs',RrdGraphs()),
+        namedtype.NamedType('indexes',  RrdIndexes())
     )
 
 
@@ -205,6 +215,24 @@ class MonitorEventProbeDump(univ.Sequence):
         namedtype.NamedType('probe',    char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('events',   MonitorProbeEvents()),
+    )
+
+class RrdIdToFile(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('index',   univ.Integer()),
+        namedtype.NamedType('path',    char.PrintableString())
+    )
+
+class RrdIdToFileSeq(univ.SequenceOf):
+    componentType = RrdIdToFile()
+
+class MonitorRrdProbeDump(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',   char.PrintableString()),
+        namedtype.NamedType('probe',    char.PrintableString()),
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('indexes',  RrdIdToFileSeq()),
+        namedtype.NamedType('archive',  char.PrintableString())
     )
 
 class MonitorProbeDump(univ.Sequence):
@@ -664,8 +692,17 @@ class MonitorPDU_fromServer(univ.Choice):
                     20
                 )
             )
+        ),
+        namedtype.NamedType(
+            'rrdProbeDump',
+            MonitorRrdProbeDump().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    30
+                )
+            )
         )
- 
     )
 
 class MonitorPDU(univ.Choice):
@@ -1199,8 +1236,27 @@ def decode(pdu):
                     elif ltype == 'loggerRrd2':
                         logger2 = logger.getComponent()
                         mod     = logger2.getComponentByName('module')
-                        conf    = logger2.getComponentByName('config')
-                        loggersDict[str(mod)] = str(conf)
+
+                        rtype   = logger2.getComponentByName('type')
+                        rcreate = logger2.getComponentByName('rrdCreate')
+                        rupdate = logger2.getComponentByName('rrdUpdate')
+                        indexes = logger2.getComponentByName('indexes')
+                        rgraphs = logger2.getComponentByName('rrdGraphs')
+                        rrdGraphs = dict()
+                        for i in range(len(rgraphs)):
+                            graph = rgraphs.getComponentByPosition(i)
+                            rrdGraphs[i] = str(graph)
+
+                        rrdConfigs = dict()
+
+                        rrdConfigs['type'] = str(rtype)
+                        rrdConfigs['rrdCreate'] = str(rcreate)
+                        rrdConfigs['rrdUpdate'] = str(rupdate)
+                        rrdConfigs['rgraphs'] = rrdGraphs
+                        rrdConfigs['indexes'] = indexes
+
+                        loggersDict[str(mod)] = rrdConfigs
+
                     elif ltype == 'loggerRrd':
                         logger2 = logger.getComponent()
                         mod     = logger2.getComponentByName('module')
@@ -1351,6 +1407,34 @@ def decode(pdu):
                         'data':   eventsList
                     }
                 }
+            elif msg3_type == 'rrdProbeDump':
+                print "probe dump !!!!!!!!!!!!"
+                target      = str(msg3.getComponentByName('target'))
+                probeName   = str(msg3.getComponentByName('probe'))
+                module      = str(msg3.getComponentByName('module'))
+                archive     = str(msg3.getComponentByName('archive'))
+                indexes     = msg3.getComponentByName('indexes')
+
+                indexesDict = dict()
+                for i in range(len(indexes)):
+                    indexEntry = indexes.getComponentByPosition(i)
+                    index = indexEntry.getComponentByName('index')
+                    path  = indexEntry.getComponentByName('path')
+                    indexesDict[index] = path
+
+                return {
+                    'from': msg1_type,
+                    'msgType': msg3_type,
+                    'value': {
+                        'target':   target,
+                        'id':       probeName,
+                        'logger':   module,
+                        'archive':  archive,
+                        'indexes':  indexesDict
+                    }
+                }
+
+
             elif msg3_type == 'rrdFileDump':
                 target      = str(msg3.getComponentByName('target'))
                 probeName   = str(msg3.getComponentByName('probeName'))

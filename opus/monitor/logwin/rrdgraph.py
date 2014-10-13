@@ -37,6 +37,13 @@ import  nocapi
 import  platform
 import  re
 
+class RrdLog2(AbstractChannelWidget):
+    def __init__(self, parent, probe, master):
+        super(RrdLog2, self).__init__(parent, probe)
+        self.connectProbe()
+        self.goOn = True
+
+
 class RrdLog(AbstractChannelWidget):
     sizeMove = Signal(int)
     timeMove = Signal(tuple)

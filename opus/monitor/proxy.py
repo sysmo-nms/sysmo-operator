@@ -241,6 +241,8 @@ class Channel(QObject):
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
+        elif dumpType == 'bmonitor_logger_rrd2':
+            print "dump rrd2"
         elif dumpType == 'bmonitor_logger_rrd':
             self.rrdEnabled = True
             # special dump comme in multiple pieces.
@@ -304,10 +306,12 @@ class Channel(QObject):
 class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelWidget, self).__init__(parent)
+        print "init...."
         self.__channel = channel
         self.__connected = False
 
     def connectProbe(self):
+        print "connect to probe"
         ChanHandler.singleton.subscribe(self, self.__channel)
         self.__connected = True
 
@@ -315,9 +319,11 @@ class AbstractChannelWidget(NFrameContainer):
         print self, ":you should handle this message: ", msg['msgType']
 
     def __disconnectProbe(self):
+        print "disconnect probe"
         ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
+        print "destroy"
         if self.__connected == True: self.__disconnectProbe()
         self.deleteLater()
         #QFrame.destroy(self)

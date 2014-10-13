@@ -31,7 +31,7 @@ from    noctopus_widgets    import (
 )
 
 from    opus.monitor.proxy           import AbstractChannelWidget
-from    opus.monitor.logwin.rrdgraph import RrdLog
+from    opus.monitor.logwin.rrdgraph import RrdLog, RrdLog2
 import  opus.monitor.api    as monapi
 import  opus.monitor.norrd  as norrd
 
@@ -161,7 +161,7 @@ class LogStatusBar(QStatusBar):
 class RrdArea(NFrameContainer):
     def __init__(self, parent, probe):
         super(RrdArea, self).__init__(parent)
-        self._rrdFrame = RrdLog(self, probe, parent)
+        self._rrdFrame = RrdLog2(self, probe, parent)
         rrdScroll = QScrollArea(self)
         rrdScroll.setWidget(self._rrdFrame)
         rrdScroll.setWidgetResizable(True)
