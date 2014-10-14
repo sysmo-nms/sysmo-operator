@@ -50,6 +50,7 @@ class ChanHandler(QObject):
         self.masterSignalsDict['probeDump']     = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
         self.masterSignalsDict['probeEventMsg'] = SimpleSignal(self)
+        self.masterSignalsDict['rrdLoggerEventMsg'] = SimpleSignal(self)
 
         # connect myself
         self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
@@ -57,6 +58,7 @@ class ChanHandler(QObject):
         self.masterSignalsDict['probeDump'].signal.connect(self._handleProbeDump)
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
         self.masterSignalsDict['probeEventMsg'].signal.connect(self._handleEventMsg)
+        self.masterSignalsDict['rrdLoggerEventMsg'].signal.connect(self._handleRrdLoggerEventMsg)
         # END
 
     def handleSupercastMsg(self, msg):
@@ -66,10 +68,16 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'probeEventMsg':
             self.masterSignalsDict['probeEventMsg'].signal.emit(msg)
 
+        elif    msg['msgType'] == 'rrdLoggerEvent':
+            self.masterSignalsDict['rrdLoggerEventMsg'].signal.emit(msg)
+
         elif    msg['msgType'] == 'probeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
         elif    msg['msgType'] == 'rrdFileDump':
+            self.masterSignalsDict['probeDump'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'rrdProbeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
         elif    msg['msgType'] == 'eventProbeDump':
@@ -143,6 +151,10 @@ class ChanHandler(QObject):
     def _handleProbeReturn(self, msg):
         channel = msg['value']['id']
         self._chanProxy[channel].handleReturn(msg)
+
+    def _handleRrdLoggerEventMsg(self, msg):
+        channel = msg['value']['id']
+        self._chanProxy[channel].handleRrdLoggerEvent(msg)
 
     def _handleEventMsg(self, msg):
         channel = msg['value']['id']
@@ -242,7 +254,7 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
         elif dumpType == 'bmonitor_logger_rrd2':
-            print "dump rrd2"
+            print "dump rrd2", msg
         elif dumpType == 'bmonitor_logger_rrd':
             self.rrdEnabled = True
             # special dump comme in multiple pieces.
@@ -262,6 +274,9 @@ class Channel(QObject):
             self.signal.emit(dumpMsg)
         else:
             print "unknown dump type ", dumpType
+
+    def handleRrdLoggerEvent(self, msg):
+        print "handle rrdLoggerEvent from channel"
 
     def handleReturn(self, msg):
         if self.rrdEnabled == True:

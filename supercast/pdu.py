@@ -235,6 +235,22 @@ class MonitorRrdProbeDump(univ.Sequence):
         namedtype.NamedType('archive',  char.PrintableString())
     )
 
+class RrdLoggerUpdate(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('index',   univ.Integer()),
+        namedtype.NamedType('update',  char.PrintableString())
+    )
+
+class RrdLoggerUpdates(univ.SequenceOf):
+    componentType = RrdLoggerUpdate()
+
+class MonitorRrdLoggerEvent(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('probeName',    char.PrintableString()),
+        namedtype.NamedType('updates',      RrdLoggerUpdates())
+    )
+
 class MonitorProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
@@ -700,6 +716,16 @@ class MonitorPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     30
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'rrdLoggerEvent',
+            MonitorRrdLoggerEvent().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    35
                 )
             )
         )
@@ -1408,7 +1434,6 @@ def decode(pdu):
                     }
                 }
             elif msg3_type == 'rrdProbeDump':
-                print "probe dump !!!!!!!!!!!!"
                 target      = str(msg3.getComponentByName('target'))
                 probeName   = str(msg3.getComponentByName('probe'))
                 module      = str(msg3.getComponentByName('module'))
@@ -1418,8 +1443,8 @@ def decode(pdu):
                 indexesDict = dict()
                 for i in range(len(indexes)):
                     indexEntry = indexes.getComponentByPosition(i)
-                    index = indexEntry.getComponentByName('index')
-                    path  = indexEntry.getComponentByName('path')
+                    index = int(indexEntry.getComponentByName('index'))
+                    path  = str(indexEntry.getComponentByName('path'))
                     indexesDict[index] = path
 
                 return {
@@ -1429,8 +1454,30 @@ def decode(pdu):
                         'target':   target,
                         'id':       probeName,
                         'logger':   module,
-                        'archive':  archive,
+                        'data':     archive,
                         'indexes':  indexesDict
+                    }
+                }
+
+            elif msg3_type == 'rrdLoggerEvent':
+                target      = str(msg3.getComponentByName('target'))
+                probeName   = str(msg3.getComponentByName('probeName'))
+                updates     = msg3.getComponentByName('updates')
+
+                updatesDict = dict()
+                for i in range(len(updates)):
+                    rrdUpdate   = updates.getComponentByPosition(i)
+                    index       = int(rrdUpdate.getComponentByName('index'))
+                    update      = str(rrdUpdate.getComponentByName('update'))
+                    updatesDict[index] = update
+                
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'target':   target,
+                        'id':       probeName,
+                        'updates':  updatesDict
                     }
                 }
 
