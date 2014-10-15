@@ -341,7 +341,6 @@ class AbstractChannelWidget(NFrameContainer):
         print "destroy"
         if self.__connected == True: self.__disconnectProbe()
         self.deleteLater()
-        #QFrame.destroy(self)
 
 
 

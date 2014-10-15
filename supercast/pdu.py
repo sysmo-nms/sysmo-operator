@@ -232,7 +232,7 @@ class MonitorRrdProbeDump(univ.Sequence):
         namedtype.NamedType('probe',    char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
         namedtype.NamedType('indexes',  RrdIdToFileSeq()),
-        namedtype.NamedType('archive',  char.PrintableString())
+        namedtype.NamedType('path',     char.PrintableString())
     )
 
 class RrdLoggerUpdate(univ.Sequence):
@@ -1437,7 +1437,7 @@ def decode(pdu):
                 target      = str(msg3.getComponentByName('target'))
                 probeName   = str(msg3.getComponentByName('probe'))
                 module      = str(msg3.getComponentByName('module'))
-                archive     = str(msg3.getComponentByName('archive'))
+                path        = str(msg3.getComponentByName('path'))
                 indexes     = msg3.getComponentByName('indexes')
 
                 indexesDict = dict()
@@ -1454,7 +1454,7 @@ def decode(pdu):
                         'target':   target,
                         'id':       probeName,
                         'logger':   module,
-                        'data':     archive,
+                        'data':     path,
                         'indexes':  indexesDict
                     }
                 }
