@@ -7,7 +7,8 @@ from    collections         import deque
 from    noctopus_widgets    import NFrameContainer
 import  nocapi
 import  re
-import  opus.monitor.norrd  as norrd
+import  opus.monitor.norrd          as norrd
+import  opus.monitor.http_manager   as httpman
 import  xml.etree.ElementTree as ET
 
 
@@ -216,6 +217,11 @@ class Channel(QObject):
         self.rrdFiles           = dict()
         self.rrdEnabled         = False
 
+        # BEGIN rrd2 synchro
+        self._tmpXmlFiles   = dict()
+        self._rrdFiles      = dict()
+        # END rrd2 synchro
+
     def synchronizeView(self, view):
         if self.loggerTextState != None:
             dumpMsg = dict()
@@ -254,6 +260,11 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
         elif dumpType == 'bmonitor_logger_rrd2':
+            # request = dict()
+            # request['url'] = url
+            # request['outfile'] = tmpfilename
+            # request['callback'] = callbackfunction
+            # httpman.requestUrl(request)
             print "dump rrd2", msg
         elif dumpType == 'bmonitor_logger_rrd':
             self.rrdEnabled = True
@@ -321,12 +332,12 @@ class Channel(QObject):
 class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelWidget, self).__init__(parent)
-        print "init...."
+        print "ABS: init...."
         self.__channel = channel
         self.__connected = False
 
     def connectProbe(self):
-        print "connect to probe"
+        print "ABS: connect to probe"
         ChanHandler.singleton.subscribe(self, self.__channel)
         self.__connected = True
 
@@ -334,11 +345,11 @@ class AbstractChannelWidget(NFrameContainer):
         print self, ":you should handle this message: ", msg['msgType']
 
     def __disconnectProbe(self):
-        print "disconnect probe"
+        print "ABS: disconnect probe"
         ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
-        print "destroy"
+        print "ABS: destroy"
         if self.__connected == True: self.__disconnectProbe()
         self.deleteLater()
 

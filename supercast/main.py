@@ -6,10 +6,14 @@ from    PySide.QtNetwork    import *
 from    PySide.QtCore       import *
 from    PySide.QtGui        import *
 from    supercast.pdu       import decode, encode
+from    supercast.http_manager import SupercastAccessManager
 import  supercast.login
 
 def send(pduType, message, callback):
     Supercast.singleton.send(pduType, message, callback)
+
+def requestUrl(request):
+    Supercast.singleton.httpManager.requestUrl(request)
 
 class Supercast(QObject):
 
@@ -23,7 +27,6 @@ class Supercast(QObject):
     def __init__(self, parent, mainwindow=None):
         super(Supercast, self).__init__(parent)
         Supercast.singleton = self
-        print "my thread is ", self.thread()
 
         # parent of dialogs must be a QMainWindow()
         if mainwindow == None:
@@ -158,9 +161,12 @@ class Supercast(QObject):
 
     def _handleSupercastPDU(self, msg):
         msgType = msg['msgType']
-        if (msgType == 'authReq'):
+        if (msgType == 'serverInfo'):
             self._setSupConn(True)
-            self.serverAuthProto = msg['value']
+            self.serverAuthProto    = msg['authProto']
+            self.dataPort           = msg['dataPort']
+            self.dataProto          = msg['dataProto']
+            self._initHttpManager()
             self.lQueue.emit(('authResp', (self.userName, self.userPass)))
         elif (msgType == 'authAck'):
             self._setUserConn(True)
@@ -179,6 +185,10 @@ class Supercast(QObject):
             self._queryNotify(msg)
         else:
             print "handle other?", msgType
+
+    def _initHttpManager(self):
+        self.httpManager = SupercastAccessManager(
+                self, self.server, self.dataProto, self.dataPort)
 
     def _subscribeSuccess(self, chan):
         self.activeChannels.append(chan)
@@ -272,7 +282,6 @@ class SupercastSocket(QThread):
         self._errorHandler  = None
 
     def _initializeSocket(self):
-        print "my thread is ", self.thread()
         self.socket = QTcpSocket(self)
         self.socket.connected.connect(self._socketConnected)
         self.socket.readyRead.connect(self._socketReadyRead)

@@ -826,10 +826,11 @@ class SupercastChanInfo(univ.Sequence):
 class SupercastChansInfo(univ.SequenceOf):
     componentType = SupercastChanInfo()
 
-class SupercastAuthProto(univ.Enumerated):
-    namedValues = namedval.NamedValues(
-        ('localFile', 0),
-        ('ldap', 1)
+class SupercastServerInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('authProto',    char.PrintableString()),
+        namedtype.NamedType('dataPort',     univ.Integer()),
+        namedtype.NamedType('dataProto',    char.PrintableString())
     )
 
 class SupercastPDU_fromServer_authAck(univ.Sequence):
@@ -872,8 +873,9 @@ class SupercastPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'authReq',
-            SupercastAuthProto().subtype(
+            'serverInfo',
+            #SupercastAuthProto().subtype(
+            SupercastServerInfo().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -1103,13 +1105,18 @@ def decode(pdu):
                         'eventType':    str(eventType)
                     }
                 }
-            elif msg3_type == 'authReq':
-                if      msg3 == 0: authProto = 'localFile'
-                elif    msg3 == 1: authProto = 'ldap'
+            elif msg3_type == 'serverInfo':
+                #if      msg3 == 0: authProto = 'localFile'
+                #elif    msg3 == 1: authProto = 'ldap'
+                authProto   = msg3.getComponentByName('authProto')
+                dataPort    = msg3.getComponentByName('dataPort')
+                dataProto   = msg3.getComponentByName('dataProto')
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
-                    'value':    str(authProto)
+                    'dataPort': int(dataPort),
+                    'dataProto': str(dataProto),
+                    'authProto': str(authProto)
                 }
             elif msg3_type == 'authAck':
                 groups      = msg3.getComponentByName('groups')

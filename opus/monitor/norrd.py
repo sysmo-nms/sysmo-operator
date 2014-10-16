@@ -53,11 +53,7 @@ class Rrdtool(QObject):
             thread.start()
             self._threadList.append(thread)
             self._signalList.append(sig)
-        #self.started.connect(self._initializeRRDPipe)
-        #self.start()
 
-    def started_ww(self):
-        print "ww"
     def getReply(self, msg):
         callback = msg['callback']
         if callback != None: callback(msg)
@@ -79,14 +75,12 @@ class RrdtoolThread(QObject):
     upSignal = Signal(dict)
     def __init__(self, executable, parent=None):
         super(RrdtoolThread, self).__init__(parent)
-        print "init?"
         self._executable        = executable
         self._endOfCommandRe    = re.compile('^OK.*|^ERROR.*')
         self._okReturnRe        = re.compile('^OK.*')
         self._includeNewlineRe  = re.compile('.*\n$')
 
     def _initializeRRDPipe(self):
-        print "thread start?", self.thread()
         executable = self._executable
         if platform.system() == 'Windows':
             customStartupinfo = subprocess.STARTUPINFO()
