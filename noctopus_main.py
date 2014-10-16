@@ -8,8 +8,7 @@ from    PySide.QtCore   import (
     Signal,
     QSettings,
     QSize,
-    QObject,
-    QThread
+    QObject
 )
 
 from    PySide.QtGui    import (

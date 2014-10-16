@@ -23,6 +23,7 @@ class Supercast(QObject):
     def __init__(self, parent, mainwindow=None):
         super(Supercast, self).__init__(parent)
         Supercast.singleton = self
+        print "my thread is ", self.thread()
 
         # parent of dialogs must be a QMainWindow()
         if mainwindow == None:
@@ -30,13 +31,26 @@ class Supercast(QObject):
         else:
             self._mainwindow = mainwindow
 
-        self._thread     = SupercastSocket(self)
+        self._thread = QThread(self)
+        self._socketThread     = SupercastSocket()
         # datas from SupercastSocket() to self
         # tuple: (key, payload)
-        self._thread.mQueue.connect(
+        self._socketThread.mQueue.connect(
             self._handleThreadMsg,
             Qt.QueuedConnection)
+
+        # datas from self to SupercastSocket()
+        self.lQueue.connect(
+            self._socketThread._handleClientMessage,
+            Qt.QueuedConnection
+        )
+
+        # init socket thread
+        self._thread.started.connect(self._socketThread._initializeSocket)
+        self._socketThread.moveToThread(self._thread)
         self._thread.start()
+
+        self._socketThread.start()
         self.userName   = ''
         self.userPass   = ''
         self.groups     = []
@@ -243,20 +257,22 @@ class SupercastSocket(QThread):
     # tuple: (key, payload)
     def __init__(self, parent=None):
         super(SupercastSocket, self).__init__(parent)
-        self._client = parent
+
+        #self._client = parent
         # datas from parent to self
         # tuple: (key, payload)
-        self._client.lQueue.connect(
-            self._handleClientMessage,
-            Qt.QueuedConnection
-        )
-        self.started.connect(self._initializeSocket)
+        #self._client.lQueue.connect(
+        #    self._handleClientMessage,
+        #    Qt.QueuedConnection
+        #)
+        #self.started.connect(self._initializeSocket)
 
         self._nextBlockSize = 0
         self._headerLen     = 4
         self._errorHandler  = None
 
     def _initializeSocket(self):
+        print "my thread is ", self.thread()
         self.socket = QTcpSocket(self)
         self.socket.connected.connect(self._socketConnected)
         self.socket.readyRead.connect(self._socketReadyRead)
