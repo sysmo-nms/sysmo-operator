@@ -37,18 +37,18 @@ import  nocapi
 import  platform
 import  re
 
-class RrdLog2(AbstractChannelWidget):
+class RrdLog(AbstractChannelWidget):
     def __init__(self, parent, probe, master):
-        super(RrdLog2, self).__init__(parent, probe)
+        super(RrdLog, self).__init__(parent, probe)
         self.connectProbe()
         self.goOn = True
 
 
-class RrdLog(AbstractChannelWidget):
+class RrdLog2(AbstractChannelWidget):
     sizeMove = Signal(int)
     timeMove = Signal(tuple)
     def __init__(self, parent, probe, master):
-        super(RrdLog, self).__init__(parent, probe)
+        super(RrdLog2, self).__init__(parent, probe)
         self._master = master
         self._grid = NGrid(self)
         self.setLayout(self._grid)
@@ -70,12 +70,14 @@ class RrdLog(AbstractChannelWidget):
         self.sizeMove.emit(size)
 
     def _continue(self):
+        print "continue?", self._probeConf['loggers']['bmonitor_logger_rrd'].keys()
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
-        self._master.setProgressMax(len(rrdConf.keys()))
-        for rrdname in rrdConf.keys():
-            rrdconf = rrdConf[rrdname]
-            self._rrdElements[rrdname] = RrdGraph(self, rrdname, rrdconf)
-            self._grid.addWidget(self._rrdElements[rrdname])
+        self._master.setProgressMax(len(rrdConf['indexes']))
+        gconf = self._probeConf['loggers']['bmonitor_logger_rrd']['rgraphs']
+        for index in rrdConf['indexes']:
+            print index, gconf
+            self._rrdElements[index] = RrdGraph2(self, index, gconf)
+            self._grid.addWidget(self._rrdElements[index])
             rcount = self._grid.rowCount()
             self._grid.setRowStretch(rcount - 1, 0)
             self._grid.setRowStretch(rcount,     1)
@@ -83,9 +85,13 @@ class RrdLog(AbstractChannelWidget):
         self.goOn = True
 
     def _cancel(self):
+        print "cancel?"
         self.goOn = False
 
     def handleProbeEvent(self, msg):
+        print "probe event: ", msg
+
+    def handleProbeEvent2(self, msg):
         if msg['msgType'] == 'probeDump':
             if msg['logger'] == 'bmonitor_logger_rrd':
                 fileId      = msg['data']['fileId']
@@ -95,6 +101,13 @@ class RrdLog(AbstractChannelWidget):
         elif msg['msgType'] == 'probeReturn':
             for key in self._rrdElements.keys():
                 self._rrdElements[key].handleReturn(msg)
+
+class RrdGraph2(QLabel):
+    def __init__(self, parent, index, gconf):
+        super(RrdGraph2, self).__init__(parent)
+        self.setMinimumWidth(400)
+        self.setFixedHeight(100)
+        self.setText('hello')
 
 class RrdGraph(QLabel):
     def __init__(self, parent, rrdname, rrdconf):

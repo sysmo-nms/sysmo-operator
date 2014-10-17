@@ -239,7 +239,7 @@ class Channel(QObject):
             update = self._rrdUpdatesPending[index].popleft()
             updateString = "update %s %s %s" % (
                 self._rrdFiles[index].fileName(),
-                self._rrdUpdateString(),
+                self._rrdUpdateString,
                 update)
             norrd.cmd(
                 updateString,
@@ -254,12 +254,13 @@ class Channel(QObject):
 
     def _restorePendingUpdatesContinue(self, msg):
         index = msg['data']
-        if len(self._rrdUpdatesPenging[data]) == 0:
+        if len(self._rrdUpdatesPending[index]) == 0:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = 'bmonitor_logger_rrd2'
             dumpMsg['data']     = (index, self._rrdFiles[index].fileName)
             self.signal.emit(dumpMsg)
+            print "succcccccccesss! restorependingupdatescontinue"
             return
 
         update = self._rrdUpdatesPending[index].popleft()
