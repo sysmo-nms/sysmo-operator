@@ -1274,6 +1274,11 @@ def decode(pdu):
                         rcreate = logger2.getComponentByName('rrdCreate')
                         rupdate = logger2.getComponentByName('rrdUpdate')
                         indexes = logger2.getComponentByName('indexes')
+                        idxs = []
+                        for i in range(len(indexes)):
+                            idx = int(indexes.getComponentByPosition(i))
+                            idxs.append(idx)
+
                         rgraphs = logger2.getComponentByName('rrdGraphs')
                         rrdGraphs = dict()
                         for i in range(len(rgraphs)):
@@ -1282,11 +1287,11 @@ def decode(pdu):
 
                         rrdConfigs = dict()
 
-                        rrdConfigs['type'] = str(rtype)
+                        rrdConfigs['type']      = str(rtype)
                         rrdConfigs['rrdCreate'] = str(rcreate)
                         rrdConfigs['rrdUpdate'] = str(rupdate)
-                        rrdConfigs['rgraphs'] = rrdGraphs
-                        rrdConfigs['indexes'] = indexes
+                        rrdConfigs['rgraphs']   = rrdGraphs
+                        rrdConfigs['indexes']   = idxs
 
                         loggersDict[str(mod)] = rrdConfigs
 
