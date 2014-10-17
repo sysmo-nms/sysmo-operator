@@ -7,6 +7,7 @@ from    collections         import deque
 from    noctopus_widgets    import NFrameContainer
 import  nocapi
 import  re
+import  supercast.main              as supercast
 import  opus.monitor.norrd          as norrd
 import  opus.monitor.http_manager   as httpman
 import  xml.etree.ElementTree as ET
@@ -222,6 +223,20 @@ class Channel(QObject):
         self._rrdFiles      = dict()
         # END rrd2 synchro
 
+    def delayedRrdRestore(self, msg):
+        print "rrd restore", msg
+
+    def delayedSyncEvent(self, reply):
+        if (reply['success'] == True):
+            xmlFile = reply['outfile']
+            index   = self._tmpXmlFiles[xmlFile]
+            rrdFile = QTemporaryFile(self)
+            rrdFile.open()
+            rrdFile.close()
+            rrdFileName = rrdFile.fileName()
+            norrd.cmd("restore %s %s --force-overwrite" % (xmlFile, rrdFileName), callback=self.delayedRrdRestore)
+            print xmlFile, index, rrdFileName
+
     def synchronizeView(self, view):
         if self.loggerTextState != None:
             dumpMsg = dict()
@@ -260,12 +275,20 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
         elif dumpType == 'bmonitor_logger_rrd2':
-            # request = dict()
-            # request['url'] = url
-            # request['outfile'] = tmpfilename
-            # request['callback'] = callbackfunction
-            # httpman.requestUrl(request)
-            print "dump rrd2", msg
+            path = msg['value']['path']
+            urls = msg['value']['indexes']
+            for index in urls.keys():
+                xmlFile = QTemporaryFile(self)
+                xmlFile.open()
+                xmlFile.close()
+                fileName = xmlFile.fileName()
+                self._tmpXmlFiles[fileName] = index
+                request = dict()
+                request['url']      = "%s/%s" % (path, urls[index])
+                request['callback'] = self.delayedSyncEvent
+                request['outfile']  = fileName
+                supercast.requestUrl(request)
+
         elif dumpType == 'bmonitor_logger_rrd':
             self.rrdEnabled = True
             # special dump comme in multiple pieces.

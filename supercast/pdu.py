@@ -220,7 +220,7 @@ class MonitorEventProbeDump(univ.Sequence):
 class RrdIdToFile(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('index',   univ.Integer()),
-        namedtype.NamedType('path',    char.PrintableString())
+        namedtype.NamedType('fileName',    char.PrintableString())
     )
 
 class RrdIdToFileSeq(univ.SequenceOf):
@@ -1449,10 +1449,10 @@ def decode(pdu):
 
                 indexesDict = dict()
                 for i in range(len(indexes)):
-                    indexEntry = indexes.getComponentByPosition(i)
-                    index = int(indexEntry.getComponentByName('index'))
-                    path  = str(indexEntry.getComponentByName('path'))
-                    indexesDict[index] = path
+                    indexEntry  = indexes.getComponentByPosition(i)
+                    index       = int(indexEntry.getComponentByName('index'))
+                    fileName    = str(indexEntry.getComponentByName('fileName'))
+                    indexesDict[index] = fileName
 
                 return {
                     'from': msg1_type,
@@ -1461,7 +1461,8 @@ def decode(pdu):
                         'target':   target,
                         'id':       probeName,
                         'logger':   module,
-                        'data':     path,
+                        'data':     None,
+                        'path':     path,
                         'indexes':  indexesDict
                     }
                 }

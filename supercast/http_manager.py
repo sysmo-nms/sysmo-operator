@@ -39,8 +39,7 @@ class SupercastAccessManagerThread(QObject):
     upSignal   = Signal(dict)
     def __init__(self, server, proto, port):
         super(SupercastAccessManagerThread, self).__init__(None)
-        self._urlHead = "%s://%s:%i/" % (proto, server, port)
-        print self._urlHead
+        self._urlHead = "%s://%s:%i" % (proto, server, port)
         self._manager = QNetworkAccessManager(self)
         self._manager.finished[QNetworkReply].connect(self._handleReply)
         self._replyDict = dict()
@@ -57,7 +56,8 @@ class SupercastAccessManagerThread(QObject):
 
     def handleRequest(self, request):
         url     = request['url']
-        reply   = self._manager.get(SupercastHTTPRequest(url))
+        fullPath = "%s/%s" % (self._urlHead, url)
+        reply   = self._manager.get(SupercastHTTPRequest(QUrl(fullPath)))
         self._replyDict[reply] = request
 
 
@@ -65,12 +65,13 @@ class SupercastAccessManager(QObject):
     downSignal = Signal(dict)
     def __init__(self, parent, server, proto, dataPort):
         super(SupercastAccessManager, self).__init__(parent)
-        print "init supercast access manager"
         SupercastAccessManager.singleton = self
         thread = QThread(self)
         self._managerDown = SupercastAccessManagerThread(server, proto, dataPort)
         self._managerDown.moveToThread(thread)
         thread.start()
+        self.destroyed.connect(self._managerDown.deleteLater)
+        self.destroyed.connect(thread.deleteLater)
         self._managerDown.upSignal.connect(self._handleReply, Qt.QueuedConnection)
         self.downSignal.connect(self._managerDown.handleRequest, Qt.QueuedConnection)
 
