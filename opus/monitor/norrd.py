@@ -67,11 +67,11 @@ class Rrdtool(QObject):
     def shutDown(self):
         for thread in self._threadList:
             thread.quit()
-            thread.wait()
-        for sig in self._signalList:
-            sig.deleteLater()
-        for rrdexe in self._rrdExeList:
-            rrdexe.deleteLater()
+            if (thread.wait(5000) != True):
+                thread.terminate()
+                if (thread.wait(5000) != True):
+                    print "failed to close a norrd thread"
+
 
 
 class RrdSignal(QObject):

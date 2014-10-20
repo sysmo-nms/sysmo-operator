@@ -66,12 +66,12 @@ class SupercastAccessManager(QObject):
     def __init__(self, parent, server, proto, dataPort):
         super(SupercastAccessManager, self).__init__(parent)
         SupercastAccessManager.singleton = self
-        thread = QThread(self)
+        self._thread = QThread(self)
         self._managerDown = SupercastAccessManagerThread(server, proto, dataPort)
-        self._managerDown.moveToThread(thread)
-        thread.start()
+        self._managerDown.moveToThread(self._thread)
+        self._thread.start()
         self.destroyed.connect(self._managerDown.deleteLater)
-        self.destroyed.connect(thread.deleteLater)
+        self.destroyed.connect(self._thread.deleteLater)
         self._managerDown.upSignal.connect(self._handleReply, Qt.QueuedConnection)
         self.downSignal.connect(self._managerDown.handleRequest, Qt.QueuedConnection)
 
@@ -82,6 +82,13 @@ class SupercastAccessManager(QObject):
     def requestUrl(self, request):
         "when request is a dict {'url': url, 'outfile': file, callback: callback}"
         self.downSignal.emit(request)
+
+    def terminateAll(self):
+        self._thread.quit()
+        if (self._thread.wait(5000) != True):
+            self._thread.terminate()
+            if (self._thread.wait(5000) != True):
+                print "failed to close http manager thread"
 
 
 class SupercastHTTPTest(QWidget):
