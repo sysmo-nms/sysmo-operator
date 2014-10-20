@@ -1,12 +1,14 @@
 from    PySide.QtCore   import (
     QObject,
     Signal,
-    QTemporaryFile
+    QTemporaryFile,
+    QDir
 )
 from    collections         import deque
 from    noctopus_widgets    import NFrameContainer
 import  nocapi
 import  re
+import  os
 import  supercast.main              as supercast
 import  opus.monitor.norrd          as norrd
 import  opus.monitor.http_manager   as httpman
@@ -258,7 +260,7 @@ class Channel(QObject):
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
             dumpMsg['logger']   = 'bmonitor_logger_rrd2'
-            dumpMsg['data']     = (index, self._rrdFiles[index].fileName)
+            dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
             self.signal.emit(dumpMsg)
             print "succcccccccesss! restorependingupdatescontinue"
             return
@@ -278,10 +280,10 @@ class Channel(QObject):
         if (reply['success'] == True):
             xmlFile = reply['outfile']
             for key in self._tmpXmlFiles.keys():
-                if (self._tmpXmlFiles[key] == xmlFile):
+                if (self._tmpXmlFiles[key].fileName() == xmlFile):
                     index = key
             print "index is ", index
-            rrdFile = QTemporaryFile(self)
+            rrdFile = NTempFile(self)
             rrdFile.open()
             rrdFile.close()
             rrdFileName = rrdFile.fileName()
@@ -336,11 +338,11 @@ class Channel(QObject):
             path = msg['value']['path']
             urls = msg['value']['indexes']
             for index in urls.keys():
-                xmlFile = QTemporaryFile(self)
+                xmlFile = NTempFile(self)
                 xmlFile.open()
                 xmlFile.close()
                 fileName = xmlFile.fileName()
-                self._tmpXmlFiles[index] = fileName
+                self._tmpXmlFiles[index] = xmlFile
                 self._rrdFiles[index] = None
                 self._rrdFilesReady[index] = False
                 request = dict()
@@ -353,7 +355,7 @@ class Channel(QObject):
             self.rrdEnabled = True
             # special dump comme in multiple pieces.
             fileId = msg['value']['fileId']
-            rrdFile = QTemporaryFile(self)
+            rrdFile = NTempFile(self)
             rrdFile.open()
             rrdFile.write(str(data))
             rrdFile.close()
@@ -474,3 +476,11 @@ class SimpleSignal(QObject):
     signal = Signal(dict)
     def __init__(self, parent):
         super(SimpleSignal, self).__init__(parent)
+
+class NTempFile(QTemporaryFile):
+    def __init__(self, parent):
+        super(NTempFile, self).__init__(parent)
+        self.setFileTemplate(
+            os.path.join(QDir.tempPath(), 'nc_temp-XXXXXXX')
+        )
+
