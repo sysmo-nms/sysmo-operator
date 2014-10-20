@@ -30,7 +30,7 @@ from    noctopus_widgets    import (
     QLabel
 )
 
-from    opus.monitor.proxy           import AbstractChannelWidget
+from    opus.monitor.proxy           import AbstractChannelWidget, ChanHandler
 from    opus.monitor.logwin.rrdgraph import RrdLog, RrdLog2
 import  opus.monitor.api    as monapi
 import  opus.monitor.norrd  as norrd
@@ -47,11 +47,26 @@ import  re
 
 
 def openLoggerFor(probe, display):
-    if probe not in LoggerView.Elements.keys():
-        v = LoggerView(probe, display)
-        LoggerView.Elements[probe] = v
-    else:
+    if probe in LoggerView.Elements.keys():
         LoggerView.Elements[probe].show()
+        return
+
+    loggers = ChanHandler.singleton.probes[probe]['loggers'].keys()
+
+    rrdLogger   = False
+    textLogger  = False
+    eventLogger = False
+    if 'bmonitor_logger_rrd'    in loggers: rrdLogger = True
+    if 'bmonitor_logger_text'   in loggers: textLogger = True
+    if 'bmonitor_logger_event'  in loggers: eventLogger = True
+
+    # TODO customize logger for:
+    # rrd, DONE
+    # text,
+    # events
+
+    v = LoggerView(probe, display)
+    LoggerView.Elements[probe] = v
     
 class LoggerView(QDialog):
     Elements = dict()

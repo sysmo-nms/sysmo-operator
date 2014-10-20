@@ -249,7 +249,7 @@ class Channel(QObject):
         dumpMsg = dict()
         dumpMsg['msgType']  = 'probeDump'
         dumpMsg['logger']   = 'bmonitor_logger_rrd2'
-        dumpMsg['data']     = (index, self._rrdFiles[index].fileName)
+        dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
         self.signal.emit(dumpMsg)
 
     def _restorePendingUpdatesContinue(self, msg):

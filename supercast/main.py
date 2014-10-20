@@ -33,6 +33,7 @@ class Supercast(QObject):
         else:
             self._mainwindow = mainwindow
 
+        self.httpManager = None
         self._thread = QThread(self)
         self._socketThread     = SupercastSocket()
         # datas from SupercastSocket() to self
@@ -261,4 +262,5 @@ class Supercast(QObject):
             self._thread.terminate();
             if (self._thread.wait(5000) != True):
                 print "failed to close supercast socket thread"
-        self.httpManager.terminateAll()
+        if (self.httpManager != None):
+            self.httpManager.terminateAll()

@@ -41,7 +41,6 @@ class RrdLog(AbstractChannelWidget):
     def __init__(self, parent, probe, master):
         super(RrdLog, self).__init__(parent, probe)
         self.connectProbe()
-        self.goOn = True
 
 
 class RrdLog2(AbstractChannelWidget):
@@ -105,6 +104,7 @@ class RrdLog2(AbstractChannelWidget):
 class RrdGraph2(QLabel):
     def __init__(self, parent, index, gconf):
         super(RrdGraph2, self).__init__(parent)
+        print "init graph: ", index, gconf[0]
         self.setMinimumWidth(400)
         self.setFixedHeight(100)
         self.setText('hello')
