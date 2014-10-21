@@ -8,8 +8,7 @@ from    PySide.QtCore   import (
     Signal,
     QSettings,
     QSize,
-    QObject,
-    QThread
+    QObject
 )
 
 from    PySide.QtGui    import (
@@ -297,7 +296,7 @@ class NMainWindow(QMainWindow):
         )
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect(self.close)
-        actionConfigureProxy = QAction(self.tr('Proxy settings'), self)
+        actionConfigureProxy = QAction(self.tr('Proxy settings...'), self)
         actionConfigureProxy.triggered.connect(self._launchProxySettings)
         menuFile.addAction(_dumpPaletteAction)
         menuFile.addAction(updateAction)
@@ -365,7 +364,7 @@ class NMainWindow(QMainWindow):
         menuStyle.addAction(cdeAction)
 
         "color sub menu"
-        self.menuColor = menuStyle.addMenu(self.tr('Colors'))
+        self.menuColor = menuStyle.addMenu(getIcon('preferences-desktop-theme'),self.tr('Colors'))
         nativeThemeAction = QAction(self.tr('Native'), self)
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))

@@ -5,6 +5,8 @@
 *.bk
 *.directory
 *.qm
+html/ol
+html/build
 build
 dist
 translate-dir

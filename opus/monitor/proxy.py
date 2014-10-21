@@ -1,13 +1,17 @@
 from    PySide.QtCore   import (
     QObject,
     Signal,
-    QTemporaryFile
+    QTemporaryFile,
+    QDir
 )
 from    collections         import deque
 from    noctopus_widgets    import NFrameContainer
 import  nocapi
 import  re
-import  opus.monitor.norrd  as norrd
+import  os
+import  supercast.main              as supercast
+import  opus.monitor.norrd          as norrd
+import  opus.monitor.http_manager   as httpman
 import  xml.etree.ElementTree as ET
 
 
@@ -50,6 +54,7 @@ class ChanHandler(QObject):
         self.masterSignalsDict['probeDump']     = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
         self.masterSignalsDict['probeEventMsg'] = SimpleSignal(self)
+        self.masterSignalsDict['rrdLoggerEventMsg'] = SimpleSignal(self)
 
         # connect myself
         self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
@@ -57,6 +62,7 @@ class ChanHandler(QObject):
         self.masterSignalsDict['probeDump'].signal.connect(self._handleProbeDump)
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
         self.masterSignalsDict['probeEventMsg'].signal.connect(self._handleEventMsg)
+        self.masterSignalsDict['rrdLoggerEventMsg'].signal.connect(self._handleRrdLoggerEventMsg)
         # END
 
     def handleSupercastMsg(self, msg):
@@ -66,10 +72,16 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'probeEventMsg':
             self.masterSignalsDict['probeEventMsg'].signal.emit(msg)
 
+        elif    msg['msgType'] == 'rrdLoggerEvent':
+            self.masterSignalsDict['rrdLoggerEventMsg'].signal.emit(msg)
+
         elif    msg['msgType'] == 'probeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
         elif    msg['msgType'] == 'rrdFileDump':
+            self.masterSignalsDict['probeDump'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'rrdProbeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
         elif    msg['msgType'] == 'eventProbeDump':
@@ -144,6 +156,10 @@ class ChanHandler(QObject):
         channel = msg['value']['id']
         self._chanProxy[channel].handleReturn(msg)
 
+    def _handleRrdLoggerEventMsg(self, msg):
+        channel = msg['value']['id']
+        self._chanProxy[channel].handleRrdLoggerEvent(msg)
+
     def _handleEventMsg(self, msg):
         channel = msg['value']['id']
         self._chanProxy[channel].handleEvent(msg)
@@ -204,6 +220,82 @@ class Channel(QObject):
         self.rrdFiles           = dict()
         self.rrdEnabled         = False
 
+        # BEGIN rrd2 synchro
+        self._tmpXmlFiles       = dict()
+        self._rrdFiles          = dict()
+        self._rrdFilesReady     = dict()
+        self._rrdUpdatesPending = dict()
+        # END rrd2 synchro
+
+    def delayedRrdRestore(self, reply):
+        if (reply['reply']['status'] == 'ok'):
+            index = reply['data']
+            del self._tmpXmlFiles[index]
+            self._rrdFilesReady[index] = True
+            self._restorePendingUpdates(index)
+        else:
+            print "rrdtool restore failed: ", msg
+
+    def _restorePendingUpdates(self, index):
+        if index in self._rrdUpdatesPending:
+            update = self._rrdUpdatesPending[index].popleft()
+            updateString = "update %s %s %s" % (
+                self._rrdFiles[index].fileName(),
+                self._rrdUpdateString,
+                update)
+            norrd.cmd(
+                updateString,
+                callback=self._restorePendingUpdatesContinue,
+                data=index)
+            return
+        dumpMsg = dict()
+        dumpMsg['msgType']  = 'probeDump'
+        dumpMsg['logger']   = 'bmonitor_logger_rrd2'
+        dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
+        self.signal.emit(dumpMsg)
+
+    def _restorePendingUpdatesContinue(self, msg):
+        index = msg['data']
+        if len(self._rrdUpdatesPending[index]) == 0:
+            dumpMsg = dict()
+            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['logger']   = 'bmonitor_logger_rrd2'
+            dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
+            self.signal.emit(dumpMsg)
+            print "succcccccccesss! restorependingupdatescontinue"
+            return
+
+        update = self._rrdUpdatesPending[index].popleft()
+        updateString = "update %s %s %s" % (
+            self._rrdFiles[index].fileName(),
+            self._rrdUpdateString(),
+            update)
+        norrd.cmd(
+            updateString,
+            callback=self._restorePendingUpdatesContinue,
+            data=index)
+
+
+    def delayedSyncEvent(self, reply):
+        if (reply['success'] == True):
+            xmlFile = reply['outfile']
+            for key in self._tmpXmlFiles.keys():
+                if (self._tmpXmlFiles[key].fileName() == xmlFile):
+                    index = key
+            print "index is ", index
+            rrdFile = NTempFile(self)
+            rrdFile.open()
+            rrdFile.close()
+            rrdFileName = rrdFile.fileName()
+            self._rrdFiles[index] = rrdFile
+            norrd.cmd(
+                "restore %s %s --force-overwrite" % (xmlFile, rrdFileName),
+                callback = self.delayedRrdRestore,
+                data = index
+            )
+        else:
+            print "supercast requestUrl failed: ", reply
+
     def synchronizeView(self, view):
         if self.loggerTextState != None:
             dumpMsg = dict()
@@ -241,11 +333,29 @@ class Channel(QObject):
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
+        elif dumpType == 'bmonitor_logger_rrd2':
+            self._initRrdUpdate()
+            path = msg['value']['path']
+            urls = msg['value']['indexes']
+            for index in urls.keys():
+                xmlFile = NTempFile(self)
+                xmlFile.open()
+                xmlFile.close()
+                fileName = xmlFile.fileName()
+                self._tmpXmlFiles[index] = xmlFile
+                self._rrdFiles[index] = None
+                self._rrdFilesReady[index] = False
+                request = dict()
+                request['url']      = "%s/%s" % (path, urls[index])
+                request['callback'] = self.delayedSyncEvent
+                request['outfile']  = fileName
+                supercast.requestUrl(request)
+
         elif dumpType == 'bmonitor_logger_rrd':
             self.rrdEnabled = True
             # special dump comme in multiple pieces.
             fileId = msg['value']['fileId']
-            rrdFile = QTemporaryFile(self)
+            rrdFile = NTempFile(self)
             rrdFile.open()
             rrdFile.write(str(data))
             rrdFile.close()
@@ -260,6 +370,41 @@ class Channel(QObject):
             self.signal.emit(dumpMsg)
         else:
             print "unknown dump type ", dumpType
+
+    def handleRrdLoggerEvent(self, msg):
+        updates = msg['value']['updates']
+        for key in updates.keys():
+            self._maybeUpdateRrd(key, updates[key])
+
+    def _initRrdUpdate(self):
+        self._rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd']['rrdUpdate']
+
+    def _maybeUpdateRrd(self, key, updateString):
+        if (self._rrdFilesReady[key] == False):
+            if key in self._rrdUpdatesPending:
+                self._rrdUpdatesPending[key].append(updateString)
+                return
+            else:
+                self._rrdUpdatesPending[key] = deque()
+                self._rrdUpdatesPending[key].append(updateString)
+                return
+        updateString = "update %s %s %s" % (
+            self._rrdFiles[key].fileName(),
+            self._rrdUpdateString,
+            updateString)
+        norrd.cmd(updateString, callback = self.getRrdStatus, data=key)
+
+    def getRrdStatus(self, reply):
+        status  = reply['reply']['status']
+        index   = reply['data']
+        if status == 'ok':
+            updateMsg = dict()
+            updateMsg['msgType'] = 'rrdProbeEvent'
+            updateMsg['logger']  = 'bmonitor_logger_rrd2'
+            updateMsg['data']    = index
+            self.signal.emit(updateMsg)
+        else:
+            print "rrdtool update error: ", reply
 
     def handleReturn(self, msg):
         if self.rrdEnabled == True:
@@ -304,10 +449,12 @@ class Channel(QObject):
 class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelWidget, self).__init__(parent)
+        print "ABS: init...."
         self.__channel = channel
         self.__connected = False
 
     def connectProbe(self):
+        print "ABS: connect to probe"
         ChanHandler.singleton.subscribe(self, self.__channel)
         self.__connected = True
 
@@ -315,12 +462,13 @@ class AbstractChannelWidget(NFrameContainer):
         print self, ":you should handle this message: ", msg['msgType']
 
     def __disconnectProbe(self):
+        print "ABS: disconnect probe"
         ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
+        print "ABS: destroy"
         if self.__connected == True: self.__disconnectProbe()
         self.deleteLater()
-        #QFrame.destroy(self)
 
 
 
@@ -328,3 +476,11 @@ class SimpleSignal(QObject):
     signal = Signal(dict)
     def __init__(self, parent):
         super(SimpleSignal, self).__init__(parent)
+
+class NTempFile(QTemporaryFile):
+    def __init__(self, parent):
+        super(NTempFile, self).__init__(parent)
+        self.setFileTemplate(
+            os.path.join(QDir.tempPath(), 'nc_temp-XXXXXXX')
+        )
+

@@ -23,7 +23,7 @@ class Central(NFrameContainer):
         nocapi.nConnectWillClose(self._willClose)
         menu = QMenu('monitor', self)
         menu.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
-        wikiConf = QAction('Configure documentation engine', self)
+        wikiConf = QAction('Configure documentation engine...', self)
         wikiConf.setIcon(nocapi.nGetIcon('folder-saved-search'))
         wikiConf.triggered.connect(self._configureDoc)
         menu.addAction(wikiConf)
