@@ -45,6 +45,7 @@ def initPixmaps():
     global iconsPath
     global pixmapSet
     pixmapSet = {
+        'dialog-information': QPixmap(os.path.join(iconsPath, "dialog-information.png")),
         'system-search': QPixmap(os.path.join(iconsPath, "system-search.png")),
         'applications-system': QPixmap(os.path.join(iconsPath, "applications-system.png")),
         'rrdtool-logo': QPixmap(os.path.join(iconsPath, "rrdtool_logo.png")),
@@ -320,4 +321,6 @@ def dumpPalette():
             rgb = color.getRgb()
             paletteDump[cGroup][cRole] = rgb
 
-    return paletteDump
+    f = open('palette.dump', 'w')
+    f.write(str(paletteDump))
+    f.close()

@@ -27,59 +27,66 @@ def cmd(command, callback=None, special=None, data=None):
 class Rrdtool(QObject):
     def __init__(self, parent=None, executable='rrdtool'):
         super(Rrdtool, self).__init__(parent)
-        Rrdtool.singleton   = self
+        Rrdtool.singleton = self
         self._executable    = executable
-        threadCount         = QThread.idealThreadCount()
+        self._threadList    = []
+        self._rrdExeList    = []
+        self._signalList    = collections.deque()
 
+        threadCount         = QThread.idealThreadCount()
         if isinstance(threadCount, int):
             if threadCount == -1:
-                self._launchThreads(1)
+                self._addRrdThread()
             else:
-                self._launchThreads(threadCount)
+                for i in range(threadCount):
+                    self._addRrdThread()
         else:
             return False
 
-    def _launchThreads(self, num):
-        self._threadList    = []
-        self._signalList    = collections.deque()
-        for i in range(num):
-            t = RrdtoolThread(self._executable, self)
-            s = RrdSignal(self)
-            t.upSignal.connect(self.getReply, Qt.QueuedConnection)
-            s.downSignal.connect(t.cmd, Qt.QueuedConnection)
-            self._threadList.append(t)
-            self._signalList.append(s)
+    def _addRrdThread(self):
+        sig     = RrdSignal(self)
+        thread  = QThread(self)
+        rrdexe  = RrdtoolThread(self._executable)
+        rrdexe.moveToThread(thread)
+        thread.start()
+        rrdexe.upSignal.connect(self.getReply, Qt.QueuedConnection)
+        sig.downSignal.connect(rrdexe.cmd, Qt.QueuedConnection)
+
+        self._threadList.append(thread)
+        self._signalList.append(sig)
+        self._rrdExeList.append(rrdexe)
+
+    def cmd(self, msg):
+        self._signalList[0].downSignal.emit(msg)
+        self._signalList.rotate(1)
 
     def getReply(self, msg):
         callback = msg['callback']
         if callback != None: callback(msg)
-        
-    def cmd(self, cmd):
-        self._signalList[0].downSignal.emit(cmd)
-        self._signalList.rotate(1)
 
     def shutDown(self):
         for thread in self._threadList:
             thread.quit()
+            if (thread.wait(5000) != True):
+                thread.terminate()
+                if (thread.wait(5000) != True):
+                    print "failed to close a norrd thread"
+
 
 
 class RrdSignal(QObject):
     downSignal = Signal(dict)
 
 
-class RrdtoolThread(QThread):
+class RrdtoolThread(QObject):
     upSignal = Signal(dict)
-    def __init__(self, executable, parent):
+    def __init__(self, executable, parent=None):
         super(RrdtoolThread, self).__init__(parent)
         self._executable        = executable
         self._endOfCommandRe    = re.compile('^OK.*|^ERROR.*')
         self._okReturnRe        = re.compile('^OK.*')
         self._includeNewlineRe  = re.compile('.*\n$')
-        self.started.connect(self._initializeRRDPipe)
-        self.start()
 
-    def _initializeRRDPipe(self):
-        executable = self._executable
         if platform.system() == 'Windows':
             customStartupinfo = subprocess.STARTUPINFO()
             customStartupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW

@@ -32,6 +32,7 @@ entries of the treeview).
 - animate central stack
     (QGraphicScene->QGraphicsProxyWidget->QWidget)
 - double clic sur la rample inverse le toggle (vue max de la liste)
+- python rrd
 
 ESTHETIC:
 - higlight selection in treeview
@@ -47,3 +48,4 @@ ECONOMIQUE:
 - win/mac: achat de l'installeur inclue monitor+dash.
 Les utilisateurs windows/mac ou linux voulant monitor+dash, paieront donc le
 meme prix au final.
+

@@ -5,6 +5,8 @@
 *.bk
 *.directory
 *.qm
+html/ol
+html/build
 build
 dist
 translate-dir
@@ -12,3 +14,4 @@ noctopus.pro
 noctopus-win32*
 noctopus.stderr.txt
 noctopus.stdout.txt
+palette.dump

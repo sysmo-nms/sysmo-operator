@@ -20,7 +20,11 @@ from PySide.QtGui   import (
     QProgressBar,
     QSpinBox,
     QFrame,
-    QGridLayout
+    QGridLayout,
+    QMessageBox,
+    QTreeWidget,
+    QTreeWidgetItem,
+    QAbstractItemView
 )
 from PySide.QtCore import Qt
 
@@ -32,6 +36,7 @@ from noctopus_widgets import (
     NIpv4Form,
     NIpv6Form
 )
+import pprint
 
 import nocapi
 import opus.monitor.api as monapi
@@ -39,6 +44,7 @@ import supercast.main   as supercast
 
 SNMP_V3  = 0
 SNMP_V2  = 1
+SNMP_V1  = 2
 
 AUTH_SHA  = 0
 AUTH_MD5  = 1
@@ -60,6 +66,7 @@ class Page1(QWizardPage):
     def __init__(self, parent=None):
         super(Page1, self).__init__(parent)
         self._wizard = parent
+        self._snmpCommandComplete = False
         self.setTitle(self.tr('Create a network element'))
         self.setSubTitle(self.tr('''
             Fill the form and add a network element to the main configuration
@@ -76,7 +83,9 @@ class Page1(QWizardPage):
         self._ipButton.currentIndexChanged[int].connect(self._ipLine.setCurrentIndex)
         self._ipButton.insertItem(IP_V4, 'IP version 4')
         self._ipButton.insertItem(IP_V6, 'IP version 6')
+        self._ipButton.setCurrentIndex(IP_V4)
         self._ipButton.setFocusPolicy(Qt.ClickFocus)
+
 
 
         # port selection and edition
@@ -94,23 +103,27 @@ class Page1(QWizardPage):
         self._timeout.setMaximum(20000)
         self._timeout.setValue(2500)
 
-        # snmpv2 form
-        self._snmp2b = QGroupBox(self)
-        self._snmp2b.setContentsMargins(15,15,15,15)
-        self._snmp2bRw   = QLineEdit(self)
-        self._snmp2bRo    = QLineEdit(self)
-        self._snmp2bLay     = QFormLayout(self._snmp2b)
-        self._snmp2bLay.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        self._snmp2b.setLayout(self._snmp2bLay)
-        self._snmp2bLay.insertRow(1, 'Read only community',  self._snmp2bRo)
-        self._snmp2bLay.insertRow(2, 'Read/write community', self._snmp2bRw)
+        # snmpv1 form
+        self._snmp1Community   = QLineEdit(self)
+        self._snmp1Community.setPlaceholderText("Community string")
+        self._snmp1    = NFrameContainer(self)
+        self._snmp1Lay = NGridContainer(self._snmp1)
+        self._snmp1Lay.setRowStretch(0,0)
+        self._snmp1Lay.setRowStretch(1,1)
+        self._snmp1Lay.addWidget(self._snmp1Community,     0,0)
 
+        # snmpv2 form
+        self._snmp2Community   = QLineEdit(self)
+        self._snmp2Community.setPlaceholderText("Community string")
+        self._snmp2    = NFrameContainer(self)
+        self._snmp2Lay = NGridContainer(self._snmp2)
+        self._snmp2Lay.setRowStretch(0,0)
+        self._snmp2Lay.setRowStretch(1,1)
+        self._snmp2Lay.addWidget(self._snmp2Community,     0,0)
 
         # snmpv3 form
         self._snmp3 = QGroupBox(self)
-        #self._snmp3User = QLineEdit(self)
-        self._snmp3User = QComboBox(self)
-        self._snmp3User.setEditable(True)
+        self._snmp3User = QLineEdit(self)
         
         self._snmp3SecLevel = QComboBox(self)
         self._snmp3SecLevel.insertItem(AUTH_PRIV, 'authPriv')
@@ -166,14 +179,16 @@ class Page1(QWizardPage):
         self._snmp3Lay.setRowStretch(10,1)
 
 
-        # snmpv2/3 stacked layout
+        # snmpv1/2/3 stacked layout
         self._snmpLay = QStackedWidget(self)
         self._snmpLay.insertWidget(SNMP_V3, self._snmp3)
-        self._snmpLay.insertWidget(SNMP_V2, self._snmp2b)
+        self._snmpLay.insertWidget(SNMP_V2, self._snmp2)
+        self._snmpLay.insertWidget(SNMP_V1, self._snmp1)
 
         self._snmpButton = QComboBox(self)
         self._snmpButton.insertItem(SNMP_V3, 'SNMP version 3')
-        self._snmpButton.insertItem(SNMP_V2, 'SNMP version 2b')
+        self._snmpButton.insertItem(SNMP_V2, 'SNMP version 2c')
+        self._snmpButton.insertItem(SNMP_V1, 'SNMP version 1')
         self._snmpButton.currentIndexChanged[int].connect(self._snmpLay.setCurrentIndex)
         self._snmpButton.setFocusPolicy(Qt.ClickFocus)
 
@@ -184,8 +199,8 @@ class Page1(QWizardPage):
         self.registerField('ip_port',           self._port)
         self.registerField('snmp_timeout',      self._timeout)
         self.registerField('snmp_version',      self._snmpButton)
-        self.registerField('snmp_v2_ro',      self._snmp2bRo)
-        self.registerField('snmp_v2_rw',     self._snmp2bRw)
+        self.registerField('snmp_v1_community', self._snmp1Community)
+        self.registerField('snmp_v2_community', self._snmp2Community)
         self.registerField('snmp_v3_user',      self._snmp3User)
         self.registerField('snmp_v3_sec_level', self._snmp3SecLevel)
         self.registerField('snmp_v3_auth_alg',  self._snmp3Auth)
@@ -200,8 +215,8 @@ class Page1(QWizardPage):
         self._port.valueChanged.connect(self._updateComplete)
         self._timeout.valueChanged.connect(self._updateComplete)
         self._snmpButton.currentIndexChanged[int].connect(self._updateComplete)
-        self._snmp2bRo.textChanged.connect(self._updateComplete)
-        self._snmp2bRw.textChanged.connect(self._updateComplete)
+        self._snmp1Community.textChanged.connect(self._updateComplete)
+        self._snmp2Community.textChanged.connect(self._updateComplete)
         self._snmp3SecLevel.currentIndexChanged[int].connect(self._updateComplete)
         self._snmp3AuthVal.textChanged.connect(self._updateComplete)
         self._snmp3PrivVal.textChanged.connect(self._updateComplete)
@@ -227,35 +242,38 @@ class Page1(QWizardPage):
         grid.setRowStretch(2,1)
         grid.setRowStretch(3,9)
         self.setLayout(grid)
+
+        self._forTest()
     
-        # TEST
-        self.validatePage()
-        # TEST END
 
     # VALIDATION SYSTEM
     def _updateComplete(self, _):
+        self._snmpCommandComplete = False
         self.completeChanged.emit()
 
     def isComplete(self):
         # ip is complete?
-        if self._wizard.field('ip_version') == IP_V4:
+        if self.field('ip_version') == IP_V4:
             if self._ip4.hasAcceptableInput() != True: return False
         else:
             if self._ip6.hasAcceptableInput() != True: return False
 
         # snmp is complete?
-        if self._wizard.field('snmp_version') == SNMP_V2:
-            read    = self._wizard.field('snmp_v2_ro')
-            write   = self._wizard.field('snmp_v2_rw')
-            if read == "" or write == "": return False
+        snmpver = self.field('snmp_version')
+        if  snmpver == SNMP_V1:
+            community = self.field('snmp_v1_community')
+            if community == "": return False
+        if  snmpver == SNMP_V2:
+            community = self.field('snmp_v2_community')
+            if community == "": return False
         else:
-            user = self._wizard.field('snmp_v3_user')
-            auth = self._wizard.field('snmp_v3_auth_val')
-            priv = self._wizard.field('snmp_v3_priv_val')
+            user = self.field('snmp_v3_user')
+            auth = self.field('snmp_v3_auth_val')
+            priv = self.field('snmp_v3_priv_val')
             if user == "": return False
-            if self._wizard.field('snmp_v3_sec_level') == AUTH_NO_PRIV:
+            if self.field('snmp_v3_sec_level') == AUTH_NO_PRIV:
                 if auth == "": return False
-            if self._wizard.field('snmp_v3_sec_level') == AUTH_PRIV:
+            if self.field('snmp_v3_sec_level') == AUTH_PRIV:
                 if auth == "" or priv == "": return False
 
 
@@ -290,49 +308,85 @@ class Page1(QWizardPage):
             self._snmp3PrivLab.setDisabled(False)
             self._snmp3PrivValLab.setDisabled(False)
 
+    def _forTest(self):
+        self._ip4.setText("192.168.0.5")
+        self._snmp2Community.setText("public")
+        self._snmpButton.setCurrentIndex(SNMP_V2)
+
     def nextId(self):
         return 2
 
     def validatePage(self):
-        self.dial = WaitSnmpInfoBox(self)
-        return False
+        if self._snmpCommandComplete == False:
+            self.dial = WaitSnmpInfoBox(self)
+            return False
+        else:
+            return True
+
+
+    def setSysInfo(self, info):
+        self._wizard.setSysInfo(info)
+
+    def setIfInfo(self, info):
+        self._wizard.setIfInfo(info)
+
+    def setEngineId(self, info):
+        self._wizard.setEngineId(info)
+
+    def triggerValidate(self):
+        self._snmpCommandComplete = True
+        self._wizard.next()
 
 class WaitSnmpInfoBox(QProgressDialog):
     def __init__(self, parent=None):
         super(WaitSnmpInfoBox, self).__init__(parent)
-        self._wizard = parent._wizard
-        self.setMinimum(0)
-        self.setMaximum(0)
-        self.setLabelText('Probing element...')
 
-        self._executeInfo()
+        self._wizPage = parent
+        self._elementName        = ""
+        self._elementEgineId     = ""
+        self._elementInterfaces  = ""
+
+        self.setMinimum(0)
+        self.setMaximum(4)
+        self.setValue(0)
+        self.setLabelText('Acquire lock...')
+
         self.setModal(True)
         self.show()
+        self._executeInfo()
 
     def _executeInfo(self):
-        ipv = self._wizard.field('ip_version')
+        ipv = self._wizPage.field('ip_version')
         if ipv == IP_V4:
             ipv = "v4"
-            ip  = self._wizard.field('ip4_value')
+            ip  = self._wizPage.field('ip4_value')
         else:
             ipv = "v6"
-            ip  = self._wizard.field('ip6_value')
+            ip  = self._wizPage.field('ip6_value')
 
-        port    = self._wizard.field('ip_port')
-        timeout = self._wizard.field('snmp_timeout')
-        snmpVer = self._wizard.field('snmp_version')
+        port    = self._wizPage.field('ip_port')
+        timeout = self._wizPage.field('snmp_timeout')
+        snmpVer = self._wizPage.field('snmp_version')
+        if snmpVer == SNMP_V1:
+            community = self._wizPage.field('snmp_v1_community')
+            snmpVer = "1"
+            v3SecL  = "noAuthNoPriv"
+            v3User  = "undefined"
+            v3AuthAlg = "SHA"
+            v3AuthKey = "undefined"
+            v3PrivAlg = "AES"
+            v3PrivKey = "undefined"
         if snmpVer == SNMP_V2:
-            snmpV2Ro = self._wizard.field('snmp_v2_ro')
-            snmpV2Rw = self._wizard.field('snmp_v2_rw')
+            community = self._wizPage.field('snmp_v2_community')
             snmpVer = "2c"
-            v3SecL  = ""
-            v3User  = ""
-            v3AuthAlg = ""
-            v3AuthKey = ""
-            v3PrivAlg = ""
-            v3PrivKey = ""
+            v3SecL  = "noAuthNoPriv"
+            v3User  = "undefined"
+            v3AuthAlg = "SHA"
+            v3AuthKey = "undefined"
+            v3PrivAlg = "AES"
+            v3PrivKey = "undefined"
         else:
-            v3SecLevel = self._wizard.field('snmp_v3_sec_level')
+            v3SecLevel = self._wizPage.field('snmp_v3_sec_level')
             if v3SecLevel == NO_AUTH_NO_PRIV:
                 v3SecL = 'noAuthNoPriv'
             elif v3SecLevel == AUTH_NO_PRIV:
@@ -340,13 +394,13 @@ class WaitSnmpInfoBox(QProgressDialog):
             elif v3SecLevel == AUTH_PRIV:
                 v3SecL = 'authPriv'
 
-            v3AuthAlgo = self._wizard.field('snmp_v3_auth_alg')
+            v3AuthAlgo = self._wizPage.field('snmp_v3_auth_alg')
             if v3AuthAlgo == AUTH_SHA:
                 v3AuthAlg = 'SHA'
             elif v3AuthAlgo == AUTH_MD5:
                 v3AuthAlg = 'MD5'
 
-            v3PrivAlgo = self._wizard.field('snmp_v3_priv_alg')
+            v3PrivAlgo = self._wizPage.field('snmp_v3_priv_alg')
             if v3PrivAlgo == PRIV_AES128:
                 v3PrivAlg = 'AES'
             elif v3PrivAlgo == PRIV_AES192:
@@ -358,62 +412,286 @@ class WaitSnmpInfoBox(QProgressDialog):
             elif v3PrivAlgo == PRIV_3DES:
                 v3PrivAlg = '3DES'
 
-            snmpV2Ro = ""
-            snmpV2Rw = ""
-            snmpVer = 3
-            v3User  = self._wizard.field('snmp_v3_user')
-            v3AuthKey = self._wizard.field('snmp_v3_auth_val')
-            v3PrivKey = self._wizard.field('snmp_v3_priv_val')
+            community = "undefined"
+            snmpVer = "3"
+            v3User  = self._wizPage.field('snmp_v3_user')
+            v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
+            v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
 
-        # TEST
         supercast.send(
             'monitorSnmpElementInfoQuery',
             (
-                "v4",
-                "192.168.0.5",
-                161,
-                2000,
-                "3",
-                "",
-                "authPriv",
-                "asterix",
-                "SHA",
-                "password123",
-                "AES",
-                "seckey321"
+                ipv,
+                ip,
+                port,
+                timeout,
+                snmpVer,
+                community,
+                v3SecL,
+                v3User,
+                v3AuthAlg,
+                v3AuthKey,
+                v3PrivAlg,
+                v3PrivKey
             ),
             self._elementInfoReply
         )
-        # TEST END
-
-
-#         supercast.send(
-#             'monitorSnmpElementInfoQuery',
-#             (
-#                 ipv,
-#                 ip,
-#                 port,
-#                 timeout,
-#                 snmpVer,
-#                 snmpV2Ro,
-#                 snmpV2Rw,
-#                 v3SecL,
-#                 v3User,
-#                 v3AuthAlg,
-#                 v3AuthKey,
-#                 v3PrivAlg,
-#                 v3PrivKey
-#             ),
-#             self._elementInfoReply
-#         )
 
     def _elementInfoReply(self, reply):
-        self.setLabelText(reply)
+        if reply['value']['status'] == False:
+            err = QMessageBox(self)
+            err.setModal(True)
+            err.setIconPixmap(nocapi.nGetPixmap('dialog-information'))
+            err.setText("Snmp manager failed to get information for element:")
+            err.setInformativeText("ERROR: " + reply['value']['reply'])
+            err.finished[int].connect(self._closeMe)
+            err.open()
+            return
+
+        self.setValue(self.value() + 1)
+
+        if (self.value() == 1):
+            self.setLabelText("Get engine ID...")
+        elif (self.value()  == 2):
+            self._wizPage.setEngineId(reply['value']['reply'])
+            self.setLabelText("Get system infos...")
+        elif (self.value() == 3):
+            self._elementName   = reply['value']['reply']
+            self.setLabelText("Get interfaces infos...")
+        elif (self.value() == 4):
+            self._elementInterfaces = reply['value']['reply']
 
 
+        if reply['value']['replyType'] == 'snmpSystemInfo':
+            self._wizPage.setSysInfo(reply['value']['reply'])
+        elif reply['value']['replyType'] == 'snmpInterfacesInfo':
+            self._wizPage.setIfInfo(reply['value']['reply'])
+
+        if reply['lastPdu'] == True:
+            if reply['value']['status'] == True:
+                self._wizPage.triggerValidate()
+            self.deleteLater()
+            return
+        
+    def _closeMe(self, a):
+        self.deleteLater()
 
 
 class Page2(QWizardPage):
     def __init__(self, parent=None):
         super(Page2, self).__init__(parent)
-        self.setTitle(self.tr('Select the interfaces you want to monitor'))
+        self._wizard = parent
+        self.setTitle(self.tr('Configure element properties'))
+        self.setSubTitle(self.tr('''
+            Chose interfaces to monitor on the device
+        '''))
+    
+        self._grid = NGrid(self)
+        self.setLayout(self._grid)
+
+        infoFrame = NFrame(self)
+        infoLayout = NGridContainer(infoFrame)
+        infoLayout.addWidget(QLabel("Tips blablab al", infoFrame), 0,0)
+
+        ifFrame = NFrame(self)
+        ifLayout = NGridContainer(ifFrame)
+        ifFrame.setLayout(ifLayout)
+        self._treeWidget = QTreeWidget(ifFrame)
+        self._treeWidget.setColumnCount(5)
+        self._treeWidget.setHeaderLabels([
+            'Descr', 'Admin status', 'Oper status', 
+            'Physical address', 'Type'])
+        self._treeWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        ifLayout.addWidget(self._treeWidget)
+
+        self._grid.addWidget(infoFrame,  0,0)
+        self._grid.addWidget(ifFrame,    1,0)
+
+    def validatePage(self):
+        count = self._treeWidget.topLevelItemCount()
+        selectedIfs = list()
+        for index in range(count):
+            item = self._treeWidget.topLevelItem(index)
+            if (item.checkState(0) == Qt.CheckState.Checked):
+                selectedIfs.append(int(item.text(5)))
+
+        self._wizard.setIfSelection(selectedIfs)
+        return True
+
+    def nextId(self):
+        return 3
+
+    def initializePage(self):
+        self._treeWidget.clear()
+        ifInfos = self._wizard._ifInfo
+        for ifDef in ifInfos:
+            ifSpeed = ifDef['ifSpeed']
+            ifType  = ifDef['ifType']
+            ifLastChange = ifDef['ifLastChange']
+            ifPhysaddress = ifDef['ifPhysaddress']
+            ifAdminStatus = ifDef['ifAdminStatus']
+            ifDescr = ifDef['ifDescr']
+            ifIndex = ifDef['ifIndex']
+            ifMTU   = ifDef['ifMTU']
+            ifOperStatus = ifDef['ifOperStatus']
+            item = QTreeWidgetItem()
+            item.setText(0, ifDescr)
+            item.setText(1, str(ifAdminStatus))
+            item.setText(2, str(ifOperStatus))
+            item.setText(3, ifPhysaddress)
+            item.setText(4, str(ifType))
+            item.setText(5, str(ifIndex))
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(0, Qt.Checked)
+            self._treeWidget.addTopLevelItem(item)
+
+
+
+
+class Page3(QWizardPage):
+    def __init__(self, parent=None):
+        super(Page3, self).__init__(parent)
+        self._wizard = parent
+        self.setTitle(self.tr('Final step'))
+        self.setSubTitle(self.tr('''
+            Validate the following configuration
+        '''))
+        self._grid = NGridContainer(self)
+        self.setLayout(self._grid)
+
+    def validatePage(self):
+        self.dial = WaitRegisterElementBox(self)
+        print "validate"
+        return False
+
+    def nextId(self):
+        print "next id here?"
+        return -1
+
+    def initializePage(self):
+        eConf = dict()
+        eConf['ip_version'] = self.field('ip_version')
+        eConf['ip6_value'] = self.field('ip6_value')
+        eConf['ip4_value'] = self.field('ip4_value')
+        eConf['ip_port'] = self.field('ip_port')
+        eConf['snmp_timeout'] = self.field('snmp_timeout')
+        eConf['snmp_version'] = self.field('snmp_version')
+        eConf['snmp_v1_community'] = self.field('snmp_v1_community')
+        eConf['snmp_v2_community'] = self.field('snmp_v2_community')
+        eConf['snmp_v3_user'] = self.field('snmp_v3_user')
+        eConf['snmp_v3_sec_level'] = self.field('snmp_v3_sec_level')
+        eConf['snmp_v3_auth_alg'] = self.field('snmp_v3_auth_alg')
+        eConf['snmp_v3_auth_val'] = self.field('snmp_v3_auth_val')
+        eConf['snmp_v3_priv_alg'] = self.field('snmp_v3_priv_alg')
+        eConf['snmp_v3_priv_val'] = self.field('snmp_v3_priv_val')
+        eConf['engine_id']  = self._wizard._engineId
+        eConf['if_selection']  = self._wizard._ifSelection
+        i = 0
+        for key in eConf.keys():
+            st = "%s %s" % (key, eConf[key])
+            lab = QLabel(st, self)
+            self._grid.addWidget(lab, i,0)
+            i += 1
+        
+
+class WaitRegisterElementBox(QProgressDialog):
+    def __init__(self, parent=None):
+        super(WaitRegisterElementBox, self).__init__(parent)
+        self._wizPage = parent
+        self.setMinimum(0)
+        self.setMaximum(4)
+        self.setValue(0)
+        self.setLabelText('Acquire lock...')
+        self.setModal(True)
+        self.show()
+        self._executeInfo()
+
+    def _executeInfo(self):
+        ipv = self._wizPage.field('ip_version')
+        if ipv == IP_V4:
+            ipv = "v4"
+            ip  = self._wizPage.field('ip4_value')
+        else:
+            ipv = "v6"
+            ip  = self._wizPage.field('ip6_value')
+
+        port    = self._wizPage.field('ip_port')
+        timeout = self._wizPage.field('snmp_timeout')
+        snmpVer = self._wizPage.field('snmp_version')
+        if snmpVer == SNMP_V1:
+            community = self._wizPage.field('snmp_v1_community')
+            snmpVer = "1"
+            v3SecL  = "noAuthNoPriv"
+            v3User  = "undefined"
+            v3AuthAlg = "SHA"
+            v3AuthKey = "undefined"
+            v3PrivAlg = "AES"
+            v3PrivKey = "undefined"
+        if snmpVer == SNMP_V2:
+            community = self._wizPage.field('snmp_v2_community')
+            snmpVer = "2c"
+            v3SecL  = "noAuthNoPriv"
+            v3User  = "undefined"
+            v3AuthAlg = "SHA"
+            v3AuthKey = "undefined"
+            v3PrivAlg = "AES"
+            v3PrivKey = "undefined"
+        else:
+            v3SecLevel = self._wizPage.field('snmp_v3_sec_level')
+            if v3SecLevel == NO_AUTH_NO_PRIV:
+                v3SecL = 'noAuthNoPriv'
+            elif v3SecLevel == AUTH_NO_PRIV:
+                v3SecL = 'authNoPriv'
+            elif v3SecLevel == AUTH_PRIV:
+                v3SecL = 'authPriv'
+
+            v3AuthAlgo = self._wizPage.field('snmp_v3_auth_alg')
+            if v3AuthAlgo == AUTH_SHA:
+                v3AuthAlg = 'SHA'
+            elif v3AuthAlgo == AUTH_MD5:
+                v3AuthAlg = 'MD5'
+
+            v3PrivAlgo = self._wizPage.field('snmp_v3_priv_alg')
+            if v3PrivAlgo == PRIV_AES128:
+                v3PrivAlg = 'AES'
+            elif v3PrivAlgo == PRIV_AES192:
+                v3PrivAlg = 'AES192'
+            elif v3PrivAlgo == PRIV_AES256:
+                v3PrivAlg = 'AES256'
+            elif v3PrivAlgo == PRIV_DES:
+                v3PrivAlg = 'DES'
+            elif v3PrivAlgo == PRIV_3DES:
+                v3PrivAlg = '3DES'
+
+            community = "undefined"
+            snmpVer = "3"
+            v3User  =   self._wizPage.field('snmp_v3_user')
+            v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
+            v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
+
+        engineId = self._wizPage._wizard._engineId
+        ifSelection = self._wizPage._wizard._ifSelection
+
+        supercast.send(
+            'monitorSnmpUpdateElementQuery',
+            (
+                ipv,
+                ip,
+                port,
+                timeout,
+                snmpVer,
+                community,
+                v3SecL,
+                v3User,
+                v3AuthAlg,
+                v3AuthKey,
+                v3PrivAlg,
+                v3PrivKey,
+                engineId,
+                ifSelection
+            ),
+            self._elementInfoReply
+        )
+
+    def _elementInfoReply(self, value):
+        print "reply!", value

@@ -53,6 +53,23 @@ class LoggerRrdConfig(univ.Sequence):
 class LoggerRrdConfigs(univ.SequenceOf):
     componentType = LoggerRrdConfig()
 
+class RrdGraphs(univ.SequenceOf):
+    componentType = char.PrintableString()
+
+class RrdIndexes(univ.SequenceOf):
+    componentType = univ.Integer()
+
+class LoggerRrd2(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('type',     char.PrintableString()),
+        namedtype.NamedType('rrdCreate',char.PrintableString()),
+        namedtype.NamedType('rrdUpdate',char.PrintableString()),
+        namedtype.NamedType('rrdGraphs',RrdGraphs()),
+        namedtype.NamedType('indexes',  RrdIndexes())
+    )
+
+
 class LoggerRrd(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('module',   char.PrintableString()),
@@ -102,7 +119,18 @@ class Logger(univ.Choice):
                     2
                 )
             )
+        ),
+        namedtype.NamedType(
+            'loggerRrd2',
+            LoggerRrd2().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    3
+                )
+            )
         )
+
     )
 
 
@@ -189,6 +217,40 @@ class MonitorEventProbeDump(univ.Sequence):
         namedtype.NamedType('events',   MonitorProbeEvents()),
     )
 
+class RrdIdToFile(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('index',   univ.Integer()),
+        namedtype.NamedType('fileName',    char.PrintableString())
+    )
+
+class RrdIdToFileSeq(univ.SequenceOf):
+    componentType = RrdIdToFile()
+
+class MonitorRrdProbeDump(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',   char.PrintableString()),
+        namedtype.NamedType('probe',    char.PrintableString()),
+        namedtype.NamedType('module',   char.PrintableString()),
+        namedtype.NamedType('indexes',  RrdIdToFileSeq()),
+        namedtype.NamedType('path',     char.PrintableString())
+    )
+
+class RrdLoggerUpdate(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('index',   univ.Integer()),
+        namedtype.NamedType('update',  char.PrintableString())
+    )
+
+class RrdLoggerUpdates(univ.SequenceOf):
+    componentType = RrdLoggerUpdate()
+
+class MonitorRrdLoggerEvent(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('probeName',    char.PrintableString()),
+        namedtype.NamedType('updates',      RrdLoggerUpdates())
+    )
+
 class MonitorProbeDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
@@ -200,7 +262,6 @@ class MonitorProbeDump(univ.Sequence):
 class MonitorProbeInfo(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
-        namedtype.NamedType('id',       univ.Integer()),
         namedtype.NamedType('name',     char.PrintableString()),
         namedtype.NamedType('descr',    char.PrintableString()),
         namedtype.NamedType('info',     char.PrintableString()),
@@ -288,6 +349,28 @@ class IpInfo(univ.Sequence):
         namedtype.NamedType('stringVal',    char.PrintableString())
     )
 
+
+class IfSelection(univ.SequenceOf):
+    componentType = univ.Integer()
+
+class SnmpUpdateElementQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('ip',           IpInfo()),
+        namedtype.NamedType('port',         univ.Integer()),
+        namedtype.NamedType('timeout',      univ.Integer()),
+        namedtype.NamedType('snmpVer',      char.PrintableString()),
+        namedtype.NamedType('community',    char.PrintableString()),
+        namedtype.NamedType('v3SecLevel',   char.PrintableString()),
+        namedtype.NamedType('v3User',       char.PrintableString()),
+        namedtype.NamedType('v3AuthAlgo',   char.PrintableString()),
+        namedtype.NamedType('v3AuthKey',    char.PrintableString()),
+        namedtype.NamedType('v3PrivAlgo',   char.PrintableString()),
+        namedtype.NamedType('v3PrivKey',    char.PrintableString()),
+        namedtype.NamedType('engineId',     char.PrintableString()),
+        namedtype.NamedType('ifSelection',  IfSelection()),
+    )
+
+
 class SnmpElementInfoQuery(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('ip',           IpInfo()),
@@ -314,7 +397,18 @@ class MonitorExtendedQuery(univ.Choice):
                     0
                 )
             )
+        ),
+        namedtype.NamedType(
+            'snmpUpdateElementQuery',
+            SnmpUpdateElementQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
         )
+
     )
 
 class MonitorExtendedQueryMsg(univ.Sequence):
@@ -348,6 +442,7 @@ class CheckArg(univ.Sequence):
         namedtype.NamedType('flag',         char.PrintableString()),
         namedtype.NamedType('value',        char.PrintableString())
     )
+
 class CheckArgs(univ.SequenceOf):
     componentType = CheckArg()
 
@@ -368,12 +463,74 @@ class GetCheckReply(univ.Sequence):
         namedtype.NamedType('infos',        CheckInfos())
     )
 
+class SnmpSystemInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('sysDescr',     char.PrintableString()),
+        namedtype.NamedType('sysObjectId',  char.PrintableString()),
+        namedtype.NamedType('sysUpTime',    char.PrintableString()),
+        namedtype.NamedType('sysContact',   char.PrintableString()),
+        namedtype.NamedType('sysName',      char.PrintableString()),
+        namedtype.NamedType('sysLocation',  char.PrintableString()),
+        namedtype.NamedType('sysServices',  univ.Integer()),
+        namedtype.NamedType('sysORLastChange', char.PrintableString())
+    )
+
+class SnmpInterfaceInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('ifIndex',      univ.Integer()),
+        namedtype.NamedType('ifDescr',      char.PrintableString()),
+        namedtype.NamedType('ifType',       univ.Integer()),
+        namedtype.NamedType('ifMTU',        univ.Integer()),
+        namedtype.NamedType('ifSpeed',      univ.Integer()),
+        namedtype.NamedType('ifPhysAddress',char.PrintableString()),
+        namedtype.NamedType('ifAdminStatus',univ.Integer()),
+        namedtype.NamedType('ifOperStatus', univ.Integer()),
+        namedtype.NamedType('ifLastChange', char.PrintableString())
+    )
+
+class SnmpInterfacesInfo(univ.SequenceOf):
+    componentType = SnmpInterfaceInfo()
+
+class ReplyChoice(univ.Choice):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType(
+            'string',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    0
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'snmpSystemInfo',
+            SnmpSystemInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    1
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'snmpInterfacesInfo',
+            SnmpInterfacesInfo().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    2
+                )
+            )
+        )
+    )
+
 class ExtendedReplyMsg(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
         namedtype.NamedType('status',       univ.Boolean()),
         namedtype.NamedType('lastPdu',      univ.Boolean()),
-        namedtype.NamedType('reply',        char.PrintableString())
+        namedtype.NamedType('reply',        ReplyChoice())
     )
 
 class MonitorPDU_fromClient(univ.Choice):
@@ -551,8 +708,27 @@ class MonitorPDU_fromServer(univ.Choice):
                     20
                 )
             )
+        ),
+        namedtype.NamedType(
+            'rrdProbeDump',
+            MonitorRrdProbeDump().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    30
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'rrdLoggerEvent',
+            MonitorRrdLoggerEvent().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    35
+                )
+            )
         )
- 
     )
 
 class MonitorPDU(univ.Choice):
@@ -650,10 +826,11 @@ class SupercastChanInfo(univ.Sequence):
 class SupercastChansInfo(univ.SequenceOf):
     componentType = SupercastChanInfo()
 
-class SupercastAuthProto(univ.Enumerated):
-    namedValues = namedval.NamedValues(
-        ('localFile', 0),
-        ('ldap', 1)
+class SupercastServerInfo(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('authProto',    char.PrintableString()),
+        namedtype.NamedType('dataPort',     univ.Integer()),
+        namedtype.NamedType('dataProto',    char.PrintableString())
     )
 
 class SupercastPDU_fromServer_authAck(univ.Sequence):
@@ -696,8 +873,9 @@ class SupercastPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'authReq',
-            SupercastAuthProto().subtype(
+            'serverInfo',
+            #SupercastAuthProto().subtype(
+            SupercastServerInfo().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -927,13 +1105,18 @@ def decode(pdu):
                         'eventType':    str(eventType)
                     }
                 }
-            elif msg3_type == 'authReq':
-                if      msg3 == 0: authProto = 'localFile'
-                elif    msg3 == 1: authProto = 'ldap'
+            elif msg3_type == 'serverInfo':
+                #if      msg3 == 0: authProto = 'localFile'
+                #elif    msg3 == 1: authProto = 'ldap'
+                authProto   = msg3.getComponentByName('authProto')
+                dataPort    = msg3.getComponentByName('dataPort')
+                dataProto   = msg3.getComponentByName('dataProto')
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
-                    'value':    str(authProto)
+                    'dataPort': int(dataPort),
+                    'dataProto': str(dataProto),
+                    'authProto': str(authProto)
                 }
             elif msg3_type == 'authAck':
                 groups      = msg3.getComponentByName('groups')
@@ -1030,7 +1213,6 @@ def decode(pdu):
                 }
             elif msg3_type == 'probeInfo':
                 target      = str(msg3.getComponentByName('channel'))
-                probeId     = msg3.getComponentByName('id')
                 name        = str(msg3.getComponentByName('name'))
                 descr       = str(msg3.getComponentByName('descr'))
                 info        = str(msg3.getComponentByName('info'))
@@ -1084,6 +1266,35 @@ def decode(pdu):
                     ####################
                     # IF LOGGER IS RRD #
                     ####################
+                    elif ltype == 'loggerRrd2':
+                        logger2 = logger.getComponent()
+                        mod     = logger2.getComponentByName('module')
+
+                        rtype   = logger2.getComponentByName('type')
+                        rcreate = logger2.getComponentByName('rrdCreate')
+                        rupdate = logger2.getComponentByName('rrdUpdate')
+                        indexes = logger2.getComponentByName('indexes')
+                        idxs = []
+                        for i in range(len(indexes)):
+                            idx = int(indexes.getComponentByPosition(i))
+                            idxs.append(idx)
+
+                        rgraphs = logger2.getComponentByName('rrdGraphs')
+                        rrdGraphs = dict()
+                        for i in range(len(rgraphs)):
+                            graph = rgraphs.getComponentByPosition(i)
+                            rrdGraphs[i] = str(graph)
+
+                        rrdConfigs = dict()
+
+                        rrdConfigs['type']      = str(rtype)
+                        rrdConfigs['rrdCreate'] = str(rcreate)
+                        rrdConfigs['rrdUpdate'] = str(rupdate)
+                        rrdConfigs['rgraphs']   = rrdGraphs
+                        rrdConfigs['indexes']   = idxs
+
+                        loggersDict[str(mod)] = rrdConfigs
+
                     elif ltype == 'loggerRrd':
                         logger2 = logger.getComponent()
                         mod     = logger2.getComponentByName('module')
@@ -1133,7 +1344,6 @@ def decode(pdu):
                     'msgType':  msg3_type,
                     'value':    {
                         'target':       target,
-                        'id':           int(probeId),
                         'name':         name,
                         'descr':        descr,
                         'info':         info,
@@ -1235,6 +1445,56 @@ def decode(pdu):
                         'data':   eventsList
                     }
                 }
+            elif msg3_type == 'rrdProbeDump':
+                target      = str(msg3.getComponentByName('target'))
+                probeName   = str(msg3.getComponentByName('probe'))
+                module      = str(msg3.getComponentByName('module'))
+                path        = str(msg3.getComponentByName('path'))
+                indexes     = msg3.getComponentByName('indexes')
+
+                indexesDict = dict()
+                for i in range(len(indexes)):
+                    indexEntry  = indexes.getComponentByPosition(i)
+                    index       = int(indexEntry.getComponentByName('index'))
+                    fileName    = str(indexEntry.getComponentByName('fileName'))
+                    indexesDict[index] = fileName
+
+                return {
+                    'from': msg1_type,
+                    'msgType': msg3_type,
+                    'value': {
+                        'target':   target,
+                        'id':       probeName,
+                        'logger':   module,
+                        'data':     None,
+                        'path':     path,
+                        'indexes':  indexesDict
+                    }
+                }
+
+            elif msg3_type == 'rrdLoggerEvent':
+                target      = str(msg3.getComponentByName('target'))
+                probeName   = str(msg3.getComponentByName('probeName'))
+                updates     = msg3.getComponentByName('updates')
+
+                updatesDict = dict()
+                for i in range(len(updates)):
+                    rrdUpdate   = updates.getComponentByPosition(i)
+                    index       = int(rrdUpdate.getComponentByName('index'))
+                    update      = str(rrdUpdate.getComponentByName('update'))
+                    updatesDict[index] = update
+                
+                return {
+                    'from':     msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'target':   target,
+                        'id':       probeName,
+                        'updates':  updatesDict
+                    }
+                }
+
+
             elif msg3_type == 'rrdFileDump':
                 target      = str(msg3.getComponentByName('target'))
                 probeName   = str(msg3.getComponentByName('probeName'))
@@ -1333,15 +1593,48 @@ def decode(pdu):
                 queryId = int(msg3.getComponentByName('queryId'))
                 status  = bool(msg3.getComponentByName('status'))
                 lastPdu = bool(msg3.getComponentByName('lastPdu'))
-                reply   = str(msg3.getComponentByName('reply'))
+
+                reply   = msg3.getComponentByName('reply')
+                rep     = reply.getComponent()
+                repType = reply.getName()
+
+                if repType == 'string':
+                    replyPayload = str(rep)
+                elif repType == 'snmpSystemInfo':
+                    replyPayload = dict()
+                    replyPayload['sysDescr']        = str(rep.getComponentByName('sysDescr'))
+                    replyPayload['sysObjectId']     = str(rep.getComponentByName('sysObjectId'))
+                    replyPayload['sysUpTime']       = str(rep.getComponentByName('sysUpTime'))
+                    replyPayload['sysContact']      = str(rep.getComponentByName('sysContact'))
+                    replyPayload['sysName']         = str(rep.getComponentByName('sysName'))
+                    replyPayload['sysLocation']     = str(rep.getComponentByName('sysLocation'))
+                    replyPayload['sysServices']      = int(rep.getComponentByName('sysServices'))
+                    replyPayload['sysORLastChange'] = str(rep.getComponentByName('sysORLastChange'))
+                elif repType == 'snmpInterfacesInfo':
+                    replyPayload = list()
+                    for i in range(len(rep)):
+                        element = rep.getComponentByPosition(i)
+                        anIf = dict()
+                        anIf['ifIndex'] = int(element.getComponentByName('ifIndex'))
+                        anIf['ifDescr'] = str(element.getComponentByName('ifDescr'))
+                        anIf['ifType']  = int(element.getComponentByName('ifType'))
+                        anIf['ifMTU']   = int(element.getComponentByName('ifMTU'))
+                        anIf['ifSpeed'] = int(element.getComponentByName('ifSpeed'))
+                        anIf['ifPhysaddress'] = str(element.getComponentByName('ifPhysAddress'))
+                        anIf['ifAdminStatus'] = int(element.getComponentByName('ifAdminStatus'))
+                        anIf['ifOperStatus'] = int(element.getComponentByName('ifOperStatus'))
+                        anIf['ifLastChange'] = str(element.getComponentByName('ifLastChange'))
+                        replyPayload.append(anIf)
+
                 return {
                     'from':     'extendedReplyMsg',
                     'queryId':  queryId,
                     'lastPdu':  lastPdu,
                     'value': {
-                            'status': status,
-                            'lastPdu': lastPdu,
-                            'reply': reply
+                            'status':       status,
+                            'lastPdu':      lastPdu,
+                            'replyType':    repType,
+                            'reply':        replyPayload
                         }
                     }
 
@@ -1383,7 +1676,11 @@ def encode(pduType, payload):
     elif pduType == 'monitorSnmpElementInfoQuery':
         (queryId, args) = payload
         return encode_monitorSnmpElementInfoQuery(queryId, args)
+    elif pduType == 'monitorSnmpUpdateElementQuery':
+        (queryId, args) = payload
+        return encode_monitorSnmpUpdateElementQuery(queryId, args)
     else:
+        print "Cannont encode PDU: ", pduType
         return False
 
 
@@ -1433,6 +1730,75 @@ def encode_simulateCheck(queryId, checkConfig):
     pdu = encoder.encode(pduDef)
     return pdu
 
+def encode_monitorSnmpUpdateElementQuery(queryId, args):
+    (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
+            v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey,
+                engineId, ifSelection) = args
+    ipinfo = IpInfo()
+    ipinfo.setComponentByName('version', ipv)
+    ipinfo.setComponentByName('stringVal', ip)
+
+    snmpUpdateElementQuery = SnmpUpdateElementQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    snmpUpdateElementQuery.setComponentByName('ip',       ipinfo)
+    snmpUpdateElementQuery.setComponentByName('port',     int(port))
+    snmpUpdateElementQuery.setComponentByName('timeout',  int(timeout))
+    snmpUpdateElementQuery.setComponentByName('snmpVer',  snmpVer)
+    snmpUpdateElementQuery.setComponentByName('community',community)
+    snmpUpdateElementQuery.setComponentByName('v3SecLevel',   v3SecL)
+    snmpUpdateElementQuery.setComponentByName('v3User',       v3User)
+    snmpUpdateElementQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
+    snmpUpdateElementQuery.setComponentByName('v3AuthKey',    v3AuthKey)
+    snmpUpdateElementQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
+    snmpUpdateElementQuery.setComponentByName('v3PrivKey',    v3PrivKey)
+    snmpUpdateElementQuery.setComponentByName('engineId',     engineId)
+    ifSel = IfSelection()
+    for i in range(len(ifSelection)):
+        ifSel.setComponentByPosition(i, ifSelection[i])
+    snmpUpdateElementQuery.setComponentByName('ifSelection',    ifSel)
+
+    extendedQuery   = MonitorExtendedQuery()
+    extendedQuery.setComponentByName('snmpUpdateElementQuery', snmpUpdateElementQuery)
+
+    extendedQueryMsg = MonitorExtendedQueryMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryMsg.setComponentByName('queryId', queryId)
+    extendedQueryMsg.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryMsg', extendedQueryMsg)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
 def encode_monitorSnmpElementInfoQuery(queryId, args):
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
             v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey) = args
@@ -1458,7 +1824,7 @@ def encode_monitorSnmpElementInfoQuery(queryId, args):
     snmpElementInfoQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
     snmpElementInfoQuery.setComponentByName('v3AuthKey',    v3AuthKey)
     snmpElementInfoQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
-    snmpElementInfoQuery.setComponentByName('v3PrivKey',    v3AuthKey)
+    snmpElementInfoQuery.setComponentByName('v3PrivKey',    v3PrivKey)
 
     extendedQuery   = MonitorExtendedQuery()
     extendedQuery.setComponentByName('snmpElementInfoQuery', snmpElementInfoQuery)
