@@ -4,6 +4,7 @@ from    PySide.QtCore import (
     Signal,
     Qt
 )
+from    PySide.QtNetwork import QAbstractSocket
 from    supercast.http_manager  import SupercastAccessManager
 from    supercast.socket        import SupercastSocket
 import  supercast.login
