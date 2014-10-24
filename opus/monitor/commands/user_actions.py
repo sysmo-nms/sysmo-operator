@@ -92,6 +92,19 @@ class UserActions(QObject):
 
 
     def _createConfExample(self):
+        # TODO examples:
+        # . tail -f /var/log/httpd.log (avec Ctrl-C qui termine tail mais
+        # ne quite pas, pour "| grep" par example)
+        # . http:osinventory ("voir element", "ajouter tache")
+        # . http:todolist    ("ajouter tache")
+        # . reboot
+        # . update ("voir check apt-get, check yum", "yum update, apt-get update")
+        # . backup (ftp, git...)
+        # . script auto puppet/chef/cfengine (editer -> commit git -> push -> reload conf)
+        # . ./omnivista -element I (ems client)
+        # . documentation (ouvrir l'explorateur de fichier client sur dossier
+        # partagé.
+        #
         binds = dict()
         binds['ip']      = '<IP>'
         execLine         = ''' xterm -e 'echo "connect to device..."; ssh root@<IP>' '''
