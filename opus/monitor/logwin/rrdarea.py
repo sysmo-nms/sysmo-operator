@@ -31,7 +31,7 @@ from    noctopus_widgets    import (
     QLabel
 )
 
-from    opus.monitor.proxy           import AbstractChannelWidget, ChanHandler
+from    opus.monitor.proxy  import AbstractChannelWidget, ChanHandler
 import  opus.monitor.api    as monapi
 import  opus.monitor.norrd  as norrd
 import  nocapi
@@ -69,7 +69,6 @@ class RrdFrame(AbstractChannelWidget):
         self._probeName = probe
         self._probeConf = monapi.getProbesDict()[probe]
         rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
-        print rrdConf['rgraphs']
         for i in range(len(rrdConf['indexes'])):
             index = rrdConf['indexes'][i]
             self._graphElements[index] = RrdGraphArea(self, index, rrdConf['rgraphs'])
@@ -86,7 +85,7 @@ class RrdFrame(AbstractChannelWidget):
         elif msg['msgType'] == 'probeDump':
             if msg['logger'] == 'bmonitor_logger_rrd2':
                 (index, rrdDbFile) = msg['data']
-                self._graphElements[index].setRrdFile(rrdDbFile)
+                self._graphElements[index].setRrdDbFile(rrdDbFile)
 
 class RrdGraphArea(NFrameContainer):
     def __init__(self, parent, index, graphConf):
@@ -99,9 +98,9 @@ class RrdGraphArea(NFrameContainer):
             self._graphs[gindex] = RrdGraph(self, graphConf[gindex])
             self._layout.addWidget(self._graphs[gindex], 0,gindex)
 
-    def setRrdFile(self, fileName):
+    def setRrdDbFile(self, fileName):
         for key in self._graphs.keys():
-            self._graphs[key].setRrdFile(fileName)
+            self._graphs[key].setRrdDbFile(fileName)
         self.rrdUpdateEvent()
 
     def rrdUpdateEvent(self):
@@ -116,15 +115,62 @@ class RrdGraph(QLabel):
         self._rrdGraphFile.open()
         self._rrdGraphFile.close()
         self._rrdGraphFileName = self._rrdGraphFile.fileName()
+        self._rrdPixmap = QPixmap()
+        self.setPixmap(self._rrdPixmap)
+        #if platform.system() == 'Windows':
+            #winfileName = filename.replace("/","\\\\").replace(":", "\\:")
+            #self._rrdGraphFile = winfileName
+        #else:
+            #self._rrdGraphFile = filename
+
         self._rrdDbFileName = None
+        self._rrdGraphOpts  = None
         self._rrdGraph      = graphConf
 
-    def setRrdFile(self, fileName):
+    def setRrdDbFile(self, fileName):
         self._rrdDbFileName = fileName
+        self._rrdGraphOpts = '\
+--border 0 \
+--full-size-mode \
+--disable-rrdtool-tag \
+--slope-mode \
+--tabwidth 1 \
+--color BACK#00000000 \
+--color CANVAS%s \
+--color GRID%s \
+--color MGRID%s \
+--color FONT%s \
+--color AXIS%s \
+--color FRAME%s \
+--color ARROW%s \
+--font DEFAULT:0:%s ' % (
+                nocapi.nGetRgba('Base'),
+                nocapi.nGetRgba('Dark'),
+                nocapi.nGetRgba('Shadow'),
+                nocapi.nGetRgba('WindowText'),
+                nocapi.nGetRgba('Dark'),
+                nocapi.nGetRgba('Window'),
+                nocapi.nGetRgba('Shadow'),
+                QFont().defaultFamily()
+            )
+        self._rrdGraph = re.sub('<FILE>', self._rrdDbFileName, self._rrdGraph)
 
     def rrdUpdateEvent(self):
-        self.setText(self._rrdGraphFileName)
+        cmd = self._generateGraphCmd()
+        norrd.cmd(
+            cmd,
+            callback=self._rrdUpdateReply,
+            data=self._rrdGraphFileName)
 
+    def _rrdUpdateReply(self, rrdreply):
+        self._rrdPixmap.load(self._rrdGraphFileName)
+        self.setPixmap(self._rrdPixmap)
+
+    def _generateGraphCmd(self):
+        return "graph %s %s %s" % (
+            self._rrdGraphFileName,
+            self._rrdGraphOpts,
+            self._rrdGraph)
 
 class RrdControls(NFrameContainer):
     def __init__(self, parent):
