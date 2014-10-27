@@ -103,7 +103,7 @@ class UserActions(QObject):
         # . script auto puppet/chef/cfengine (editer -> commit git -> push -> reload conf)
         # . ./omnivista -element I (ems client)
         # . documentation (ouvrir l'explorateur de fichier client sur dossier
-        # partagé.
+        # partage.
         #
         binds = dict()
         binds['ip']      = '<IP>'
