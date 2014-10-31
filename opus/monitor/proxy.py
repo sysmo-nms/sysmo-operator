@@ -37,7 +37,6 @@ class ChanHandler(QObject):
 
     def _initChanHandling(self):
         self._masterChan        = 'target-MasterChan'
-        self._masterChanRunning = False
         self._subscribedChans   = list()
         self._pendingSubscribe  = list()
         self._chanProxy         = dict()
@@ -49,7 +48,6 @@ class ChanHandler(QObject):
         self.masterSignalsDict = dict()
         self.masterSignalsDict['probeInfo']     = SimpleSignal(self)
         self.masterSignalsDict['targetInfo']    = SimpleSignal(self)
-        self.masterSignalsDict['probeModInfo']  = SimpleSignal(self)
         self.masterSignalsDict['probeActivity'] = SimpleSignal(self)
         self.masterSignalsDict['probeDump']     = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
@@ -78,9 +76,6 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'probeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'rrdFileDump':
-            self.masterSignalsDict['probeDump'].signal.emit(msg)
-
         elif    msg['msgType'] == 'rrdProbeDump':
             self.masterSignalsDict['probeDump'].signal.emit(msg)
 
@@ -92,9 +87,6 @@ class ChanHandler(QObject):
 
         elif    msg['msgType'] == 'targetInfo':
             self.masterSignalsDict['targetInfo'].signal.emit(msg)
-
-        elif    msg['msgType'] == 'probeModInfo':
-            self.masterSignalsDict['probeModInfo'].signal.emit(msg)
 
         elif    msg['msgType'] == 'probeActivity':
             self.masterSignalsDict['probeActivity'].signal.emit(msg)
@@ -220,7 +212,6 @@ class Channel(QObject):
         self.rrdFiles           = dict()
         self.rrdEnabled         = False
 
-        # BEGIN rrd2 synchro
         self._tmpXmlFiles       = dict()
         self._rrdFiles          = dict()
         self._rrdFilesReady     = dict()
@@ -303,12 +294,16 @@ class Channel(QObject):
             dumpMsg['logger']   = 'bmonitor_logger_text'
             dumpMsg['data']     = self.loggerTextState
             view.handleProbeEvent(dumpMsg)
+
         if self.rrdEnabled == True:
-            dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
-            dumpMsg['logger']   = 'bmonitor_logger_rrd'
-            dumpMsg['data']     = self.rrdFiles
-            view.handleProbeEvent(dumpMsg)
+            for i in self._rrdFilesReady.keys():
+                if self._rrdFilesReady[i] == True:
+                    dumpMsg = dict()
+                    dumpMsg['msgType']  = 'probeDump'
+                    dumpMsg['logger']   = 'bmonitor_logger_rrd2'
+                    dumpMsg['data']     = (i, self._rrdFiles[i].fileName())
+                    self.signal.emit(dumpMsg)
+
         if self.loggerEventState != None:
             dumpMsg = dict()
             dumpMsg['msgType']  = 'probeDump'
@@ -334,6 +329,7 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
         elif dumpType == 'bmonitor_logger_rrd2':
+            self.rrdEnabled = True
             self._initRrdUpdate()
             path = msg['value']['path']
             urls = msg['value']['indexes']
@@ -350,24 +346,6 @@ class Channel(QObject):
                 request['callback'] = self.delayedSyncEvent
                 request['outfile']  = fileName
                 supercast.requestUrl(request)
-
-        elif dumpType == 'bmonitor_logger_rrd':
-            self.rrdEnabled = True
-            # special dump comme in multiple pieces.
-            fileId = msg['value']['fileId']
-            rrdFile = NTempFile(self)
-            rrdFile.open()
-            rrdFile.write(str(data))
-            rrdFile.close()
-            fileName = rrdFile.fileName()
-            self.rrdFiles[fileId] = fileName
-            dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
-            dumpMsg['logger']   = 'bmonitor_logger_rrd'
-            dumpMsg['data']     = dict()
-            dumpMsg['data']['fileId'] = fileId
-            dumpMsg['data']['file']   = fileName
-            self.signal.emit(dumpMsg)
         else:
             print "unknown dump type ", dumpType
 
@@ -407,8 +385,6 @@ class Channel(QObject):
             print "rrdtool update error: ", reply
 
     def handleReturn(self, msg):
-        if self.rrdEnabled == True:
-            self._updateRrdDb(msg)
         if self.loggerTextState != None:
             self._updateLoggerText(msg)
         self.signal.emit(msg)
@@ -421,29 +397,6 @@ class Channel(QObject):
         self.loggerTextState.append(msg['value']['originalRep'])
         if len(self.loggerTextState) > 50:
             self.loggerTextState.popleft()
-
-    def _updateRrdDb(self, msg):
-        rrdConf   = self.probeDict['loggers']['bmonitor_logger_rrd']
-        rrdFiles  = self.rrdFiles
-        keyVals   = msg['value']['keyVals']
-        for rrd in rrdFiles.keys():
-            updateString = rrdConf[rrd]['update']
-            for bind in rrdConf[rrd]['binds']:
-                macro   = rrdConf[rrd]['binds'][bind]
-                try:
-                    value = keyVals[bind]
-                except KeyError:
-                    print "missing bind. I will not update the rrd"
-                    break
-                updateString = updateString.replace(macro, str(value))
-
-            template    = re.findall(r'--template\s+[^\s]+',  updateString)
-            template    = re.sub(r'--template\s+', r'', template[0])
-            rrdvalues   = re.findall(r'N:[^\s]+', updateString)
-            rrdvalues   = rrdvalues[0]
-            commandString = 'update %s --template %s %s' % (rrdFiles[rrd], template, rrdvalues)
-            norrd.cmd(commandString, None)
-
 
 
 class AbstractChannelWidget(NFrameContainer):

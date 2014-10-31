@@ -182,16 +182,6 @@ class TargetInfoType(univ.Enumerated):
         ('update', 2)
     )
 
-
-class MonitorRrdFileDump(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('target',       char.PrintableString()),
-        namedtype.NamedType('probeName',    char.PrintableString()),
-        namedtype.NamedType('module',       char.PrintableString()),
-        namedtype.NamedType('fileId',       char.PrintableString()),
-        namedtype.NamedType('bin',          univ.OctetString())
-    )
-
 class MonitorProbeEvent(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('probeName',    char.PrintableString()),
@@ -296,12 +286,6 @@ class MonitorProbeReturn(univ.Sequence):
         namedtype.NamedType('originalReply',    char.PrintableString()),
         namedtype.NamedType('timestamp',        univ.Integer()),
         namedtype.NamedType('keyVals',   TargetProbeReturnKeyVals())
-    )
-
-class MonitorProbeModuleInfo(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('name', char.PrintableString()),
-        namedtype.NamedType('info', char.PrintableString())
     )
 
 class MonitorTargetInfo(univ.Sequence):
@@ -620,16 +604,6 @@ class MonitorPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'probeModInfo',
-            MonitorProbeModuleInfo().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    6
-                )
-            )
-        ),
-        namedtype.NamedType(
             'probeActivity',
             MonitorProbeActivity().subtype(
                 implicitTag=tag.Tag(
@@ -646,16 +620,6 @@ class MonitorPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     8
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'rrdFileDump',
-            MonitorRrdFileDump().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    9
                 )
             )
         ),
@@ -1174,18 +1138,7 @@ def decode(pdu):
         if msg2_type == 'fromServer':
             msg3        = msg2.getComponent()
             msg3_type   = msg2.getName()
-            if msg3_type == 'probeModInfo':
-                name = str(msg3.getComponentByName('name'))
-                info = str(msg3.getComponentByName('info'))
-                return {
-                    'from':     msg1_type,
-                    'msgType':  msg3_type,
-                    'value':    {
-                        'name': name,
-                        'info': info
-                    }
-                }
-            elif msg3_type == 'targetInfo':
+            if msg3_type == 'targetInfo':
                 targetId    = str(msg3.getComponentByName('channel'))
                 infoType    = msg3.getComponentByName('type')
 
@@ -1491,26 +1444,6 @@ def decode(pdu):
                         'target':   target,
                         'id':       probeName,
                         'updates':  updatesDict
-                    }
-                }
-
-
-            elif msg3_type == 'rrdFileDump':
-                target      = str(msg3.getComponentByName('target'))
-                probeName   = str(msg3.getComponentByName('probeName'))
-                fileId      = str(msg3.getComponentByName('fileId'))
-                module      = str(msg3.getComponentByName('module'))
-                binFile     = msg3.getComponentByName('bin')
-
-                return {
-                    'from':     msg1_type,
-                    'msgType':  msg3_type,
-                    'value':    {
-                        'target':   target,
-                        'id':       probeName,
-                        'logger':   module,
-                        'fileId':   fileId,
-                        'data':     binFile
                     }
                 }
             elif msg3_type == 'probeActivity':
