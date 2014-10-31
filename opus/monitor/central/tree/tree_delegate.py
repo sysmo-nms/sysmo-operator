@@ -33,7 +33,7 @@ class LoggerItemDelegate(QStyledItemDelegate):
         loggers = index.data(treemod.LoggerItem.LoggersRole)
         if loggers == None:
             QStyledItemDelegate.paint(self, painter, option, index)
-        elif 'bmonitor_logger_rrd' in loggers:
+        elif 'bmonitor_logger_rrd2' in loggers:
             option.rect.setSize(self._rrdToolSize)
             if option.state == QStyle.State_Selected:
                 painter.setBrush(option.palette.hightlightedText())

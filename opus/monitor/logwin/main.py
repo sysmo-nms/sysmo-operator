@@ -66,7 +66,7 @@ class LoggerView(QDialog):
         rrdlogger   = False
         textlogger  = False
         eventlogger = False
-        if 'bmonitor_logger_rrd'    in loggers: rrdlogger = True
+        if 'bmonitor_logger_rrd2'    in loggers: rrdlogger = True
         if 'bmonitor_logger_text'   in loggers: textlogger = True
         if 'bmonitor_logger_event'  in loggers: eventlogger = True
 

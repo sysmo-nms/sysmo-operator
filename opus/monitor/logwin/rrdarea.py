@@ -68,7 +68,7 @@ class RrdFrame(AbstractChannelWidget):
         self._graphElements = dict()
         self._probeName = probe
         self._probeConf = monapi.getProbesDict()[probe]
-        rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
+        rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd2']
         for i in range(len(rrdConf['indexes'])):
             index = rrdConf['indexes'][i]
             self._graphElements[index] = RrdGraphArea(self, index, rrdConf['rgraphs'])
@@ -412,7 +412,7 @@ class RrdLog2(AbstractChannelWidget):
         probes          = monapi.getProbesDict()
         self._probeConf = probes[probe]
 
-        if 'bmonitor_logger_rrd' in self._probeConf['loggers'].keys():
+        if 'bmonitor_logger_rrd2' in self._probeConf['loggers'].keys():
             self._continue()
         else:
             self._cancel()
@@ -424,10 +424,10 @@ class RrdLog2(AbstractChannelWidget):
         self.sizeMove.emit(size)
 
     def _continue(self):
-        print "continue?", self._probeConf['loggers']['bmonitor_logger_rrd'].keys()
-        rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd']
+        print "continue?", self._probeConf['loggers']['bmonitor_logger_rrd2'].keys()
+        rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd2']
         self._master.setProgressMax(len(rrdConf['indexes']))
-        gconf = self._probeConf['loggers']['bmonitor_logger_rrd']['rgraphs']
+        gconf = self._probeConf['loggers']['bmonitor_logger_rrd2']['rgraphs']
         for index in rrdConf['indexes']:
             print index, gconf
             self._rrdElements[index] = RrdGraph2(self, index, gconf)
@@ -447,7 +447,7 @@ class RrdLog2(AbstractChannelWidget):
 
     def handleProbeEvent2(self, msg):
         if msg['msgType'] == 'probeDump':
-            if msg['logger'] == 'bmonitor_logger_rrd':
+            if msg['logger'] == 'bmonitor_logger_rrd2':
                 fileId      = msg['data']['fileId']
                 fileName    = msg['data']['file']
                 self._rrdElements[fileId].handleDump(fileName)

@@ -11,7 +11,6 @@ import  re
 import  os
 import  supercast.main              as supercast
 import  opus.monitor.norrd          as norrd
-import  opus.monitor.http_manager   as httpman
 import  xml.etree.ElementTree as ET
 
 
@@ -355,7 +354,7 @@ class Channel(QObject):
             self._maybeUpdateRrd(key, updates[key])
 
     def _initRrdUpdate(self):
-        self._rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd']['rrdUpdate']
+        self._rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd2']['rrdUpdate']
 
     def _maybeUpdateRrd(self, key, updateString):
         if (self._rrdFilesReady[key] == False):
