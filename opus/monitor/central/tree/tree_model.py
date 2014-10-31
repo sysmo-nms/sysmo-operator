@@ -34,13 +34,13 @@ class ProbeModel(QStandardItemModel):
         ])
         monapi.connectToEvent('targetInfo', self._handleTargetInfo)
         monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
-        monapi.connectToEvent('probeActivity', self._handleProbeActivity)
+        monapi.connectToEvent('probeReturn', self._handleProbeReturn)
 
-    def _handleProbeActivity(self, msg):
+    def _handleProbeReturn(self, msg):
         target = msg['value']['target']
         (boo,parent) = self._itemExist(target)
         if boo == False: return
-        parent.handleProbeActivity(msg)
+        parent.handleProbeReturn(msg)
 
     def _handleTargetInfo(self, msg):
         (boo, target) = self._itemExist(msg['value']['name'])
@@ -144,12 +144,12 @@ class TargetItem(QStandardItem):
         self._setWorstStatus()
         self.emitDataChanged()
 
-    def handleProbeActivity(self, msg):
+    def handleProbeReturn(self, msg):
         count = self.rowCount()
-        probe = msg['value']['name']
+        probe = msg['value']['id']
         for i in range(count):
             if self.child(i).name == probe:
-                self.child(i).handleActivity(msg)
+                self.child(i).handleReturn(msg)
                 break
         self.emitDataChanged()
 
@@ -292,9 +292,9 @@ class ProbeItem(QStandardItem):
 
 
 
-    def handleActivity(self, msg):
+    def handleReturn(self, msg):
+        print "TODO correctly handle RETURN FRom tree_model (timestamp micro): ", msg['value']['nextReturn']
         self.row2_progress.reset()
-        self._lastReturn = msg['value']['textual']
 
     def data(self, role):
         if   role == Qt.DecorationRole:

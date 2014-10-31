@@ -280,12 +280,13 @@ class MonitorProbeActivity(univ.Sequence):
 
 class MonitorProbeReturn(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('target',  char.PrintableString()),
-        namedtype.NamedType('id',      char.PrintableString()),
-        namedtype.NamedType('status',   char.PrintableString()),
-        namedtype.NamedType('originalReply',    char.PrintableString()),
-        namedtype.NamedType('timestamp',        univ.Integer()),
-        namedtype.NamedType('keyVals',   TargetProbeReturnKeyVals())
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('id',           char.PrintableString()),
+        namedtype.NamedType('status',       char.PrintableString()),
+        namedtype.NamedType('originalReply', char.PrintableString()),
+        namedtype.NamedType('timestamp',    univ.Integer()),
+        namedtype.NamedType('keyVals',      TargetProbeReturnKeyVals()),
+        namedtype.NamedType('nextReturn',   univ.Integer())
     )
 
 class MonitorTargetInfo(univ.Sequence):
@@ -1471,8 +1472,9 @@ def decode(pdu):
                 probeId     = str(msg3.getComponentByName('id'))
                 status      = str(msg3.getComponentByName('status'))
                 original_rep = str(msg3.getComponentByName('originalReply'))
-                timestamp   = msg3.getComponentByName('timestamp')
+                timestamp   = int(msg3.getComponentByName('timestamp'))
                 keyVals     = msg3.getComponentByName('keyVals')
+                nextReturn  = int(msg3.getComponentByName('nextReturn'))
 
                 keyValsDict = dict()
                 for i in range(len(keyVals)):
@@ -1489,8 +1491,9 @@ def decode(pdu):
                         'id':           probeId,
                         'status':       status,
                         'originalRep':  original_rep,
-                        'timestamp':    int(timestamp),
-                        'keyVals':      keyValsDict
+                        'timestamp':    timestamp,
+                        'keyVals':      keyValsDict,
+                        'nextReturn':   nextReturn
                     }
                 }
             elif msg3_type == 'monitorReply':

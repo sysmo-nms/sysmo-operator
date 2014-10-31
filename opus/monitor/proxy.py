@@ -145,7 +145,8 @@ class ChanHandler(QObject):
 
     def _handleProbeReturn(self, msg):
         channel = msg['value']['id']
-        self._chanProxy[channel].handleReturn(msg)
+        if channel in self._chanProxy.keys():
+            self._chanProxy[channel].handleReturn(msg)
 
     def _handleRrdLoggerEventMsg(self, msg):
         channel = msg['value']['id']
