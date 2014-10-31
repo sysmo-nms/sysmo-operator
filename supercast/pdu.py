@@ -268,16 +268,6 @@ class MonitorProbeInfo(univ.Sequence):
         namedtype.NamedType('infoType', ProbeInfoType())
     )
 
-class MonitorProbeActivity(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('target',       char.PrintableString()),
-        namedtype.NamedType('probeName',    char.PrintableString()),
-        namedtype.NamedType('timestamp',    univ.Integer()),
-        namedtype.NamedType('probeState',   char.PrintableString()),
-        namedtype.NamedType('returnStatus', char.PrintableString()),
-        namedtype.NamedType('textual',  char.PrintableString())
-    )
-
 class MonitorProbeReturn(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('target',       char.PrintableString()),
@@ -601,16 +591,6 @@ class MonitorPDU_fromServer(univ.Choice):
                     tag.tagClassContext,
                     tag.tagFormatSimple,
                     4
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'probeActivity',
-            MonitorProbeActivity().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    7
                 )
             )
         ),
@@ -1445,26 +1425,6 @@ def decode(pdu):
                         'target':   target,
                         'id':       probeName,
                         'updates':  updatesDict
-                    }
-                }
-            elif msg3_type == 'probeActivity':
-                target      = str(msg3.getComponentByName('target'))
-                probeName   = msg3.getComponentByName('probeName')
-                time        = msg3.getComponentByName('timestamp')
-                probeState  = str(msg3.getComponentByName('probeState'))
-                returnStatus = str(msg3.getComponentByName('returnStatus'))
-                textual     = str(msg3.getComponentByName('textual'))
-                return {
-                    'from': msg1_type,
-                    'msgType':  msg3_type,
-                    'value':    {
-                        'target':       target,
-                        'name':         probeName,
-                        'timestamp':    int(time),
-                        'probeState':   probeState,
-                        'returnStatus': returnStatus,
-                        'textual':      textual
-
                     }
                 }
             elif msg3_type == 'probeReturn':
