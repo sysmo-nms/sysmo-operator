@@ -79,7 +79,7 @@ class RrdFrame(AbstractChannelWidget):
         self.connectProbe()
 
     def handleProbeEvent(self, msg):
-        if msg['msgType'] == 'rrdProbeEvent':
+        if msg['msgType'] == 'loggerRrdEvent':
             index = msg['data']
             self._graphElements[index].rrdUpdateEvent()
         elif msg['msgType'] == 'probeDump':

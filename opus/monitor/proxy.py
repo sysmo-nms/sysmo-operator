@@ -47,38 +47,29 @@ class ChanHandler(QObject):
         self.masterSignalsDict = dict()
         self.masterSignalsDict['probeInfo']     = SimpleSignal(self)
         self.masterSignalsDict['targetInfo']    = SimpleSignal(self)
-        self.masterSignalsDict['probeDump']     = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
-        self.masterSignalsDict['probeEventMsg'] = SimpleSignal(self)
-        self.masterSignalsDict['rrdLoggerEventMsg'] = SimpleSignal(self)
+
+        self.masterSignalsDict['loggerRrdDump']     = SimpleSignal(self)
+        self.masterSignalsDict['loggerRrdEvent'] = SimpleSignal(self)
 
         # connect myself
-        self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
         self.masterSignalsDict['targetInfo'].signal.connect(self._handleTargetInfo)
-        self.masterSignalsDict['probeDump'].signal.connect(self._handleProbeDump)
+        self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
-        self.masterSignalsDict['probeEventMsg'].signal.connect(self._handleEventMsg)
-        self.masterSignalsDict['rrdLoggerEventMsg'].signal.connect(self._handleRrdLoggerEventMsg)
+
+        self.masterSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
+        self.masterSignalsDict['loggerRrdEvent'].signal.connect(self._handleLoggerRrdEventMsg)
         # END
 
     def handleSupercastMsg(self, msg):
         if      msg['msgType'] == 'probeReturn':
             self.masterSignalsDict['probeReturn'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'probeEventMsg':
-            self.masterSignalsDict['probeEventMsg'].signal.emit(msg)
+        elif    msg['msgType'] == 'loggerRrdDump':
+            self.masterSignalsDict['loggerRrdDump'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'rrdLoggerEvent':
-            self.masterSignalsDict['rrdLoggerEventMsg'].signal.emit(msg)
-
-        elif    msg['msgType'] == 'probeDump':
-            self.masterSignalsDict['probeDump'].signal.emit(msg)
-
-        elif    msg['msgType'] == 'rrdProbeDump':
-            self.masterSignalsDict['probeDump'].signal.emit(msg)
-
-        elif    msg['msgType'] == 'eventProbeDump':
-            self.masterSignalsDict['probeDump'].signal.emit(msg)
+        elif    msg['msgType'] == 'loggerRrdEvent':
+            self.masterSignalsDict['loggerRrdEvent'].signal.emit(msg)
 
         elif    msg['msgType'] == 'probeInfo':
             self.masterSignalsDict['probeInfo'].signal.emit(msg)
@@ -144,9 +135,9 @@ class ChanHandler(QObject):
         if channel in self._chanProxy.keys():
             self._chanProxy[channel].handleReturn(msg)
 
-    def _handleRrdLoggerEventMsg(self, msg):
+    def _handleLoggerRrdEventMsg(self, msg):
         channel = msg['value']['id']
-        self._chanProxy[channel].handleRrdLoggerEvent(msg)
+        self._chanProxy[channel].handleLoggerRrdEvent(msg)
 
     def _handleEventMsg(self, msg):
         channel = msg['value']['id']
@@ -345,10 +336,20 @@ class Channel(QObject):
         else:
             print "unknown dump type ", dumpType
 
-    def handleRrdLoggerEvent(self, msg):
+    def handleLoggerRrdEvent(self, msg):
         updates = msg['value']['updates']
-        for key in updates.keys():
-            self._maybeUpdateRrd(key, updates[key])
+        print updates
+        for index in updates.keys():
+            if updates[index] != '':
+                self._maybeUpdateRrd(index, updates[index])
+            else:
+                updateMsg = dict()
+                updateMsg['msgType'] = 'loggerRrdEvent'
+                updateMsg['logger']  = 'bmonitor_logger_rrd2'
+                updateMsg['data']    = index
+                self.signal.emit(updateMsg)
+ 
+                
 
     def _initRrdUpdate(self):
         self._rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd2']['rrdUpdate']
@@ -373,7 +374,7 @@ class Channel(QObject):
         index   = reply['data']
         if status == 'ok':
             updateMsg = dict()
-            updateMsg['msgType'] = 'rrdProbeEvent'
+            updateMsg['msgType'] = 'loggerRrdEvent'
             updateMsg['logger']  = 'bmonitor_logger_rrd2'
             updateMsg['data']    = index
             self.signal.emit(updateMsg)

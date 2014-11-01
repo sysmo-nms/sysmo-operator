@@ -182,63 +182,38 @@ class TargetInfoType(univ.Enumerated):
         ('update', 2)
     )
 
-class MonitorProbeEvent(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('probeName',    char.PrintableString()),
-        namedtype.NamedType('eventId',      univ.Integer()),
-        namedtype.NamedType('insertTs',     univ.Integer()),
-        namedtype.NamedType('ackTs',        univ.Integer()),
-        namedtype.NamedType('status',       char.PrintableString()),
-        namedtype.NamedType('textual',      char.PrintableString()),
-        namedtype.NamedType('ackNeeded',    univ.Boolean()),
-        namedtype.NamedType('ackValue',     char.PrintableString()),
-        namedtype.NamedType('groupOwner',   char.PrintableString()),
-        namedtype.NamedType('userOwner',    char.PrintableString()),
-    )
-
-class MonitorProbeEvents(univ.SequenceOf):
-    componentType = MonitorProbeEvent()
-
-class MonitorEventProbeDump(univ.Sequence):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType('target',   char.PrintableString()),
-        namedtype.NamedType('probe',    char.PrintableString()),
-        namedtype.NamedType('module',   char.PrintableString()),
-        namedtype.NamedType('events',   MonitorProbeEvents()),
-    )
-
-class RrdIdToFile(univ.Sequence):
+class LoggerRrdIdToFile(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('index',   univ.Integer()),
         namedtype.NamedType('fileName',    char.PrintableString())
     )
 
-class RrdIdToFileSeq(univ.SequenceOf):
-    componentType = RrdIdToFile()
+class LoggerRrdIdToFileSeq(univ.SequenceOf):
+    componentType = LoggerRrdIdToFile()
 
-class MonitorRrdProbeDump(univ.Sequence):
+class MonitorLoggerRrdDump(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('target',   char.PrintableString()),
         namedtype.NamedType('probe',    char.PrintableString()),
         namedtype.NamedType('module',   char.PrintableString()),
-        namedtype.NamedType('indexes',  RrdIdToFileSeq()),
+        namedtype.NamedType('indexes',  LoggerRrdIdToFileSeq()),
         namedtype.NamedType('path',     char.PrintableString())
     )
 
-class RrdLoggerUpdate(univ.Sequence):
+class LoggerRrdUpdate(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('index',   univ.Integer()),
         namedtype.NamedType('update',  char.PrintableString())
     )
 
-class RrdLoggerUpdates(univ.SequenceOf):
-    componentType = RrdLoggerUpdate()
+class LoggerRrdUpdates(univ.SequenceOf):
+    componentType = LoggerRrdUpdate()
 
-class MonitorRrdLoggerEvent(univ.Sequence):
+class MonitorLoggerRrdEvent(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('target',       char.PrintableString()),
         namedtype.NamedType('probeName',    char.PrintableString()),
-        namedtype.NamedType('updates',      RrdLoggerUpdates())
+        namedtype.NamedType('updates',      LoggerRrdUpdates())
     )
 
 class MonitorProbeDump(univ.Sequence):
@@ -585,42 +560,12 @@ class MonitorPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'probeDump',
-            MonitorProbeDump().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    4
-                )
-            )
-        ),
-        namedtype.NamedType(
             'probeReturn',
             MonitorProbeReturn().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
-                    8
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'eventProbeDump',
-            MonitorEventProbeDump().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    10 
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'probeEventMsg',
-            MonitorProbeEvent().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    11 
+                    3
                 )
             )
         ),
@@ -630,7 +575,7 @@ class MonitorPDU_fromServer(univ.Choice):
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
-                    12
+                    10
                 )
             )
         ),
@@ -640,7 +585,7 @@ class MonitorPDU_fromServer(univ.Choice):
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
-                    13
+                    11
                 )
             )
         ),
@@ -650,27 +595,27 @@ class MonitorPDU_fromServer(univ.Choice):
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
+                    12
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'loggerRrdDump',
+            MonitorLoggerRrdDump().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
                     20
                 )
             )
         ),
         namedtype.NamedType(
-            'rrdProbeDump',
-            MonitorRrdProbeDump().subtype(
+            'loggerRrdEvent',
+            MonitorLoggerRrdEvent().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
-                    30
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'rrdLoggerEvent',
-            MonitorRrdLoggerEvent().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    35
+                    21
                 )
             )
         )
@@ -1294,22 +1239,6 @@ def decode(pdu):
                         'infoType':     infoType.prettyPrint()
                     }
                 }
-            elif msg3_type == 'probeDump':
-                channel     = str(msg3.getComponentByName('channel'))
-                probeId     = str(msg3.getComponentByName('name'))
-                module      = msg3.getComponentByName('module')
-                binaryData  = msg3.getComponentByName('data')
-
-                return {
-                    'from': msg1_type,
-                    'msgType':  msg3_type,
-                    'value':    {
-                        'target': channel,
-                        'id':     probeId,
-                        'logger': module,
-                        'data':   str(binaryData)
-                    }
-                }
             elif msg3_type == 'probeEventMsg':
                 probeName   = msg3.getComponentByName('probeName')
                 eventId     = msg3.getComponentByName('eventId')
@@ -1379,7 +1308,7 @@ def decode(pdu):
                         'data':   eventsList
                     }
                 }
-            elif msg3_type == 'rrdProbeDump':
+            elif msg3_type == 'loggerRrdDump':
                 target      = str(msg3.getComponentByName('target'))
                 probeName   = str(msg3.getComponentByName('probe'))
                 module      = str(msg3.getComponentByName('module'))
@@ -1406,7 +1335,7 @@ def decode(pdu):
                     }
                 }
 
-            elif msg3_type == 'rrdLoggerEvent':
+            elif msg3_type == 'loggerRrdEvent':
                 target      = str(msg3.getComponentByName('target'))
                 probeName   = str(msg3.getComponentByName('probeName'))
                 updates     = msg3.getComponentByName('updates')
