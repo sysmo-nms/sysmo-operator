@@ -607,8 +607,8 @@ class WaitRegisterElementBox(QProgressDialog):
         self._executeInfo()
 
     def _executeInfo(self):
-        ipv = self._wizPage.field('ip_version')
-        if ipv == IP_V4:
+        ipvf = self._wizPage.field('ip_version')
+        if ipvf == IP_V4:
             ipv = "v4"
             ip  = self._wizPage.field('ip4_value')
         else:
@@ -669,11 +669,12 @@ class WaitRegisterElementBox(QProgressDialog):
             v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
             v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
 
-        engineId = self._wizPage._wizard._engineId
+        engineId    = self._wizPage._wizard._engineId
         ifSelection = self._wizPage._wizard._ifSelection
 
+        print "if selection: ", ifSelection
         supercast.send(
-            'monitorSnmpUpdateElementQuery',
+            'monitorSnmpElementCreateQuery',
             (
                 ipv,
                 ip,

@@ -303,7 +303,7 @@ class IpInfo(univ.Sequence):
 class IfSelection(univ.SequenceOf):
     componentType = univ.Integer()
 
-class SnmpUpdateElementQuery(univ.Sequence):
+class SnmpElementCreateQuery(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('ip',           IpInfo()),
         namedtype.NamedType('port',         univ.Integer()),
@@ -349,8 +349,8 @@ class MonitorExtendedQuery(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'snmpUpdateElementQuery',
-            SnmpUpdateElementQuery().subtype(
+            'snmpElementCreateQuery',
+            SnmpElementCreateQuery().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -1501,9 +1501,9 @@ def encode(pduType, payload):
     elif pduType == 'monitorSnmpElementInfoQuery':
         (queryId, args) = payload
         return encode_monitorSnmpElementInfoQuery(queryId, args)
-    elif pduType == 'monitorSnmpUpdateElementQuery':
+    elif pduType == 'monitorSnmpElementCreateQuery':
         (queryId, args) = payload
-        return encode_monitorSnmpUpdateElementQuery(queryId, args)
+        return encode_monitorSnmpElementCreateQuery(queryId, args)
     else:
         print "Cannont encode PDU: ", pduType
         return False
@@ -1555,7 +1555,7 @@ def encode_simulateCheck(queryId, checkConfig):
     pdu = encoder.encode(pduDef)
     return pdu
 
-def encode_monitorSnmpUpdateElementQuery(queryId, args):
+def encode_monitorSnmpElementCreateQuery(queryId, args):
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
             v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey,
                 engineId, ifSelection) = args
@@ -1563,32 +1563,32 @@ def encode_monitorSnmpUpdateElementQuery(queryId, args):
     ipinfo.setComponentByName('version', ipv)
     ipinfo.setComponentByName('stringVal', ip)
 
-    snmpUpdateElementQuery = SnmpUpdateElementQuery().subtype(
+    snmpElementCreateQuery = SnmpElementCreateQuery().subtype(
         implicitTag=tag.Tag(
             tag.tagClassContext,
             tag.tagFormatSimple,
             1
         )
     )
-    snmpUpdateElementQuery.setComponentByName('ip',       ipinfo)
-    snmpUpdateElementQuery.setComponentByName('port',     int(port))
-    snmpUpdateElementQuery.setComponentByName('timeout',  int(timeout))
-    snmpUpdateElementQuery.setComponentByName('snmpVer',  snmpVer)
-    snmpUpdateElementQuery.setComponentByName('community',community)
-    snmpUpdateElementQuery.setComponentByName('v3SecLevel',   v3SecL)
-    snmpUpdateElementQuery.setComponentByName('v3User',       v3User)
-    snmpUpdateElementQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
-    snmpUpdateElementQuery.setComponentByName('v3AuthKey',    v3AuthKey)
-    snmpUpdateElementQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
-    snmpUpdateElementQuery.setComponentByName('v3PrivKey',    v3PrivKey)
-    snmpUpdateElementQuery.setComponentByName('engineId',     engineId)
+    snmpElementCreateQuery.setComponentByName('ip',       ipinfo)
+    snmpElementCreateQuery.setComponentByName('port',     int(port))
+    snmpElementCreateQuery.setComponentByName('timeout',  int(timeout))
+    snmpElementCreateQuery.setComponentByName('snmpVer',  snmpVer)
+    snmpElementCreateQuery.setComponentByName('community',community)
+    snmpElementCreateQuery.setComponentByName('v3SecLevel',   v3SecL)
+    snmpElementCreateQuery.setComponentByName('v3User',       v3User)
+    snmpElementCreateQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
+    snmpElementCreateQuery.setComponentByName('v3AuthKey',    v3AuthKey)
+    snmpElementCreateQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
+    snmpElementCreateQuery.setComponentByName('v3PrivKey',    v3PrivKey)
+    snmpElementCreateQuery.setComponentByName('engineId',     engineId)
     ifSel = IfSelection()
     for i in range(len(ifSelection)):
         ifSel.setComponentByPosition(i, ifSelection[i])
-    snmpUpdateElementQuery.setComponentByName('ifSelection',    ifSel)
+    snmpElementCreateQuery.setComponentByName('ifSelection',    ifSel)
 
     extendedQuery   = MonitorExtendedQuery()
-    extendedQuery.setComponentByName('snmpUpdateElementQuery', snmpUpdateElementQuery)
+    extendedQuery.setComponentByName('snmpElementCreateQuery', snmpElementCreateQuery)
 
     extendedQueryMsg = MonitorExtendedQueryMsg().subtype(
         implicitTag=tag.Tag(
