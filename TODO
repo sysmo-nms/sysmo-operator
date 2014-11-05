@@ -2,16 +2,12 @@
 # MODULE MONITOR #
 ##################
 ### HIGH
-- SNMP element rrdtool view
-- rrd time range slides
 - Dashboards
 - Services.
 
 ### MEDIUM:
+- QTreeWidget with user definede property tree
 - proxy.py in a thread (lock the main loop)
-- rrd time range slider for individual probes, or the entire set of probes
-for targets and custom targets.
-- rrd editor
 - custom target view with probes from diferents targets with tree views:
 . standard target view, look like a target view,
 . MDI view, when the user create his own rrd graphs view,
