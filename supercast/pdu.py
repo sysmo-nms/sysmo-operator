@@ -316,7 +316,6 @@ class SnmpElementCreateQuery(univ.Sequence):
         namedtype.NamedType('v3AuthKey',    char.PrintableString()),
         namedtype.NamedType('v3PrivAlgo',   char.PrintableString()),
         namedtype.NamedType('v3PrivKey',    char.PrintableString()),
-        namedtype.NamedType('engineId',     char.PrintableString()),
         namedtype.NamedType('ifSelection',  IfSelection()),
     )
 
@@ -1557,8 +1556,7 @@ def encode_simulateCheck(queryId, checkConfig):
 
 def encode_monitorSnmpElementCreateQuery(queryId, args):
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
-            v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey,
-                engineId, ifSelection) = args
+            v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey,ifSelection) = args
     ipinfo = IpInfo()
     ipinfo.setComponentByName('version', ipv)
     ipinfo.setComponentByName('stringVal', ip)
@@ -1570,18 +1568,17 @@ def encode_monitorSnmpElementCreateQuery(queryId, args):
             1
         )
     )
-    snmpElementCreateQuery.setComponentByName('ip',       ipinfo)
-    snmpElementCreateQuery.setComponentByName('port',     int(port))
-    snmpElementCreateQuery.setComponentByName('timeout',  int(timeout))
-    snmpElementCreateQuery.setComponentByName('snmpVer',  snmpVer)
-    snmpElementCreateQuery.setComponentByName('community',community)
-    snmpElementCreateQuery.setComponentByName('v3SecLevel',   v3SecL)
-    snmpElementCreateQuery.setComponentByName('v3User',       v3User)
-    snmpElementCreateQuery.setComponentByName('v3AuthAlgo',   v3AuthAlg)
-    snmpElementCreateQuery.setComponentByName('v3AuthKey',    v3AuthKey)
-    snmpElementCreateQuery.setComponentByName('v3PrivAlgo',   v3PrivAlg)
-    snmpElementCreateQuery.setComponentByName('v3PrivKey',    v3PrivKey)
-    snmpElementCreateQuery.setComponentByName('engineId',     engineId)
+    snmpElementCreateQuery.setComponentByName('ip',         ipinfo)
+    snmpElementCreateQuery.setComponentByName('port',       int(port))
+    snmpElementCreateQuery.setComponentByName('timeout',    int(timeout))
+    snmpElementCreateQuery.setComponentByName('snmpVer',    snmpVer)
+    snmpElementCreateQuery.setComponentByName('community',  community)
+    snmpElementCreateQuery.setComponentByName('v3SecLevel', v3SecL)
+    snmpElementCreateQuery.setComponentByName('v3User',     v3User)
+    snmpElementCreateQuery.setComponentByName('v3AuthAlgo', v3AuthAlg)
+    snmpElementCreateQuery.setComponentByName('v3AuthKey',  v3AuthKey)
+    snmpElementCreateQuery.setComponentByName('v3PrivAlgo', v3PrivAlg)
+    snmpElementCreateQuery.setComponentByName('v3PrivKey',  v3PrivKey)
     ifSel = IfSelection()
     for i in range(len(ifSelection)):
         ifSel.setComponentByPosition(i, ifSelection[i])

@@ -452,13 +452,10 @@ class WaitSnmpInfoBox(QProgressDialog):
 
         if (self.value() == 1):
             self.setLabelText("Get engine ID...")
-        elif (self.value()  == 2):
-            self._wizPage.setEngineId(reply['value']['reply'])
-            self.setLabelText("Get system infos...")
-        elif (self.value() == 3):
+        elif (self.value() == 2):
             self._elementName   = reply['value']['reply']
             self.setLabelText("Get interfaces infos...")
-        elif (self.value() == 4):
+        elif (self.value() == 3):
             self._elementInterfaces = reply['value']['reply']
 
 
@@ -584,7 +581,6 @@ class Page3(QWizardPage):
         eConf['snmp_v3_auth_val'] = self.field('snmp_v3_auth_val')
         eConf['snmp_v3_priv_alg'] = self.field('snmp_v3_priv_alg')
         eConf['snmp_v3_priv_val'] = self.field('snmp_v3_priv_val')
-        eConf['engine_id']  = self._wizard._engineId
         eConf['if_selection']  = self._wizard._ifSelection
         i = 0
         for key in eConf.keys():
@@ -669,7 +665,6 @@ class WaitRegisterElementBox(QProgressDialog):
             v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
             v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
 
-        engineId    = self._wizPage._wizard._engineId
         ifSelection = self._wizPage._wizard._ifSelection
 
         print "if selection: ", ifSelection
@@ -688,7 +683,6 @@ class WaitRegisterElementBox(QProgressDialog):
                 v3AuthKey,
                 v3PrivAlg,
                 v3PrivKey,
-                engineId,
                 ifSelection
             ),
             self._elementInfoReply
