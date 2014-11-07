@@ -246,7 +246,7 @@ class Channel(QObject):
         update = self._rrdUpdatesPending[index].popleft()
         updateString = "update %s %s %s" % (
             self._rrdFiles[index].fileName(),
-            self._rrdUpdateString(),
+            self._rrdUpdateString,
             update)
         norrd.cmd(
             updateString,
@@ -355,6 +355,12 @@ class Channel(QObject):
         self._rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd2']['rrdUpdate']
 
     def _maybeUpdateRrd(self, key, updateString):
+
+        # TODO correctly handle updates when missing dump msg
+        # Rewrite proxy module
+        if key not in self._rrdFilesReady: return
+        # TODO END
+
         if (self._rrdFilesReady[key] == False):
             if key in self._rrdUpdatesPending:
                 self._rrdUpdatesPending[key].append(updateString)

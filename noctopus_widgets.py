@@ -1,6 +1,7 @@
 # PySide
 from    PySide.QtSvg    import QSvgWidget
 from    PySide.QtCore   import (
+    QObject,
     Qt,
     QUrl,
     Signal,
@@ -22,6 +23,25 @@ from    PySide.QtGui    import (
 )
 
 import noctopus_images
+import tempfile
+from   functools import partial
+
+# temporary file
+class NTemporaryFile(QObject):
+    def __init__(self, parent=None):
+        super(NTemporaryFile, self).__init__(parent)
+        self._f = tempfile.NamedTemporaryFile(prefix='noc_tmp')
+        name = self._f.name
+        self.destroyed.connect(partial(NTemporaryFile._deleteFile, name))
+        self._f.close()
+
+    def fileName(self):
+        return self._f.name
+
+    @staticmethod
+    def _deleteFile(f):
+        print "will delete file: ", f
+
 
 # SPLITER
 class NSplitter(QSplitter):

@@ -1,4 +1,5 @@
 from    PySide.QtCore   import (
+    QObject,
     QTemporaryFile,
     QSettings,
     QSize,
@@ -34,12 +35,12 @@ from    noctopus_widgets    import (
 from    opus.monitor.proxy  import AbstractChannelWidget, ChanHandler
 import  opus.monitor.api    as monapi
 import  opus.monitor.norrd  as norrd
-import  nocapi
+from    noctopus_widgets import NTemporaryFile
 
 import  nocapi
 import  platform
+import  tempfile
 import  re
-
 
 class RrdArea(NFrameContainer):
     def __init__(self, parent, probe):
@@ -111,11 +112,9 @@ class RrdGraphArea(NFrameContainer):
 class RrdGraph(QLabel):
     def __init__(self, parent, graphConf):
         super(RrdGraph, self).__init__(parent)
-        self._rrdGraphFile  = QTemporaryFile(self)
-        self._rrdGraphFile.open()
-        self._rrdGraphFile.close()
-        self._rrdGraphFileName = self._rrdGraphFile.fileName()
-        self._rrdPixmap = QPixmap()
+        self._rrdGraphFile      = NTemporaryFile(self)
+        self._rrdGraphFileName  = self._rrdGraphFile.fileName()
+        self._rrdPixmap         = QPixmap()
         self.setPixmap(self._rrdPixmap)
         #if platform.system() == 'Windows':
             #winfileName = filename.replace("/","\\\\").replace(":", "\\:")

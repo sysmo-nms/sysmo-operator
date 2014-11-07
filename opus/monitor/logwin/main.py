@@ -1,5 +1,4 @@
 from    PySide.QtCore   import (
-    QTemporaryFile,
     QSettings,
     QSize,
     QTimeLine,
