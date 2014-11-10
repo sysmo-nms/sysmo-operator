@@ -369,30 +369,39 @@ class WaitSnmpInfoBox(QProgressDialog):
         snmpVer = self._wizPage.field('snmp_version')
         if snmpVer == SNMP_V1:
             community = self._wizPage.field('snmp_v1_community')
-            snmpVer = "1"
-            v3SecL  = "noAuthNoPriv"
-            v3User  = "undefined"
-            v3AuthAlg = "SHA"
-            v3AuthKey = "undefined"
-            v3PrivAlg = "AES"
-            v3PrivKey = "undefined"
+            snmpVer     = "1"
+            v3SecL      = "noAuthNoPriv"
+            v3User      = "undefined"
+            v3AuthAlg   = "SHA"
+            v3AuthKey   = "undefined"
+            v3PrivAlg   = "AES"
+            v3PrivKey   = "undefined"
         if snmpVer == SNMP_V2:
-            community = self._wizPage.field('snmp_v2_community')
-            snmpVer = "2c"
-            v3SecL  = "noAuthNoPriv"
-            v3User  = "undefined"
-            v3AuthAlg = "SHA"
-            v3AuthKey = "undefined"
-            v3PrivAlg = "AES"
-            v3PrivKey = "undefined"
+            community   = self._wizPage.field('snmp_v2_community')
+            snmpVer     = "2c"
+            v3SecL      = "noAuthNoPriv"
+            v3User      = "undefined"
+            v3AuthAlg   = "SHA"
+            v3AuthKey   = "undefined"
+            v3PrivAlg   = "AES"
+            v3PrivKey   = "undefined"
         else:
-            v3SecLevel = self._wizPage.field('snmp_v3_sec_level')
+            v3SecLevel  = self._wizPage.field('snmp_v3_sec_level')
+            v3User      = self._wizPage.field('snmp_v3_user')
+            community   = "undefined"
+            snmpVer     = "3"
             if v3SecLevel == NO_AUTH_NO_PRIV:
-                v3SecL = 'noAuthNoPriv'
+                v3SecL      = 'noAuthNoPriv'
+                v3AuthKey   = "undefined"
+                v3PrivKey   = "undefined"
             elif v3SecLevel == AUTH_NO_PRIV:
-                v3SecL = 'authNoPriv'
+                v3SecL      = 'authNoPriv'
+                v3AuthKey   = self._wizPage.field('snmp_v3_auth_val')
+                v3PrivKey   = "undefined"
             elif v3SecLevel == AUTH_PRIV:
-                v3SecL = 'authPriv'
+                v3SecL      = 'authPriv'
+                v3AuthKey   = self._wizPage.field('snmp_v3_auth_val')
+                v3PrivKey   = self._wizPage.field('snmp_v3_priv_val')
 
             v3AuthAlgo = self._wizPage.field('snmp_v3_auth_alg')
             if v3AuthAlgo == AUTH_SHA:
@@ -411,12 +420,6 @@ class WaitSnmpInfoBox(QProgressDialog):
                 v3PrivAlg = 'DES'
             elif v3PrivAlgo == PRIV_3DES:
                 v3PrivAlg = '3DES'
-
-            community = "undefined"
-            snmpVer = "3"
-            v3User  = self._wizPage.field('snmp_v3_user')
-            v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
-            v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
 
         supercast.send(
             'monitorSnmpElementInfoQuery',
@@ -633,13 +636,20 @@ class WaitRegisterElementBox(QProgressDialog):
             v3PrivAlg = "AES"
             v3PrivKey = "undefined"
         else:
+            v3User  =   self._wizPage.field('snmp_v3_user')
             v3SecLevel = self._wizPage.field('snmp_v3_sec_level')
             if v3SecLevel == NO_AUTH_NO_PRIV:
                 v3SecL = 'noAuthNoPriv'
+                v3AuthKey = "undefined"
+                v3PrivKey = "undefined"
             elif v3SecLevel == AUTH_NO_PRIV:
                 v3SecL = 'authNoPriv'
+                v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
+                v3PrivKey = "undefined"
             elif v3SecLevel == AUTH_PRIV:
                 v3SecL = 'authPriv'
+                v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
+                v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
 
             v3AuthAlgo = self._wizPage.field('snmp_v3_auth_alg')
             if v3AuthAlgo == AUTH_SHA:
@@ -661,9 +671,6 @@ class WaitRegisterElementBox(QProgressDialog):
 
             community = "undefined"
             snmpVer = "3"
-            v3User  =   self._wizPage.field('snmp_v3_user')
-            v3AuthKey = self._wizPage.field('snmp_v3_auth_val')
-            v3PrivKey = self._wizPage.field('snmp_v3_priv_val')
 
         ifSelection = self._wizPage._wizard._ifSelection
 
@@ -689,4 +696,6 @@ class WaitRegisterElementBox(QProgressDialog):
         )
 
     def _elementInfoReply(self, value):
-        print "reply!", value
+        trayicon = nocapi.nGetSystemTrayIcon()
+        trayicon.showMessage('Create SNMP element return:', 'Sucess', msecs=3000)
+        self.deleteLater()

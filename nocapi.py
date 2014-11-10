@@ -154,3 +154,6 @@ def nGetGroups():
 def nAddMainMenu(menu):
     mw = noctopus_main.NMainWindow.singleton
     mw.setApplicationMenu(menu)
+
+def nGetSystemTrayIcon():
+    return noctopus_main.NMainWindow.singleton._trayIcon
