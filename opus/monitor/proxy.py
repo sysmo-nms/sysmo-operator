@@ -45,16 +45,16 @@ class ChanHandler(QObject):
     def _initSignals(self):
         # signals
         self.masterSignalsDict = dict()
-        self.masterSignalsDict['probeInfo']     = SimpleSignal(self)
-        self.masterSignalsDict['targetInfo']    = SimpleSignal(self)
+        self.masterSignalsDict['infoProbe']     = SimpleSignal(self)
+        self.masterSignalsDict['infoTarget']    = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
 
         self.masterSignalsDict['loggerRrdDump']     = SimpleSignal(self)
         self.masterSignalsDict['loggerRrdEvent'] = SimpleSignal(self)
 
         # connect myself
-        self.masterSignalsDict['targetInfo'].signal.connect(self._handleTargetInfo)
-        self.masterSignalsDict['probeInfo'].signal.connect(self._handleProbeInfo)
+        self.masterSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
+        self.masterSignalsDict['infoProbe'].signal.connect(self._handleProbeInfo)
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
 
         self.masterSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
@@ -71,11 +71,11 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'loggerRrdEvent':
             self.masterSignalsDict['loggerRrdEvent'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'probeInfo':
-            self.masterSignalsDict['probeInfo'].signal.emit(msg)
+        elif    msg['msgType'] == 'infoProbe':
+            self.masterSignalsDict['infoProbe'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'targetInfo':
-            self.masterSignalsDict['targetInfo'].signal.emit(msg)
+        elif    msg['msgType'] == 'infoTarget':
+            self.masterSignalsDict['infoTarget'].signal.emit(msg)
 
         elif    msg['msgType'] == 'staticChanInfo':
             chan    = msg['value']
@@ -144,14 +144,14 @@ class ChanHandler(QObject):
         self._chanProxy[channel].handleEvent(msg)
 
     def _handleProbeInfo(self, msg):
-        probeInfo   = msg['value']
-        probeName   = probeInfo['name']
-        self.probes[probeName] = probeInfo
+        infoProbe   = msg['value']
+        probeName   = infoProbe['name']
+        self.probes[probeName] = infoProbe
 
     def _handleTargetInfo(self, msg):
-        targetInfo  = msg['value']
-        targetName  = targetInfo['name']
-        self.targets[targetName] = targetInfo
+        infoTarget  = msg['value']
+        targetName  = infoTarget['name']
+        self.targets[targetName] = infoTarget
 
     # startup subscribe
     def _autoSubscribe(self):
@@ -160,33 +160,8 @@ class ChanHandler(QObject):
     def _handleAutoSubscribe(self, msg):
         if msg['msgType'] == 'subscribeOk':
             self._masterchanRunning = True
-            nocapi.nQuery('getChecksInfo', self._handleChecksInfo)
         else:
             print "error: ", msg
-
-    def _handleChecksInfo(self, msg):
-        checkInfos = dict()
-        checkDefs = msg['value']['infos']
-        for i in range(len(checkDefs)):
-            root = ET.fromstring(checkDefs[i])
-            chk  = root.attrib['command']
-            checkInfos[chk] = dict()
-            checkInfos[chk]['path']  = root.find('path').text
-            checkInfos[chk]['descr'] = root.find('descr').text
-
-            fdict = dict()
-            finfo = root.find('flags_def')
-            for i in finfo.findall('flag_info'):
-                name = i.attrib['name']
-                fdict[name] = dict()
-                fdict[name]['usage']   = i.find('usage').text
-                fdict[name]['default'] = i.find('default').text
-                fdict[name]['role']    = i.find('role').text
-            checkInfos[chk]['flags_def'] = fdict
-        self.checkInfos = checkInfos
-
-    def getCheckInfos(self):
-        return self.checkInfos
 
 class Channel(QObject):
     signal = Signal(dict)

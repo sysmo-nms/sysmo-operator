@@ -67,7 +67,6 @@ class ProbeMenu(QMenu):
         monapi.execUAction(action, element)
 
     def _suspendProbe(self):
-        #self._infoBox.showMessage("You are about to suspend a probe check. Is it allright?", "alert_suspend_probe")
         #print "result is: ", self._infoBox.result()
         trayicon = nocapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Suspend check succeeded blablabla bla...', msecs=3000)

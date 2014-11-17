@@ -42,6 +42,3 @@ def getUActionsCmds():
 def execUAction(action, target):
     ua = opus.monitor.commands.user_actions.UserActions.singleton
     return ua.execUAction(action, target)
-    
-def getCheckInfos():
-    return opus.monitor.proxy.ChanHandler.singleton.checkInfos

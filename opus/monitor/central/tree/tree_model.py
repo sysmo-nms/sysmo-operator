@@ -32,8 +32,8 @@ class ProbeModel(QStandardItemModel):
                 "Ip|Host",
                 "Timeline"
         ])
-        monapi.connectToEvent('targetInfo', self._handleTargetInfo)
-        monapi.connectToEvent('probeInfo',  self._handleProbeInfo)
+        monapi.connectToEvent('infoTarget', self._handleTargetInfo)
+        monapi.connectToEvent('infoProbe',  self._handleProbeInfo)
         monapi.connectToEvent('probeReturn', self._handleProbeReturn)
 
     def _handleProbeReturn(self, msg):

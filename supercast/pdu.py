@@ -3,18 +3,6 @@ from pyasn1.codec.ber   import encoder, decoder
 
 ##############################################################################
 ##############################################################################
-#### ENMS PDU DEF ############################################################
-##############################################################################
-##############################################################################
-class EsnmpPDU(univ.Choice):
-    componentType = namedtype.NamedTypes(
-        namedtype.NamedType(
-            'text', char.PrintableString()),
-        namedtype.NamedType('id', univ.Integer())
-    )
-
-##############################################################################
-##############################################################################
 #### MONITOR PDU DEF #########################################################
 ##############################################################################
 ##############################################################################
@@ -168,14 +156,14 @@ class TargetProbeReturnKeyVal(univ.Sequence):
 class TargetProbeReturnKeyVals(univ.SequenceOf):
     componentType = TargetProbeReturnKeyVal()
 
-class ProbeInfoType(univ.Enumerated):
+class InfoProbeType(univ.Enumerated):
     namedValues = namedval.NamedValues(
         ('create', 0),
         ('delete', 1),
         ('update', 2)
     )
 
-class TargetInfoType(univ.Enumerated):
+class InfoTargetType(univ.Enumerated):
     namedValues = namedval.NamedValues(
         ('create', 0),
         ('delete', 1),
@@ -224,7 +212,7 @@ class MonitorProbeDump(univ.Sequence):
         namedtype.NamedType('data',     univ.OctetString()),
     )
 
-class MonitorProbeInfo(univ.Sequence):
+class MonitorInfoProbe(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('channel',  char.PrintableString()),
         namedtype.NamedType('name',     char.PrintableString()),
@@ -240,7 +228,7 @@ class MonitorProbeInfo(univ.Sequence):
         namedtype.NamedType('loggers',      Loggers()),
         namedtype.NamedType('properties',   Properties()),
         namedtype.NamedType('active',   univ.Integer()),
-        namedtype.NamedType('infoType', ProbeInfoType())
+        namedtype.NamedType('infoType', InfoProbeType())
     )
 
 class MonitorProbeReturn(univ.Sequence):
@@ -254,11 +242,12 @@ class MonitorProbeReturn(univ.Sequence):
         namedtype.NamedType('nextReturn',   univ.Integer())
     )
 
-class MonitorTargetInfo(univ.Sequence):
+class MonitorInfoTarget(univ.Sequence):
     componentType = namedtype.NamedTypes(
-        namedtype.NamedType('channel',      char.PrintableString()),
-        namedtype.NamedType('properties',   TargetProperties()),
-        namedtype.NamedType('type',         TargetInfoType())
+        namedtype.NamedType('channel',          char.PrintableString()),
+        namedtype.NamedType('properties',       TargetProperties()),
+        namedtype.NamedType('sysProperties',    TargetProperties()),
+        namedtype.NamedType('type',             InfoTargetType())
     )
 
 class MonitorCreateTarget(univ.Sequence):
@@ -485,46 +474,6 @@ class MonitorExtendedQueryFromServer(univ.Sequence):
 class MonitorPDU_fromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
-            'createTarget',
-            MonitorCreateTarget().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    1
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'createSimpleProbe',
-            MonitorCreateSimpleProbe().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    4
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'simulateCheck',
-            MonitorSimulateCheck().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    7
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'query',
-            MonitorQuery().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    10
-                )
-            )
-        ),
-        namedtype.NamedType(
             'extendedQueryFromClient',
             MonitorExtendedQueryFromClient().subtype(
                 implicitTag=tag.Tag(
@@ -539,8 +488,8 @@ class MonitorPDU_fromClient(univ.Choice):
 class MonitorPDU_fromServer(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
-            'targetInfo',
-            MonitorTargetInfo().subtype(
+            'infoTarget',
+            MonitorInfoTarget().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -549,8 +498,8 @@ class MonitorPDU_fromServer(univ.Choice):
             )
         ),
         namedtype.NamedType(
-            'probeInfo',
-            MonitorProbeInfo().subtype(
+            'infoProbe',
+            MonitorInfoProbe().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -568,27 +517,7 @@ class MonitorPDU_fromServer(univ.Choice):
                 )
             )
         ),
-        namedtype.NamedType(
-            'monitorReply',
-            MonitorReply().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    10
-                )
-            )
-        ),
-        namedtype.NamedType(
-            'getCheckReply',
-            GetCheckReply().subtype(
-                implicitTag=tag.Tag(
-                    tag.tagClassContext,
-                    tag.tagFormatSimple,
-                    11
-                )
-            )
-        ),
-        namedtype.NamedType(
+       namedtype.NamedType(
             'extendedQueryFromServer',
             MonitorExtendedQueryFromServer().subtype(
                 implicitTag=tag.Tag(
@@ -1063,11 +992,11 @@ def decode(pdu):
         if msg2_type == 'fromServer':
             msg3        = msg2.getComponent()
             msg3_type   = msg2.getName()
-            if msg3_type == 'targetInfo':
+            if msg3_type == 'infoTarget':
                 targetId    = str(msg3.getComponentByName('channel'))
                 infoType    = msg3.getComponentByName('type')
-
                 infoProp    = msg3.getComponentByName('properties')
+                infoSysProp = msg3.getComponentByName('sysProperties')
                 propDict    = dict()
                 for i in range(len(infoProp)):
                     prop = infoProp.getComponentByPosition(i)
@@ -1075,21 +1004,28 @@ def decode(pdu):
                     val  = str(prop.getComponentByName('value'))
                     propDict[key] = val
                     
+                sysPropDict = dict()
+                for i in range(len(infoSysProp)):
+                    prop = infoSysProp.getComponentByPosition(i)
+                    key  = str(prop.getComponentByName('key'))
+                    val  = str(prop.getComponentByName('value'))
+                    sysPropDict[key] = val
+ 
 
                 if      infoType == 0: infoT = 'create'
                 elif    infoType == 1: infoT = 'delete'
                 elif    infoType == 2: infoT = 'update'
-                else:   infoT = 'nothing'
                 return {
                     'from':     msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
-                        'name':         targetId,
-                        'properties':   propDict,
-                        'infoType':     infoT
+                        'name':             targetId,
+                        'properties':       propDict,
+                        'sysProperties':    sysPropDict,
+                        'infoType':         infoT
                     }
                 }
-            elif msg3_type == 'probeInfo':
+            elif msg3_type == 'infoProbe':
                 target      = str(msg3.getComponentByName('channel'))
                 name        = str(msg3.getComponentByName('name'))
                 descr       = str(msg3.getComponentByName('descr'))
@@ -1218,7 +1154,7 @@ def decode(pdu):
                     propertiesDict[str(key)] = str(value)
 
                 return {
-                    'from': msg1_type,
+                    'from':     msg1_type,
                     'msgType':  msg3_type,
                     'value':    {
                         'target':       target,
@@ -1484,19 +1420,6 @@ def encode(pduType, payload):
     elif pduType == 'authResp':
         (userId, password) = payload
         return encode_authResp(userId, password)
-    elif pduType == 'monitorCreateTarget':
-        (queryId, msg)          = payload
-        (ip, perms, n, ro, rw, tpl) = msg
-        return encode_create_target(ip, perms, n, ro, rw, tpl, queryId)
-    elif pduType == 'query':
-        (queryId, queryString) = payload
-        return encode_query(queryId, queryString)
-    elif pduType == 'monitorSimulateCheck':
-        (queryId, checkConf) = payload
-        return encode_simulateCheck(queryId, checkConf)
-    elif pduType == 'monitorCreateSimpleProbe':
-        (queryId, args) = payload
-        return encode_createSimpleProbe(queryId, args)
     elif pduType == 'monitorSnmpElementInfoQuery':
         (queryId, args) = payload
         return encode_monitorSnmpElementInfoQuery(queryId, args)
@@ -1506,53 +1429,6 @@ def encode(pduType, payload):
     else:
         print "Cannont encode PDU: ", pduType
         return False
-
-
-def encode_simulateCheck(queryId, checkConfig):
-    (path, args) = checkConfig
-    argsP  = CheckArgs()
-    for i in range(len(args)):
-        (flag, val) = args[i]
-        argP = CheckArg()
-        argP.setComponentByName('flag',   flag)
-        argP.setComponentByName('value', val)
-        argsP.setComponentByPosition(i, argP)
-
-    checkP = MonitorSimulateCheck().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            7
-        )
-    )
-    checkP.setComponentByName('queryId',    queryId)
-    checkP.setComponentByName('executable', path)
-    checkP.setComponentByName('args',       argsP)
-
-    fromClient = MonitorPDU_fromClient().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            1
-        )
-    )
-
-    fromClient.setComponentByName('simulateCheck', checkP)
-
-    monitorPDU = MonitorPDU().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            2
-        )
-    )
-    monitorPDU.setComponentByName('fromClient', fromClient)
-
-    pduDef = NmsPDU()
-    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
-
-    pdu = encoder.encode(pduDef)
-    return pdu
 
 def encode_monitorSnmpElementCreateQuery(queryId, args):
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
@@ -1685,161 +1561,6 @@ def encode_monitorSnmpElementInfoQuery(queryId, args):
     pdu = encoder.encode(pduDef)
     return pdu
 
-def encode_query(queryId, queryString):
-    query = MonitorQuery().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            10
-        )
-    )
-    query.setComponentByName('queryId', queryId)
-    query.setComponentByName('query',   queryString)
-
-    fromClient = MonitorPDU_fromClient().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            1
-        )
-    )
-    fromClient.setComponentByName('query', query)
-
-    monitorPDU = MonitorPDU().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            2
-        )
-    )
-    monitorPDU.setComponentByName('fromClient', fromClient)
-
-    pduDef = NmsPDU()
-    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
-
-    pdu = encoder.encode(pduDef)
-    return pdu
-
-def encode_createSimpleProbe(queryId, args):
-    (tname, pname, descr, perms, tpl, timeout, step, flags, exe) = args
-
-    (read, write)   = perms
-    readGroups      = Groups()
-    for i in range(len(read)):
-        readGroups.setComponentByPosition(i, read[i])
-    writeGroups     = Groups()
-    for i in range(len(write)):
-        writeGroups.setComponentByPosition(i, write[i])
-
-    permConf      = PermConf()
-    permConf.setComponentByName('read',         readGroups)
-    permConf.setComponentByName('write',        writeGroups)
-
-    fprops = Properties()
-    for i in range(len(flags)):
-        (f, v) = flags[i]
-        fprop = Property()
-        fprop.setComponentByName('key', f)
-        fprop.setComponentByName('value', v)
-        fprops.setComponentByPosition(i, fprop)
-
-
-    createSP = MonitorCreateSimpleProbe().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            4
-        )
-    )
-
-    createSP.setComponentByName('target',   tname)
-    createSP.setComponentByName('name',     pname)
-    createSP.setComponentByName('description',  descr)
-    createSP.setComponentByName('permConf', permConf)
-    createSP.setComponentByName('template', tpl)
-    createSP.setComponentByName('timeout',  int(timeout))
-    createSP.setComponentByName('step',     int(step))
-    createSP.setComponentByName('flags',    fprops)
-    createSP.setComponentByName('exe',      exe)
-    createSP.setComponentByName('queryId',  queryId)
-
-    fromClient = MonitorPDU_fromClient().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            1
-        )
-    )
-    fromClient.setComponentByName('createSimpleProbe', createSP)
-
-    monitorPDU = MonitorPDU().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            2
-        )
-    )
-    monitorPDU.setComponentByName('fromClient', fromClient)
-
-    pduDef = NmsPDU()
-    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
-
-    pdu = encoder.encode(pduDef)
-    return pdu
-
-def encode_create_target(ip, perms, name, ro, rw, tpl, queryId):
-    (read, write)   = perms
-    readGroups      = Groups()
-    for i in range(len(read)):
-        readGroups.setComponentByPosition(i, read[i])
-    writeGroups     = Groups()
-    for i in range(len(write)):
-        writeGroups.setComponentByPosition(i, write[i])
-
-    targetConf      = PermConf()
-    targetConf.setComponentByName('read',         readGroups)
-    targetConf.setComponentByName('write',        writeGroups)
-
-    targetCreate = MonitorCreateTarget().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            1
-        )
-    )
-    targetCreate.setComponentByName('ipAdd',    ip)
-    targetCreate.setComponentByName('permConf', targetConf)
-    targetCreate.setComponentByName('staticName', name)
-    targetCreate.setComponentByName('snmpv2ro', ro)
-    targetCreate.setComponentByName('snmpv2rw', rw)
-    targetCreate.setComponentByName('template', tpl)
-    targetCreate.setComponentByName('queryId',  queryId)
-
-    fromClient = MonitorPDU_fromClient().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            1
-        )
-    )
-    fromClient.setComponentByName('createTarget', targetCreate)
-
-    monitorPDU = MonitorPDU().subtype(
-        implicitTag=tag.Tag(
-            tag.tagClassContext,
-            tag.tagFormatSimple,
-            2
-        )
-    )
-    monitorPDU.setComponentByName('fromClient', fromClient)
-
-    pduDef = NmsPDU()
-    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
-
-    pdu = encoder.encode(pduDef)
-    return pdu
-
-
 def encode_unsubscribe(queryId, chanString):
     #chan = SupercastChan(chanString).subtype(
         #implicitTag=tag.Tag(
@@ -1947,17 +1668,3 @@ def encode_authResp(userId, password):
 
     pdu = encoder.encode(pduDef)
     return pdu
-
-
-#fd = open('/tmp/pdu.bin', 'r')
-# fw = open('/tmp/ret.bin', 'w')
-#pdu = fd.read(); fd.close()
-#print pdu
-
-#a = decoder.decode(pdu, asn1Spec=NmsPDU())
-#a = decode(pdu)
-#print a
-# print "Return is ", a
-# x = genPdu_unsubscribe("channel-Xkki")
-# 
-# fw.write(x); fw.close()
