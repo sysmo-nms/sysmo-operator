@@ -225,7 +225,6 @@ class Page10(QWizardPage):
         self._snmp3PrivVal.setPlaceholderText('Priv key')
 
         self._snmp3SecLevel.setCurrentIndex(AUTH_PRIV)
-        self._setSecLevel(AUTH_PRIV)
 
         self._snmp3Lay      = QFormLayout(self._snmp3)
         self._snmp3Lay.setVerticalSpacing(8)
@@ -236,9 +235,9 @@ class Page10(QWizardPage):
         authFrameLay = NGridContainer(authFrame)
         authFrameLay.addWidget(self._snmp3Auth,    0,0)
         authFrameLay.addWidget(self._snmp3AuthVal, 0,1)
-        authShowCheck = QCheckBox('show', self)
-        authShowCheck.stateChanged.connect(self._toggleShowAuth)
-        authFrameLay.addWidget(authShowCheck,  0,2)
+        self._authShowCheck = QCheckBox('show', self)
+        self._authShowCheck.stateChanged.connect(self._toggleShowAuth)
+        authFrameLay.addWidget(self._authShowCheck,  0,2)
         authFrameLay.setColumnStretch(0,0)
         authFrameLay.setColumnStretch(1,1)
         authFrameLay.setHorizontalSpacing(3)
@@ -248,13 +247,14 @@ class Page10(QWizardPage):
         privFrameLay = NGridContainer(privFrame)
         privFrameLay.addWidget(self._snmp3Priv,    0,0)
         privFrameLay.addWidget(self._snmp3PrivVal, 0,1)
-        privShowCheck = QCheckBox('show', self)
-        privShowCheck.stateChanged.connect(self._toggleShowPriv)
-        privFrameLay.addWidget(privShowCheck,  0,2)
+        self._privShowCheck = QCheckBox('show', self)
+        self._privShowCheck.stateChanged.connect(self._toggleShowPriv)
+        privFrameLay.addWidget(self._privShowCheck,  0,2)
         privFrameLay.setColumnStretch(0,0)
         privFrameLay.setColumnStretch(1,1)
         privFrameLay.setHorizontalSpacing(3)
 
+        self._setSecLevel(AUTH_PRIV)
 
         self._snmp3Lay.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
 
@@ -366,6 +366,8 @@ class Page10(QWizardPage):
             self._snmp3Priv.setDisabled(True)
             self._snmp3PrivVal.setDisabled(True)
             self._snmp3PrivLab.setDisabled(True)
+            self._authShowCheck.setDisabled(True)
+            self._privShowCheck.setDisabled(True)
         if index == AUTH_NO_PRIV:
             self._snmp3Auth.setDisabled(False)
             self._snmp3AuthVal.setDisabled(False)
@@ -373,6 +375,8 @@ class Page10(QWizardPage):
             self._snmp3Priv.setDisabled(True)
             self._snmp3PrivVal.setDisabled(True)
             self._snmp3PrivLab.setDisabled(True)
+            self._authShowCheck.setDisabled(False)
+            self._privShowCheck.setDisabled(True)
         if index == AUTH_PRIV:
             self._snmp3Auth.setDisabled(False)
             self._snmp3AuthVal.setDisabled(False)
@@ -380,6 +384,8 @@ class Page10(QWizardPage):
             self._snmp3Priv.setDisabled(False)
             self._snmp3PrivVal.setDisabled(False)
             self._snmp3PrivLab.setDisabled(False)
+            self._authShowCheck.setDisabled(False)
+            self._privShowCheck.setDisabled(False)
 
 
 
