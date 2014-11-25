@@ -13,15 +13,12 @@ from    noctopus_widgets        import (
     NGrid
 )
 
-from    opus.monitor.commands.wizards import (
-    NetworkElementWizard,
-    NetworkServerWizard
-)
+from    opus.monitor.commands.wizards import AddElementWizard
 import nocapi
 
-class ProbesActions(NFrameContainer):
+class ElementsActions(NFrameContainer):
     def __init__(self, parent):
-        super(ProbesActions, self).__init__(parent)
+        super(ElementsActions, self).__init__(parent)
         grid = NGridContainer(self)
         grid.setHorizontalSpacing(4)
 
@@ -29,15 +26,16 @@ class ProbesActions(NFrameContainer):
         self.line.setPlaceholderText('Filter')
         #self._line.textChanged.connect(self._lineChanged)
 
-        self.createMenu = QMenu(self)
+        #self.createMenu = QMenu(self)
         create   = QPushButton(self)
         create.setFixedWidth(30)
         create.setIcon(nocapi.nGetIcon('list-add'))
         create.setContentsMargins(0,0,0,0)
-        createAction = QWidgetAction(self)
-        createAction.setDefaultWidget(ProbesAdd(self))
-        self.createMenu.addAction(createAction)
-        create.setMenu(self.createMenu)
+        create.clicked.connect(self._launchWizard)
+        #createAction = QWidgetAction(self)
+        #createAction.setDefaultWidget(ElementsAdd(self))
+        #self.createMenu.addAction(createAction)
+        #create.setMenu(self.createMenu)
         #create.clicked.connect(self._createTargetWizard)
 
         clear = QPushButton(self)
@@ -59,54 +57,6 @@ class ProbesActions(NFrameContainer):
         grid.setColumnStretch(4,0)
         self.setLayout(grid)
 
-class ProbesAdd(NFrameContainer):
-    def __init__(self, parent):
-        super(ProbesAdd, self).__init__(parent)
-        self._createMenu = parent.createMenu
-        self.setFixedWidth(300)
-        grid = NGrid(self)
-        grid.setVerticalSpacing(0)
-        addNetElementButton = QCommandLinkButton(
-            self.tr('Add a network element'),
-            self.tr('A network element must responde to SNMP and implement the MIB2 tree.'),
-            self
-        )
-        addNetServerButton = QCommandLinkButton(
-            self.tr('Add a network server'),
-            self.tr('A network server offer services like HTTP, IMAP...'),
-            self
-        )
-        addNetServiceButton = QCommandLinkButton(
-            self.tr('Add a service'),
-            self.tr('A service offer user functionnality depending on multiple network server services or elements'),
-            self
-        )
-
-        addNetElementButton.setIcon(nocapi.nGetIcon('network-wired'))
-        addNetServerButton.setIcon(nocapi.nGetIcon('applications-system'))
-        addNetServiceButton.setIcon(nocapi.nGetIcon('system-users'))
-
-        addNetElementButton.clicked.connect(self._addElement)
-        addNetServerButton.clicked.connect(self._addServer)
-        addNetServiceButton.clicked.connect(self._addService)
-
-        grid.addWidget(addNetElementButton, 0,0)
-        grid.addWidget(addNetServerButton,  1,0)
-        grid.addWidget(addNetServiceButton, 2,0)
-        grid.setRowStretch(0,1)
-        grid.setRowStretch(1,1)
-        grid.setRowStretch(2,1)
-        self.setLayout(grid)
-
-    def _addServer(self):
-        self._createMenu.hide()
-        wizard = NetworkServerWizard(self)
+    def _launchWizard(self):
+        wizard = AddElementWizard(self)
         wizard.show()
-
-    def _addElement(self):
-        self._createMenu.hide()
-        wizard = NetworkElementWizard(self)
-        wizard.show()
-
-    def _addService(self):
-        self._createMenu.hide()

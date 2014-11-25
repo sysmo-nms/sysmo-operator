@@ -1,7 +1,7 @@
 from    PySide.QtGui     import QFrame
 from    noctopus_widgets import (NFrame, NGrid)
 
-from    opus.monitor.central.tree.controls      import ProbesActions
+from    opus.monitor.central.tree.controls      import ElementsActions
 from    opus.monitor.central.tree.tree_view     import ProbesTreeview
 
 class ProbesTree(NFrame):
@@ -9,7 +9,7 @@ class ProbesTree(NFrame):
         super(ProbesTree, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
         self._grid = NGrid(self)
-        self._probesActions     = ProbesActions(self)
+        self._probesActions     = ElementsActions(self)
         self._probesTreeview    = ProbesTreeview(self)
         self._connectControls()
         self._grid.addWidget(self._probesActions,   0,0)

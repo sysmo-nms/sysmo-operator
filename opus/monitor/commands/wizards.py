@@ -24,12 +24,53 @@ import nocapi
 import opus.monitor.api as monapi
 import supercast.main   as supercast
 
-import opus.monitor.commands.net_element_wizard.wizard_pages as NetElement
-import opus.monitor.commands.net_server_wizard.wizard_pages  as SrvElement
-import opus.monitor.commands.probe_wizard.wizard_pages       as ProbeElement
+import opus.monitor.commands.net_element_wizard.wizard_pages  as NetElement
+import opus.monitor.commands.net_server_wizard.wizard_pages   as SrvElement
+import opus.monitor.commands.probe_wizard.wizard_pages        as ProbeElement
 import opus.monitor.commands.user_actions_wizard.wizard_pages as UActionPages
 
+import opus.monitor.commands.add_element_pages as AddElementPages
 
+# NEW WIZARD
+class AddElementWizard(QWizard):
+    def __init__(self, parent=None):
+        super(AddElementWizard, self).__init__(parent)
+        self._sysInfo   = None
+        self._ifInfo    = None
+        self._engineId  = None
+
+        #self.setWizardStyle(QWizard.ModernStyle)
+        #self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('network-bay'))
+
+        self.setModal(True)
+        pix = nocapi.nGetPixmap('applications-system')
+        self.setPixmap(QWizard.LogoPixmap, pix)
+        self.setOption(QWizard.NoBackButtonOnStartPage, True)
+        npage1  = AddElementPages.Page10(self)
+        npage2  = AddElementPages.Page20(self)
+        npage3  = AddElementPages.Page30(self)
+        self.setPage(10, npage1)
+        self.setPage(20, npage2)
+        self.setPage(30, npage3)
+        self.setStartId(10)
+
+    def setSysInfo(self, info):
+        self._sysInfo = info
+
+    def setIfInfo(self, info):
+        self._ifInfo = info
+
+    def setEngineId(self, info):
+        self._engineId = info
+
+    def setIfSelection(self, selection):
+        self._ifSelection = selection
+
+
+
+
+
+# OLD WIZARDS
 class UserActionsWizard(QWizard):
     def __init__(self, parent=None, element=None):
         super(UserActionsWizard, self).__init__(parent)
