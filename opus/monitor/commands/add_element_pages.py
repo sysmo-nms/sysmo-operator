@@ -167,6 +167,8 @@ class Page10(QWizardPage):
         self._snmpBox    = NFrameContainer(self)
         self._snmpBox.setEnabled(False)
         self._snmpLayout = NGridContainer(self._snmpBox)
+        self._snmpLayout.setColumnStretch(0,0)
+        self._snmpLayout.setColumnStretch(1,1)
 
 
         self._snmpCheck.clicked[bool].connect(self._snmpBox.setEnabled)
@@ -203,7 +205,9 @@ class Page10(QWizardPage):
         auth.setCurrentIndex(AUTH_MD5)
         self._snmp3AuthLab  = QLabel('Authentication:', self)
         self._snmp3Auth     = auth
+        self._snmp3Auth.setFixedWidth(100)
         self._snmp3AuthVal  = QLineEdit(self)
+        self._snmp3AuthVal.setEchoMode(QLineEdit.Password)
         self._snmp3AuthVal.setPlaceholderText('Auth key')
         priv = QComboBox(self)
         priv.insertItem(PRIV_AES128, 'AES (128)')
@@ -215,48 +219,65 @@ class Page10(QWizardPage):
         priv.setCurrentIndex(PRIV_DES)
         self._snmp3PrivLab  = QLabel('Privacy:', self)
         self._snmp3Priv     = priv
+        self._snmp3Priv.setFixedWidth(100)
         self._snmp3PrivVal  = QLineEdit(self)
+        self._snmp3PrivVal.setEchoMode(QLineEdit.Password)
         self._snmp3PrivVal.setPlaceholderText('Priv key')
 
         self._snmp3SecLevel.setCurrentIndex(AUTH_PRIV)
         self._setSecLevel(AUTH_PRIV)
 
-        self._snmp3Lay      = QGridLayout(self._snmp3)
+        self._snmp3Lay      = QFormLayout(self._snmp3)
         self._snmp3Lay.setVerticalSpacing(8)
         self._snmp3Lay.setContentsMargins(15,10,15,10)
         self._snmp3.setLayout(self._snmp3Lay)
 
-        seclFrame = NFrameContainer(self)
-        seclFrameLay = NGridContainer(seclFrame)
-        seclFrameLay.addWidget(self._snmp3Auth,    0,0)
-        seclFrameLay.addWidget(self._snmp3AuthVal, 0,1)
-        seclFrameLay.addWidget(self._snmp3Priv,    1,0)
-        seclFrameLay.addWidget(self._snmp3PrivVal, 1,1)
-        seclFrameLay.setColumnStretch(0,0)
-        seclFrameLay.setColumnStretch(1,1)
-        seclFrameLay.setHorizontalSpacing(3)
+        authFrame = NFrameContainer(self)
+        authFrameLay = NGridContainer(authFrame)
+        authFrameLay.addWidget(self._snmp3Auth,    0,0)
+        authFrameLay.addWidget(self._snmp3AuthVal, 0,1)
+        authShowCheck = QCheckBox('show', self)
+        authShowCheck.stateChanged.connect(self._toggleShowAuth)
+        authFrameLay.addWidget(authShowCheck,  0,2)
+        authFrameLay.setColumnStretch(0,0)
+        authFrameLay.setColumnStretch(1,1)
+        authFrameLay.setHorizontalSpacing(3)
 
 
-        self._snmp3Lay.addWidget(QLabel('Security level:'),   2,0)
-        self._snmp3Lay.addWidget(self._snmp3SecLevel,         2,1,1,2)
-        self._snmp3Lay.addWidget(QLabel('User name:'),        4,0)
-        self._snmp3Lay.addWidget(self._snmp3User,             4,1,1,2)
-        self._snmp3Lay.addWidget(self._snmp3AuthLab,          5,0)
-        self._snmp3Lay.addWidget(seclFrame,                   5,1,2,2)
+        privFrame = NFrameContainer(self)
+        privFrameLay = NGridContainer(privFrame)
+        privFrameLay.addWidget(self._snmp3Priv,    0,0)
+        privFrameLay.addWidget(self._snmp3PrivVal, 0,1)
+        privShowCheck = QCheckBox('show', self)
+        privShowCheck.stateChanged.connect(self._toggleShowPriv)
+        privFrameLay.addWidget(privShowCheck,  0,2)
+        privFrameLay.setColumnStretch(0,0)
+        privFrameLay.setColumnStretch(1,1)
+        privFrameLay.setHorizontalSpacing(3)
+
+
+        self._snmp3Lay.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+
+        self._snmp3Lay.addRow(QLabel('Security level:'),   self._snmp3SecLevel)
+        #self._snmp3Lay.addWidget(self._snmp3SecLevel,         2,1,1,2)
+        self._snmp3Lay.addRow(QLabel('User name:'), self._snmp3User)
+        #self._snmp3Lay.addWidget(self._snmp3User,             4,1,1,2)
+        self._snmp3Lay.addRow(self._snmp3AuthLab, authFrame)
+        #self._snmp3Lay.addWidget(seclFrame,                   5,1,2,2)
         #self._snmp3Lay.addWidget(self._snmp3Auth,             5,1)
         #self._snmp3Lay.addWidget(self._snmp3AuthVal,          5,3)
-        self._snmp3Lay.addWidget(self._snmp3PrivLab,          6,0)
+        self._snmp3Lay.addRow(self._snmp3PrivLab,         privFrame)
         #self._snmp3Lay.addWidget(self._snmp3Priv,             6,1)
         #self._snmp3Lay.addWidget(self._snmp3PrivVal,          6,3)
 
-        self._snmp3Lay.setRowStretch(1,0)
-        self._snmp3Lay.setRowStretch(2,0)
-        self._snmp3Lay.setRowStretch(3,0)
-        self._snmp3Lay.setRowStretch(4,0)
-        self._snmp3Lay.setRowStretch(5,0)
-        self._snmp3Lay.setRowStretch(6,0)
-        self._snmp3Lay.setRowStretch(7,0)
-        self._snmp3Lay.setRowStretch(10,1)
+        #self._snmp3Lay.setRowStretch(1,0)
+        #self._snmp3Lay.setRowStretch(2,0)
+        #self._snmp3Lay.setRowStretch(3,0)
+        #self._snmp3Lay.setRowStretch(4,0)
+        #self._snmp3Lay.setRowStretch(5,0)
+        #self._snmp3Lay.setRowStretch(6,0)
+        #self._snmp3Lay.setRowStretch(7,0)
+        #self._snmp3Lay.setRowStretch(10,1)
 
 
 # 
@@ -311,6 +332,20 @@ class Page10(QWizardPage):
 #         self._retries.setDisabled(True)
 #         self._snmpPermsLabel.setDisabled(True)
 #         self._snmpPerms.setDisabled(True)
+
+
+    def _toggleShowPriv(self):
+        if self._snmp3PrivVal.echoMode() == QLineEdit.Normal:
+            self._snmp3PrivVal.setEchoMode(QLineEdit.Password)
+        else:
+            self._snmp3PrivVal.setEchoMode(QLineEdit.Normal)
+
+    def _toggleShowAuth(self):
+        if self._snmp3AuthVal.echoMode() == QLineEdit.Normal:
+            self._snmp3AuthVal.setEchoMode(QLineEdit.Password)
+        else:
+            self._snmp3AuthVal.setEchoMode(QLineEdit.Normal)
+
 
     def nextId(self):
         return 20
