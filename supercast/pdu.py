@@ -471,6 +471,12 @@ class MonitorExtendedQueryFromServer(univ.Sequence):
         namedtype.NamedType('reply',        ReplyChoice())
     )
 
+class MonitorDeleteProbe(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',      char.PrintableString()),
+        namedtype.NamedType('probe',       char.PrintableString())
+    )
+
 class MonitorPDU_fromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
@@ -517,6 +523,28 @@ class MonitorPDU_fromServer(univ.Choice):
                 )
             )
         ),
+        namedtype.NamedType(
+            'deleteTarget',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    5
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'deleteProbe',
+            MonitorDeleteProbe().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    6
+                )
+            )
+        ),
+
+
        namedtype.NamedType(
             'extendedQueryFromServer',
             MonitorExtendedQueryFromServer().subtype(
@@ -1320,35 +1348,28 @@ def decode(pdu):
                         'nextReturn':   nextReturn
                     }
                 }
-            elif msg3_type == 'monitorReply':
-                queryId = int(msg3.getComponentByName('queryId'))
-                status  = bool(msg3.getComponentByName('status'))
-                info    = str(msg3.getComponentByName('info'))
-                return {
-                    'from':     'monitorReply',
-                    'queryId':  queryId,
-                    'value': {
-                        'status':   status,
-                        'info':     info
-                    }
-                }
-            elif msg3_type == 'getCheckReply':
-                queryId = int(msg3.getComponentByName('queryId'))
-                status  = bool(msg3.getComponentByName('status'))
-                infos   = msg3.getComponentByName('infos')
-                infoList = list()
-                for i in range(len(infos)):
-                    info = str(infos.getComponentByPosition(i))
-                    infoList.append(info)
 
+            elif msg3_type == 'deleteTarget':
+                target = str(msg3)
                 return {
-                    'from':     'getCheckReply',
-                    'queryId':  queryId,
-                    'value': {
-                        'status':   status,
-                        'infos':    infoList
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'name': target
                     }
                 }
+            elif msg3_type == 'deleteProbe':
+                probe = str(msg3.getComponentByName('probe'))
+                target = str(msg3.getComponentByName('target'))
+                return {
+                    'from': msg1_type,
+                    'msgType':  msg3_type,
+                    'value':    {
+                        'name': probe,
+                        'target': target
+                    }
+                }
+
             elif msg3_type == 'extendedQueryFromServer':
                 queryId = int(msg3.getComponentByName('queryId'))
                 status  = bool(msg3.getComponentByName('status'))

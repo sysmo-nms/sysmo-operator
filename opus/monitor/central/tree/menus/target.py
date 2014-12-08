@@ -33,6 +33,7 @@ class TargetMenu(QMenu):
 
         self.addSeparator()
 
+
         action = NAction(self.tr('Locate on map'), self)
         action.triggered.connect(self._locateOnMap)
         self.addAction(action)
@@ -50,6 +51,11 @@ class TargetMenu(QMenu):
         self.addAction(action)
 
         self.addSeparator()
+
+        action = NAction(self.tr('Add a new probe'), self)
+        action.triggered.connect(self._newProbe)
+        action.setIcon(nocapi.nGetIcon('list-add'))
+        self.addAction(action)
 
         action = NAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
@@ -104,6 +110,8 @@ class TargetMenu(QMenu):
 
     def _deleteTarget(self):
         print "delete: ", self._currentTarget
+
+    def _newProbe(self): pass
 
     def _openProperties(self):
         openTargetPropertiesFor(self._currentTarget)

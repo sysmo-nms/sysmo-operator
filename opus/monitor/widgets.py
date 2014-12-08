@@ -36,7 +36,7 @@ class Summary(NFrame):
         self.okWidget       = StatusSummary(self, 'OK')
         self.warningWidget  = StatusSummary(self, 'WARNING')
         self.criticalWidget = StatusSummary(self, 'CRITICAL')
-        self.unknownWidget  = StatusSummary(self, 'UNKNOWN')
+        self.unknownWidget  = StatusSummary(self, 'DOWN')
 
 
         grid.addWidget(self.okWidget,       0,0)
@@ -64,7 +64,7 @@ class Summary(NFrame):
             if      status == 'OK':         ok       += 1
             elif    status == 'WARNING':    warning  += 1
             elif    status == 'CRITICAL':   critical += 1
-            elif    status == 'UNKNOWN':    unknown  += 1
+            elif    status == 'DOWN':    unknown  += 1
 
         self.okWidget.setCount(ok)
         self.warningWidget.setCount(warning)
@@ -113,7 +113,7 @@ class StatusSummary(QPushButton):
             picture = QSvgWidget(nocapi.nGetImage('weather-severe-alert'), self)
             self.blinkingPalette.setColor(self.blinkingPalette.Light, QColor(255,0,0))
             self.blinkingPalette.setColor(self.blinkingPalette.Dark, QColor(255,0,0))
-        elif status == 'UNKNOWN':
+        elif status == 'DOWN':
             picture = QSvgWidget(nocapi.nGetImage('weather-clear-night'), self)
 
         picture.setFixedHeight(30)
@@ -356,7 +356,7 @@ class TextLog(AbstractChannelWidget):
             color = '#fce94f'
         elif status == 'CRITICAL':
             color = '#ef2929'
-        elif status == 'UNKNOWN':
+        elif status == 'DOWN':
             color = '#888a85'
 
         data2 = data.replace('\n', ' ')

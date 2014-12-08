@@ -338,7 +338,7 @@ class Page3(QWizardPage):
         self._alertsD = dict()
         self._alertsD['CRITICAL']   = onCrit
         self._alertsD['WARNING']    = onWarn
-        self._alertsD['UNKNOWN']    = onUnk
+        self._alertsD['DOWN']    = onUnk
         self._alertsD['OK']         = onOk
 
         groups  = nocapi.nGetGroups()

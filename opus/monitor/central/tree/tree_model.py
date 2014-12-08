@@ -34,6 +34,9 @@ class ProbeModel(QStandardItemModel):
         ])
         monapi.connectToEvent('infoTarget', self._handleTargetInfo)
         monapi.connectToEvent('infoProbe',  self._handleProbeInfo)
+        monapi.connectToEvent('deleteTarget', self._handleTargetDelete)
+        monapi.connectToEvent('deleteProbe', self._handleProbeDelete)
+
         monapi.connectToEvent('probeReturn', self._handleProbeReturn)
 
     def _handleProbeReturn(self, msg):
@@ -41,6 +44,19 @@ class ProbeModel(QStandardItemModel):
         (boo,parent) = self._itemExist(target)
         if boo == False: return
         parent.handleProbeReturn(msg)
+
+    def _handleTargetDelete(self, msg):
+        elem = msg['value']['name']
+        (boo,target) = self._itemExist(elem)
+        if boo == False: return
+        self.removeRow(target.row())
+
+    def _handleProbeDelete(self, msg):
+        elem = msg['value']['target']
+        (boo,target) = self._itemExist(elem)
+        if boo == False: return
+        target.handleProbeDelete(msg)
+
 
     def _handleTargetInfo(self, msg):
         (boo, target) = self._itemExist(msg['value']['name'])
@@ -77,7 +93,7 @@ class TargetItem(QStandardItem):
 
         self.name       = data['value']['name']
         self.nodeType   = 'target'
-        self.status     = 'UNKNOWN'
+        self.status     = 'DOWN'
         self.probeSearchStrings = list()
         self.targetDict = data
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
@@ -144,6 +160,13 @@ class TargetItem(QStandardItem):
         self._setWorstStatus()
         self.emitDataChanged()
 
+    def handleProbeDelete(self, msg):
+        count = self.rowCount()
+        probe = msg['value']['name']
+        for i in range(count):
+            if self.child(i).name == probe:
+                self.removeRow(i)
+
     def handleProbeReturn(self, msg):
         count = self.rowCount()
         probe = msg['value']['id']
@@ -169,7 +192,7 @@ class TargetItem(QStandardItem):
     def __lt__(self, other): pass
 
     def _getIconStatus(self):
-        if self.status  == 'UNKNOWN':
+        if self.status  == 'DOWN':
             return nocapi.nGetIcon('weather-clear-night')
         elif self.status == 'WARNING':
             return nocapi.nGetIcon('weather-showers')
@@ -194,8 +217,8 @@ class TargetItem(QStandardItem):
         elif 'OK' in status:
             self.status = 'OK'
             return
-        elif 'UNKNOWN' in status:
-            self.status = 'UNKNOWN'
+        elif 'DOWN' in status:
+            self.status = 'DOWN'
             return
 
 class ProgressItem(QStandardItem):
@@ -336,7 +359,7 @@ class ProbeItem(QStandardItem):
     def __lt__(self, other): pass
 
     def _getIconStatus(self):
-        if self.status == 'UNKNOWN':
+        if self.status == 'DOWN':
             return nocapi.nGetIcon('weather-clear-night')
         if self.status == 'WARNING':
             return nocapi.nGetIcon('weather-showers')

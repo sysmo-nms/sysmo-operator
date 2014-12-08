@@ -1,4 +1,5 @@
 from PySide.QtGui   import (
+    QDialog,
     QWizard,
     QWizardPage,
     QLabel,
@@ -24,17 +25,26 @@ import nocapi
 import opus.monitor.api as monapi
 import supercast.main   as supercast
 
+
 import opus.monitor.commands.net_element_wizard.wizard_pages  as NetElement
 import opus.monitor.commands.net_server_wizard.wizard_pages   as SrvElement
 import opus.monitor.commands.probe_wizard.wizard_pages        as ProbeElement
 import opus.monitor.commands.user_actions_wizard.wizard_pages as UActionPages
+import opus.monitor.commands.properties as PropInfo
 
 import opus.monitor.commands.add_element_pages as AddElementPages
 
-# NEW WIZARD
-class AddElementWizard(QWizard):
+class AddElementWizard(QDialog):
     def __init__(self, parent=None):
         super(AddElementWizard, self).__init__(parent)
+        grid = NGridContainer(self)
+        grid.addWidget(PropInfo.PropertiesAll(self))
+
+
+# NEW WIZARD
+class AddElementWizard2(QWizard):
+    def __init__(self, parent=None):
+        super(AddElementWizard2, self).__init__(parent)
         self._sysInfo   = None
         self._ifInfo    = None
         self._engineId  = None

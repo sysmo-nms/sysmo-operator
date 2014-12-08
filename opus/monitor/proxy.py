@@ -48,13 +48,17 @@ class ChanHandler(QObject):
         self.masterSignalsDict['infoProbe']     = SimpleSignal(self)
         self.masterSignalsDict['infoTarget']    = SimpleSignal(self)
         self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
+        self.masterSignalsDict['deleteTarget']  = SimpleSignal(self)
+        self.masterSignalsDict['deleteProbe']   = SimpleSignal(self)
 
-        self.masterSignalsDict['loggerRrdDump']     = SimpleSignal(self)
+        self.masterSignalsDict['loggerRrdDump']  = SimpleSignal(self)
         self.masterSignalsDict['loggerRrdEvent'] = SimpleSignal(self)
 
         # connect myself
         self.masterSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
         self.masterSignalsDict['infoProbe'].signal.connect(self._handleProbeInfo)
+        self.masterSignalsDict['deleteTarget'].signal.connect(self._handleDeleteTarget)
+        self.masterSignalsDict['deleteProbe'].signal.connect(self._handleDeleteProbe)
         self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
 
         self.masterSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
@@ -76,6 +80,12 @@ class ChanHandler(QObject):
 
         elif    msg['msgType'] == 'infoTarget':
             self.masterSignalsDict['infoTarget'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'deleteTarget':
+            self.masterSignalsDict['deleteTarget'].signal.emit(msg)
+
+        elif    msg['msgType'] == 'deleteProbe':
+            self.masterSignalsDict['deleteProbe'].signal.emit(msg)
 
         elif    msg['msgType'] == 'staticChanInfo':
             chan    = msg['value']
@@ -146,12 +156,24 @@ class ChanHandler(QObject):
     def _handleProbeInfo(self, msg):
         infoProbe   = msg['value']
         probeName   = infoProbe['name']
+        print "probeName", probeName
         self.probes[probeName] = infoProbe
 
     def _handleTargetInfo(self, msg):
         infoTarget  = msg['value']
         targetName  = infoTarget['name']
+        print "targetName", targetName
         self.targets[targetName] = infoTarget
+
+
+    def _handleDeleteTarget(self, msg):
+        target = msg['value']['name']
+        del self.targets[target]
+
+    def _handleDeleteProbe(self, msg):
+        probe = msg['value']['name']
+        del self.probes[probe]
+
 
     # startup subscribe
     def _autoSubscribe(self):
