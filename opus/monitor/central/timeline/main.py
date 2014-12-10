@@ -38,7 +38,7 @@ class Timeline(NFrame):
         self._timeslide.minimizeButton.clicked.connect(self._updateLayout)
 
         self._minimized = True
-        self.setDisabled(True)
+        #self.setDisabled(True)
         self._initLayout()
 
     def _initLayout(self):

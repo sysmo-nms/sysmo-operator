@@ -15,31 +15,38 @@ class TreeContainer(NFrameContainer):
     def __init__(self, parent):
         super(TreeContainer, self).__init__(parent)
         TreeContainer.singleton = self
-        self._treeStack  = TreeStack(self)
+        self._splitter   = MainSplitter(self)
         self._timeline   = Timeline(self)
         self._grid = NGridContainer(self)
         self._grid.setVerticalSpacing(6)
 
-        self._grid.addWidget(self._treeStack,          1, 0)
-        self._grid.addWidget(self._timeline,           2, 0)
+        self._grid.addWidget(self._splitter, 1, 0)
+        self._grid.addWidget(self._timeline, 2, 0)
 
         self._grid.setRowStretch(1,1)
         self._grid.setRowStretch(2,0)
         self.setLayout(self._grid)
 
-class TreeStack(QStackedWidget):
+class MainSplitter(QSplitter):
     def __init__(self, parent):
-        super(TreeStack, self).__init__(parent)
-        nocapi.nConnectAppToggled(self._toggleSplitter)
+        super(MainSplitter, self).__init__(parent)
         self._osmap = OSMapContainer(self)
         self._ptree = ProbesTree(self)
-        self.addWidget(self._ptree)
-        self.addWidget(self._osmap)
+        self.insertWidget(0,self._ptree)
+        self.insertWidget(1,self._osmap)
+        self.setStretchFactor(0,0)
+        self.setStretchFactor(1,1)
+        self.setCollapsible(0,False)
+        self.setCollapsible(1,False)
 
-    def _toggleSplitter(self, msg):
-        if msg['id']        != 'monitor': return
-        if msg['button']    != 'left': return
-        if (self.currentWidget() == self._ptree):
-            self.setCurrentWidget(self._osmap)
-        else:
-            self.setCurrentWidget(self._ptree)
+        self._loadSettings()
+
+    def _loadSettings(self):
+        nocapi.nConnectWillClose(self._saveSettings)
+        self._settings = QSettings()
+        state = self._settings.value('monitor/main_splitter')
+        if state == None: return
+        self.restoreState(state)
+
+    def _saveSettings(self):
+        self._settings.setValue('monitor/main_splitter', self.saveState())

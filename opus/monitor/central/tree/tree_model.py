@@ -29,8 +29,8 @@ class ProbeModel(QStandardItemModel):
                 "Status",
                 "Step/Timeout",
                 "State",
-                "Ip|Host",
-                "Timeline"
+                "Ip|Host"
+                #"Timeline"
         ])
         monapi.connectToEvent('infoTarget', self._handleTargetInfo)
         monapi.connectToEvent('infoProbe',  self._handleProbeInfo)
@@ -44,18 +44,21 @@ class ProbeModel(QStandardItemModel):
         (boo,parent) = self._itemExist(target)
         if boo == False: return
         parent.handleProbeReturn(msg)
+        self._probeView.expandAll()
 
     def _handleTargetDelete(self, msg):
         elem = msg['value']['name']
         (boo,target) = self._itemExist(elem)
         if boo == False: return
         self.removeRow(target.row())
+        self._probeView.expandAll()
 
     def _handleProbeDelete(self, msg):
         elem = msg['value']['target']
         (boo,target) = self._itemExist(elem)
         if boo == False: return
         target.handleProbeDelete(msg)
+        self._probeView.expandAll()
 
 
     def _handleTargetInfo(self, msg):
@@ -64,17 +67,21 @@ class ProbeModel(QStandardItemModel):
             t = TargetItem(msg)
             self.appendRow([
                 t, t.row1, t.row2, t.row3_status,
-                t.row4, t.row5, t.row6_ip, t.row7_timeline])
+                t.row4, t.row5, t.row6_ip])
+                #t.row4, t.row5, t.row6_ip, t.row7_timeline])
         else:
             self._updateRow(target, msg)
+        self._probeView.expandAll()
 
     def _handleProbeInfo(self, msg):
         target = msg['value']['target']
         (_, parent) = self._itemExist(target)
         parent.handleProbeInfo(msg)
+        self._probeView.expandAll()
 
     def _updateRow(self, item, msg):
         item.updateState(msg)
+        self._probeView.expandAll()
 
     def _itemExist(self, itemName):
         rootItem = self.invisibleRootItem()
@@ -109,11 +116,11 @@ class TargetItem(QStandardItem):
 
         self.row3_status    = QStandardItem()
         self.row6_ip        = QStandardItem()
-        self.row7_timeline  = QStandardItem()
+        #self.row7_timeline  = QStandardItem()
 
         self.row3_status.setData('status', role=Qt.DisplayRole)
         self.row6_ip.setData(self.targetDict['value']['properties']['ip'], role=Qt.DisplayRole)
-        self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
+        #self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -153,7 +160,8 @@ class TargetItem(QStandardItem):
             p = ProbeItem(msg, self)
             self.appendRow([
                 p, p.row1_log, p.row2_progress, p.row3_status, 
-                p.row4_trigger, p.row5_state, p.row6_host, p.row7_time])
+                p.row4_trigger, p.row5_state, p.row6_host])
+                #p.row4_trigger, p.row5_state, p.row6_host, p.row7_time])
         else:
             child.updateState(msg)
 
@@ -235,6 +243,10 @@ class ProgressItem(QStandardItem):
         ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
         self._initData()
 
+    def setRemaining(self, millisec):
+        self._progress = self._step - (millisec / 1000)
+        self._updateData()
+
     def _initData(self):
         display = '%s/%s' % (self._progress, self._step)
         self.setData(display, role=Qt.DisplayRole)
@@ -310,14 +322,14 @@ class ProbeItem(QStandardItem):
         self.row6_host  = QStandardItem()
         self.row6_host.setData('host or ip', role=Qt.DisplayRole)
 
-        self.row7_time  = QStandardItem()
-        self.row7_time.setData('timeline', role=Qt.DisplayRole)
+        #self.row7_time  = QStandardItem()
+        #self.row7_time.setData('timeline', role=Qt.DisplayRole)
 
 
 
     def handleReturn(self, msg):
-        print "TODO correctly handle RETURN FRom tree_model (timestamp micro): ", msg['value']['nextReturn']
-        self.row2_progress.reset()
+        val= msg['value']['nextReturn']
+        self.row2_progress.setRemaining(val)
 
     def data(self, role):
         if   role == Qt.DecorationRole:

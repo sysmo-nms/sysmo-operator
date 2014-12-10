@@ -30,11 +30,14 @@ class ProbesTreeview(QTreeView):
         self._viewDialogs = dict()
         
         # QTreeView conf
+        self.setItemsExpandable(False)
+        self.setRootIsDecorated(False)
+        self.setWordWrap(False)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setDragEnabled(True)
-        self.setDragDropMode(QAbstractItemView.DragOnly)
-        self.setDropIndicatorShown(True)
+        #self.setDragEnabled(True)
+        #self.setDragDropMode(QAbstractItemView.DragOnly)
+        #self.setDropIndicatorShown(True)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._showMenu)
@@ -69,7 +72,7 @@ class ProbesTreeview(QTreeView):
         self.setItemDelegateForColumn(4, pdelegate.TriggerItemDelegate(self))
         self.setItemDelegateForColumn(5, pdelegate.StateItemDelegate(self))
         self.setItemDelegateForColumn(6, pdelegate.HostItemDelegate(self))
-        self.setItemDelegateForColumn(7, pdelegate.TimelineItemDelegate(self))
+        #self.setItemDelegateForColumn(7, pdelegate.TimelineItemDelegate(self))
 
         # setings
         settings = QSettings()
@@ -97,6 +100,7 @@ class ProbesTreeview(QTreeView):
 
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)
+        self.expandAll()
                 
     def getSelectedElements(self):
         proxyIndexes = self.selectedIndexes()
