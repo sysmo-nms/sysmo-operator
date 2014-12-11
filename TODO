@@ -3,32 +3,20 @@
 ##################
 ### HIGH
 - Dashboards
-- Services.
 
 ### MEDIUM:
+- replace QTreeWidget by QAbstractItemModel
 - QTreeWidget with user definede property tree
 - proxy.py in a thread (lock the main loop)
-- custom target view with probes from diferents targets with tree views:
-. standard target view, look like a target view,
-. MDI view, when the user create his own rrd graphs view,
-. Map view, when links betwin nodes represent a probe rrd.
-. Map zoom, zoom on map show more precise layers of info
-. add request ID on a subscribe call to identifie the recever
-
 
 MAYBE:
 - Use a python version (3.x?) compiled with visual studio 2010
+- Rewrite client in pyqt5 or C++ qt5
 - keep an average packet time travel from server to client and add this in
 the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
 - perf: build the maximum number of view widget at startup (total of probe
 entries of the treeview).
-- threading QTimelines,
-- traceroute tool
-- animate central stack
-    (QGraphicScene->QGraphicsProxyWidget->QWidget)
-- double clic sur la rample inverse le toggle (vue max de la liste)
-- python rrd
 
 ESTHETIC:
 - higlight selection in treeview
@@ -37,11 +25,3 @@ ESTHETIC:
 BUGS
 - tko do not have updated property list. The problem dit not come 
 from the server.
-- right clic on left ramp malfunction
-
-ECONOMIQUE:
-- linux: monitor libre, le reste payant (dash,know,netman)
-- win/mac: achat de l'installeur inclue monitor+dash.
-Les utilisateurs windows/mac ou linux voulant monitor+dash, paieront donc le
-meme prix au final.
-
