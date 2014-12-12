@@ -7,7 +7,7 @@ from    noctopus_widgets    import (
 
 from    opus.monitor.central.tree.main          import ProbesTree
 from    opus.monitor.central.timeline.main      import Timeline
-from    opus.monitor.central.osmap.main         import OSMapContainer
+from    opus.monitor.central.rightmaps.main         import RightMapsContainer
 #import  opus.monitor.api as monapi
 import  nocapi
 
@@ -30,10 +30,10 @@ class TreeContainer(NFrameContainer):
 class MainSplitter(QSplitter):
     def __init__(self, parent):
         super(MainSplitter, self).__init__(parent)
-        self._osmap = OSMapContainer(self)
+        self._maps  = RightMapsContainer(self)
         self._ptree = ProbesTree(self)
         self.insertWidget(0,self._ptree)
-        self.insertWidget(1,self._osmap)
+        self.insertWidget(1,self._maps)
         self.setStretchFactor(0,0)
         self.setStretchFactor(1,1)
         self.setCollapsible(0,False)

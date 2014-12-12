@@ -111,16 +111,15 @@ class MainConfigFrame(QGroupBox):
 
 
 
-class SnmpConfigFrame(QGroupBox):
+class SnmpConfigFrame(NFrame):
     def __init__(self, parent=None, conf=None):
         super(SnmpConfigFrame, self).__init__(parent)
-        self.setTitle('SNMP config')
 
         snmpEnable    = QCheckBox('SNMP enabled', self)
         snmpEnable.setChecked(False)
         snmpConfFrame = NFrameContainer(self)
         snmpConfFrame.setEnabled(False)
-        snmpConfLay   = QFormLayout(snmpConfFrame)
+        snmpConfLay   = NGridContainer(snmpConfFrame)
         snmpEnable.clicked[bool].connect(snmpConfFrame.setEnabled)
 
         grid = NGrid(self)
@@ -129,12 +128,21 @@ class SnmpConfigFrame(QGroupBox):
         grid.setRowStretch(0,0)
         grid.setRowStretch(1,1)
 
+        # version
+        versionGroup = QComboBox(self)
+        versionGroup.addItem('1')
+        versionGroup.addItem('2c')
+        versionGroup.addItem('3')
+        snmpConfLay.addWidget(QLabel('Version:'), 0,0)
+        snmpConfLay.addWidget(versionGroup, 0,1)
+
         # port selection and edition
         self._port = QSpinBox(self)
         self._port.setMinimum(1)
         self._port.setMaximum(65535)
         self._port.setValue(161)
-        snmpConfLay.addRow('Port:',self._port)
+        snmpConfLay.addWidget(QLabel('Port:', self), 0,2)
+        snmpConfLay.addWidget(self._port,            0,3)
 
         # timeout selection and edition
         self._timeout = QSpinBox(self)
@@ -142,37 +150,23 @@ class SnmpConfigFrame(QGroupBox):
         self._timeout.setMinimum(100)
         self._timeout.setMaximum(20000)
         self._timeout.setValue(2500)
-        snmpConfLay.addRow('Timeout:', self._timeout)
-
-        # version
-        versionGroup = QButtonGroup(self)
-        v1 = QRadioButton('Version 1', self)
-        v2c = QRadioButton('Version 2c', self)
-        v3 = QRadioButton('Version 3', self)
-        versionGroup.addButton(v3,  SNMP_V3)
-        versionGroup.addButton(v2c, SNMP_V2)
-        versionGroup.addButton(v1,  SNMP_V1)
-        versionGroup.setExclusive(True)
-        v3.setChecked(True)
-        versionFrame = NFrameContainer(self)
-        versionLay = NGridContainer(versionFrame)
-        versionLay.addWidget(v1,  0,0)
-        versionLay.addWidget(v2c, 0,1)
-        versionLay.addWidget(v3,  0,2)
-        versionLay.setColumnStretch(0,0)
-        versionLay.setColumnStretch(1,0)
-        versionLay.setColumnStretch(2,0)
-        versionLay.setColumnStretch(3,1)
-        snmpConfLay.addRow('SNMP version:', versionFrame)
-
+        snmpConfLay.addWidget(QLabel('Timeout:', self), 0,4)
+        snmpConfLay.addWidget(self._timeout,            0,5)
         # auth
-        self._snmp3 = QGroupBox('Version 3 specific', self)
+
+        self._snmp3 = NFrameContainer(self)
         self._snmp3.setDisabled(True)
         self._snmp3User = QLineEdit(self)
         #self._snmpLayout.addWidget(self._snmp3,3,1)
         stackConf = QStackedWidget(self)
         stackConf.insertWidget(SNMP_V3, self._snmp3)
-        snmpConfLay.addRow(stackConf)
+        snmpConfLay.addWidget(stackConf, 1,0,1,6)
+        snmpConfLay.setColumnStretch(0,0)
+        snmpConfLay.setColumnStretch(1,0)
+        snmpConfLay.setColumnStretch(2,0)
+        snmpConfLay.setColumnStretch(3,0)
+        snmpConfLay.setColumnStretch(4,0)
+        snmpConfLay.setColumnStretch(5,1)
 
 
         

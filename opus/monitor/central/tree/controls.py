@@ -13,7 +13,7 @@ from    noctopus_widgets        import (
     NGrid
 )
 
-from    opus.monitor.commands.wizards import AddElementWizard
+from    opus.monitor.commands.wizards import NewTargetDialog
 import nocapi
 
 class ElementsActions(NFrameContainer):
@@ -27,11 +27,12 @@ class ElementsActions(NFrameContainer):
         #self._line.textChanged.connect(self._lineChanged)
 
         #self.createMenu = QMenu(self)
-        create   = QPushButton(self)
+        create = QPushButton(self)
         create.setFixedWidth(30)
         create.setIcon(nocapi.nGetIcon('list-add'))
         create.setContentsMargins(0,0,0,0)
-        create.clicked.connect(self._launchWizard)
+        create.setMenu(NewTargetDialog(self))
+        #create.clicked.connect(self._launchWizard)
         #createAction = QWidgetAction(self)
         #createAction.setDefaultWidget(ElementsAdd(self))
         #self.createMenu.addAction(createAction)
@@ -58,5 +59,5 @@ class ElementsActions(NFrameContainer):
         self.setLayout(grid)
 
     def _launchWizard(self):
-        wizard = AddElementWizard(self)
+        wizard = NewTargetDialog(self)
         wizard.show()
