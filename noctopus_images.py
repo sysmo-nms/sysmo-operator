@@ -53,7 +53,10 @@ def initPixmaps():
         'network-bay': QPixmap(os.path.join(iconsPath, "network-bay.png")),
         'console': QPixmap(os.path.join(iconsPath, "console.png")),
         'radar': QPixmap(os.path.join(iconsPath, "radar.png")),
-        'document-stack': QPixmap(os.path.join(iconsPath, "document-stack.png"))
+        'document-stack': QPixmap(os.path.join(iconsPath, "document-stack.png")),
+        'switch': QPixmap(os.path.join(iconsPath, "switch.png")),
+        'router': QPixmap(os.path.join(iconsPath, "router.png")),
+        'wireless': QPixmap(os.path.join(iconsPath, "wireless.png")),
     }
 
 def initIcons():

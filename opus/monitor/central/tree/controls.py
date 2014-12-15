@@ -13,7 +13,8 @@ from    noctopus_widgets        import (
     NGrid
 )
 
-from    opus.monitor.commands.wizards import NewTargetDialog
+from    opus.monitor.commands.target_utils import NewTargetDialog
+
 import nocapi
 
 class ElementsActions(NFrameContainer):
