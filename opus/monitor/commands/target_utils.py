@@ -1,5 +1,6 @@
 from PySide.QtGui   import (
     QSpinBox,
+    QDoubleSpinBox,
     QDialog,
     QWizard,
     QWizardPage,
@@ -106,23 +107,29 @@ class TargetConfFrame(NFrame):
         self._nameLine.textChanged.connect(self._formValidate)
         form.addRow('Name:', self._nameLine)
 
+        self._latitude = QDoubleSpinBox(self)
+        self._latitude.setToolTip('Latitude')
+        self._latitude.setDecimals(5)
+        self._latitude.setMaximum(90.0)
+        self._latitude.setMinimum(-90.0)
+        self._longitude = QDoubleSpinBox(self)
+        self._longitude.setToolTip('Longitude')
+        self._longitude.setDecimals(5)
+        self._longitude.setMaximum(180.0)
+        self._longitude.setMinimum(-180.0)
+        locFrame = NFrameContainer(self)
+        locFrameLay = NGridContainer(locFrame)
+        locFrameLay.addWidget(self._latitude,  0,0)
+        locFrameLay.addWidget(self._longitude, 0,1)
+        locFrameLay.setColumnStretch(0,1)
+        locFrameLay.setColumnStretch(1,1)
+        form.addRow('Location:', locFrame)
         form.addRow(NFrame(self))
 
         self._snmpEnable    = QCheckBox('SNMP enabled', self)
         self._snmpEnable.stateChanged.connect(self._updateEnable)
         self._snmpEnable.stateChanged.connect(self._formValidate)
         form.addRow(self._snmpEnable)
-
-        self._versionGroup = QComboBox(self)
-        self._versionGroup.insertItem(SNMP_V3, '3')
-        self._versionGroup.insertItem(SNMP_V2, '2c')
-        self._versionGroup.insertItem(SNMP_V1, '1')
-        self._versionGroup.setCurrentIndex(SNMP_V2)
-        self._versionGroup.currentIndexChanged.connect(self._updateEnable)
-        self._versionGroup.currentIndexChanged.connect(self._formValidate)
-        form.addRow('Version:', self._versionGroup)
-        self._versionGroupLab  = form.labelForField(self._versionGroup)
-
         self._port = QSpinBox(self)
         self._port.setMinimum(1)
         self._port.setMaximum(65535)
@@ -140,12 +147,22 @@ class TargetConfFrame(NFrame):
         
         form.addRow(NFrame(self))
 
+        self._versionGroup = QComboBox(self)
+        self._versionGroup.insertItem(SNMP_V3, '3')
+        self._versionGroup.insertItem(SNMP_V2, '2c')
+        self._versionGroup.insertItem(SNMP_V1, '1')
+        self._versionGroup.setCurrentIndex(SNMP_V2)
+        self._versionGroup.currentIndexChanged.connect(self._updateEnable)
+        self._versionGroup.currentIndexChanged.connect(self._formValidate)
+        form.addRow('Version:', self._versionGroup)
+        self._versionGroupLab  = form.labelForField(self._versionGroup)
+
+
+
         self._community = QLineEdit(self)
         self._community.textChanged.connect(self._formValidate)
         form.addRow('Community:', self._community)
         self._communityLab  = form.labelForField(self._community)
-
-        form.addRow(NFrame(self))
 
         self._secLevel = QComboBox(self)
         self._secLevel.insertItem(NO_AUTH_NO_PRIV, 'noAuthNoPriv')
@@ -355,7 +372,72 @@ class TargetConfFrame(NFrame):
                 return
 
     def _accepted(self):
-        print "accept..."
+        props = dict()
+        props['host'] = self._hostLine.text()
+        props['name'] = self._nameLine.text()
+        if self._typeCombo.currentIndex() == TYPE_SERVER:
+            props['type'] = 'server'
+        elif self._typeCombo.currentIndex() == TYPE_ROUTER:
+            props['type'] = 'router'
+        elif self._typeCombo.currentIndex() == TYPE_SWITCH:
+            props['type'] = 'switch'
+        elif self._typeCombo.currentIndex() == TYPE_WIRELESS:
+            props['type'] = 'wireless'
+        else:
+            props['type'] = 'other'
+
+        props['latitude'] = str(self._latitude.value())
+        props['longitude'] = str(self._longitude.value())
+
+        sprops = dict()
+        if self._snmpEnable.isChecked() == True:
+            sprops['snmp_port']     = str(self._port.value())
+            sprops['snmp_timeout']  = str(self._timeout.value())
+            if self._versionGroup.currentIndex() == SNMP_V3:
+                sprops['snmp_version'] = '3'
+                sprops['snmp_usm_user'] = self._snmp3User.text()
+                if self._secLevel.currentIndex() == NO_AUTH_NO_PRIV:
+                    sprops['snmp_seclevel'] = 'noAuthNoPriv'
+                else:
+                    sprops['snmp_seclevel'] = 'authNoPriv'
+                    sprops['snmp_authkey'] = self._authKey.text()
+                    if self._authProto.currentIndex() == AUTH_SHA:
+                        sprops['snmp_authproto'] = 'SHA'
+                    elif self._authProto.currentIndex() == AUTH_MD5:
+                        sprops['snmp_authproto'] = 'MD5'
+
+                    if self._secLevel.currentIndex() == AUTH_PRIV:
+                        sprops['snmp_seclevel'] = 'authPriv'
+                        sprops['snmp_privkey']  = self._privKey.text()
+                        if self._privProto.currentIndex() == PRIV_AES128:
+                            sprops['snmp_privproto'] = 'AES'
+                        elif self._privProto.currentIndex() == PRIV_DES:
+                            sprops['snmp_privproto'] = 'DES'
+                        elif self._privProto.currentIndex() == PRIV_AES192:
+                            sprops['snmp_privproto'] = 'AES192'
+                        elif self._privProto.currentIndex() == PRIV_AES256:
+                            sprops['snmp_privproto'] = 'AES256'
+                        elif self._privProto.currentIndex() == PRIV_3DES:
+                            sprops['snmp_privproto'] = '3DES'
+            else:
+                if self._versionGroup.currentIndex() == SNMP_V2:
+                    sprops['snmp_version'] = '2c'
+                else:
+                    sprops['snmp_version'] = '1'
+
+                sprops['snmp_community'] = self._community.text()
+
+        supercast.send(
+            'monitorCreateTargetQuery',
+            (
+                sprops,
+                props
+            ),
+            self.replyFromServer
+        )
+
+    def replyFromServer(self, msg):
+        print "reply!!", msg
 
     def _rejected(self):
         self.parent().hide()

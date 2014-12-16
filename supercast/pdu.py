@@ -324,6 +324,12 @@ class SnmpElementInfoQuery(univ.Sequence):
         namedtype.NamedType('v3PrivKey',    char.PrintableString())
     )
 
+class CreateTargetQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('sysProperties', Properties()),
+        namedtype.NamedType('properties',    Properties())
+    )
+
 class MonitorExtendedQueryFromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
@@ -345,8 +351,17 @@ class MonitorExtendedQueryFromClient(univ.Choice):
                     1
                 )
             )
+        ),
+        namedtype.NamedType(
+            'createTargetQuery',
+            CreateTargetQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    10
+                )
+            )
         )
-
     )
 
 class MonitorExtendedQueryFromClientMsg(univ.Sequence):
@@ -463,7 +478,7 @@ class ReplyChoice(univ.Choice):
         )
     )
 
-class MonitorExtendedQueryFromServer(univ.Sequence):
+class MonitorExtendedReply(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('queryId',      univ.Integer()),
         namedtype.NamedType('status',       univ.Boolean()),
@@ -546,8 +561,8 @@ class MonitorPDU_fromServer(univ.Choice):
 
 
        namedtype.NamedType(
-            'extendedQueryFromServer',
-            MonitorExtendedQueryFromServer().subtype(
+            'extendedReply',
+            MonitorExtendedReply().subtype(
                 implicitTag=tag.Tag(
                     tag.tagClassContext,
                     tag.tagFormatSimple,
@@ -1370,7 +1385,7 @@ def decode(pdu):
                     }
                 }
 
-            elif msg3_type == 'extendedQueryFromServer':
+            elif msg3_type == 'extendedReply':
                 queryId = int(msg3.getComponentByName('queryId'))
                 status  = bool(msg3.getComponentByName('status'))
                 lastPdu = bool(msg3.getComponentByName('lastPdu'))
@@ -1408,7 +1423,7 @@ def decode(pdu):
                         replyPayload.append(anIf)
 
                 return {
-                    'from':     'extendedQueryFromServer',
+                    'from':     'extendedReply',
                     'queryId':  queryId,
                     'lastPdu':  lastPdu,
                     'value': {
@@ -1447,6 +1462,9 @@ def encode(pduType, payload):
     elif pduType == 'monitorSnmpElementCreateQuery':
         (queryId, args) = payload
         return encode_monitorSnmpElementCreateQuery(queryId, args)
+    elif pduType == 'monitorCreateTargetQuery':
+        (queryId, args) = payload
+        return encode_monitorCreateTargetQuery(queryId, args)
     else:
         print "Cannont encode PDU: ", pduType
         return False
@@ -1518,10 +1536,80 @@ def encode_monitorSnmpElementCreateQuery(queryId, args):
     pdu = encoder.encode(pduDef)
     return pdu
 
+def encode_monitorCreateTargetQuery(queryId, args):
+    (sysProps, props) = args
+    createQuery = CreateTargetQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            10
+        )
+    )
+
+    propList  = Properties()
+    i = 0
+    for key in props.keys():
+        p = Property()
+        p.setComponentByName('key', key)
+        p.setComponentByName('value', props[key])
+        propList.setComponentByPosition(i, p)
+        i = i+1
+
+    spropList = Properties()
+    i = 0
+    for key in sysProps.keys():
+        p = Property()
+        p.setComponentByName('key', key)
+        p.setComponentByName('value', sysProps[key])
+        spropList.setComponentByPosition(i, p)
+        i = i+1
+
+    createQuery.setComponentByName('sysProperties',   spropList)
+    createQuery.setComponentByName('properties',      propList)
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('createTargetQuery', createQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
+
+
 def encode_monitorSnmpElementInfoQuery(queryId, args):
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
             v3AuthAlg, v3AuthKey, v3PrivAlg, v3PrivKey) = args
-    print "encoding for ", ip
     ipinfo = IpInfo()
     ipinfo.setComponentByName('version', ipv)
     ipinfo.setComponentByName('stringVal', ip)

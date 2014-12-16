@@ -103,10 +103,24 @@ class TargetItem(QStandardItem):
         self.status     = 'DOWN'
         self.probeSearchStrings = list()
         self.targetDict = data
+        self.nodeIconType = data['value']['properties']['type']
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
+        self._initIcon()
         self._initColumnItems()
         self._generateToolTip()
+
+    def _initIcon(self):
+        if self.nodeIconType == 'server':
+            self.nodeIcon = nocapi.nGetIcon('network-server')
+        elif self.nodeIconType == 'router':
+            self.nodeIcon = nocapi.nGetPixmap('router')
+        elif self.nodeIconType == 'switch':
+            self.nodeIcon = nocapi.nGetPixmap('switch')
+        elif self.nodeIconType == 'wireless':
+            self.nodeIcon = nocapi.nGetPixmap('wireless')
+        else:
+            self.nodeIcon = nocapi.nGetIcon('computer')
 
     def _initColumnItems(self):
         self.row1       = QStandardItem()
@@ -118,13 +132,13 @@ class TargetItem(QStandardItem):
         self.row6_ip        = QStandardItem()
         #self.row7_timeline  = QStandardItem()
 
-        self.row3_status.setData('status', role=Qt.DisplayRole)
+        #self.row3_status.setData('status', role=Qt.DisplayRole)
         self.row6_ip.setData(self.targetDict['value']['properties']['ip'], role=Qt.DisplayRole)
         #self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
 
     def data(self, role):
         if   role == Qt.DecorationRole:
-            return self._getIconStatus()
+            return self.nodeIcon
         elif role == Qt.DisplayRole:
             if self.targetDict['value']['properties']['sysName'] != "undefined":
                 return self.targetDict['value']['properties']['sysName']
@@ -199,16 +213,6 @@ class TargetItem(QStandardItem):
 
     def __lt__(self, other): pass
 
-    def _getIconStatus(self):
-        if self.status  == 'DOWN':
-            return nocapi.nGetIcon('weather-clear-night')
-        elif self.status == 'WARNING':
-            return nocapi.nGetIcon('weather-showers')
-        elif self.status == 'CRITICAL':
-            return nocapi.nGetIcon('weather-severe-alert')
-        elif self.status == 'OK':
-            return nocapi.nGetIcon('weather-clear')
-
     def _setWorstStatus(self):
         count = self.rowCount()
         status = list()
@@ -217,17 +221,14 @@ class TargetItem(QStandardItem):
             status.append(probe.status)
 
         if 'CRITICAL' in status:
-            self.status = 'CRITICAL'
-            return
+            self.row3_status.setIcon(nocapi.nGetIcon('weather-severe-alert'))
         elif 'WARNING' in status:
-            self.status = 'WARNING'
-            return
+            self.row3_status.setIcon(nocapi.nGetIcon('weather-showers'))
         elif 'OK' in status:
-            self.status = 'OK'
-            return
+            self.row3_status.setIcon(nocapi.nGetIcon('weather-clear'))
         elif 'DOWN' in status:
-            self.status = 'DOWN'
-            return
+            self.row3_status.setIcon(nocapi.nGetIcon('weather-clear-night'))
+
 
 class ProgressItem(QStandardItem):
     TimeoutRole     = Qt.UserRole + 1
