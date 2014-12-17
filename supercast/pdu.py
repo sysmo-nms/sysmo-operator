@@ -330,6 +330,29 @@ class CreateTargetQuery(univ.Sequence):
         namedtype.NamedType('properties',    Properties())
     )
 
+class ElementInterfaceQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('sysProperties', Properties()),
+        namedtype.NamedType('properties',    Properties())
+    )
+
+class CreateNchecksQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('type',         char.PrintableString()),
+        namedtype.NamedType('conf',         Properties())
+    )
+
+class InterfaceIds(univ.SequenceOf):
+    componentType = univ.Integer()
+
+class CreateIfPerfQuery(univ.Sequence):
+    componentType = namedtype.NamedTypes(
+        namedtype.NamedType('target',       char.PrintableString()),
+        namedtype.NamedType('interfaces',   Properties())
+    )
+
+
 class MonitorExtendedQueryFromClient(univ.Choice):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType(
@@ -361,7 +384,39 @@ class MonitorExtendedQueryFromClient(univ.Choice):
                     10
                 )
             )
-        )
+        ),
+        namedtype.NamedType(
+            'elementInterfaceQuery',
+            ElementInterfaceQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    11
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'createNchecksQuery',
+            CreateNchecksQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    12
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'createIfPerfQuery',
+            CreateIfPerfQuery().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    13
+                )
+            )
+        ),
+
+
     )
 
 class MonitorExtendedQueryFromClientMsg(univ.Sequence):
@@ -1465,9 +1520,137 @@ def encode(pduType, payload):
     elif pduType == 'monitorCreateTargetQuery':
         (queryId, args) = payload
         return encode_monitorCreateTargetQuery(queryId, args)
+    elif pduType == 'monitorElementInterfaceQuery':
+        (queryId, args) = payload
+        return encode_monitorElementInterfaceQuery(queryId, args)
+    elif pduType == 'monitorCreateNchecksQuery':
+        (queryId, args) = payload
+        return encode_monitorCreateNchecksQuery(queryId, args)
+    elif pduType == 'monitorCreateIfPerfQuery':
+        (queryId, args) = payload
+        return encode_monitorCreateIfPerfQuery(queryId, args)
     else:
         print "Cannont encode PDU: ", pduType
         return False
+
+def encode_monitorCreateIfPerfQuery(queryId, args):
+    (targetId, interfaces) = args
+    createQuery = CreateIfPerfQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            13
+        )
+    )
+
+    ifs  = InterfaceIds()
+    i = 0
+    for item in interfaces:
+        ifs.setComponentByPosition(i, item)
+        i = i+1
+
+    createQuery.setComponentByName('target', targetId)
+    createQuery.setComponentByName('interfaces', ifs)
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('createIfPerfQuery', createQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
+def encode_monitorCreateNchecksQuery(queryId, args):
+    (targetId, probeType, props) = args
+    createQuery = CreateNchecksQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            12
+        )
+    )
+
+    propList  = Properties()
+    i = 0
+    for key in props.keys():
+        p = Property()
+        p.setComponentByName('key', key)
+        p.setComponentByName('value', props[key])
+        propList.setComponentByPosition(i, p)
+        i = i+1
+
+    createQuery.setComponentByName('target', targetId)
+    createQuery.setComponentByName('type',   probeType)
+    createQuery.setComponentByName('conf',   propList)
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('createNchecksQuery', createQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
 
 def encode_monitorSnmpElementCreateQuery(queryId, args):
     (ipv, ip, port, timeout, snmpVer, community, v3SecL, v3User, 
@@ -1535,6 +1718,76 @@ def encode_monitorSnmpElementCreateQuery(queryId, args):
 
     pdu = encoder.encode(pduDef)
     return pdu
+
+def encode_monitorElementInterfaceQuery(queryId, args):
+    (sysProps, props) = args
+    interfaceQuery = ElementInterfaceQuery().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            11
+        )
+    )
+
+    propList  = Properties()
+    i = 0
+    for key in props.keys():
+        p = Property()
+        p.setComponentByName('key', key)
+        p.setComponentByName('value', props[key])
+        propList.setComponentByPosition(i, p)
+        i = i+1
+
+    spropList = Properties()
+    i = 0
+    for key in sysProps.keys():
+        p = Property()
+        p.setComponentByName('key', key)
+        p.setComponentByName('value', sysProps[key])
+        spropList.setComponentByPosition(i, p)
+        i = i+1
+
+    interfaceQuery.setComponentByName('sysProperties',   spropList)
+    interfaceQuery.setComponentByName('properties',      propList)
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('elementInterfaceQuery', interfaceQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
 
 def encode_monitorCreateTargetQuery(queryId, args):
     (sysProps, props) = args
