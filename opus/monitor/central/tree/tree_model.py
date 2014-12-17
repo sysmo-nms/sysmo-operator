@@ -67,8 +67,8 @@ class ProbeModel(QStandardItemModel):
             t = TargetItem(msg)
             self.appendRow([
                 t, t.row1, t.row2, t.row3_status,
-                t.row4, t.row5, t.row6_ip])
-                #t.row4, t.row5, t.row6_ip, t.row7_timeline])
+                t.row4, t.row5, t.row6_host])
+                #t.row4, t.row5, t.row6_host, t.row7_timeline])
         else:
             self._updateRow(target, msg)
         self._probeView.expandAll()
@@ -129,11 +129,11 @@ class TargetItem(QStandardItem):
         self.row5       = QStandardItem()
 
         self.row3_status    = QStandardItem()
-        self.row6_ip        = QStandardItem()
+        self.row6_host        = QStandardItem()
         #self.row7_timeline  = QStandardItem()
 
         #self.row3_status.setData('status', role=Qt.DisplayRole)
-        self.row6_ip.setData(self.targetDict['value']['properties']['ip'], role=Qt.DisplayRole)
+        self.row6_host.setData(self.targetDict['value']['properties']['host'], role=Qt.DisplayRole)
         #self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
 
     def data(self, role):
@@ -156,7 +156,7 @@ class TargetItem(QStandardItem):
         #elif role == (Qt.UserRole + 1):
             #return "Target"
         #elif role == (Qt.UserRole + 2):
-            #return self.targetDict['value']['properties']['ip']
+            #return self.targetDict['value']['properties']['host']
         else:
             return QStandardItem.data(self, role)
 
@@ -321,7 +321,7 @@ class ProbeItem(QStandardItem):
         self.row5_state.setData(state, role=Qt.DisplayRole)
 
         self.row6_host  = QStandardItem()
-        self.row6_host.setData('host or ip', role=Qt.DisplayRole)
+        self.row6_host.setData('host', role=Qt.DisplayRole)
 
         #self.row7_time  = QStandardItem()
         #self.row7_time.setData('timeline', role=Qt.DisplayRole)
