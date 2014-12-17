@@ -145,8 +145,6 @@ class TargetConfFrame(NFrame):
         form.addRow('Timeout:', self._timeout)
         self._timeoutLab  = form.labelForField(self._timeout)
         
-        form.addRow(NFrame(self))
-
         self._versionGroup = QComboBox(self)
         self._versionGroup.insertItem(SNMP_V3, '3')
         self._versionGroup.insertItem(SNMP_V2, '2c')
@@ -185,6 +183,7 @@ class TargetConfFrame(NFrame):
         self._authProto.setFixedWidth(100)
         self._authProto.insertItem(AUTH_SHA, 'SHA')
         self._authProto.insertItem(AUTH_MD5, 'MD5')
+        self._authProto.setCurrentIndex(AUTH_MD5)
         self._authKey   = QLineEdit(self)
         self._authKey.textChanged.connect(self._formValidate)
         self._authKey.setPlaceholderText('Key')
@@ -197,12 +196,13 @@ class TargetConfFrame(NFrame):
         privFrameLay = NGridContainer(self._privFrame)
         self._privProto = QComboBox(self)
         self._privProto.setFixedWidth(100)
-        self._privProto.insertItem(PRIV_AES128, 'AES (128)')
+        self._privProto.insertItem(PRIV_AES128, 'AES')
         self._privProto.insertItem(PRIV_DES,    'DES')
         self._privProto.insertSeparator(2)  
         self._privProto.insertItem(PRIV_AES192, 'AES 192')
         self._privProto.insertItem(PRIV_AES256, 'AES 256')
         self._privProto.insertItem(PRIV_3DES,   '3DES')
+        self._privProto.setCurrentIndex(PRIV_DES)
         self._privKey   = QLineEdit(self)
         self._privKey.textChanged.connect(self._formValidate)
         self._privKey.setPlaceholderText('Key')
@@ -211,6 +211,14 @@ class TargetConfFrame(NFrame):
 
         form.addRow('Privacy:', self._privFrame)
         self._privFrameLab = form.labelForField(self._privFrame)
+
+        form.addRow(NFrame(self))
+        self._includeICMP    = QCheckBox('Include probe: ICMP Echo presence')
+        self._includeIfPerfs = QCheckBox('Include probe: SNMP Interfaces performances')
+        self._includeICMP.setChecked(True)
+        self._includeIfPerfs.setChecked(True)
+        form.addRow(self._includeICMP)
+        form.addRow(self._includeIfPerfs)
 
         grid.addWidget(formFrame, 1,0)
 
@@ -274,7 +282,8 @@ class TargetConfFrame(NFrame):
             self._authFrame,
             self._authFrameLab,
             self._privFrame,
-            self._privFrameLab
+            self._privFrameLab,
+            self._includeIfPerfs
         ]
 
         self._stateSnmp2 = [
@@ -285,7 +294,8 @@ class TargetConfFrame(NFrame):
             self._timeout,
             self._timeoutLab,
             self._community,
-            self._communityLab
+            self._communityLab,
+            self._includeIfPerfs
         ]
 
         self._stateSnmp3AuthPriv = [
@@ -302,7 +312,8 @@ class TargetConfFrame(NFrame):
             self._authFrame,
             self._authFrameLab,
             self._privFrame,
-            self._privFrameLab
+            self._privFrameLab,
+            self._includeIfPerfs
         ]
 
         self._stateSnmp3AuthNoPriv = [
@@ -317,7 +328,8 @@ class TargetConfFrame(NFrame):
             self._snmp3User,
             self._snmp3UserLab,
             self._authFrame,
-            self._authFrameLab
+            self._authFrameLab,
+            self._includeIfPerfs
         ]
 
         self._stateSnmp3NoAuthNoPriv = [
@@ -330,7 +342,8 @@ class TargetConfFrame(NFrame):
             self._secLevel,
             self._secLevelLab,
             self._snmp3User,
-            self._snmp3UserLab
+            self._snmp3UserLab,
+            self._includeIfPerfs
         ]
 
     def _updateEnable(self):

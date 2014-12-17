@@ -30,6 +30,7 @@ class TreeContainer(NFrameContainer):
 class MainSplitter(QSplitter):
     def __init__(self, parent):
         super(MainSplitter, self).__init__(parent)
+        nocapi.nConnectAppToggled(self._toggle)
         self._maps  = RightMapsContainer(self)
         self._ptree = ProbesTree(self)
         self.insertWidget(0,self._ptree)
@@ -40,6 +41,13 @@ class MainSplitter(QSplitter):
         self.setCollapsible(1,False)
 
         self._loadSettings()
+
+    def _toggle(self, msg):
+        if msg['id'] != 'monitor': return
+        if self._ptree.isVisible() == True:
+            self._ptree.hide()
+        else:
+            self._ptree.show()
 
     def _loadSettings(self):
         nocapi.nConnectWillClose(self._saveSettings)

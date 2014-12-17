@@ -8,6 +8,7 @@ from PySide.QtCore import QUrl
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
+from    opus.monitor.commands.probe_utils       import CreateProbeDialog
 #from    opus.monitor.central.tree.logwin        import LoggerView
 from    opus.monitor.central.tree.toolbox       import openTargetPropertiesFor
 from    noctopus_widgets                        import NAction
@@ -33,6 +34,10 @@ class TargetMenu(QMenu):
 
         self.addSeparator()
 
+        action = NAction(self.tr('Add a new probe'), self)
+        action.triggered.connect(self._newProbe)
+        action.setIcon(nocapi.nGetIcon('list-add'))
+        self.addAction(action)
 
         action = NAction(self.tr('Locate on map'), self)
         action.triggered.connect(self._locateOnMap)
@@ -51,12 +56,6 @@ class TargetMenu(QMenu):
         self.addAction(action)
 
         self.addSeparator()
-
-        action = NAction(self.tr('Add a new probe'), self)
-        action.triggered.connect(self._newProbe)
-        action.setIcon(nocapi.nGetIcon('list-add'))
-        self.addAction(action)
-
         action = NAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
         action.setIcon(nocapi.nGetIcon('edit-paste'))
@@ -111,7 +110,8 @@ class TargetMenu(QMenu):
     def _deleteTarget(self):
         print "delete: ", self._currentTarget
 
-    def _newProbe(self): pass
+    def _newProbe(self):
+        cpWiz = CreateProbeDialog(self, self._currentTarget)
 
     def _openProperties(self):
         openTargetPropertiesFor(self._currentTarget)

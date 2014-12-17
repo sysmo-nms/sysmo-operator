@@ -4,7 +4,8 @@ from    PySide.QtCore   import (
 )
 from    PySide.QtGui    import (
     QStandardItemModel,
-    QStandardItem
+    QStandardItem,
+    QIcon
 )
 
 import nocapi
@@ -129,7 +130,7 @@ class TargetItem(QStandardItem):
         self.row5       = QStandardItem()
 
         self.row3_status    = QStandardItem()
-        self.row6_host        = QStandardItem()
+        self.row6_host      = QStandardItem()
         #self.row7_timeline  = QStandardItem()
 
         #self.row3_status.setData('status', role=Qt.DisplayRole)
@@ -137,17 +138,16 @@ class TargetItem(QStandardItem):
         #self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
 
     def data(self, role):
+        name = self.targetDict['value']['properties']['name']
         if   role == Qt.DecorationRole:
             return self.nodeIcon
         elif role == Qt.DisplayRole:
             if self.targetDict['value']['properties']['sysName'] != "undefined":
                 return self.targetDict['value']['properties']['sysName']
-            elif self.targetDict['value']['properties']['dnsName'] != "undefined":
-                return self.targetDict['value']['properties']['dnsName']
-            elif self.targetDict['value']['properties']['staticName'] != "undefined":
-                return self.targetDict['value']['properties']['staticName']
+            elif name != "undefined" and name != "":
+                return self.targetDict['value']['properties']['name']
             else:
-                return self.targetDict['value']['name']
+                return self.targetDict['value']['properties']['host']
         elif role == Qt.UserRole:
             searchString = ""
             for i in range(self.rowCount()):
@@ -220,14 +220,16 @@ class TargetItem(QStandardItem):
             probe = self.child(i)
             status.append(probe.status)
 
-        if 'CRITICAL' in status:
+        if 'DOWN' in status:
+            self.row3_status.setIcon(nocapi.nGetIcon('weather-clear-night'))
+        elif 'CRITICAL' in status:
             self.row3_status.setIcon(nocapi.nGetIcon('weather-severe-alert'))
         elif 'WARNING' in status:
             self.row3_status.setIcon(nocapi.nGetIcon('weather-showers'))
         elif 'OK' in status:
             self.row3_status.setIcon(nocapi.nGetIcon('weather-clear'))
-        elif 'DOWN' in status:
-            self.row3_status.setIcon(nocapi.nGetIcon('weather-clear-night'))
+        else:
+            self.row3_status.setIcon(QIcon())
 
 
 class ProgressItem(QStandardItem):
@@ -327,9 +329,8 @@ class ProbeItem(QStandardItem):
         #self.row7_time.setData('timeline', role=Qt.DisplayRole)
 
 
-
     def handleReturn(self, msg):
-        val= msg['value']['nextReturn']
+        val = msg['value']['nextReturn']
         self.row2_progress.setRemaining(val)
 
     def data(self, role):
