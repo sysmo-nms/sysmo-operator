@@ -113,13 +113,15 @@ class TargetItem(QStandardItem):
 
     def _initIcon(self):
         if self.nodeIconType == 'server':
-            self.nodeIcon = nocapi.nGetIcon('network-server')
+            self.nodeIcon = nocapi.nGetIcon('server')
         elif self.nodeIconType == 'router':
-            self.nodeIcon = nocapi.nGetPixmap('router')
+            self.nodeIcon = nocapi.nGetIcon('router')
         elif self.nodeIconType == 'switch':
-            self.nodeIcon = nocapi.nGetPixmap('switch')
+            self.nodeIcon = nocapi.nGetIcon('switch')
         elif self.nodeIconType == 'wireless':
-            self.nodeIcon = nocapi.nGetPixmap('wireless')
+            self.nodeIcon = nocapi.nGetIcon('wireless')
+        elif self.nodeIconType == 'firewall':
+            self.nodeIcon = nocapi.nGetIcon('firewall')
         else:
             self.nodeIcon = nocapi.nGetIcon('computer')
 

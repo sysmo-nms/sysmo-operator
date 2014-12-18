@@ -70,14 +70,11 @@ class ProbeMenu(QMenu):
         monapi.execUAction(action, element)
 
     def _suspendProbe(self):
-        #print "result is: ", self._infoBox.result()
         trayicon = nocapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Suspend check succeeded blablabla bla...', msecs=3000)
         print "suspend probe ", self._currentProbe
 
     def _forceCheck(self):
-        #self._infoBox.showMessage("You are about to edforce a probe check. Is it allright?", "alert_force_check")
-        #self._infoBox.exec_()
         supercast.send(
             'monitorForceProbeQuery',
             (self._currentProbe),

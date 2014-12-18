@@ -54,15 +54,18 @@ def initPixmaps():
         'console': QPixmap(os.path.join(iconsPath, "console.png")),
         'radar': QPixmap(os.path.join(iconsPath, "radar.png")),
         'document-stack': QPixmap(os.path.join(iconsPath, "document-stack.png")),
-        'switch': QPixmap(os.path.join(iconsPath, "switch.png")),
-        'router': QPixmap(os.path.join(iconsPath, "router.png")),
-        'wireless': QPixmap(os.path.join(iconsPath, "wireless.png")),
     }
 
 def initIcons():
     global iconsPath
     global iconSet
     iconSet = {
+
+        'server': QIcon(os.path.join(iconsPath, "server.svg")),
+        'firewall': QIcon(os.path.join(iconsPath, "firewall.svg")),
+        'switch': QIcon(os.path.join(iconsPath, "switch.svg")),
+        'router': QIcon(os.path.join(iconsPath, "router.svg")),
+        'wireless': QIcon(os.path.join(iconsPath, "wireless.svg")),
         'document-save': QIcon(os.path.join(iconsPath, "document-save.svg")),
         'accessories-text-editor': QIcon(os.path.join(iconsPath, "accessories-text-editor.svg")),
         'edit-paste': QIcon(os.path.join(iconsPath, "edit-paste.svg")),

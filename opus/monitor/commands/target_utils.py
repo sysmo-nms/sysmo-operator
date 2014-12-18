@@ -66,7 +66,8 @@ TYPE_SERVER      = 0
 TYPE_ROUTER      = 1
 TYPE_SWITCH      = 2
 TYPE_WIRELESS    = 3
-TYPE_OTHER       = 4
+TYPE_FIREWALL    = 4
+TYPE_OTHER       = 5
 
 class NewTargetDialog(QWizard):
     def __init__(self, parent=None):
@@ -90,15 +91,17 @@ class TargetConfFrame(QWizardPage):
         form = QFormLayout(formFrame)
 
         otherIcon = nocapi.nGetIcon('computer')
-        srvIcon = nocapi.nGetIcon('network-server')
-        routerIcon = nocapi.nGetPixmap('router')
-        switchIcon = nocapi.nGetPixmap('switch')
-        wirelessIcon = nocapi.nGetPixmap('wireless')
+        srvIcon         = nocapi.nGetIcon('server')
+        routerIcon      = nocapi.nGetIcon('router')
+        switchIcon      = nocapi.nGetIcon('switch')
+        wirelessIcon    = nocapi.nGetIcon('wireless')
+        firewallIcon    = nocapi.nGetIcon('firewall')
         self._typeCombo = QComboBox(self)
         self._typeCombo.insertItem(TYPE_SERVER, srvIcon,    'Server')
         self._typeCombo.insertItem(TYPE_ROUTER, routerIcon, 'Router')
         self._typeCombo.insertItem(TYPE_SWITCH, switchIcon, 'Switch')
         self._typeCombo.insertItem(TYPE_WIRELESS, wirelessIcon, 'Wireless router')
+        self._typeCombo.insertItem(TYPE_FIREWALL, firewallIcon, 'Firewall')
         self._typeCombo.insertItem(TYPE_OTHER, otherIcon,   'Other')
         form.addRow('Type:', self._typeCombo)
 
@@ -391,6 +394,8 @@ class TargetConfFrame(QWizardPage):
             props['type'] = 'switch'
         elif self._typeCombo.currentIndex() == TYPE_WIRELESS:
             props['type'] = 'wireless'
+        elif self._typeCombo.currentIndex() == TYPE_FIREWALL:
+            props['type'] = 'firewall'
         else:
             props['type'] = 'other'
 
