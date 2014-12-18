@@ -1,7 +1,9 @@
 from    PySide.QtGui    import (
     QMenu,
     QAction,
-    QErrorMessage
+    QErrorMessage,
+    QMessageBox
+
 )
 
 
@@ -11,6 +13,7 @@ from    opus.monitor.logwin.main                import openLoggerFor
 from    opus.monitor.central.tree.toolbox       import openProbePropertiesFor
 import  opus.monitor.api    as monapi
 import  nocapi
+import  supercast.main as supercast
 
 class ProbeMenu(QMenu):
     def __init__(self, parent):
@@ -75,6 +78,13 @@ class ProbeMenu(QMenu):
     def _forceCheck(self):
         #self._infoBox.showMessage("You are about to edforce a probe check. Is it allright?", "alert_force_check")
         #self._infoBox.exec_()
+        supercast.send(
+            'monitorForceProbeQuery',
+            (self._currentProbe),
+            self._forceProbeReply
+        )
+
+    def _forceProbeReply(self, msg):
         trayicon = nocapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Force check succeeded...', msecs=3000)
 
@@ -82,7 +92,21 @@ class ProbeMenu(QMenu):
         print "locate on map: ", self._currentProbe
 
     def _deleteProbe(self):
-        print "delete probe ", self._currentProbe
+        msgBox = QMessageBox()
+        msgBox.setText('You are about to delete a probe.')
+        msgBox.setInformativeText('Do you want to continue?')
+        msgBox.setStandardButtons(QMessageBox.Apply | QMessageBox.Cancel)
+        msgBox.setIcon(QMessageBox.Warning)
+        r = msgBox.exec_()
+        if r == QMessageBox.Apply:
+            supercast.send(
+                'monitorDeleteProbeQuery',
+                (self._currentProbe),
+                self._deleteProbeReply
+            )
+
+    def _deleteProbeReply(self, msg):
+        print "delete probe: ", msg
 
     def _openProperties(self):
         openProbePropertiesFor(self._currentProbe)

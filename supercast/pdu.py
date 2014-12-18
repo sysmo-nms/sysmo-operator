@@ -415,7 +415,36 @@ class MonitorExtendedQueryFromClient(univ.Choice):
                 )
             )
         ),
-
+        namedtype.NamedType(
+            'deleteProbeQuery',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    20
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'deleteTargetQuery',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    21
+                )
+            )
+        ),
+        namedtype.NamedType(
+            'forceProbeQuery',
+            char.PrintableString().subtype(
+                implicitTag=tag.Tag(
+                    tag.tagClassContext,
+                    tag.tagFormatSimple,
+                    30
+                )
+            )
+        ),
 
     )
 
@@ -1529,9 +1558,167 @@ def encode(pduType, payload):
     elif pduType == 'monitorCreateIfPerfQuery':
         (queryId, args) = payload
         return encode_monitorCreateIfPerfQuery(queryId, args)
+    elif pduType == 'monitorDeleteProbeQuery':
+        (queryId, args) = payload
+        return encode_monitorDeleteProbeQuery(queryId, args)
+    elif pduType == 'monitorDeleteTargetQuery':
+        (queryId, args) = payload
+        return encode_monitorDeleteTargetQuery(queryId, args)
+    elif pduType == 'monitorForceProbeQuery':
+        (queryId, args) = payload
+        return encode_monitorForceProbeQuery(queryId, args)
     else:
         print "Cannont encode PDU: ", pduType
         return False
+
+
+def encode_monitorForceProbeQuery(queryId, args):
+    (probeId) = args
+    forceQuery = char.PrintableString(probeId).subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            30
+        )
+    )
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('forceProbeQuery', forceQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    print "encode?", args
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
+def encode_monitorDeleteTargetQuery(queryId, args):
+    (targetId) = args
+    deleteQuery = char.PrintableString(targetId).subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            21
+        )
+    )
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('deleteTargetQuery', deleteQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    print "encode?", args
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
+def encode_monitorDeleteProbeQuery(queryId, args):
+    (probeId) = args
+    deleteQuery = char.PrintableString(probeId).subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+
+    extendedQuery = MonitorExtendedQueryFromClient()
+    extendedQuery.setComponentByName('deleteProbeQuery', deleteQuery)
+
+    extendedQueryFromClient = MonitorExtendedQueryFromClientMsg().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            20
+        )
+    )
+    extendedQueryFromClient.setComponentByName('queryId', queryId)
+    extendedQueryFromClient.setComponentByName('query',   extendedQuery)
+
+    fromClient = MonitorPDU_fromClient().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            1
+        )
+    )
+    fromClient.setComponentByName('extendedQueryFromClient', extendedQueryFromClient)
+
+    monitorPDU = MonitorPDU().subtype(
+        implicitTag=tag.Tag(
+            tag.tagClassContext,
+            tag.tagFormatSimple,
+            2
+        )
+    )
+    monitorPDU.setComponentByName('fromClient', fromClient)
+
+    pduDef = NmsPDU()
+    pduDef.setComponentByName('modMonitorPDU', monitorPDU)
+
+    print "encode?", args
+    pdu = encoder.encode(pduDef)
+    return pdu
+
+
 
 def encode_monitorCreateIfPerfQuery(queryId, args):
     (targetId, interfaces) = args

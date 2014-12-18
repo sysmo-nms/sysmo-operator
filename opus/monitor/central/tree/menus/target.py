@@ -2,7 +2,8 @@ from    PySide.QtGui    import (
     QMenu,
     QFont,
     QAction,
-    QDesktopServices
+    QDesktopServices,
+    QMessageBox
 )
 from PySide.QtCore import QUrl
 
@@ -14,6 +15,7 @@ from    opus.monitor.central.tree.toolbox       import openTargetPropertiesFor
 from    noctopus_widgets                        import NAction
 import  opus.monitor.api                        as monapi
 import  nocapi
+import  supercast.main as supercast
 
 
 class TargetMenu(QMenu):
@@ -43,7 +45,7 @@ class TargetMenu(QMenu):
         action.triggered.connect(self._locateOnMap)
         self.addAction(action)
 
-        action = NAction(self.tr('Delete this target ans his probes'), self)
+        action = NAction(self.tr('Delete this target...'), self)
         action.triggered.connect(self._deleteTarget)
         action.setIcon(nocapi.nGetIcon('process-stop'))
         self.addAction(action)
@@ -108,7 +110,21 @@ class TargetMenu(QMenu):
         QDesktopServices.openUrl(url)
 
     def _deleteTarget(self):
-        print "delete: ", self._currentTarget
+        msgBox = QMessageBox()
+        msgBox.setText('You are about to delete a target.')
+        msgBox.setInformativeText('Do you want to continue?')
+        msgBox.setStandardButtons(QMessageBox.Apply | QMessageBox.Cancel)
+        msgBox.setIcon(QMessageBox.Warning)
+        r = msgBox.exec_()
+        if r == QMessageBox.Apply:
+            supercast.send(
+                'monitorDeleteTargetQuery',
+                (self._currentTarget),
+                self._deleteTargetReply
+            )
+    
+    def _deleteTargetReply(self, msg):
+        print "reply, ", msg
 
     def _newProbe(self):
         cpWiz = CreateProbeDialog(self, self._currentTarget)
