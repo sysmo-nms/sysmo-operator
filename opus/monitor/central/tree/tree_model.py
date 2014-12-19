@@ -31,7 +31,6 @@ class ProbeModel(QStandardItemModel):
                 "Step/Timeout",
                 "State",
                 "Ip|Host"
-                #"Timeline"
         ])
         monapi.connectToEvent('infoTarget', self._handleTargetInfo)
         monapi.connectToEvent('infoProbe',  self._handleProbeInfo)
@@ -122,6 +121,8 @@ class TargetItem(QStandardItem):
             self.nodeIcon = nocapi.nGetIcon('wireless')
         elif self.nodeIconType == 'firewall':
             self.nodeIcon = nocapi.nGetIcon('firewall')
+        elif self.nodeIconType == 'printer':
+            self.nodeIcon = nocapi.nGetIcon('printer')
         else:
             self.nodeIcon = nocapi.nGetIcon('computer')
 
@@ -129,9 +130,9 @@ class TargetItem(QStandardItem):
         self.row1       = QStandardItem()
         self.row2       = QStandardItem()
         self.row4       = QStandardItem()
-        self.row5       = QStandardItem()
+        self.row5       = QStandardItem('nodata')
 
-        self.row3_status    = QStandardItem()
+        self.row3_status    = QStandardItem('nodata')
         self.row6_host      = QStandardItem()
         #self.row7_timeline  = QStandardItem()
 
@@ -215,7 +216,8 @@ class TargetItem(QStandardItem):
 
     def __lt__(self, other): pass
 
-    def _setWorstStatus(self):
+    def _setWorstStatus(self): pass
+    def _setWorstStatus2(self):
         count = self.rowCount()
         status = list()
         for i in range(count):
@@ -289,6 +291,7 @@ class ProbeItem(QStandardItem):
         #ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
 
 
+        self._decoIcon = nocapi.nGetIcon('satellite')
         self._parentItem = parentItem
         self._lastReturn = ""
         self._type      = data['value']['probeMod']
@@ -337,7 +340,7 @@ class ProbeItem(QStandardItem):
 
     def data(self, role):
         if   role == Qt.DecorationRole:
-            return self._getIconStatus()
+            return self._decoIcon
         elif role == Qt.DisplayRole:
             return self.probeDict['value']['descr']
         elif role == Qt.UserRole:

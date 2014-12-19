@@ -27,25 +27,37 @@ import  nocapi
 class StatusItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):
         super(StatusItemDelegate, self).__init__(parent)
-        self._okImage = QImage(nocapi.nGetImage('weather-clear'))
-        self._okImageSize = QSize(25,25)
+
+        self._imageSize = QSize(25,25)
 
     def paint(self, painter, option, index):
-        status = index.data(Qt.DisplayRole)
-        if status == 'status':
-            QStyledItemDelegate.paint(self, painter, option, index)
-            return
-
+        status    = index.data(Qt.DisplayRole)
         cartouche = QRect(option.rect)
         if option.state & QStyle.State_Selected:
             painter.fillRect(option.rect, option.palette.highlight())
-        cartouche.setSize(self._okImageSize)
+        if status == 'nodata':
+            painter.drawText(cartouche, Qt.AlignCenter, '')
+            return
+            
+        cartouche.setSize(self._imageSize)
+        if status == 'DOWN':
+            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe-alert')))
+        elif status == 'OK':
+            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-clear')))
+        elif status == 'WARNING':
+            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-showers')))
+        elif status == 'CRITICAL':
+            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe')))
 
-        painter.drawImage(cartouche, self._okImage)
+            #QStyledItemDelegate.paint(self, painter, option, index)
+            #return
+
+
+        #painter.drawImage(cartouche, self._okImage)
         #QStyledItemDelegate.paint(self, painter, option, index)
 
     def sizeHint(self, option, index):
-        return self._okImageSize
+        return self._imageSize
 
 
 class LoggerItemDelegate(QStyledItemDelegate):
@@ -117,9 +129,26 @@ class StateItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):
         super(StateItemDelegate, self).__init__(parent)
 
+        self._imageSize = QSize(25,25)
+
     def paint(self, painter, option, index):
-        #print "paint from state delegate!"
-        QStyledItemDelegate.paint(self, painter, option, index)
+        state    = index.data(Qt.DisplayRole)
+        cartouche = QRect(option.rect)
+        if option.state & QStyle.State_Selected:
+            painter.fillRect(option.rect, option.palette.highlight())
+        if state == 'nodata':
+            painter.drawText(cartouche, Qt.AlignCenter, '')
+            return
+            
+        cartouche.setSize(self._imageSize)
+        if state == 'running':
+            painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-start')))
+        elif state == 'paused':
+            painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-pause')))
+
+        
+    def sizeHint(self, option, index):
+        return self._imageSize
 
 class HostItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):

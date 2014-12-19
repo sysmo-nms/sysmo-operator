@@ -1,8 +1,16 @@
-from    PySide.QtCore   import Qt
+from    PySide.QtCore   import (
+    Qt,
+    QRectF,
+)
 from    PySide.QtGui   import (
     QGraphicsView,
     QGraphicsScene,
+    QGraphicsSimpleTextItem,
+    QGraphicsItem,
+    QGraphicsDropShadowEffect,
     QLabel,
+    QWidget,
+    QGridLayout,
     QPalette
 )
 
@@ -11,10 +19,45 @@ import  nocapi
 class MDIDependencies(QGraphicsView):
     def __init__(self, parent):
         super(MDIDependencies, self).__init__(parent)
-        self._scene = QGraphicsScene(self)
-        self._scene.setBackgroundBrush(self.palette().color(QPalette.Dark))
-        self._scene.addWidget(QLabel('hello'))
-        self.setScene(self._scene)
+        self.setScene(DependenciesScene(self))
 
     def _addRootElement(self):
         self._scene.addWidget(QLabel('root'),wFlags=Qt.Dialog)
+
+class DependenciesScene(QGraphicsScene):
+    def __init__(self, parent):
+        super(DependenciesScene, self).__init__(parent)
+        self.setBackgroundBrush(self.palette().color(QPalette.Dark))
+        widget  = TargetItem('target1')
+        widget2 = TargetItem('target2')
+        self.addWidget(widget, Qt.Dialog | Qt.WindowTitleHint)
+        self.addWidget(widget2, Qt.Dialog | Qt.WindowTitleHint)
+        i1 = SimpleItem()
+        i2 = SimpleItem()
+        self.addItem(i1)
+        self.addItem(i2)
+        self.addLine(0,0,100,100)
+
+
+class SimpleItem(QGraphicsItem):
+    def __init__(self, parent=None, scene=None):
+        super(SimpleItem, self).__init__(parent,scene)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+
+    def boundingRect(self):
+        penWidth = 1.0
+        return QRectF(
+                -10 - penWidth / 2,
+                -10 - penWidth / 2,
+                 20 + penWidth,
+                 20 + penWidth)
+
+    def paint(self, painter, option, widget):
+        painter.drawRoundedRect(-10, -10, 20, 20, 5, 5)
+
+
+class TargetItem(QWidget):
+    def __init__(self, name, parent=None):
+        super(TargetItem, self).__init__(parent)
+        grid = QGridLayout(self)
+        grid.addWidget(QLabel(name,self), 0,0)

@@ -67,24 +67,26 @@ TYPE_ROUTER      = 1
 TYPE_SWITCH      = 2
 TYPE_WIRELESS    = 3
 TYPE_FIREWALL    = 4
-TYPE_OTHER       = 5
+TYPE_PRINTER     = 5
+TYPE_OTHER       = 6
 
 class NewTargetDialog(QWizard):
     def __init__(self, parent=None):
         super(NewTargetDialog, self).__init__(parent)
         self.setModal(True)
-        pix = nocapi.nGetPixmap('applications-system')
-        self.setPixmap(QWizard.LogoPixmap, pix)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
         self.setPage(1, TargetConfFrame(self))
         self.setStartId(1)
+        self.setButtonText(QWizard.FinishButton, 'Validate')
+        self.setButtonText(QWizard.CancelButton, 'Close')
 
 
 
 class TargetConfFrame(QWizardPage):
     def __init__(self, parent=None):
         super(TargetConfFrame, self).__init__(parent)
-        self.setTitle(self.tr('Add a new target'))
+        self.setTitle(self.tr('Add new targets'))
+        self.setSubTitle('Use this form add new target to the system.')
         grid = NGrid(self)
 
         formFrame = NFrame(self)
@@ -96,12 +98,14 @@ class TargetConfFrame(QWizardPage):
         switchIcon      = nocapi.nGetIcon('switch')
         wirelessIcon    = nocapi.nGetIcon('wireless')
         firewallIcon    = nocapi.nGetIcon('firewall')
+        printerIcon     = nocapi.nGetIcon('printer')
         self._typeCombo = QComboBox(self)
         self._typeCombo.insertItem(TYPE_SERVER, srvIcon,    'Server')
         self._typeCombo.insertItem(TYPE_ROUTER, routerIcon, 'Router')
         self._typeCombo.insertItem(TYPE_SWITCH, switchIcon, 'Switch')
         self._typeCombo.insertItem(TYPE_WIRELESS, wirelessIcon, 'Wireless router')
         self._typeCombo.insertItem(TYPE_FIREWALL, firewallIcon, 'Firewall')
+        self._typeCombo.insertItem(TYPE_PRINTER, printerIcon,  'Printer')
         self._typeCombo.insertItem(TYPE_OTHER, otherIcon,   'Other')
         form.addRow('Type:', self._typeCombo)
 
@@ -396,6 +400,8 @@ class TargetConfFrame(QWizardPage):
             props['type'] = 'wireless'
         elif self._typeCombo.currentIndex() == TYPE_FIREWALL:
             props['type'] = 'firewall'
+        elif self._typeCombo.currentIndex() == TYPE_PRINTER:
+            props['type'] = 'printer'
         else:
             props['type'] = 'other'
 

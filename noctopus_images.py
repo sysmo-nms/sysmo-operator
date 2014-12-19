@@ -61,6 +61,8 @@ def initIcons():
     global iconSet
     iconSet = {
 
+        'satellite': QIcon(os.path.join(iconsPath, "satellite.svg")),
+        'printer': QIcon(os.path.join(iconsPath, "printer.svg")),
         'server': QIcon(os.path.join(iconsPath, "server.svg")),
         'firewall': QIcon(os.path.join(iconsPath, "firewall.svg")),
         'switch': QIcon(os.path.join(iconsPath, "switch.svg")),
@@ -163,6 +165,7 @@ def initImages():
         'accessories-text-editor': os.path.join(imagesPath, "accessories-text-editor.svg"),
         'edit-paste': os.path.join(imagesPath, "edit-paste.svg"),
         'media-playback-pause': os.path.join(imagesPath, "media-playback-pause.svg"),
+        'media-playback-start': os.path.join(imagesPath, "media-playback-start.svg"),
         'rrdtool-logo': os.path.join(imagesPath, "rrdtool_logo.png"),
         '60-day-trial-banner': os.path.join(imagesPath, "60-day-trial-banner.svg"),
         '60-day-trial-banner-reversed': os.path.join(imagesPath, "60-day-trial-banner-reversed.svg"),
