@@ -6,7 +6,9 @@ from    PySide.QtGui    import (
     QPainter,
     QColor,
     QRadialGradient,
-    QBrush
+    QBrush,
+    QLabel,
+    QFrame
 )
 import noctopus_ramp
 import noctopus_main
@@ -21,10 +23,14 @@ class NCentralFrame(NFrame):
         NCentralFrame.singleton = self
         self.grid = NGrid(self)
         self.grid.setHorizontalSpacing(6)
+        self.grid.setVerticalSpacing(6)
         self.centralStack   = NCentralStack(self)
         self.selector       = noctopus_ramp.NSelector(self, self.centralStack)
-        self.grid.addWidget(self.selector,       0,0,)
-        self.grid.addWidget(self.centralStack,   0,1,)
+        #self.menuFrame  = NMenuFrame(self)
+        #self.grid.addWidget(self.menuFrame,      0,0,1,2)
+        self.grid.addWidget(self.selector,       1,0)
+        self.grid.addWidget(self.centralStack,   1,1)
+
         self.grid.setColumnStretch(0, 0)
         self.grid.setColumnStretch(1, 1)
         self.selector.connectAll()
@@ -40,6 +46,16 @@ class NCentralFrame(NFrame):
             self.grid.removeWidget(self._infoFrame)
             self._infoFrame.deleteLater()
 
+class NMenuFrame(NFrame):
+    def __init__(self, parent):
+        super(NMenuFrame, self).__init__(parent)
+        grid = NGrid(self)
+        self.setFrameShape(QFrame.StyledPanel)
+
+        grid.addWidget(QLabel('overview', self), 0,0)
+        grid.addWidget(QLabel('and menu', self), 1,0)
+        self.setDisabled(True)
+        self.setContentsMargins(3,4,4,4)
 
 class NInfoFrame(NFrame):
     def __init__(self, parent):
@@ -103,3 +119,9 @@ class NCentralStack(NFrameContainer):
         qWidget = pyCallable(self)
         self._stackElements[app] = qWidget
         self._stack.addWidget(qWidget)
+
+
+
+
+
+

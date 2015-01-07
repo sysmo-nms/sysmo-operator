@@ -22,9 +22,9 @@ class RightMapsContainer(NFrame):
     def __init__(self, parent):
         super(RightMapsContainer, self).__init__(parent)
         self.setFrameShape(QFrame.StyledPanel)
-        self._mapsControls = RightMapsControls(self)
+        #self._mapsControls = RightMapsControls(self)
         grid = NGrid(self)
-        grid.addWidget(self._mapsControls,  0,0)
+        #grid.addWidget(self._mapsControls,  0,0)
         grid.addWidget(RightMapsTabs(self), 1,0)
         grid.setRowStretch(0,0)
         grid.setRowStretch(1,1)
@@ -59,9 +59,10 @@ class RightMapsTabs(QTabWidget):
         self._depc = DepContainer(self)
         osmicon = nocapi.nGetIcon('internet-web-browser')
         depicon = nocapi.nGetIcon('network-workgroup')
-        self.addTab(self._depc,depicon,self.tr('Dependencies'))
-
-        self.addTab(self._osmc,osmicon,self.tr('Map'))
+        self.insertTab(0,self._depc,depicon,self.tr('Dependencies'))
+        self.insertTab(1,self._osmc,osmicon,self.tr('Map'))
+        self.setTabEnabled(0, False)
+        self.setCurrentIndex(1)
 
 class OSMContainer(NFrameContainer):
     def __init__(self, parent):

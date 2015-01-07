@@ -165,24 +165,40 @@ class OSMView(NFrameContainer):
         super(OSMView, self).__init__(parent)
 
         self.osm    = QWebView(self)
-        # XXX Found bug here. QWebView do not properly quit on application
-        # shutdow when he is loading a page.
-        self.osm.load(QUrl('./html/OpenStreetMap.html'))
+        self.osm.load(QUrl('./html/map.html'))
+
+        page = self.osm.page()
+        self._frame = self.osm.page().currentFrame()
+        self._frame.addToJavaScriptWindowObject("qtCom",self)
 
         self.shade = QFrame(self)
         self.shade.setAutoFillBackground(False)
         self.shade.hide()
         self._browsable = True
 
+        testbutton = QPushButton('test',self)
+        testbutton.clicked.connect(self._clic)
         self.grid = NGridContainer(self)
-        self.grid.addWidget(self.osm, 0,0)
+        self.grid.addWidget(testbutton, 0,0)
+        self.grid.addWidget(self.osm,   1,0)
         self.setLayout(self.grid)
+
+    def _clic(self):
+        self._frame.evaluateJavaScript('alert("hello")')
+
+    @Slot(str)
+    def thanksOsm(self, wrd):
+        QDesktopServices.openUrl(QUrl('http://www.openstreetmap.org/copyright/en'))
+
+    @Slot(str)
+    def clac(self, wrd):
+        print "word is ", wrd
 
     def setBrowsable(self, bol):
         if  bol == False and self._browsable == True:
             self.shade.show()
             self.grid.addWidget(self.shade, 0,0)
-            self.shadeStatus = False
+            selfshadeStatus = False
         elif bol == True and self._browsable == False:
             self.shade.hide()
             self.grid.removeWidget(self.shade)

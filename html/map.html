@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+    <script type="text/javascript" src="OpenLayers.js"></script>
+    <style>
+    .map {
+        height: 80%;
+        width:  100%;
+        bottom:    0px;
+        left:   0px;
+        z-index:    1000;
+        position:   fixed;
+    }
+    .olControlAttribution {
+        position: relative;
+        bottom: 0;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+
+
+
+
+
+function clacFun(evt) {
+    qtCom.clac("hello");
+}
+
+function sysevent(evt) {
+    alert(evt);
+}
+
+function thanksOsm(evt) {
+    qtCom.thanksOsm("Thanks!");
+}
+
+map   = new OpenLayers.Map("map");
+layer = new OpenLayers.Layer.OSM();
+layer.attribution = "<a href=\"#\" onclick=\"thanksOsm();\">OpenStreetMap</a> contributor";
+map.addLayer(layer);
+ 
+var lonLat = new OpenLayers.LonLat(-0.1279688 ,51.5077286 )
+    .transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        map.getProjectionObject() // to Spherical Mercator Projection
+    );
+
+var zoom=16;
+
+var markers = new OpenLayers.Layer.Markers( "Markers" );
+map.addLayer(markers);
+
+markers.addMarker(new OpenLayers.Marker(lonLat));
+ 
+map.setCenter (lonLat, zoom);
+
+
+
+
+
+    </script>
+    <a href="#" onclick="clacFun();">AAAAAAARGGGHH</a>
+
+  </body>
+</html>

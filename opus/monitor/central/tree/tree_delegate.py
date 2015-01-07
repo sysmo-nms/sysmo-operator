@@ -31,30 +31,30 @@ class StatusItemDelegate(QStyledItemDelegate):
         self._imageSize = QSize(25,25)
 
     def paint(self, painter, option, index):
-        status    = index.data(Qt.DisplayRole)
-        cartouche = QRect(option.rect)
-        if option.state & QStyle.State_Selected:
-            painter.fillRect(option.rect, option.palette.highlight())
-        if status == 'nodata':
-            painter.drawText(cartouche, Qt.AlignCenter, '')
-            return
-            
-        cartouche.setSize(self._imageSize)
-        if status == 'DOWN':
-            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe-alert')))
-        elif status == 'OK':
-            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-clear')))
-        elif status == 'WARNING':
-            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-showers')))
-        elif status == 'CRITICAL':
-            painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe')))
+#         status    = index.data(Qt.DisplayRole)
+#         cartouche = QRect(option.rect)
+#         if option.state & QStyle.State_Selected:
+#             painter.fillRect(option.rect, option.palette.highlight())
+#         if status == 'nodata':
+#             painter.drawText(cartouche, Qt.AlignCenter, '')
+#             return
+#             
+#         cartouche.setSize(self._imageSize)
+#         if status == 'DOWN':
+#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe-alert')))
+#         elif status == 'OK':
+#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-clear')))
+#         elif status == 'WARNING':
+#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-showers')))
+#         elif status == 'CRITICAL':
+#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe')))
 
             #QStyledItemDelegate.paint(self, painter, option, index)
             #return
 
 
         #painter.drawImage(cartouche, self._okImage)
-        #QStyledItemDelegate.paint(self, painter, option, index)
+        QStyledItemDelegate.paint(self, painter, option, index)
 
     def sizeHint(self, option, index):
         return self._imageSize
@@ -139,12 +139,13 @@ class StateItemDelegate(QStyledItemDelegate):
         if state == 'nodata':
             painter.drawText(cartouche, Qt.AlignCenter, '')
             return
-            
-        cartouche.setSize(self._imageSize)
-        if state == 'running':
-            painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-start')))
-        elif state == 'paused':
-            painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-pause')))
+#             
+#         cartouche.setSize(self._imageSize)
+#         if state == 'running':
+#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-start')))
+#         elif state == 'paused':
+#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-pause')))
+        QStyledItemDelegate.paint(self, painter, option, index)
 
         
     def sizeHint(self, option, index):
