@@ -1,5 +1,12 @@
 import  os, sys, platform
-from    PyQt5.QtGui import QIcon, QWidget, QPalette, QPixmap
+from    PyQt5.QtWidgets import (
+    QWidget
+)
+from    PyQt5.QtGui import (
+    QIcon,
+    QPalette,
+    QPixmap
+)
 
 pixmapSet   = dict()
 iconSet     = dict()

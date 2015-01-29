@@ -1,4 +1,4 @@
-from    PyQt5.QtGui        import QGraphicsScene, QGraphicsView
+from    PyQt5.QtWidgets        import QGraphicsScene, QGraphicsView
 from    noctopus_widgets    import NFrameContainer, NGridContainer
 
 class GraphicDash(NFrameContainer):

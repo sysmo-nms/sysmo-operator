@@ -1,4 +1,7 @@
 from    PyQt5.QtGui    import (
+    QPalette
+)
+from    PyQt5.QtWidgets    import (
     QTreeView,
     QFrame,
     QPushButton,
@@ -6,7 +9,6 @@ from    PyQt5.QtGui    import (
     QLineEdit,
     QTextEdit,
     QSlider,
-    QPalette,
     QButtonGroup,
     QStackedLayout,
     QScrollArea

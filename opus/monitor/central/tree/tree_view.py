@@ -1,12 +1,12 @@
 from    PyQt5.QtCore   import (
     Qt,
     QSize,
+    QSortFilterProxyModel,
     QSettings
 )
 
-from    PyQt5.QtGui    import (
+from    PyQt5.QtWidgets    import (
     QTreeView,
-    QSortFilterProxyModel,
     QMenu,
     QAction,
     QAbstractItemView

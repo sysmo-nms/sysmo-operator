@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QSplitter, QStackedWidget
+from PyQt5.QtWidgets import QSplitter, QStackedWidget
 from PyQt5.QtCore import QSettings, QTimeLine
 from    noctopus_widgets    import (
     NFrameContainer, NFrame,

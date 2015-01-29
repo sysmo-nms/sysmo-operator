@@ -9,15 +9,17 @@ from    PyQt5.QtCore   import (
 )
 
 from    PyQt5.QtGui    import (
+    QRegExpValidator,
+    QValidator,
+    QDesktopServices
+)
+from    PyQt5.QtWidgets    import (
     QFrame,
     QLabel,
     QGridLayout,
     QSplitter,
     QCommandLinkButton,
-    QDesktopServices,
     QPushButton,
-    QRegExpValidator,
-    QValidator,
     QAction,
     QLineEdit
 )

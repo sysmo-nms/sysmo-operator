@@ -6,8 +6,10 @@ from    PyQt5.QtCore   import (
 )
 
 from    PyQt5.QtGui    import (
-    QPushButton,
     QDrag
+)
+from    PyQt5.QtWidgets    import (
+    QPushButton
 )
 import noctopus_images
 import noctopus_centerwidget

@@ -17,18 +17,18 @@ def main():
     
     if noctopusStyle == None:
         if   re.match('^Windows-XP..*',    osType) != None:
-            noctopusStyle = 'plastique'
+            noctopusStyle = 'fusion'
         elif re.match('^Linux..*',         osType) != None:
-            noctopusStyle = 'plastique'
+            noctopusStyle = 'fusion'
         elif re.match('^Windows-Vista..*', osType) != None: pass # native
         elif re.match('^Windows-7..*',     osType) != None: pass # native
         elif re.match('^Windows-8..*',     osType) != None: pass # native
         elif re.match('^Mac..*',           osType) != None: pass # native
     
     # TOPYQT ERROR BEGIN
-    # force dark plastique
-    noctopusStyle = 'plastique'
-    noctopusTheme = 'dark'
+    # force dark fusion
+    #noctopusStyle = 'fusion'
+    #noctopusTheme = 'dark'
     # TOPYQT ERROR END
 
     if      noctopusStyle == None:      pass

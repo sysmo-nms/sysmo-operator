@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from    PyQt5.QtGui        import (
+from    PyQt5.QtWidgets        import (
     QDialog,
     QLineEdit,
     QSpinBox,

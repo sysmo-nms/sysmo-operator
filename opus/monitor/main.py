@@ -3,7 +3,7 @@ from    PyQt5.QtCore   import (
     QTimeLine,
 )
 
-from PyQt5.QtGui import QMenu, QAction
+from PyQt5.QtWidgets import QMenu, QAction
 # TOPYQT ERROR BEGIN
 # AttributeError: 'module' object has no attribute 'STARTF_USESHOWWINDOW
 #from    opus.monitor                 import norrd

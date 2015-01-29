@@ -1,12 +1,14 @@
 # PyQt5
 from    PyQt5.QtCore   import QRect
 from    PyQt5.QtGui    import (
-    QStackedLayout,
-    QGridLayout,
     QPainter,
     QColor,
     QRadialGradient,
-    QBrush,
+    QBrush
+)
+from    PyQt5.QtWidgets    import (
+    QStackedLayout,
+    QGridLayout,
     QLabel,
     QFrame
 )

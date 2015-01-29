@@ -7,12 +7,15 @@ from    PyQt5.QtCore   import (
 )
 
 from    PyQt5.QtGui    import (
-    QWidget,
-    QDialog,
-    QScrollArea,
     QPixmap,
     QPalette,
     QFont,
+)
+
+from    PyQt5.QtWidgets    import (
+    QWidget,
+    QDialog,
+    QScrollArea,
     QStatusBar,
     QProgressBar,
     QPushButton,

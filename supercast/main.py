@@ -4,7 +4,7 @@ from    PyQt5.QtCore import (
     pyqtSignal,
     Qt
 )
-from PyQt5.QtGui import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 from    PyQt5.QtNetwork import QAbstractSocket
 from    supercast.http_manager  import SupercastAccessManager
 from    supercast.socket        import SupercastSocket

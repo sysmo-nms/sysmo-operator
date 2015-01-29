@@ -1,5 +1,9 @@
 from functools      import partial
 from PyQt5.QtGui   import (
+    QRegExpValidator,
+    QIntValidator
+)
+from PyQt5.QtWidgets   import (
     QMenu,
     QWizardPage,
     QCheckBox,
@@ -11,8 +15,6 @@ from PyQt5.QtGui   import (
     QTreeWidgetItem,
     QGroupBox,
     QMessageBox,
-    QRegExpValidator,
-    QIntValidator
 )
 from PyQt5.QtCore import Qt, QPoint, QRegExp
 

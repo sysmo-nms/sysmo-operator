@@ -11,7 +11,7 @@ from    PyQt5.QtCore   import (
     QObject
 )
 
-from    PyQt5.QtGui    import (
+from    PyQt5.QtWidgets    import (
     QMainWindow,
     QApplication,
     QSystemTrayIcon,
@@ -358,7 +358,7 @@ class NMainWindow(QMainWindow):
     
         plastiqueAction = QAction(self.tr('Balanced'), self)
         plastiqueAction.setCheckable(True)
-        plastiqueAction.triggered.connect(partial(self._setStyle, 'plastique'))
+        plastiqueAction.triggered.connect(partial(self._setStyle, 'fusion'))
 
         cdeAction = QAction(self.tr('CDE'), self)
         cdeAction.setCheckable(True)
@@ -452,7 +452,7 @@ class NMainWindow(QMainWindow):
         if self._noctopusStyle == 'native':
             nativeAction.setChecked(True)
             self.menuColor.setDisabled(True)
-        elif self._noctopusStyle == 'plastique':
+        elif self._noctopusStyle == 'fusion':
             plastiqueAction.setChecked(True)
         elif self._noctopusStyle == 'cde':
             cdeAction.setChecked(True)

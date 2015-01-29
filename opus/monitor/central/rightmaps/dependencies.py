@@ -3,6 +3,9 @@ from    PyQt5.QtCore   import (
     QRectF,
 )
 from    PyQt5.QtGui   import (
+    QPalette
+)
+from    PyQt5.QtWidgets   import (
     QGraphicsView,
     QGraphicsScene,
     QGraphicsSimpleTextItem,
@@ -11,7 +14,6 @@ from    PyQt5.QtGui   import (
     QLabel,
     QWidget,
     QGridLayout,
-    QPalette
 )
 
 import  nocapi
@@ -27,16 +29,18 @@ class MDIDependencies(QGraphicsView):
 class DependenciesScene(QGraphicsScene):
     def __init__(self, parent):
         super(DependenciesScene, self).__init__(parent)
-        self.setBackgroundBrush(self.palette().color(QPalette.Dark))
-        widget  = TargetItem('target1')
-        widget2 = TargetItem('target2')
-        self.addWidget(widget, Qt.Dialog | Qt.WindowTitleHint)
-        self.addWidget(widget2, Qt.Dialog | Qt.WindowTitleHint)
-        i1 = SimpleItem()
-        i2 = SimpleItem()
-        self.addItem(i1)
-        self.addItem(i2)
-        self.addLine(0,0,100,100)
+        # TOPYQT( ERROR BEGIN
+        #self.setBackgroundBrush(self.palette().color(QPalette.Dark))
+        #widget  = TargetItem('target1')
+        #widget2 = TargetItem('target2')
+        #self.addWidget(widget, Qt.Dialog | Qt.WindowTitleHint)
+        #self.addWidget(widget2, Qt.Dialog | Qt.WindowTitleHint)
+        #i1 = SimpleItem()
+        #i2 = SimpleItem()
+        #self.addItem(i1)
+        #self.addItem(i2)
+        #self.addLine(0,0,100,100)
+        # TOPYQT( ERROR END
 
 
 class SimpleItem(QGraphicsItem):

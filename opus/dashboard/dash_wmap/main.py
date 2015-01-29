@@ -1,4 +1,4 @@
-from    PyQt5.QtGui        import QLabel
+from    PyQt5.QtWidgets        import QLabel
 from    noctopus_widgets    import NFrameContainer, NGridContainer
 from    opus.dashboard.dash_widgets    import OSMView
 

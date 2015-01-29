@@ -9,12 +9,14 @@ from    PyQt5.QtCore   import (
 )
 
 from    PyQt5.QtGui    import (
+    QPalette,
+    QFont,
+    QPixmap
+)
+from    PyQt5.QtWidgets    import (
     QWidget,
     QDialog,
     QScrollArea,
-    QPixmap,
-    QPalette,
-    QFont,
     QStatusBar,
     QProgressBar,
     QPushButton,

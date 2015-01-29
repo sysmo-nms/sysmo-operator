@@ -5,13 +5,15 @@ from    PyQt5.QtCore   import (
 )
 
 from    PyQt5.QtGui    import (
+    QPalette,
+    QColor,
+    QImage
+)
+from    PyQt5.QtWidgets    import (
     QStyle,
     QStyledItemDelegate,
     QStyleOptionProgressBar,
     QApplication,
-    QImage,
-    QPalette,
-    QColor
 )
 
 from    functools import partial

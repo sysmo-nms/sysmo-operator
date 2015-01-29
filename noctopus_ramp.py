@@ -9,7 +9,7 @@ from    PyQt5.QtCore   import (
     QSize
 )
 
-from    PyQt5.QtGui    import (
+from    PyQt5.QtWidgets    import (
     QAction,
     QActionGroup,
     QSizePolicy,

@@ -1,8 +1,10 @@
 from    PyQt5.QtGui    import (
-    QMenu,
-    QFont,
-    QAction,
     QDesktopServices,
+    QFont
+)
+from    PyQt5.QtWidgets    import (
+    QMenu,
+    QAction,
     QMessageBox
 )
 from PyQt5.QtCore import QUrl

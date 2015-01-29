@@ -3,7 +3,7 @@ from PyQt5.QtCore import (
     QSettings,
     pyqtSignal
 )
-from PyQt5.QtGui import (
+from PyQt5.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QPushButton,
