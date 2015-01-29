@@ -226,7 +226,9 @@ class NMainWindow(QMainWindow):
         settings.setValue("NMainWindow/viewMode",       self.activeViewMode)
         settings.setValue("NMainWindow/style",          self._noctopusStyle)
         settings.setValue("NMainWindow/theme",          self._noctopusTheme)
-        self.supercast.supercastClose()
+        # TOPYQT ERROR BEGIN
+        #self.supercast.supercastClose()
+        # TOPYQT ERROR END
         QMainWindow.closeEvent(self, event)
 
     ############
