@@ -4,7 +4,10 @@ from    PyQt4.QtCore   import (
 )
 
 from PyQt4.QtGui import QMenu, QAction
-from    opus.monitor                 import norrd
+# TOPYQT ERROR BEGIN
+# AttributeError: 'module' object has no attribute 'STARTF_USESHOWWINDOW
+#from    opus.monitor                 import norrd
+# TOPYQT ERROR END
 from    opus.monitor.commands.user_actions  import UserActions
 from    opus.monitor.commands.doc_engine    import DocConfigurator
 from    opus.monitor.central.main    import TreeContainer
@@ -40,9 +43,12 @@ class Central(NFrameContainer):
     def _initUserActions(self):
         self._userActions = UserActions(self)
 
-    def _initRrdtool(self):
-        norrd.start(self)
-        nocapi.nConnectWillClose(norrd.stop)
+    # TOPYQT ERROR BEGIN
+    # AttributeError: 'module' object has no attribute 'STARTF_USESHOWWINDOW
+    def _initRrdtool(self): pass
+        #norrd.start(self)
+        #nocapi.nConnectWillClose(norrd.stop)
+    # TOPYQT ERROR END
 
     def _configureDoc(self):
         ret = DocConfigurator(self)

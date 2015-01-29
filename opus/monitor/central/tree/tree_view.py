@@ -77,7 +77,10 @@ class ProbesTreeview(QTreeView):
         state   = settings.value('monitor/probe_treeview_header')
         if state != None:
             header = self.header()
-            header.restoreState(state)
+            # TOPYQT ERROR BEGIN
+            # TypeError: QHeaderView.restoreState(QByteArray): argument 1 has unexpected type 'QVariant'
+            #header.restoreState(state)
+            # TOPYQT ERROR END
 
         # various init
         self.targetMenu = TargetMenu(self)

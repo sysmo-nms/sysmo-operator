@@ -227,8 +227,11 @@ class NMainWindow(QMainWindow):
         #settings = QSettings("Noctopus NMS", "noctopus-client")
         settings = QSettings()
 
-        self.restoreGeometry(settings.value("NMainWindow/geometry"))
-        self.restoreState(settings.value("NMainWindow/windowState"))
+        # TOPYQT ERROR BEGIN
+        # QWidget.restoreGeometry(QByteArray): argument 1 has unexpected type 'QVariant'
+        #self.restoreGeometry(settings.value("NMainWindow/geometry"))
+        #self.restoreState(settings.value("NMainWindow/windowState"))
+        # TOPYQT ERROR END
 
         proxySet = settings.value("NMainWindow/proxySettings")
         if proxySet != None: self.activeProxySettings = proxySet

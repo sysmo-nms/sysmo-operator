@@ -54,7 +54,10 @@ class MainSplitter(QSplitter):
         self._settings = QSettings()
         state = self._settings.value('monitor/main_splitter')
         if state == None: return
-        self.restoreState(state)
+        # TOPYQT ERROR BEGIN
+        # TypeError: QSplitter.restoreState(QByteArray): argument 1 has unexpected type 'QVariant'
+        #self.restoreState(state)
+        # TOPYQT ERROR END
 
     def _saveSettings(self):
         self._settings.setValue('monitor/main_splitter', self.saveState())
