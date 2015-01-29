@@ -1,9 +1,9 @@
-from PyQt4.QtCore import (
+from PyQt5.QtCore import (
     QObject,
     QSettings,
     pyqtSignal
 )
-from PyQt4.QtGui import (
+from PyQt5.QtGui import (
     QDialog,
     QLabel,
     QListWidget

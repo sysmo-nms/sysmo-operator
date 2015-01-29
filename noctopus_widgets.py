@@ -1,6 +1,6 @@
-# PyQt4
-from    PyQt4.QtSvg    import QSvgWidget
-from    PyQt4.QtCore   import (
+# PyQt5
+from    PyQt5.QtSvg    import QSvgWidget
+from    PyQt5.QtCore   import (
     QObject,
     Qt,
     QUrl,
@@ -8,7 +8,7 @@ from    PyQt4.QtCore   import (
     QRegExp
 )
 
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QFrame,
     QLabel,
     QGridLayout,

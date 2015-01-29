@@ -1,15 +1,15 @@
 # python lib
 from functools import partial
 
-# PyQt4
-from    PyQt4.QtCore   import (
+# PyQt5
+from    PyQt5.QtCore   import (
     Qt,
     pyqtSignal,
     QSettings,
     QSize
 )
 
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QAction,
     QActionGroup,
     QSizePolicy,
@@ -20,7 +20,7 @@ from    PyQt4.QtGui    import (
     QToolButton,
 )
 
-from PyQt4.QtSvg   import QSvgWidget
+from PyQt5.QtSvg   import QSvgWidget
 
 # local dependencies
 from    noctopus_images     import getIcon, getImage

@@ -1,4 +1,4 @@
-from PyQt4.QtGui   import (
+from PyQt5.QtGui   import (
     QWizard,
     QWizardPage,
     QLabel,
@@ -26,7 +26,7 @@ from PyQt4.QtGui   import (
     QTreeWidgetItem,
     QAbstractItemView
 )
-from PyQt4.QtCore import Qt
+from PyQt5.QtCore import Qt
 
 from noctopus_widgets import (
     NGrid,

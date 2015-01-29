@@ -1,11 +1,11 @@
-from    PyQt4.QtCore import (
+from    PyQt5.QtCore import (
     QObject,
     QThread,
     pyqtSignal,
     Qt
 )
-from PyQt4.QtGui import QMessageBox
-from    PyQt4.QtNetwork import QAbstractSocket
+from PyQt5.QtGui import QMessageBox
+from    PyQt5.QtNetwork import QAbstractSocket
 from    supercast.http_manager  import SupercastAccessManager
 from    supercast.socket        import SupercastSocket
 import  supercast.login

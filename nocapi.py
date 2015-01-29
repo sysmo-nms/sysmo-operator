@@ -27,13 +27,13 @@ def nGetViewMode():
 
 def nGetPixmap(pixmapName):
     ''' return:
-        PyQt4.QtGui.QPixmap()
+        PyQt5.QtGui.QPixmap()
     '''
     return noctopus_images.getPixmap(pixmapName)
 
 def nGetIcon(iconName):
     ''' return:
-        PyQt4.QtGui.QIcon()
+        PyQt5.QtGui.QIcon()
     '''
     return noctopus_images.getIcon(iconName)
 

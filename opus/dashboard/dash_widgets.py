@@ -1,10 +1,10 @@
-from    PyQt4.QtGui        import (
+from    PyQt5.QtGui        import (
     QTreeWidget,
     QTreeWidgetItem,
     QFrame
 )
-from    PyQt4.QtWebKit     import *
-from    PyQt4.QtCore       import Qt, QSize
+from    PyQt5.QtWebKit     import *
+from    PyQt5.QtCore       import Qt, QSize
 from    noctopus_widgets    import (
     NFrameContainer,
     NGridContainer,

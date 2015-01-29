@@ -1,4 +1,4 @@
-from    PyQt4.QtGui        import QListWidget
+from    PyQt5.QtGui        import QListWidget
 from    noctopus_widgets    import NFrameContainer, NGridContainer
 
 class TimelineDash(NFrameContainer):

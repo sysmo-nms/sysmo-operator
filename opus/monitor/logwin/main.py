@@ -1,4 +1,4 @@
-from    PyQt4.QtCore   import (
+from    PyQt5.QtCore   import (
     QSettings,
     QSize,
     QTimeLine,
@@ -6,7 +6,7 @@ from    PyQt4.QtCore   import (
     Qt
 )
 
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QWidget,
     QDialog,
     QScrollArea,

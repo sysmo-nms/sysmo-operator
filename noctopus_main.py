@@ -1,9 +1,9 @@
 # python lib
 from functools import partial
 
-# PyQt4
-from    PyQt4.QtNetwork import QAbstractSocket
-from    PyQt4.QtCore   import (
+# PyQt5
+from    PyQt5.QtNetwork import QAbstractSocket
+from    PyQt5.QtCore   import (
     Qt,
     pyqtSignal,
     QSettings,
@@ -11,7 +11,7 @@ from    PyQt4.QtCore   import (
     QObject
 )
 
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QMainWindow,
     QApplication,
     QSystemTrayIcon,

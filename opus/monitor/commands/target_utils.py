@@ -1,4 +1,4 @@
-from PyQt4.QtGui   import (
+from PyQt5.QtGui   import (
     QAbstractItemView,
     QProgressDialog,
     QSpinBox,
@@ -25,7 +25,7 @@ from PyQt4.QtGui   import (
     QWidgetAction,
     QDialogButtonBox
 )
-from PyQt4.QtCore import Qt
+from PyQt5.QtCore import Qt
 
 from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
 import nocapi

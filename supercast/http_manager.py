@@ -3,7 +3,7 @@
 import  sys
 import  zlib
 from    functools import partial
-from    PyQt4.QtCore import (
+from    PyQt5.QtCore import (
     Qt,
     QUrl,
     QObject,
@@ -11,13 +11,13 @@ from    PyQt4.QtCore import (
     pyqtSignal
 )
 
-from    PyQt4.QtNetwork import (
+from    PyQt5.QtNetwork import (
     QNetworkAccessManager,
     QNetworkRequest,
     QNetworkReply
 )
 
-from PyQt4.QtGui import (
+from PyQt5.QtGui import (
     QApplication,
     QWidget,
     QGridLayout,

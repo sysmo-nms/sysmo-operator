@@ -1,5 +1,5 @@
-from    PyQt4.QtNetwork    import QTcpSocket
-from    PyQt4.QtCore       import (
+from    PyQt5.QtNetwork    import QTcpSocket
+from    PyQt5.QtCore       import (
         QThread, 
         QObject,
         QDataStream,

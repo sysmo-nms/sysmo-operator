@@ -2,8 +2,8 @@ import  subprocess
 import  re
 import  platform
 import  collections
-from    PyQt4.QtGui    import QPixmap
-from    PyQt4.QtCore   import (
+from    PyQt5.QtGui    import QPixmap
+from    PyQt5.QtCore   import (
     QObject,
     QThread,
     Qt,

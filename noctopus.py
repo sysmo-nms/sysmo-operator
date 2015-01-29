@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from    PyQt4.QtGui    import QApplication
-from    PyQt4.QtCore   import QSettings, QTranslator
+from    PyQt5.QtWidgets    import QApplication
+from    PyQt5.QtCore   import QSettings, QTranslator
 import  sys
 import  re
 import  platform

@@ -1,4 +1,4 @@
-from    PyQt4.QtCore   import *
+from    PyQt5.QtCore   import *
 import  Supercast
 
 class ChannelHandler(QObject):

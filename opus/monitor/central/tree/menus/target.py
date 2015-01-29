@@ -1,11 +1,11 @@
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QMenu,
     QFont,
     QAction,
     QDesktopServices,
     QMessageBox
 )
-from PyQt4.QtCore import QUrl
+from PyQt5.QtCore import QUrl
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard

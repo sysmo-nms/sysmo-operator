@@ -1,11 +1,11 @@
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QToolBox,
     QDialog,
     QWidget,
     QLabel
 )
 
-from    PyQt4.QtCore   import QSettings
+from    PyQt5.QtCore   import QSettings
 from    noctopus_widgets    import (
     NFrameContainer,
     NGridContainer,

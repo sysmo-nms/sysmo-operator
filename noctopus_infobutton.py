@@ -1,11 +1,11 @@
-# PyQt4
-from    PyQt4.QtCore   import (
+# PyQt5
+from    PyQt5.QtCore   import (
     pyqtSignal,
     Qt,
     QMimeData
 )
 
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QPushButton,
     QDrag
 )

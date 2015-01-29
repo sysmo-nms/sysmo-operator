@@ -1,10 +1,10 @@
-from    PyQt4.QtCore   import (
+from    PyQt5.QtCore   import (
     Qt,
     QSize,
     QRect
 )
 
-from    PyQt4.QtGui    import (
+from    PyQt5.QtGui    import (
     QStyle,
     QStyledItemDelegate,
     QStyleOptionProgressBar,

@@ -1,4 +1,4 @@
-from PyQt4.QtGui import (
+from PyQt5.QtGui import (
     QScrollArea,
     QWizardPage,
     QLabel,
@@ -14,7 +14,7 @@ from PyQt4.QtGui import (
     QButtonGroup
 )
 
-from PyQt4.QtCore import QSize
+from PyQt5.QtCore import QSize
 from noctopus_widgets import (
     NGrid,
     NGridContainer,

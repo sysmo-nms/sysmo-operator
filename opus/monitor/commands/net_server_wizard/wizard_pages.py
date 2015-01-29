@@ -1,5 +1,5 @@
 from functools      import partial
-from PyQt4.QtGui   import (
+from PyQt5.QtGui   import (
     QMenu,
     QWizardPage,
     QCheckBox,
@@ -14,7 +14,7 @@ from PyQt4.QtGui   import (
     QRegExpValidator,
     QIntValidator
 )
-from PyQt4.QtCore import Qt, QPoint, QRegExp
+from PyQt5.QtCore import Qt, QPoint, QRegExp
 
 from noctopus_widgets import (
     NGrid,

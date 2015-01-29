@@ -1,6 +1,6 @@
-# PyQt4
-from    PyQt4.QtCore   import QRect
-from    PyQt4.QtGui    import (
+# PyQt5
+from    PyQt5.QtCore   import QRect
+from    PyQt5.QtGui    import (
     QStackedLayout,
     QGridLayout,
     QPainter,

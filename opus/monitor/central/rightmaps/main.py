@@ -1,5 +1,5 @@
-from    PyQt4.QtCore   import Qt, QSize
-from    PyQt4.QtGui   import (
+from    PyQt5.QtCore   import Qt, QSize
+from    PyQt5.QtGui   import (
     QFrame,
     QPushButton,
     QTabWidget,
