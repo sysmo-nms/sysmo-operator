@@ -186,13 +186,15 @@ class OSMView(NFrameContainer):
     def _clic(self):
         self._frame.evaluateJavaScript('alert("hello")')
 
-    @Slot(str)
-    def thanksOsm(self, wrd):
-        QDesktopServices.openUrl(QUrl('http://www.openstreetmap.org/copyright/en'))
-
-    @Slot(str)
-    def clac(self, wrd):
-        print "word is ", wrd
+    # TOPYQT ERROR BEGIN
+    #@Slot(str)
+    #def thanksOsm(self, wrd):
+        #QDesktopServices.openUrl(QUrl('http://www.openstreetmap.org/copyright/en'))
+#
+    #@Slot(str)
+    #def clac(self, wrd):
+        #print "word is ", wrd
+    # TOPYQT ERROR END
 
     def setBrowsable(self, bol):
         if  bol == False and self._browsable == True:
