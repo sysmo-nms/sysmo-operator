@@ -2,12 +2,12 @@ import  subprocess
 import  re
 import  platform
 import  collections
-from    PySide.QtGui    import QPixmap
-from    PySide.QtCore   import (
+from    PyQt4.QtGui    import QPixmap
+from    PyQt4.QtCore   import (
     QObject,
     QThread,
     Qt,
-    Signal
+    pyqtSignal
 )
 
 def start(parent):
@@ -44,20 +44,20 @@ class Rrdtool(QObject):
             return False
 
     def _addRrdThread(self):
-        sig     = RrdSignal(self)
+        sig     = RrdpyqtSignal(self)
         thread  = QThread(self)
         rrdexe  = RrdtoolThread(self._executable)
         rrdexe.moveToThread(thread)
         thread.start()
-        rrdexe.upSignal.connect(self.getReply, Qt.QueuedConnection)
-        sig.downSignal.connect(rrdexe.cmd, Qt.QueuedConnection)
+        rrdexe.uppyqtSignal.connect(self.getReply, Qt.QueuedConnection)
+        sig.downpyqtSignal.connect(rrdexe.cmd, Qt.QueuedConnection)
 
         self._threadList.append(thread)
         self._signalList.append(sig)
         self._rrdExeList.append(rrdexe)
 
     def cmd(self, msg):
-        self._signalList[0].downSignal.emit(msg)
+        self._signalList[0].downpyqtSignal.emit(msg)
         self._signalList.rotate(1)
 
     def getReply(self, msg):
@@ -74,12 +74,12 @@ class Rrdtool(QObject):
 
 
 
-class RrdSignal(QObject):
-    downSignal = Signal(dict)
+class RrdpyqtSignal(QObject):
+    downpyqtSignal = pyqtSignal(dict)
 
 
 class RrdtoolThread(QObject):
-    upSignal = Signal(dict)
+    uppyqtSignal = pyqtSignal(dict)
     def __init__(self, executable, parent=None):
         super(RrdtoolThread, self).__init__(parent)
         self._executable        = executable
@@ -113,7 +113,7 @@ class RrdtoolThread(QObject):
             pixFile = cmd['data']
             cmd['data']  = QPixmap(pixFile)
 
-        self.upSignal.emit(cmd)
+        self.uppyqtSignal.emit(cmd)
 
     def _rrdtoolExec(self, command):
         if self._includeNewlineRe.match(command) == None: command += '\n'

@@ -1,5 +1,5 @@
-from    PySide.QtGui    import *
-from    PySide.QtCore   import *
+from    PyQt4.QtGui    import *
+from    PyQt4.QtCore   import *
 from    LocatorProxyEvents import ChannelHandler
 import  Commercials
 

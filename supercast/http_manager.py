@@ -3,21 +3,21 @@
 import  sys
 import  zlib
 from    functools import partial
-from    PySide.QtCore import (
+from    PyQt4.QtCore import (
     Qt,
     QUrl,
     QObject,
     QThread,
-    Signal
+    pyqtSignal
 )
 
-from    PySide.QtNetwork import (
+from    PyQt4.QtNetwork import (
     QNetworkAccessManager,
     QNetworkRequest,
     QNetworkReply
 )
 
-from PySide.QtGui import (
+from PyQt4.QtGui import (
     QApplication,
     QWidget,
     QGridLayout,
@@ -36,7 +36,7 @@ class SupercastHTTPRequest(QNetworkRequest):
 
 
 class SupercastAccessManagerThread(QObject):
-    upSignal   = Signal(dict)
+    uppyqtSignal   = pyqtSignal(dict)
     def __init__(self, server, proto, port):
         super(SupercastAccessManagerThread, self).__init__(None)
         self._urlHead = "%s://%s:%i" % (proto, server, port)
@@ -52,7 +52,7 @@ class SupercastAccessManagerThread(QObject):
         uFile.close()
         reply.deleteLater()
         originalRequest['success'] = True
-        self.upSignal.emit(originalRequest)
+        self.uppyqtSignal.emit(originalRequest)
 
     def handleRequest(self, request):
         url     = request['url']
@@ -62,7 +62,7 @@ class SupercastAccessManagerThread(QObject):
 
 
 class SupercastAccessManager(QObject):
-    downSignal = Signal(dict)
+    downpyqtSignal = pyqtSignal(dict)
     def __init__(self, parent, server, proto, dataPort):
         super(SupercastAccessManager, self).__init__(parent)
         SupercastAccessManager.singleton = self
@@ -72,8 +72,8 @@ class SupercastAccessManager(QObject):
         self._thread.start()
         self.destroyed.connect(self._managerDown.deleteLater)
         self.destroyed.connect(self._thread.deleteLater)
-        self._managerDown.upSignal.connect(self._handleReply, Qt.QueuedConnection)
-        self.downSignal.connect(self._managerDown.handleRequest, Qt.QueuedConnection)
+        self._managerDown.uppyqtSignal.connect(self._handleReply, Qt.QueuedConnection)
+        self.downpyqtSignal.connect(self._managerDown.handleRequest, Qt.QueuedConnection)
 
     def _handleReply(self, reply):
         callback = reply['callback']
@@ -81,7 +81,7 @@ class SupercastAccessManager(QObject):
 
     def requestUrl(self, request):
         "when request is a dict {'url': url, 'outfile': file, callback: callback}"
-        self.downSignal.emit(request)
+        self.downpyqtSignal.emit(request)
 
     def terminateAll(self):
         self._thread.quit()

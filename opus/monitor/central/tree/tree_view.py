@@ -1,10 +1,10 @@
-from    PySide.QtCore   import (
+from    PyQt4.QtCore   import (
     Qt,
     QSize,
     QSettings
 )
 
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QTreeView,
     QSortFilterProxyModel,
     QMenu,

@@ -1,4 +1,4 @@
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QFrame,
     QPushButton,
     QLabel,
@@ -12,9 +12,9 @@ from    noctopus_widgets    import (
     NGridContainer
 )
 
-from    PySide.QtCore   import QUrl
-from    PySide.QtWebKit import QWebView
-from    PySide.QtSvg    import QSvgWidget
+from    PyQt4.QtCore   import QUrl
+from    PyQt4.QtWebKit import QWebView
+from    PyQt4.QtSvg    import QSvgWidget
 import    nocapi
 
 class Central(NFrameContainer):

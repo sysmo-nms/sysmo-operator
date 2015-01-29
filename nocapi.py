@@ -27,13 +27,13 @@ def nGetViewMode():
 
 def nGetPixmap(pixmapName):
     ''' return:
-        PySide.QtGui.QPixmap()
+        PyQt4.QtGui.QPixmap()
     '''
     return noctopus_images.getPixmap(pixmapName)
 
 def nGetIcon(iconName):
     ''' return:
-        PySide.QtGui.QIcon()
+        PyQt4.QtGui.QIcon()
     '''
     return noctopus_images.getIcon(iconName)
 
@@ -59,7 +59,7 @@ def nConnectProxySettings(pyCallable):
     ''' return: None
     Connect every proxy settings modification to the pyCallable given as 
     argument.
-    pyCallable will receive: Signal(dict)
+    pyCallable will receive: pyqtSignal(dict)
     {
         'use':  True | False,
         'host': str,
@@ -71,7 +71,7 @@ def nConnectProxySettings(pyCallable):
 def nConnectViewMode(pyCallable):
     ''' return: None
     Connect every view mode modification to the pyCallable given as argument.
-    pyCallable will receive: Signal(dict)
+    pyCallable will receive: pyqtSignal(dict)
     {
         'screen':   'full' | 'normal',
         'mode':     'minimal' | 'simple' | 'expert',
@@ -95,7 +95,7 @@ def nConnectAppSelect(pyCallable):
     Connect every select event from the left ramp buttons to pyCallable.
     Trigered when a module button from the ramp is pressed, wille the module
     is not visible.
-    pyCallable will receive: str, when str = module name. Signal(str)
+    pyCallable will receive: str, when str = module name. pyqtSignal(str)
     '''
     noctopus_ramp.NSelector.singleton.appButtonPressed.connect(pyCallable)
     return None
@@ -105,7 +105,7 @@ def nConnectWillClose(pyCallable):
     Connect the close event to pyCallable.
     module button from the ramp is pressed, wille the module is not
     visible.
-    pyCallable will receive nothing. Signal()
+    pyCallable will receive nothing. pyqtSignal()
     '''
     noctopus_main.NMainWindow.singleton.willClose.connect(pyCallable)
     return None

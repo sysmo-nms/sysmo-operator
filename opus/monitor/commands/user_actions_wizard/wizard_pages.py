@@ -1,4 +1,4 @@
-from PySide.QtGui   import (
+from PyQt4.QtGui   import (
     QWizard,
     QWizardPage,
     QLabel,
@@ -20,7 +20,7 @@ from PySide.QtGui   import (
     QMenu,
     QAction
 )
-from PySide.QtCore import Qt
+from PyQt4.QtCore import Qt
 
 from noctopus_widgets import (
     NGrid,

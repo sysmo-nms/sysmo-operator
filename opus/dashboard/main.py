@@ -1,11 +1,11 @@
-from    PySide.QtGui        import (
+from    PyQt4.QtGui        import (
     QTabWidget,
     QMdiArea,
     QFrame,
     QPushButton,
     QMenu
 )
-from    PySide.QtCore       import Qt
+from    PyQt4.QtCore       import Qt
 from    noctopus_widgets    import (
     NFrame,
     NGridContainer

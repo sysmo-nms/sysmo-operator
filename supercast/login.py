@@ -1,4 +1,4 @@
-from    PySide.QtGui        import (
+from    PyQt4.QtGui        import (
     QDialog,
     QLineEdit,
     QSpinBox,
@@ -8,7 +8,7 @@ from    PySide.QtGui        import (
     QFormLayout,
     QGridLayout
 )
-from    PySide.QtSvg        import QSvgWidget
+from    PyQt4.QtSvg        import QSvgWidget
 import  nocapi
 
 class Query(QDialog):

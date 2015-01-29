@@ -1,4 +1,4 @@
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QFrame,
     QPushButton,
     QLineEdit,
@@ -14,8 +14,8 @@ from noctopus_widgets   import (
     NGrid,
     NFrame
 )
-from    PySide.QtCore   import QUrl, Qt
-from    PySide.QtSvg    import QSvgWidget
+from    PyQt4.QtCore   import QUrl, Qt
+from    PyQt4.QtSvg    import QSvgWidget
 import    nocapi
 
 class Central(NFrameContainer):
@@ -132,15 +132,15 @@ class Add(NFrame):
             <p>802.1x, traffic </p>
             <h2>The ipcalc utils</h2>
             <p>qsdfqsdfffffff qsdf qsdf qsdfqsdflkjqsdlfkj qsdlkj qsdflkj qdslfkj 
-            A PySide.QtGui.QTextDocument can be edited programmatically using a PySide.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PySide.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PySide.QtGui.QTextDocument.begin() , PySide.QtGui.QTextDocument.end() , and PySide.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
+            A PyQt4.QtGui.QTextDocument can be edited programmatically using a PyQt4.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PyQt4.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PyQt4.QtGui.QTextDocument.begin() , PyQt4.QtGui.QTextDocument.end() , and PyQt4.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
             </p>
             <h2>Fonctionnality</h2>
             <p>
-            A PySide.QtGui.QTextDocument can be edited programmatically using a PySide.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PySide.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PySide.QtGui.QTextDocument.begin() , PySide.QtGui.QTextDocument.end() , and PySide.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
+            A PyQt4.QtGui.QTextDocument can be edited programmatically using a PyQt4.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PyQt4.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PyQt4.QtGui.QTextDocument.begin() , PyQt4.QtGui.QTextDocument.end() , and PyQt4.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
             </p>
             <h2>Benefits</h2>
             <p>
-            A PySide.QtGui.QTextDocument can be edited programmatically using a PySide.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PySide.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PySide.QtGui.QTextDocument.begin() , PySide.QtGui.QTextDocument.end() , and PySide.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
+            A PyQt4.QtGui.QTextDocument can be edited programmatically using a PyQt4.QtGui.QTextCursor , and its contents can be examined by traversing the document structure. The entire document structure is stored as a hierarchy of document elements beneath the root frame, found with the PyQt4.QtGui.QTextDocument.rootFrame() function. Alternatively, if you just want to iterate over the textual contents of the document you can use PyQt4.QtGui.QTextDocument.begin() , PyQt4.QtGui.QTextDocument.end() , and PyQt4.QtGui.QTextDocument.findBlock() to retrieve text blocks that you can examine and iterate over.
             </p>
         '''
         #document = QTextDocument(self)

@@ -1,9 +1,9 @@
-from PySide.QtCore import (
+from PyQt4.QtCore import (
     QObject,
     QSettings,
-    Signal
+    pyqtSignal
 )
-from PySide.QtGui import (
+from PyQt4.QtGui import (
     QDialog,
     QDialogButtonBox,
     QPushButton,

@@ -1,17 +1,17 @@
 # python lib
 from functools import partial
 
-# PySide
-from    PySide.QtNetwork import QAbstractSocket
-from    PySide.QtCore   import (
+# PyQt4
+from    PyQt4.QtNetwork import QAbstractSocket
+from    PyQt4.QtCore   import (
     Qt,
-    Signal,
+    pyqtSignal,
     QSettings,
     QSize,
     QObject
 )
 
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QMainWindow,
     QApplication,
     QSystemTrayIcon,
@@ -47,24 +47,24 @@ class NMainWindow(QMainWindow):
 
     " The noctopus QMainWindow "
 
-    proxySettings   = Signal(dict)
+    proxySettings   = pyqtSignal(dict)
     # emit self.activeProxySettings dict: {
     #   'use':  True | False,
     #   'host': str,
     #   'port': int
     # }
 
-    viewMode        = Signal(dict)
+    viewMode        = pyqtSignal(dict)
     # emit self.activeViewMode dict: {
     #   'screen':   'full' | 'normal',
     #   'mode':     'minimal' | 'simple' | 'expert',
     #   'tray':     'traymin' | 'traymax'
     # }
 
-    willClose       = Signal()
+    willClose       = pyqtSignal()
     # emit when the application will close
 
-    supercastEnabled = Signal()
+    supercastEnabled = pyqtSignal()
     # emit when supercast is enabled
 
     def __init__(self, style, parent=None):
@@ -97,7 +97,7 @@ class NMainWindow(QMainWindow):
     def _initSupercast(self):
         self.supercastLogged = False
         self.supercast = Supercast(self, mainwindow=self)
-        self.supercast.eventSignals.connect(self._handleSupercastEvents)
+        self.supercast.eventpyqtSignals.connect(self._handleSupercastEvents)
         self.supercast.tryLogin()
 
     def _handleSupercastEvents(self, event):

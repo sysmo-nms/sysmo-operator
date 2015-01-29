@@ -1,11 +1,11 @@
-from    PySide.QtNetwork    import QTcpSocket
-from    PySide.QtCore       import (
+from    PyQt4.QtNetwork    import QTcpSocket
+from    PyQt4.QtCore       import (
         QThread, 
         QObject,
         QDataStream,
         QByteArray,
         QIODevice,
-        Signal
+        pyqtSignal
 )
 
 from    supercast.pdu       import (
@@ -14,7 +14,7 @@ from    supercast.pdu       import (
 )
 
 class SupercastSocket(QObject):
-    mQueue      = Signal(tuple)
+    mQueue      = pyqtSignal(tuple)
     # datas queue from self to Supercast()
     # tuple: (key, payload)
     def __init__(self, parent=None):

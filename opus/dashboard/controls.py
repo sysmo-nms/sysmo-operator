@@ -1,4 +1,4 @@
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QLineEdit,
     QPushButton
 )

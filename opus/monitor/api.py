@@ -5,7 +5,7 @@ import  opus.monitor.commands.user_actions
 
 def connectToEvent(eventType, pyCallable):
     "Connect to events emited by the server."
-    opus.monitor.proxy.ChanHandler.singleton.masterSignalsDict[eventType].signal.connect(pyCallable)
+    opus.monitor.proxy.ChanHandler.singleton.masterpyqtSignalsDict[eventType].signal.connect(pyCallable)
 
 def getProbeSelection():
     "Return a list of probes actualy selected in the left tree view"

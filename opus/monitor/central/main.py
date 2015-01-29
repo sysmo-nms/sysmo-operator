@@ -1,5 +1,5 @@
-from PySide.QtGui import QSplitter, QStackedWidget
-from PySide.QtCore import QSettings, QTimeLine
+from PyQt4.QtGui import QSplitter, QStackedWidget
+from PyQt4.QtCore import QSettings, QTimeLine
 from    noctopus_widgets    import (
     NFrameContainer, NFrame,
     NGridContainer, NGrid

@@ -1,6 +1,6 @@
-from    PySide.QtCore   import (
+from    PyQt4.QtCore   import (
     QObject,
-    Signal,
+    pyqtSignal,
     QTemporaryFile,
     QDir
 )
@@ -17,7 +17,7 @@ import  xml.etree.ElementTree as ET
 class ChanHandler(QObject):
     
     " This class handle other widgets subscription and emit message "
-    " received by the server with Signal(). The method 'handleMSG' receive "
+    " received by the server with pyqtSignal(). The method 'handleMSG' receive "
     " messages from the server "
     " She is also responsible of the channel group concept and max channel "
     " limitations."
@@ -29,7 +29,7 @@ class ChanHandler(QObject):
         nocapi.nConnectSupercastEnabled(self._initSupercast)
 
         self._initChanHandling()
-        self._initSignals()
+        self._initpyqtSignals()
 
     def _initSupercast(self):
         nocapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
@@ -42,50 +42,50 @@ class ChanHandler(QObject):
         self.targets            = dict()
         self.probes             = dict()
 
-    def _initSignals(self):
+    def _initpyqtSignals(self):
         # signals
-        self.masterSignalsDict = dict()
-        self.masterSignalsDict['infoProbe']     = SimpleSignal(self)
-        self.masterSignalsDict['infoTarget']    = SimpleSignal(self)
-        self.masterSignalsDict['probeReturn']   = SimpleSignal(self)
-        self.masterSignalsDict['deleteTarget']  = SimpleSignal(self)
-        self.masterSignalsDict['deleteProbe']   = SimpleSignal(self)
+        self.masterpyqtSignalsDict = dict()
+        self.masterpyqtSignalsDict['infoProbe']     = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['infoTarget']    = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['probeReturn']   = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['deleteTarget']  = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['deleteProbe']   = SimplepyqtSignal(self)
 
-        self.masterSignalsDict['loggerRrdDump']  = SimpleSignal(self)
-        self.masterSignalsDict['loggerRrdEvent'] = SimpleSignal(self)
+        self.masterpyqtSignalsDict['loggerRrdDump']  = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['loggerRrdEvent'] = SimplepyqtSignal(self)
 
         # connect myself
-        self.masterSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
-        self.masterSignalsDict['infoProbe'].signal.connect(self._handleProbeInfo)
-        self.masterSignalsDict['deleteTarget'].signal.connect(self._handleDeleteTarget)
-        self.masterSignalsDict['deleteProbe'].signal.connect(self._handleDeleteProbe)
-        self.masterSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
+        self.masterpyqtSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
+        self.masterpyqtSignalsDict['infoProbe'].signal.connect(self._handleProbeInfo)
+        self.masterpyqtSignalsDict['deleteTarget'].signal.connect(self._handleDeleteTarget)
+        self.masterpyqtSignalsDict['deleteProbe'].signal.connect(self._handleDeleteProbe)
+        self.masterpyqtSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
 
-        self.masterSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
-        self.masterSignalsDict['loggerRrdEvent'].signal.connect(self._handleLoggerRrdEventMsg)
+        self.masterpyqtSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
+        self.masterpyqtSignalsDict['loggerRrdEvent'].signal.connect(self._handleLoggerRrdEventMsg)
         # END
 
     def handleSupercastMsg(self, msg):
         if      msg['msgType'] == 'probeReturn':
-            self.masterSignalsDict['probeReturn'].signal.emit(msg)
+            self.masterpyqtSignalsDict['probeReturn'].signal.emit(msg)
 
         elif    msg['msgType'] == 'loggerRrdDump':
-            self.masterSignalsDict['loggerRrdDump'].signal.emit(msg)
+            self.masterpyqtSignalsDict['loggerRrdDump'].signal.emit(msg)
 
         elif    msg['msgType'] == 'loggerRrdEvent':
-            self.masterSignalsDict['loggerRrdEvent'].signal.emit(msg)
+            self.masterpyqtSignalsDict['loggerRrdEvent'].signal.emit(msg)
 
         elif    msg['msgType'] == 'infoProbe':
-            self.masterSignalsDict['infoProbe'].signal.emit(msg)
+            self.masterpyqtSignalsDict['infoProbe'].signal.emit(msg)
 
         elif    msg['msgType'] == 'infoTarget':
-            self.masterSignalsDict['infoTarget'].signal.emit(msg)
+            self.masterpyqtSignalsDict['infoTarget'].signal.emit(msg)
 
         elif    msg['msgType'] == 'deleteTarget':
-            self.masterSignalsDict['deleteTarget'].signal.emit(msg)
+            self.masterpyqtSignalsDict['deleteTarget'].signal.emit(msg)
 
         elif    msg['msgType'] == 'deleteProbe':
-            self.masterSignalsDict['deleteProbe'].signal.emit(msg)
+            self.masterpyqtSignalsDict['deleteProbe'].signal.emit(msg)
 
         elif    msg['msgType'] == 'staticChanInfo':
             chan    = msg['value']
@@ -133,8 +133,8 @@ class ChanHandler(QObject):
     def _handleUnsubscribeOk(self, msg):
         channel = msg['value']
         if channel == self._masterChan: return
-        self.chanSignals[channel].destroy()
-        del self.chanSignals[channel]
+        self.chanpyqtSignals[channel].destroy()
+        del self.chanpyqtSignals[channel]
 
     def _handleProbeDump(self, msg):
         channel = msg['value']['id']
@@ -186,7 +186,7 @@ class ChanHandler(QObject):
             print "error: ", msg
 
 class Channel(QObject):
-    signal = Signal(dict)
+    signal = pyqtSignal(dict)
     def __init__(self, parent, probeName):
         super(Channel, self).__init__(parent)
         self.probeDict = ChanHandler.singleton.probes[probeName]
@@ -425,10 +425,10 @@ class AbstractChannelWidget(NFrameContainer):
 
 
 
-class SimpleSignal(QObject):
-    signal = Signal(dict)
+class SimplepyqtSignal(QObject):
+    signal = pyqtSignal(dict)
     def __init__(self, parent):
-        super(SimpleSignal, self).__init__(parent)
+        super(SimplepyqtSignal, self).__init__(parent)
 
 class NTempFile(QTemporaryFile):
     def __init__(self, parent):

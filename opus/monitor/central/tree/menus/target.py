@@ -1,11 +1,11 @@
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QMenu,
     QFont,
     QAction,
     QDesktopServices,
     QMessageBox
 )
-from PySide.QtCore import QUrl
+from PyQt4.QtCore import QUrl
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard

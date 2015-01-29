@@ -1,8 +1,8 @@
-from    PySide.QtCore   import (
+from    PyQt4.QtCore   import (
     Qt,
     QTimer
 )
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QStandardItemModel,
     QStandardItem,
     QIcon

@@ -1,12 +1,12 @@
-from    PySide.QtCore   import (
+from    PyQt4.QtCore   import (
     QSettings,
     QSize,
     QTimeLine,
-    Signal,
+    pyqtSignal,
     Qt
 )
 
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QWidget,
     QDialog,
     QScrollArea,

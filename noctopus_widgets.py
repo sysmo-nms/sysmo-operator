@@ -1,14 +1,14 @@
-# PySide
-from    PySide.QtSvg    import QSvgWidget
-from    PySide.QtCore   import (
+# PyQt4
+from    PyQt4.QtSvg    import QSvgWidget
+from    PyQt4.QtCore   import (
     QObject,
     Qt,
     QUrl,
-    Signal,
+    pyqtSignal,
     QRegExp
 )
 
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QFrame,
     QLabel,
     QGridLayout,
@@ -90,7 +90,7 @@ class NMenuButton(QPushButton):
         ''')
 
 class NInfoButton(QPushButton):
-    showInfo = Signal(bool)
+    showInfo = pyqtSignal(bool)
     def __init__(self, parent=None):
         super(NInfoButton, self).__init__(parent)
         #self.showInfo.connect(noctopus_centerwidget.NCentralFrame.singleton.showInfo)

@@ -1,11 +1,11 @@
-# PySide
-from    PySide.QtCore   import (
-    Signal,
+# PyQt4
+from    PyQt4.QtCore   import (
+    pyqtSignal,
     Qt,
     QMimeData
 )
 
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QPushButton,
     QDrag
 )

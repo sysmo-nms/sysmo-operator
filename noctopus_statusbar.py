@@ -1,6 +1,6 @@
 # python lib
 from    functools       import partial
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QStatusBar,
     QToolButton
 )

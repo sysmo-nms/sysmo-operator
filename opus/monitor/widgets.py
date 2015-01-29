@@ -1,7 +1,7 @@
-from    PySide.QtGui        import *
-from    PySide.QtCore       import *
-from    PySide.QtSvg        import *
-from    PySide.QtWebKit     import *
+from    PyQt4.QtGui        import *
+from    PyQt4.QtCore       import *
+from    PyQt4.QtSvg        import *
+from    PyQt4.QtWebKit     import *
 from    noctopus_widgets    import (
     NFrame,
     NFrameContainer,
@@ -21,7 +21,7 @@ class Summary(NFrame):
         self.setContentsMargins(0,0,0,0)
         self.setSizePolicy(QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
         self.chanH   = ChannelHandler.singleton
-        sigDict     = self.chanH.masterSignalsDict
+        sigDict     = self.chanH.masterpyqtSignalsDict
         sigDict['probeInfo'].signal.connect(self._handleProbeInfo)
         self._initInterface()
 

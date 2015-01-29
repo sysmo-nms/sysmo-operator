@@ -1,15 +1,15 @@
 # python lib
 from functools import partial
 
-# PySide
-from    PySide.QtCore   import (
+# PyQt4
+from    PyQt4.QtCore   import (
     Qt,
-    Signal,
+    pyqtSignal,
     QSettings,
     QSize
 )
 
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QAction,
     QActionGroup,
     QSizePolicy,
@@ -20,7 +20,7 @@ from    PySide.QtGui    import (
     QToolButton,
 )
 
-from PySide.QtSvg   import QSvgWidget
+from PyQt4.QtSvg   import QSvgWidget
 
 # local dependencies
 from    noctopus_images     import getIcon, getImage
@@ -40,8 +40,8 @@ class NSelector(NFrameContainer):
     
     " left button ramp container "
 
-    appButtonPressed = Signal(str)
-    appButtonToggled = Signal(dict)
+    appButtonPressed = pyqtSignal(str)
+    appButtonToggled = pyqtSignal(dict)
 
     def __init__(self, parent, stackWidget):
         super(NSelector, self).__init__(parent)
@@ -188,7 +188,7 @@ class NSelector(NFrameContainer):
 
 # SELECTOR BUTTON #############################################################
 class NSelectorButton(QPushButton):
-    toggle = Signal(dict)
+    toggle = pyqtSignal(dict)
     def __init__(self, parent, identifier):
         super(NSelectorButton, self).__init__(parent)
         buttonPol = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)

@@ -1,5 +1,5 @@
 import  os, sys, platform
-from    PySide.QtGui import QIcon, QWidget, QPalette, QPixmap
+from    PyQt4.QtGui import QIcon, QWidget, QPalette, QPixmap
 
 pixmapSet   = dict()
 iconSet     = dict()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from    PySide.QtGui        import (
+from    PyQt4.QtGui        import (
     QDialog,
     QLineEdit,
     QSpinBox,
@@ -10,7 +10,7 @@ from    PySide.QtGui        import (
     QButtonGroup,
     QLabel
 )
-from    PySide.QtSvg        import QSvgWidget
+from    PyQt4.QtSvg        import QSvgWidget
 from    noctopus_widgets    import NFrame, NGrid
 import  nocapi
 

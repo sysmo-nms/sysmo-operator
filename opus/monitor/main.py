@@ -1,9 +1,9 @@
-from    PySide.QtCore   import (
+from    PyQt4.QtCore   import (
     QSettings,
     QTimeLine,
 )
 
-from PySide.QtGui import QMenu, QAction
+from PyQt4.QtGui import QMenu, QAction
 from    opus.monitor                 import norrd
 from    opus.monitor.commands.user_actions  import UserActions
 from    opus.monitor.commands.doc_engine    import DocConfigurator

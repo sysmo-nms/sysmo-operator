@@ -1,5 +1,5 @@
-from    PySide.QtCore   import Qt, QSize
-from    PySide.QtGui   import (
+from    PyQt4.QtCore   import Qt, QSize
+from    PyQt4.QtGui   import (
     QFrame,
     QPushButton,
     QTabWidget,

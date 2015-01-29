@@ -1,4 +1,4 @@
-from    PySide.QtGui     import QFrame
+from    PyQt4.QtGui     import QFrame
 from    noctopus_widgets import (NFrame, NGrid)
 
 from    opus.monitor.central.tree.controls      import ElementsActions

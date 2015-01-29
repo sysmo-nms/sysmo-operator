@@ -1,6 +1,6 @@
-# PySide
-from    PySide.QtCore   import QRect
-from    PySide.QtGui    import (
+# PyQt4
+from    PyQt4.QtCore   import QRect
+from    PyQt4.QtGui    import (
     QStackedLayout,
     QGridLayout,
     QPainter,

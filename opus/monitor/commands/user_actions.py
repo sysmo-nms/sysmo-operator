@@ -1,9 +1,9 @@
-from PySide.QtCore import (
+from PyQt4.QtCore import (
     QObject,
     QSettings,
-    Signal
+    pyqtSignal
 )
-from PySide.QtGui import (
+from PyQt4.QtGui import (
     QDialog,
     QLabel,
     QListWidget
@@ -29,7 +29,7 @@ import opus.monitor.proxy
 
 class UserActions(QObject):
     
-    signal = Signal()
+    signal = pyqtSignal()
 
     def __init__(self, parent=None):
         super(UserActions, self).__init__(parent)

@@ -1,4 +1,4 @@
-from PySide.QtGui import (
+from PyQt4.QtGui import (
     QScrollArea,
     QWizardPage,
     QLabel,
@@ -14,7 +14,7 @@ from PySide.QtGui import (
     QButtonGroup
 )
 
-from PySide.QtCore import QSize
+from PyQt4.QtCore import QSize
 from noctopus_widgets import (
     NGrid,
     NGridContainer,
@@ -191,7 +191,7 @@ class Page1(QWizardPage):
                 self.registerField(
                     '%s*' % pdef,
                     self._mconfig[pdef],
-                    changedSignal=pdef)
+                    changedpyqtSignal=pdef)
                 mandatoryFormLayout.addRow('-%s' % pdef, self._mconfig[pdef])
 
         optionalBox = QGroupBox(self)

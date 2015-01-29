@@ -1,4 +1,4 @@
-from    PySide.QtGui    import QMdiArea
+from    PyQt4.QtGui    import QMdiArea
 
 class MdiDash(QMdiArea):
     def __init__(self, parent):

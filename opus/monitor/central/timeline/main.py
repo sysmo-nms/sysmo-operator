@@ -1,4 +1,4 @@
-from    PySide.QtGui    import (
+from    PyQt4.QtGui    import (
     QTreeView,
     QFrame,
     QPushButton,
@@ -12,7 +12,7 @@ from    PySide.QtGui    import (
     QScrollArea
 )
 
-from PySide.QtCore import Qt
+from PyQt4.QtCore import Qt
 from noctopus_widgets   import (
     NFrame,
     NFrameContainer,

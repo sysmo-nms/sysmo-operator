@@ -1,11 +1,11 @@
-from    PySide.QtCore import (
+from    PyQt4.QtCore import (
     QObject,
     QThread,
-    Signal,
+    pyqtSignal,
     Qt
 )
-from PySide.QtGui import QMessageBox
-from    PySide.QtNetwork import QAbstractSocket
+from PyQt4.QtGui import QMessageBox
+from    PyQt4.QtNetwork import QAbstractSocket
 from    supercast.http_manager  import SupercastAccessManager
 from    supercast.socket        import SupercastSocket
 import  supercast.login
@@ -18,10 +18,10 @@ def requestUrl(request):
 
 class Supercast(QObject):
 
-    eventSignals = Signal(tuple)
+    eventpyqtSignals = pyqtSignal(tuple)
     # datas (key, other) where key = 'success' | 'abort'
 
-    lQueue      = Signal(tuple)
+    lQueue      = pyqtSignal(tuple)
     # datas queue from self to SupercastSocket()
     # tuple: (key, payload)
 
@@ -223,7 +223,7 @@ class Supercast(QObject):
         self._loginWin = supercast.login.Query(parent, uncle)
 
     def loginAbort(self):
-        self.eventSignals.emit(('abort', None))
+        self.eventpyqtSignals.emit(('abort', None))
 
     def tryConnect(self, cred):
         self.userName   = cred['name']
@@ -245,7 +245,7 @@ class Supercast(QObject):
             self._loginWin.supConnected(False)
 
     def _setUserConn(self, state):
-        self.eventSignals.emit(('success', None))
+        self.eventpyqtSignals.emit(('success', None))
         self._loginWin.close()
 
     def _showErrorBox(self, event):
@@ -253,7 +253,7 @@ class Supercast(QObject):
         msgBox.setText("Socket ERROR %s" % event)
         msgBox.setStandardButtons(QMessageBox.Close)
         msgBox.exec_()
-        self.eventSignals.emit(('abort', None))
+        self.eventpyqtSignals.emit(('abort', None))
 
     #########
     # CLOSE #
