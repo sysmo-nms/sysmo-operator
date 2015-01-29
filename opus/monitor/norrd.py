@@ -70,7 +70,7 @@ class Rrdtool(QObject):
             if (thread.wait(5000) != True):
                 thread.terminate()
                 if (thread.wait(5000) != True):
-                    print "failed to close a norrd thread"
+                    print("failed to close a norrd thread")
 
 
 

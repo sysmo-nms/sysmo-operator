@@ -335,7 +335,7 @@ class Page1(QWizardPage):
 
     def triggerValidate(self):
         self._snmpCommandComplete = True
-        self._wizard.next()
+        next(self._wizard)
 
 class WaitSnmpInfoBox(QProgressDialog):
     def __init__(self, parent=None):
@@ -561,11 +561,11 @@ class Page3(QWizardPage):
 
     def validatePage(self):
         self.dial = WaitRegisterElementBox(self)
-        print "validate"
+        print("validate")
         return False
 
     def nextId(self):
-        print "next id here?"
+        print("next id here?")
         return -1
 
     def initializePage(self):
@@ -586,7 +586,7 @@ class Page3(QWizardPage):
         eConf['snmp_v3_priv_val'] = self.field('snmp_v3_priv_val')
         eConf['if_selection']  = self._wizard._ifSelection
         i = 0
-        for key in eConf.keys():
+        for key in list(eConf.keys()):
             st = "%s %s" % (key, eConf[key])
             lab = QLabel(st, self)
             self._grid.addWidget(lab, i,0)
@@ -674,7 +674,7 @@ class WaitRegisterElementBox(QProgressDialog):
 
         ifSelection = self._wizPage._wizard._ifSelection
 
-        print "if selection: ", ifSelection
+        print(("if selection: ", ifSelection))
         supercast.send(
             'monitorSnmpElementCreateQuery',
             (

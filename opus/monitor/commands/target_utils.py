@@ -255,7 +255,7 @@ class TargetConfFrame(QWizardPage):
         return True
 
     def _formSnmpValid(self):
-        print "form snmp valid"
+        print("form snmp valid")
         if self._versionGroup.currentIndex() == SNMP_V3:
             if self._snmp3User.text() == "": return False
             if self._secLevel.currentIndex() == AUTH_NO_PRIV:
@@ -548,7 +548,7 @@ class CreateTargetDialog(QProgressDialog):
         )
 
     def _createIcmpReply(self, msg):
-        print "reply icmp: ", msg
+        print(("reply icmp: ", msg))
         if self._ifSelection != None:
             self._createIfPerfQuery()
         else:

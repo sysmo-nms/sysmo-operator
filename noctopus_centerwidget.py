@@ -38,11 +38,11 @@ class NCentralFrame(NFrame):
 
     def showInfo(self, boolean):
         if boolean == True:
-            print "show info"
+            print("show info")
             self._infoFrame = NInfoFrame(self)
             self.grid.addWidget(self._infoFrame, 0,0,1,2)
         else:
-            print "hide info"
+            print("hide info")
             self.grid.removeWidget(self._infoFrame)
             self._infoFrame.deleteLater()
 
@@ -83,17 +83,17 @@ class NInfoFrame(NFrame):
     def dragEnterEvent(self, event):
         event.accept()
         self._mousePos = event.pos()
-        print "drag event! "
+        print("drag event! ")
         NFrame.dragEnterEvent(self, event)
 
     def dragMoveEvent(self, event):
-        print "move", type(event)
+        print(("move", type(event)))
         self._mousePos = event.pos()
         self.update()
         NFrame.dragMoveEvent(self, event)
 
     def dropEvent(self, event):
-        print "drop event!", type(event)
+        print(("drop event!", type(event)))
         self._parent.grid.removeWidget(self)
         self.deleteLater()
         NFrame.dropEvent(self, event)

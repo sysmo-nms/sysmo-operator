@@ -8,7 +8,7 @@ from    noctopus_widgets    import (
     NGridContainer,
     NGrid
 )
-from    proxy               import AbstractChannelWidget
+from    .proxy               import AbstractChannelWidget
 import  nocapi
 
 

@@ -33,7 +33,7 @@ class Central(NFrameContainer):
         grid.addWidget(ad, 0,0)
 
     def toggleButtonClicked(self):
-        print "toggle"
+        print("toggle")
 
 class Add(NFrame):
     def __init__(self, parent):

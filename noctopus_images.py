@@ -277,7 +277,7 @@ def initHexSet():
         'Shadow':       QPalette.Shadow
     }
 
-    for key in constDict.keys():
+    for key in list(constDict.keys()):
         col             = pal.color(constDict[key])
         (r,g,b,a)       = col.getRgb()
         hexRgbaSet[key] = "#%0.2X%0.2X%0.2X%0.2X" % (r,g,b,a)
@@ -318,10 +318,10 @@ def dumpPalette():
     colorRoles['QPalette.LinkVisited']  = QPalette.LinkVisited
 
     paletteDump = dict()
-    for group in colorGroups.keys():
+    for group in list(colorGroups.keys()):
         cGroup = colorGroups[group]
         paletteDump[cGroup] = dict()
-        for role in colorRoles.keys():
+        for role in list(colorRoles.keys()):
             cRole = colorRoles[role]
             color = palette.color(
                 cGroup,

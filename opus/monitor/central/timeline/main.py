@@ -148,7 +148,7 @@ class TimelineCommands(NFrameContainer):
             self.minimizeButton.show()
             
     def _minimizeClicked(self):
-        print "minimize!"
+        print("minimize!")
 
 class TimelineStack(NFrameContainer):
     def __init__(self, parent):

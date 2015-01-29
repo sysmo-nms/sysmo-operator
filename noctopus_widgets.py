@@ -40,7 +40,7 @@ class NTemporaryFile(QObject):
 
     @staticmethod
     def _deleteFile(f):
-        print "will delete file: ", f
+        print(("will delete file: ", f))
 
 
 # SPLITER

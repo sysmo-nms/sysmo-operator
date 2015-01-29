@@ -80,7 +80,7 @@ class Page1(QWizardPage):
 
         self._checkDefs = monapi.getCheckInfos()
         checkMenu = QMenu(self)
-        for key in self._checkDefs.keys():
+        for key in list(self._checkDefs.keys()):
             action = checkMenu.addAction(key)
             action.triggered.connect(partial(self._openProbeConfig, key))
 
@@ -191,7 +191,7 @@ class Page1(QWizardPage):
             )
     
     def createProbesCallback(self, msg):
-        print "next pass ", msg
+        print(("next pass ", msg))
         if msg['value']['status'] == True:
             self._createProbes()
 

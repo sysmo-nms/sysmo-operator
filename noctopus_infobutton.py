@@ -29,7 +29,7 @@ class NInfoButton(QPushButton):
         if self._showInfoEnabled == False:
             noctopus_centerwidget.NCentralFrame.singleton.showInfo(True)
             self._showInfoEnabled = True
-        print "move event"
+        print("move event")
         drag = QDrag(self)
         drag.setPixmap(noctopus_images.getPixmap('system-search'))
         mime = QMimeData()

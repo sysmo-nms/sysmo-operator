@@ -88,7 +88,7 @@ class SupercastAccessManager(QObject):
         if (self._thread.wait(5000) != True):
             self._thread.terminate()
             if (self._thread.wait(5000) != True):
-                print "failed to close http manager thread"
+                print("failed to close http manager thread")
 
 
 class SupercastHTTPTest(QWidget):
@@ -105,7 +105,7 @@ class SupercastHTTPTest(QWidget):
         reply1 = self.manager.requestUrl(request)
 
     def _handleReply(self, reply):
-        print "end reply", reply
+        print(("end reply", reply))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

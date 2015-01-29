@@ -99,7 +99,7 @@ class ChanHandler(QObject):
         elif    msg['msgType'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
         else: 
-            print "unknown msg received", msg['msgType']
+            print(("unknown msg received", msg['msgType']))
 
     def subscribe(self, viewObject, channel):
         if channel in self._subscribedChans:
@@ -142,7 +142,7 @@ class ChanHandler(QObject):
 
     def _handleProbeReturn(self, msg):
         channel = msg['value']['id']
-        if channel in self._chanProxy.keys():
+        if channel in list(self._chanProxy.keys()):
             self._chanProxy[channel].handleReturn(msg)
 
     def _handleLoggerRrdEventMsg(self, msg):
@@ -156,13 +156,13 @@ class ChanHandler(QObject):
     def _handleProbeInfo(self, msg):
         infoProbe   = msg['value']
         probeName   = infoProbe['name']
-        print "probeName", probeName
+        print(("probeName", probeName))
         self.probes[probeName] = infoProbe
 
     def _handleTargetInfo(self, msg):
         infoTarget  = msg['value']
         targetName  = infoTarget['name']
-        print "targetName", targetName
+        print(("targetName", targetName))
         self.targets[targetName] = infoTarget
 
 
@@ -183,7 +183,7 @@ class ChanHandler(QObject):
         if msg['msgType'] == 'subscribeOk':
             self._masterchanRunning = True
         else:
-            print "error: ", msg
+            print(("error: ", msg))
 
 class Channel(QObject):
     signal = pyqtSignal(dict)
@@ -209,7 +209,7 @@ class Channel(QObject):
             self._rrdFilesReady[index] = True
             self._restorePendingUpdates(index)
         else:
-            print "rrdtool restore failed: ", msg
+            print(("rrdtool restore failed: ", msg))
 
     def _restorePendingUpdates(self, index):
         if index in self._rrdUpdatesPending:
@@ -237,7 +237,7 @@ class Channel(QObject):
             dumpMsg['logger']   = 'bmonitor_logger_rrd2'
             dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
             self.signal.emit(dumpMsg)
-            print "succcccccccesss! restorependingupdatescontinue"
+            print("succcccccccesss! restorependingupdatescontinue")
             return
 
         update = self._rrdUpdatesPending[index].popleft()
@@ -254,10 +254,10 @@ class Channel(QObject):
     def delayedSyncEvent(self, reply):
         if (reply['success'] == True):
             xmlFile = reply['outfile']
-            for key in self._tmpXmlFiles.keys():
+            for key in list(self._tmpXmlFiles.keys()):
                 if (self._tmpXmlFiles[key].fileName() == xmlFile):
                     index = key
-            print "index is ", index
+            print(("index is ", index))
             rrdFile = NTempFile(self)
             rrdFile.open()
             rrdFile.close()
@@ -269,7 +269,7 @@ class Channel(QObject):
                 data = index
             )
         else:
-            print "supercast requestUrl failed: ", reply
+            print(("supercast requestUrl failed: ", reply))
 
     def synchronizeView(self, view):
         if self.loggerTextState != None:
@@ -280,7 +280,7 @@ class Channel(QObject):
             view.handleProbeEvent(dumpMsg)
 
         if self.rrdEnabled == True:
-            for i in self._rrdFilesReady.keys():
+            for i in list(self._rrdFilesReady.keys()):
                 if self._rrdFilesReady[i] == True:
                     dumpMsg = dict()
                     dumpMsg['msgType']  = 'probeDump'
@@ -317,7 +317,7 @@ class Channel(QObject):
             self._initRrdUpdate()
             path = msg['value']['path']
             urls = msg['value']['indexes']
-            for index in urls.keys():
+            for index in list(urls.keys()):
                 xmlFile = NTempFile(self)
                 xmlFile.open()
                 xmlFile.close()
@@ -331,12 +331,12 @@ class Channel(QObject):
                 request['outfile']  = fileName
                 supercast.requestUrl(request)
         else:
-            print "unknown dump type ", dumpType
+            print(("unknown dump type ", dumpType))
 
     def handleLoggerRrdEvent(self, msg):
         updates = msg['value']['updates']
-        print updates
-        for index in updates.keys():
+        print(updates)
+        for index in list(updates.keys()):
             if updates[index] != '':
                 self._maybeUpdateRrd(index, updates[index])
             else:
@@ -382,7 +382,7 @@ class Channel(QObject):
             updateMsg['data']    = index
             self.signal.emit(updateMsg)
         else:
-            print "rrdtool update error: ", reply
+            print(("rrdtool update error: ", reply))
 
     def handleReturn(self, msg):
         if self.loggerTextState != None:
@@ -402,24 +402,24 @@ class Channel(QObject):
 class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelWidget, self).__init__(parent)
-        print "ABS: init...."
+        print("ABS: init....")
         self.__channel = channel
         self.__connected = False
 
     def connectProbe(self):
-        print "ABS: connect to probe"
+        print("ABS: connect to probe")
         ChanHandler.singleton.subscribe(self, self.__channel)
         self.__connected = True
 
     def handleProbeEvent(self, msg): 
-        print self, ":you should handle this message: ", msg['msgType']
+        print((self, ":you should handle this message: ", msg['msgType']))
 
     def __disconnectProbe(self):
-        print "ABS: disconnect probe"
+        print("ABS: disconnect probe")
         ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
-        print "ABS: destroy"
+        print("ABS: destroy")
         if self.__connected == True: self.__disconnectProbe()
         self.deleteLater()
 

@@ -1108,10 +1108,10 @@ def decode(pdu):
                     }
                 }
             else:
-                print "unknwon message", msg3_type
+                print(("unknwon message", msg3_type))
                 return {}
         else: 
-            print "unknwon message", msg2_type
+            print(("unknwon message", msg2_type))
             return {}
     elif msg1_type == 'modMonitorPDU':
         msg2        = msg1.getComponent()
@@ -1519,14 +1519,14 @@ def decode(pdu):
                     }
 
             else:
-                print "unknwon message", msg3_type
+                print(("unknwon message", msg3_type))
                 return {}
         else:
-            print "unknwon message", msg2_type
+            print(("unknwon message", msg2_type))
             return {}
-        print msg2, msg2_type
+        print((msg2, msg2_type))
     else:
-        print "Unknown pdu: ", msg1_type
+        print(("Unknown pdu: ", msg1_type))
         return {}
 
 
@@ -1568,7 +1568,7 @@ def encode(pduType, payload):
         (queryId, args) = payload
         return encode_monitorForceProbeQuery(queryId, args)
     else:
-        print "Cannont encode PDU: ", pduType
+        print(("Cannont encode PDU: ", pduType))
         return False
 
 
@@ -1616,7 +1616,7 @@ def encode_monitorForceProbeQuery(queryId, args):
     pduDef = NmsPDU()
     pduDef.setComponentByName('modMonitorPDU', monitorPDU)
 
-    print "encode?", args
+    print(("encode?", args))
     pdu = encoder.encode(pduDef)
     return pdu
 
@@ -1665,7 +1665,7 @@ def encode_monitorDeleteTargetQuery(queryId, args):
     pduDef = NmsPDU()
     pduDef.setComponentByName('modMonitorPDU', monitorPDU)
 
-    print "encode?", args
+    print(("encode?", args))
     pdu = encoder.encode(pduDef)
     return pdu
 
@@ -1714,7 +1714,7 @@ def encode_monitorDeleteProbeQuery(queryId, args):
     pduDef = NmsPDU()
     pduDef.setComponentByName('modMonitorPDU', monitorPDU)
 
-    print "encode?", args
+    print(("encode?", args))
     pdu = encoder.encode(pduDef)
     return pdu
 
@@ -1789,7 +1789,7 @@ def encode_monitorCreateNchecksQuery(queryId, args):
 
     propList  = Properties()
     i = 0
-    for key in props.keys():
+    for key in list(props.keys()):
         p = Property()
         p.setComponentByName('key', key)
         p.setComponentByName('value', props[key])
@@ -1918,7 +1918,7 @@ def encode_monitorElementInterfaceQuery(queryId, args):
 
     propList  = Properties()
     i = 0
-    for key in props.keys():
+    for key in list(props.keys()):
         p = Property()
         p.setComponentByName('key', key)
         p.setComponentByName('value', props[key])
@@ -1927,7 +1927,7 @@ def encode_monitorElementInterfaceQuery(queryId, args):
 
     spropList = Properties()
     i = 0
-    for key in sysProps.keys():
+    for key in list(sysProps.keys()):
         p = Property()
         p.setComponentByName('key', key)
         p.setComponentByName('value', sysProps[key])
@@ -1988,7 +1988,7 @@ def encode_monitorCreateTargetQuery(queryId, args):
 
     propList  = Properties()
     i = 0
-    for key in props.keys():
+    for key in list(props.keys()):
         p = Property()
         p.setComponentByName('key', key)
         p.setComponentByName('value', props[key])
@@ -1997,7 +1997,7 @@ def encode_monitorCreateTargetQuery(queryId, args):
 
     spropList = Properties()
     i = 0
-    for key in sysProps.keys():
+    for key in list(sysProps.keys()):
         p = Property()
         p.setComponentByName('key', key)
         p.setComponentByName('value', sysProps[key])

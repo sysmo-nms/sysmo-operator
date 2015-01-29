@@ -85,7 +85,7 @@ class Page1(QWizardPage):
         self._uactions = monapi.getUActionsCmds()
         self._commList  = list()
         index           = 0
-        for key in self._uactions.keys():
+        for key in list(self._uactions.keys()):
             qact = QAction(key,self)
             qact.triggered.connect(partial(self._addAction, key))
             self._commMenu.addAction(qact)

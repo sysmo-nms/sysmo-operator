@@ -100,7 +100,7 @@ class TargetMenu(QMenu):
         uaWiz = UserActionsWizard(self, element=elem)
 
     def _createProbeAction(self, msg):
-        print "create prboe ", msg
+        print(("create prboe ", msg))
 
     def _userAction(self, element, action):
         monapi.execUAction(action, element)
@@ -124,14 +124,14 @@ class TargetMenu(QMenu):
             )
     
     def _deleteTargetReply(self, msg):
-        print "reply, ", msg
+        print(("reply, ", msg))
 
     def _newProbe(self):
         cpWiz = CreateProbeDialog(self, self._currentTarget)
 
     def _openProperties(self):
         openTargetPropertiesFor(self._currentTarget)
-        print "properties: ", self._currentTarget
+        print(("properties: ", self._currentTarget))
 
     def _locateOnMap(self):
-        print "locate on map: ", self._currentTarget
+        print(("locate on map: ", self._currentTarget))

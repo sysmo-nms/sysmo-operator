@@ -95,17 +95,17 @@ class RrdGraphArea(NFrameContainer):
         self._graphs    = dict()
         self._index     = index
         self._graphConf = graphConf
-        for gindex in graphConf.keys():
+        for gindex in list(graphConf.keys()):
             self._graphs[gindex] = RrdGraph(self, graphConf[gindex])
             self._layout.addWidget(self._graphs[gindex], 0,gindex)
 
     def setRrdDbFile(self, fileName):
-        for key in self._graphs.keys():
+        for key in list(self._graphs.keys()):
             self._graphs[key].setRrdDbFile(fileName)
         self.rrdUpdateEvent()
 
     def rrdUpdateEvent(self):
-        for key in self._graphs.keys():
+        for key in list(self._graphs.keys()):
             self._graphs[key].rrdUpdateEvent()
 
 

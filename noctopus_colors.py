@@ -21,9 +21,9 @@ def getPalette(key):
     else:
         return palette
 
-    for group in colorDict.keys():
+    for group in list(colorDict.keys()):
         colorGroup = colorDict[group]
-        for role in colorGroup.keys():
+        for role in list(colorGroup.keys()):
             (r, g, b, a)    = colorGroup[role]
             roleColor       = QColor(r,g,b,a)
             palette.setColor(group, role, roleColor)

@@ -208,7 +208,7 @@ class TargetItem(QStandardItem):
     def _generateToolTip(self):
         props   = self.targetDict['value']['properties']
         table = "<table>"
-        for k in props.keys():
+        for k in list(props.keys()):
             row = "<tr><td><b>%s</b></td><td>: %s</td></tr>" % (k, props[k])
             table = table + row
         table = table + "</table>"
@@ -306,7 +306,7 @@ class ProbeItem(QStandardItem):
         self._initColumnItems()
 
     def _initColumnItems(self):
-        loggers = self.probeDict['value']['loggers'].keys()
+        loggers = list(self.probeDict['value']['loggers'].keys())
         self.row1_log   = LoggerItem(loggers)
 
         timeout = self.probeDict['value']['timeout']

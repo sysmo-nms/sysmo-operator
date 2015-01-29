@@ -1,6 +1,6 @@
 from    PyQt4.QtGui    import *
 from    PyQt4.QtCore   import *
-from    LocatorProxyEvents import ChannelHandler
+from    .LocatorProxyEvents import ChannelHandler
 import  Commercials
 
 import  TkorderMain
@@ -27,4 +27,4 @@ class LocatorMain(QFrame):
         
 
     def toggleButtonClicked(self):
-        print "toggle"
+        print("toggle")

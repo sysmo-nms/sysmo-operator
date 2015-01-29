@@ -37,7 +37,7 @@ class Central(NFrameContainer):
         return grid
 
     def toggleButtonClicked(self):
-        print "toggle"
+        print("toggle")
 
 class App(NFrame):
     def __init__(self, parent):

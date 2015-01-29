@@ -47,7 +47,7 @@ import  re
 
 
 def openLoggerFor(probe, displayName):
-    if probe in LoggerView.Elements.keys():
+    if probe in list(LoggerView.Elements.keys()):
         LoggerView.Elements[probe].show()
         return
     else:
@@ -61,7 +61,7 @@ class LoggerView(QDialog):
         self._statusBar = LogStatusBar(self)
         self._menus     = ProbeMenus(self)
 
-        loggers = ChanHandler.singleton.probes[probe]['loggers'].keys()
+        loggers = list(ChanHandler.singleton.probes[probe]['loggers'].keys())
         rrdlogger   = False
         textlogger  = False
         eventlogger = False

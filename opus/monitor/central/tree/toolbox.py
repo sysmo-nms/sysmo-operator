@@ -16,14 +16,14 @@ import  nocapi
 import  opus.monitor.api    as monapi
 
 def openTargetPropertiesFor(target):
-    if target not in TargetProperties.Elements.keys():
+    if target not in list(TargetProperties.Elements.keys()):
         v = TargetProperties(target)
         TargetProperties.Elements[target] = v
     else:
         TargetProperties.Elements[target].show()
 
 def openProbePropertiesFor(target):
-    if target not in ProbeProperties.Elements.keys():
+    if target not in list(ProbeProperties.Elements.keys()):
         v = ProbeProperties(target)
         ProbeProperties.Elements[target] = v
     else:

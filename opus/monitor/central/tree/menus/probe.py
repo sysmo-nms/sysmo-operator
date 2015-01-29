@@ -72,7 +72,7 @@ class ProbeMenu(QMenu):
     def _suspendProbe(self):
         trayicon = nocapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Suspend check succeeded blablabla bla...', msecs=3000)
-        print "suspend probe ", self._currentProbe
+        print(("suspend probe ", self._currentProbe))
 
     def _forceCheck(self):
         supercast.send(
@@ -86,7 +86,7 @@ class ProbeMenu(QMenu):
         trayicon.showMessage('Command return:', 'Force check succeeded...', msecs=3000)
 
     def _locateOnMap(self):
-        print "locate on map: ", self._currentProbe
+        print(("locate on map: ", self._currentProbe))
 
     def _deleteProbe(self):
         msgBox = QMessageBox()
@@ -103,7 +103,7 @@ class ProbeMenu(QMenu):
             )
 
     def _deleteProbeReply(self, msg):
-        print "delete probe: ", msg
+        print(("delete probe: ", msg))
 
     def _openProperties(self):
         openProbePropertiesFor(self._currentProbe)

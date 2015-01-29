@@ -40,7 +40,7 @@ class UserActions(QObject):
         self._loadSettings()
 
     def getUActionsFor(self, element):
-        if element in self._UACfg.keys():
+        if element in list(self._UACfg.keys()):
             return self._UACfg[element]
         else:
             return []
@@ -83,7 +83,7 @@ class UserActions(QObject):
         self._settings.setValue('monitor/user_actions_cfg',  self._UACfg)
 
     def addTargetAction(self, action, target):
-        if target in self._UACfg.keys():
+        if target in list(self._UACfg.keys()):
             actionList = self._UACfg[target]
             actionList.append(action)
             self._UACfg[target] = actionList

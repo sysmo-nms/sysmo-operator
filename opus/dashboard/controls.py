@@ -38,5 +38,5 @@ class DashActions(NFrameContainer):
 
     def _lineChanged(self):
         text = self._line.text()
-        print text
+        print(text)
         #MonitorTreeview.singleton.filterThis(text)

@@ -34,7 +34,7 @@ class Page1(QWizardPage):
             blabla
         '''))
         self._wizard    = parent
-        print parent.defs
+        print((parent.defs))
         self._probeName = parent.probeKey
         self._probeDef  = parent.defs[self._probeName]
         self._defaultIp = parent.defaultIp
@@ -99,10 +99,10 @@ class Page1(QWizardPage):
         self._updateComm(True)
         args = list()
         check = self._probeName
-        for key in self._mconfig.keys():
+        for key in list(self._mconfig.keys()):
             args.append((key, self._mconfig[key].text()))
 
-        for key in self._oconfig.keys():
+        for key in list(self._oconfig.keys()):
             if self._oconfig[key].text() != "":
                 args.append((key, self._oconfig[key].text()))
         supercast.send(
@@ -120,10 +120,10 @@ class Page1(QWizardPage):
 
     def _updateComm(self, _):
         comm = '> %s ' % self._probeName
-        for key in self._mconfig.keys():
+        for key in list(self._mconfig.keys()):
             comm = comm + '--%s=%s ' %(key, self._mconfig[key].text())
 
-        for key in self._oconfig.keys():
+        for key in list(self._oconfig.keys()):
             if self._oconfig[key].text() != "":
                 comm = comm + '--%s=%s ' %(key, self._oconfig[key].text())
         self._comline = comm
@@ -148,7 +148,7 @@ class Page1(QWizardPage):
 
         self._man += '<h3>Mandatory flags</h3>'
         pdefs = self._probeDef['flags_def']
-        for pdef in pdefs.keys():
+        for pdef in list(pdefs.keys()):
             r = pdefs[pdef]['role']
             if r == 'mandatory':
                name    = pdef
@@ -158,7 +158,7 @@ class Page1(QWizardPage):
 
         self._man += '<h3>Options flags</h3>'
         pdefs = self._probeDef['flags_def']
-        for pdef in pdefs.keys():
+        for pdef in list(pdefs.keys()):
             r = pdefs[pdef]['role']
             if r == 'optional':
                name    = pdef
@@ -169,7 +169,7 @@ class Page1(QWizardPage):
 
         self._man += '<h3>Informational flags</h3>'
         pdefs = self._probeDef['flags_def']
-        for pdef in pdefs.keys():
+        for pdef in list(pdefs.keys()):
             r = pdefs[pdef]['role']
             if r == 'informational':
                name    = pdef
@@ -184,7 +184,7 @@ class Page1(QWizardPage):
         mandatoryBox = QGroupBox(self)
         mandatoryBox.setTitle(self.tr('Mandatory flags'))
         mandatoryFormLayout = QFormLayout(mandatoryBox)
-        for pdef in pdefs.keys():
+        for pdef in list(pdefs.keys()):
             if pdefs[pdef]['role'] == 'mandatory':
                 self._mconfig[pdef] = QLineEdit(self)
                 self._mconfig[pdef].textChanged.connect(self._updateComm)
@@ -204,7 +204,7 @@ class Page1(QWizardPage):
         optionalScroll.setFixedWidth(260)
         optionalScrollFrame = NFrame(optionalScroll)
         optionalFormLayout = QFormLayout(optionalScrollFrame)
-        for pdef in pdefs.keys():
+        for pdef in list(pdefs.keys()):
             if pdefs[pdef]['role'] == 'optional':
                 self._oconfig[pdef] = QLineEdit(self)
                 self._oconfig[pdef].textChanged.connect(self._updateComm)
@@ -226,10 +226,10 @@ class Page1(QWizardPage):
 
     def validatePage(self):
         flags = list()
-        for key in self._mconfig.keys():
+        for key in list(self._mconfig.keys()):
             flags.append((key, self._mconfig[key].text()))
 
-        for key in self._oconfig.keys():
+        for key in list(self._oconfig.keys()):
             if self._oconfig[key].text() != "":
                 flags.append((key, self._oconfig[key].text()))
 
@@ -358,12 +358,12 @@ class Page3(QWizardPage):
     def validatePage(self):
         confDict = dict()
         confDict['alerts'] = list()
-        for key in self._alertsD.keys():
+        for key in list(self._alertsD.keys()):
             if self._alertsD[key].currentIndex() == Page3.ALERT:
                 confDict['alerts'].append(key)
 
         confDict['groups'] = list()
-        for key in self._groupsD.keys():
+        for key in list(self._groupsD.keys()):
             if self._groupsD[key].isChecked() == True:
                 confDict['groups'].append(key)
 

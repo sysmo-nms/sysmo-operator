@@ -277,7 +277,7 @@ class NMainWindow(QMainWindow):
     # MENUS #
     #########
     def _communityPressed(self):
-        print "community pressed ajouter soumettre bug ou soumettre idee"
+        print("community pressed ajouter soumettre bug ou soumettre idee")
 
     def _initMenus(self):
         " Menu bar "

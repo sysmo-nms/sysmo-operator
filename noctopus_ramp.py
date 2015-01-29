@@ -66,7 +66,7 @@ class NSelector(NFrameContainer):
         self.setLayout(self.grid)
 
     def _updateGrid(self):
-        for key in self._buttons.keys():
+        for key in list(self._buttons.keys()):
             self.grid.addWidget(
                 self._buttons[key]['widget'],
                 self._buttons[key]['row'],
@@ -85,7 +85,7 @@ class NSelector(NFrameContainer):
     def _initButtonSelector(self):
         self.menuButton = QPushButton(self)
         self._menuHide  = QMenu(self)
-        for key in self._buttons.keys():
+        for key in list(self._buttons.keys()):
             action = self._menuHide.addAction(key)
             action.setData(key)
             action.setCheckable(True)
@@ -157,12 +157,12 @@ class NSelector(NFrameContainer):
         self._buttons['monitor']['widget'].setChecked(True)
         self.buttonGroup = QButtonGroup(self)
         self.buttonGroup.setExclusive(True)
-        for key in self._buttons.keys():
+        for key in list(self._buttons.keys()):
             self.buttonGroup.addButton(self._buttons[key]['widget'])
 
     def connectAll(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
-        for key in self._buttons.keys():
+        for key in list(self._buttons.keys()):
             but = self._buttons[key]['widget']
             but.toggle.connect(self._appButtonPressed)
             
@@ -175,13 +175,13 @@ class NSelector(NFrameContainer):
             self.currentView = identifier
 
     def goUp(self, mod):
-        print "go up ", mod
+        print(("go up ", mod))
 
     def goDown(self, mod):
-        print "go down ", mod
+        print(("go down ", mod))
 
     def goRemove(self, mod):
-        print "go remove ", mod
+        print(("go remove ", mod))
 
 
 

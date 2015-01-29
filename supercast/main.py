@@ -118,7 +118,7 @@ class Supercast(QObject):
                     else:
                         self._queryNotify(payload)
                 else:
-                    print "unknown destination", payload['from']
+                    print(("unknown destination", payload['from']))
 
             else:
                 handler(payload)
@@ -185,7 +185,7 @@ class Supercast(QObject):
         elif (msgType == 'unsubscribeErr'):
             self._queryNotify(msg)
         else:
-            print "handle other?", msgType
+            print(("handle other?", msgType))
 
     def _initHttpManager(self):
         self.httpManager = SupercastAccessManager(
@@ -263,6 +263,6 @@ class Supercast(QObject):
         if (self._thread.wait(5000) != True):
             self._thread.terminate();
             if (self._thread.wait(5000) != True):
-                print "failed to close supercast socket thread"
+                print("failed to close supercast socket thread")
         if (self.httpManager != None):
             self.httpManager.terminateAll()
