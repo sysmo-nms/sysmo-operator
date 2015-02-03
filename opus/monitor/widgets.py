@@ -1,4 +1,5 @@
 from    PyQt5.QtWidgets     import *
+from    PyQt5.QtGui         import QDesktopServices
 from    PyQt5.QtWebKitWidgets     import QWebView
 from    PyQt5.QtCore       import *
 from    PyQt5.QtSvg        import *
@@ -11,6 +12,7 @@ from    noctopus_widgets    import (
 )
 from    .proxy               import AbstractChannelWidget
 import  nocapi
+import sys
 
 
 ##################
@@ -166,7 +168,10 @@ class OSMView(NFrameContainer):
         super(OSMView, self).__init__(parent)
 
         self.osm    = QWebView(self)
-        self.osm.load(QUrl('./html/map.html'))
+        mapFile = 'html/map.html'
+        mapPath = QDir().absoluteFilePath(mapFile)
+        mapUrl  = QUrl().fromLocalFile(mapPath)
+        self.osm.load(mapUrl)
 
         page = self.osm.page()
         self._frame = self.osm.page().currentFrame()
@@ -187,15 +192,14 @@ class OSMView(NFrameContainer):
     def _clic(self):
         self._frame.evaluateJavaScript('alert("hello")')
 
-    # TOPYQT ERROR BEGIN
-    #@Slot(str)
-    #def thanksOsm(self, wrd):
-        #QDesktopServices.openUrl(QUrl('http://www.openstreetmap.org/copyright/en'))
-#
-    #@Slot(str)
-    #def clac(self, wrd):
-        #print "word is ", wrd
-    # TOPYQT ERROR END
+    @pyqtSlot(str)
+    def thanksOsm(self, wrd):
+        QDesktopServices.openUrl(QUrl('http://www.openstreetmap.org/copyright/en'))
+
+    @pyqtSlot(str)
+    def clac(self, wrd):
+        print("word is ", wrd)
+        sys.stdout.flush()
 
     def setBrowsable(self, bol):
         if  bol == False and self._browsable == True:
