@@ -13,17 +13,18 @@ from    supercast.pdu       import (
         encode
 )
 
+import sys
 class SupercastSocket(QObject):
     mQueue      = pyqtSignal(tuple)
     # datas queue from self to Supercast()
     # tuple: (key, payload)
     def __init__(self, parent=None):
         super(SupercastSocket, self).__init__(parent)
+
         self._nextBlockSize = 0
         self._headerLen     = 4
         self._errorHandler  = None
 
-    def _initializeSocket(self):
         self.socket = QTcpSocket(self)
         self.socket.connected.connect(self._socketConnected)
         self.socket.readyRead.connect(self._socketReadyRead)

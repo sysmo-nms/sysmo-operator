@@ -9,6 +9,7 @@ from    PyQt5.QtNetwork import QAbstractSocket
 from    supercast.http_manager  import SupercastAccessManager
 from    supercast.socket        import SupercastSocket
 import  supercast.login
+import sys
 
 def send(pduType, message, callback):
     Supercast.singleton.send(pduType, message, callback)
@@ -28,6 +29,8 @@ class Supercast(QObject):
     def __init__(self, parent, mainwindow=None):
         super(Supercast, self).__init__(parent)
         Supercast.singleton = self
+        print("Supercast thread is", self.thread().currentThreadId())
+        sys.stdout.flush()
 
         # parent of dialogs must be a QMainWindow()
         if mainwindow == None:
@@ -36,7 +39,6 @@ class Supercast(QObject):
             self._mainwindow = mainwindow
 
         self.httpManager = None
-        self._thread = QThread(self)
         self._socketThread     = SupercastSocket()
         # datas from SupercastSocket() to self
         # tuple: (key, payload)
@@ -51,7 +53,8 @@ class Supercast(QObject):
         )
 
         # init socket thread
-        self._thread.started.connect(self._socketThread._initializeSocket)
+        #self._thread.started.connect(self._socketThread._initializeSocket)
+        self._thread = QThread(self)
         self._socketThread.moveToThread(self._thread)
         self._thread.start()
 

@@ -24,7 +24,7 @@ class Query(QDialog):
         autoName    = 'admuser'
         autoPass    = 'passwd'
         autoPort    = 8888
-        autoHost    = 'localhost'
+        autoHost    = '192.168.0.66'
 
 
         # edit area

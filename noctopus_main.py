@@ -77,11 +77,7 @@ class NMainWindow(QMainWindow):
         self.setWindowIcon(getIcon('applications-development'))
         self.setWindowTitle('Noctopus')
 
-        # TOPYQT ERROR BEGIN
-        # (Parent is SupercastSocket(0x1c30aa8), parent's thread is QThread(0x1c30bc8), current thread is QThread(0x133a7f0)
-
-        #self._initSupercast()
-        # TOPYQT ERROR BEGIN
+        self._initSupercast()
 
         self._initProxySettings()
         self._initViewModes()
@@ -92,11 +88,6 @@ class NMainWindow(QMainWindow):
         self._initMenus()
         self._initLayout()
         
-        # TOPYQT ERROR BEGIN
-        # add self.show() to debug the rest of the application
-        self.show()
-        # TOPYQT ERROR END
-
 
     #########
     # INITS #
