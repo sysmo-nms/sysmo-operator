@@ -989,8 +989,9 @@ class NmsPDU(univ.Choice):
 #### EXPORTED FUNCTIONS ######################################################
 ##############################################################################
 ##############################################################################
+import sys
 def decode(pdu):
-    msg, x = decoder.decode(str(pdu), asn1Spec=NmsPDU())
+    msg, x = decoder.decode(pdu, asn1Spec=NmsPDU())
 
     msg1        = msg.getComponent()
     msg1_type   = msg.getName()
