@@ -8,6 +8,7 @@ from    PyQt5.QtCore   import (
 
 from    PyQt5.QtGui    import (
     QPixmap,
+    QIcon,
     QPalette,
     QFont,
 )
@@ -105,10 +106,10 @@ class LogArea(NFrameContainer):
 
         if rrd == True:
             self._rrds = RrdArea(self, probe)
-            self._tabs.insertTab(0, self._rrds, nocapi.nGetPixmap('rrdtool-logo'), 'RRD')
+            self._tabs.insertTab(0, self._rrds, QIcon(nocapi.nGetPixmap('rrdtool-logo')), 'RRD')
         else:
             self._rrds = QLabel('rrds', self)
-            self._tabs.insertTab(0, self._rrds, nocapi.nGetPixmap('rrdtool-logo'), 'RRD')
+            self._tabs.insertTab(0, self._rrds, QIcon(nocapi.nGetPixmap('rrdtool-logo')), 'RRD')
             self._tabs.setTabEnabled(0, False)
 
         if text == True:
