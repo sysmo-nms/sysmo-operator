@@ -200,6 +200,7 @@ class OSMView(NFrameContainer):
     def clac(self, wrd):
         print("word is ", wrd)
         sys.stdout.flush()
+        sys.stderr.flush()
 
     def setBrowsable(self, bol):
         if  bol == False and self._browsable == True:

@@ -610,7 +610,7 @@ class SelectInterfaceDialog(QDialog):
         selectedIfs = list()
         for index in range(count):
             item = self._treeWidget.topLevelItem(index)
-            if (item.checkState(0) == Qt.CheckState.Checked):
+            if (item.checkState(0) == Qt.Checked):
                 selectedIfs.append(int(item.text(5)))
 
         self.parent().setIfSelection(selectedIfs)
