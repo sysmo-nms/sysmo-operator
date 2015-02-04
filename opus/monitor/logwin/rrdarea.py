@@ -162,6 +162,12 @@ class RrdGraph(QLabel):
         double = self._rrdDbFileName.replace("\\", "\\\\")
         print("<<< double, ", double)
         print("<<< Shell? ", self._rrdGraph)
+        #TODO rrdtool window path: need to escape : example,
+        # C\:\cygwain\tmp\jlskqdjflk.rrd
+        #
+        # full working example:
+        # c:\cygwin\tmp> rrdtool graph dd.png --end now --start end-120000s --width 400 DEF:myspeed=c\:\cygwin\tmp\nc_temp-aFSp572:octetsIn:AVERAGE LINE1:myspeed#0000FF
+        # 481x149
         self._rrdGraph = re.sub('<FILE>', double, self._rrdGraph)
         print("<<< after", self._rrdGraph)
 
