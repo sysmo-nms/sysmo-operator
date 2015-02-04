@@ -11,7 +11,12 @@ from    PyQt5.QtCore   import (
 )
 
 def start(parent):
-    Rrdtool(parent)
+
+    if platform.system() == 'Windows':
+        executable = 'c:/Program Files/RRDTool/rrdtool.exe'
+    else:
+        executable = 'rrdtool'
+    Rrdtool(parent, executable)
     
 def stop():
     Rrdtool.singleton.shutDown()
