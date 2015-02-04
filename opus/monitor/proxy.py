@@ -209,7 +209,7 @@ class Channel(QObject):
             self._rrdFilesReady[index] = True
             self._restorePendingUpdates(index)
         else:
-            print(("rrdtool restore failed: ", msg))
+            print(("rrdtool restore failed: ", reply))
 
     def _restorePendingUpdates(self, index):
         if index in self._rrdUpdatesPending:

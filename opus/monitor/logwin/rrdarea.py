@@ -43,6 +43,7 @@ import  nocapi
 import  platform
 import  tempfile
 import  re
+import  os
 
 class RrdArea(NFrameContainer):
     def __init__(self, parent, probe):
@@ -119,7 +120,8 @@ class RrdGraph(QLabel):
         self._rrdPixmap         = QPixmap()
         self.setPixmap(self._rrdPixmap)
         #if platform.system() == 'Windows':
-            #winfileName = filename.replace("/","\\\\").replace(":", "\\:")
+            #winfileName = os.path.normpath(self._rrdGraphFileName)
+            #print("old filename: ", self._rrdGraphFileName, " new file name: ", winfileName)
             #self._rrdGraphFile = winfileName
         #else:
             #self._rrdGraphFile = filename
@@ -129,9 +131,14 @@ class RrdGraph(QLabel):
         self._rrdGraph      = graphConf
 
     def setRrdDbFile(self, fileName):
-        self._rrdDbFileName = fileName
+        print(fileName)
+        if platform.system() == 'Windows':
+            winfileName = os.path.normpath(fileName)
+            self._rrdDbFileName = winfileName
+        else:
+            self._rrdDbFileName = fileName
+#--border 0 \
         self._rrdGraphOpts = '\
---border 0 \
 --full-size-mode \
 --disable-rrdtool-tag \
 --slope-mode \
@@ -143,18 +150,20 @@ class RrdGraph(QLabel):
 --color FONT%s \
 --color AXIS%s \
 --color FRAME%s \
---color ARROW%s \
---font DEFAULT:0:%s ' % (
+--color ARROW%s ' % (
                 nocapi.nGetRgba('Base'),
                 nocapi.nGetRgba('Dark'),
                 nocapi.nGetRgba('Shadow'),
                 nocapi.nGetRgba('WindowText'),
                 nocapi.nGetRgba('Dark'),
                 nocapi.nGetRgba('Window'),
-                nocapi.nGetRgba('Shadow'),
-                QFont().defaultFamily()
+                nocapi.nGetRgba('Shadow')
             )
-        self._rrdGraph = re.sub('<FILE>', self._rrdDbFileName, self._rrdGraph)
+        double = self._rrdDbFileName.replace("\\", "\\\\")
+        print("<<< double, ", double)
+        print("<<< Shell? ", self._rrdGraph)
+        self._rrdGraph = re.sub('<FILE>', double, self._rrdGraph)
+        print("<<< after", self._rrdGraph)
 
     def rrdUpdateEvent(self):
         cmd = self._generateGraphCmd()

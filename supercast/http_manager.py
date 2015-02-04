@@ -39,6 +39,8 @@ class SupercastAccessManagerThread(QObject):
     uppyqtSignal   = pyqtSignal(dict)
     def __init__(self, server, proto, port):
         super(SupercastAccessManagerThread, self).__init__(None)
+    
+        sys.stdout.flush()
         self._urlHead = "%s://%s:%i" % (proto, server, port)
         self._manager = QNetworkAccessManager(self)
         self._manager.finished[QNetworkReply].connect(self._handleReply)
@@ -47,7 +49,7 @@ class SupercastAccessManagerThread(QObject):
     def _handleReply(self, reply):
         originalRequest = self._replyDict[reply]
         del self._replyDict[reply]
-        uFile = open(originalRequest['outfile'], 'w+')
+        uFile = open(originalRequest['outfile'], 'w+b')
         uFile.write(zlib.decompress(reply.readAll(), 16+zlib.MAX_WBITS))
         uFile.close()
         reply.deleteLater()

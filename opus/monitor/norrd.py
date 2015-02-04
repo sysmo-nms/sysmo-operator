@@ -97,6 +97,7 @@ class RrdtoolThread(QObject):
             customStartupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             self._rrdProcess = subprocess.Popen(
                 [executable, '-'],
+                universal_newlines=True,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 startupinfo=customStartupinfo
@@ -122,6 +123,7 @@ class RrdtoolThread(QObject):
 
     def _rrdtoolExec(self, command):
         if self._includeNewlineRe.match(command) == None: command += '\n'
+        print("etape1: ", command)
         self._rrdProcess.stdin.write(command)
         responce = dict()
         responce['cmd']     = command
@@ -129,6 +131,7 @@ class RrdtoolThread(QObject):
         responce['status']  = None
         while True:
             line = self._rrdProcess.stdout.readline()
+            print("line is: ", line)
             if self._endOfCommandRe.match(line) == None:
                 responce['string'] += line
             else:
