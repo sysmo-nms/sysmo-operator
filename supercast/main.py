@@ -53,8 +53,8 @@ class Supercast(QObject):
         )
 
         # init socket thread
-        #self._thread.started.connect(self._socketThread._initializeSocket)
-        self._thread = QThread(self)
+        self._thread = QThread()
+        self._thread.started.connect(self._socketThread._initializeSocket)
         self._socketThread.moveToThread(self._thread)
         self._thread.start()
 

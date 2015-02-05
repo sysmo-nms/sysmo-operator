@@ -19,16 +19,17 @@ class SupercastSocket(QObject):
     # datas queue from self to Supercast()
     # tuple: (key, payload)
     def __init__(self, parent=None):
-        super(SupercastSocket, self).__init__(parent)
+        super(SupercastSocket, self).__init__()
 
         self._nextBlockSize = 0
         self._headerLen     = 4
         self._errorHandler  = None
 
-        self.socket = QTcpSocket(self)
-        self.socket.connected.connect(self._socketConnected)
-        self.socket.readyRead.connect(self._socketReadyRead)
-        self.socket.error.connect(self._socketErrorEvent)
+    def _initializeSocket(self):
+        self._socket = QTcpSocket()
+        self._socket.connected.connect(self._socketConnected)
+        self._socket.readyRead.connect(self._socketReadyRead)
+        self._socket.error.connect(self._socketErrorEvent)
 
     def _handleServerMessage(self, payload):
         message = decode(payload)
@@ -44,7 +45,7 @@ class SupercastSocket(QObject):
         (key, payload) = msg
         if key == 'tryconnect':
             (server, port) = payload
-            self.socket.connectToHost(server, port)
+            self._socket.connectToHost(server, port)
         elif key == 'authResp':
             (name, passw) = payload
             pdu = encode('authResp', (name, passw))
@@ -61,17 +62,17 @@ class SupercastSocket(QObject):
         stream.writeRawData(pdu)
         stream.device().seek(0)
         stream.writeUInt32(request.size() - 4)
-        self.socket.write(request)
+        self._socket.write(request)
 
     def _socketReadyRead(self):
-        stream  = QDataStream(self.socket)
+        stream  = QDataStream(self._socket)
 
         while stream.atEnd() != True:
             if self._nextBlockSize == 0:
-                if self.socket.bytesAvailable() < self._headerLen:
+                if self._socket.bytesAvailable() < self._headerLen:
                     return
                 self._nextBlockSize = stream.readUInt32()
-            if self.socket.bytesAvailable() < self._nextBlockSize:
+            if self._socket.bytesAvailable() < self._nextBlockSize:
                 return
     
             payload = stream.readRawData(self._nextBlockSize)
