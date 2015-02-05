@@ -32,16 +32,16 @@ class ProbesTreeview(QTreeView):
         # QTreeView conf
         self.setItemsExpandable(False)
         self.setRootIsDecorated(False)
-        self.setWordWrap(False)
+        self.setWordWrap(True)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._showMenu)
         self.setObjectName('backTree')
         self.setIconSize(QSize(25, 25)) 
-        self.setAnimated(True)
+        self.setAnimated(False)
         self.setAlternatingRowColors(True)
         self.setStyleSheet('''QFrame#backTree { 
             background-image: url(./graphics/hover_info_files.png);
@@ -65,11 +65,11 @@ class ProbesTreeview(QTreeView):
 
         # delegates
         #self.setItemDelegateForColumn(1, pdelegate.LoggerItemDelegate(self))
-        self.setItemDelegateForColumn(1, pdelegate.ProgressItemDelegate(self))
-        self.setItemDelegateForColumn(2, pdelegate.StatusItemDelegate(self))
-        self.setItemDelegateForColumn(3, pdelegate.TriggerItemDelegate(self))
-        self.setItemDelegateForColumn(4, pdelegate.StateItemDelegate(self))
-        self.setItemDelegateForColumn(5, pdelegate.HostItemDelegate(self))
+        #self.setItemDelegateForColumn(1, pdelegate.ProgressItemDelegate(self))
+        #self.setItemDelegateForColumn(2, pdelegate.StatusItemDelegate(self))
+        #self.setItemDelegateForColumn(3, pdelegate.TriggerItemDelegate(self))
+        #self.setItemDelegateForColumn(4, pdelegate.StateItemDelegate(self))
+        #self.setItemDelegateForColumn(5, pdelegate.HostItemDelegate(self))
         #self.setItemDelegateForColumn(7, pdelegate.TimelineItemDelegate(self))
 
         # setings

@@ -131,7 +131,7 @@ class TargetItem(QStandardItem):
         self.row4       = QStandardItem()
         self.row5       = QStandardItem('nodata')
 
-        self.row3_status    = QStandardItem('nodata')
+        self.row3_status    = QStandardItem()
         self.row6_host      = QStandardItem()
         #self.row7_timeline  = QStandardItem()
 
@@ -250,7 +250,7 @@ class ProgressItem(QStandardItem):
         self._initData()
 
     def setRemaining(self, millisec):
-        self._progress = self._step - (millisec / 1000)
+        self._progress = self._step - int(millisec / 1000)
         self._updateData()
 
     def _initData(self):
@@ -327,7 +327,7 @@ class ProbeItem(QStandardItem):
         self.row5_state.setData(state, role=Qt.DisplayRole)
 
         self.row6_host  = QStandardItem()
-        self.row6_host.setData('host', role=Qt.DisplayRole)
+        #self.row6_host.setData('host', role=Qt.DisplayRole)
 
         #self.row7_time  = QStandardItem()
         #self.row7_time.setData('timeline', role=Qt.DisplayRole)
