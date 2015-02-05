@@ -131,7 +131,6 @@ class RrdGraph(QLabel):
         self._rrdGraph      = graphConf
 
     def setRrdDbFile(self, fileName):
-        print(fileName)
         if platform.system() == 'Windows':
             winfileName = os.path.normpath(fileName)
             self._rrdDbFileName = winfileName

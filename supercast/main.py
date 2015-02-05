@@ -29,7 +29,6 @@ class Supercast(QObject):
     def __init__(self, parent, mainwindow=None):
         super(Supercast, self).__init__(parent)
         Supercast.singleton = self
-        print("Supercast thread is", self.thread().currentThreadId())
         sys.stdout.flush()
 
         # parent of dialogs must be a QMainWindow()
