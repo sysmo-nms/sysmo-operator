@@ -64,12 +64,12 @@ class ProbesTreeview(QTreeView):
 
 
         # delegates
-        self.setItemDelegateForColumn(1, pdelegate.LoggerItemDelegate(self))
-        self.setItemDelegateForColumn(2, pdelegate.ProgressItemDelegate(self))
-        self.setItemDelegateForColumn(3, pdelegate.StatusItemDelegate(self))
-        self.setItemDelegateForColumn(4, pdelegate.TriggerItemDelegate(self))
-        self.setItemDelegateForColumn(5, pdelegate.StateItemDelegate(self))
-        self.setItemDelegateForColumn(6, pdelegate.HostItemDelegate(self))
+        #self.setItemDelegateForColumn(1, pdelegate.LoggerItemDelegate(self))
+        self.setItemDelegateForColumn(1, pdelegate.ProgressItemDelegate(self))
+        self.setItemDelegateForColumn(2, pdelegate.StatusItemDelegate(self))
+        self.setItemDelegateForColumn(3, pdelegate.TriggerItemDelegate(self))
+        self.setItemDelegateForColumn(4, pdelegate.StateItemDelegate(self))
+        self.setItemDelegateForColumn(5, pdelegate.HostItemDelegate(self))
         #self.setItemDelegateForColumn(7, pdelegate.TimelineItemDelegate(self))
 
         # setings

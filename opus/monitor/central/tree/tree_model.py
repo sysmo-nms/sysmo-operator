@@ -25,7 +25,6 @@ class ProbeModel(QStandardItemModel):
 
         self.setHorizontalHeaderLabels([
                 "Targets/Probes",
-                "Loggers",
                 "Progress",
                 "Status",
                 "Step/Timeout",
@@ -66,7 +65,7 @@ class ProbeModel(QStandardItemModel):
         if boo == False:
             t = TargetItem(msg)
             self.appendRow([
-                t, t.row1, t.row2, t.row3_status,
+                t, t.row2, t.row3_status,
                 t.row4, t.row5, t.row6_host])
                 #t.row4, t.row5, t.row6_host, t.row7_timeline])
         else:
@@ -127,7 +126,7 @@ class TargetItem(QStandardItem):
             self.nodeIcon = nocapi.nGetIcon('computer')
 
     def _initColumnItems(self):
-        self.row1       = QStandardItem()
+        #self.row1       = QStandardItem()
         self.row2       = QStandardItem()
         self.row4       = QStandardItem()
         self.row5       = QStandardItem('nodata')
@@ -176,7 +175,7 @@ class TargetItem(QStandardItem):
         if probeExist == False:
             p = ProbeItem(msg, self)
             self.appendRow([
-                p, p.row1_log, p.row2_progress, p.row3_status, 
+                p, p.row2_progress, p.row3_status, 
                 p.row4_trigger, p.row5_state, p.row6_host])
                 #p.row4_trigger, p.row5_state, p.row6_host, p.row7_time])
         else:
@@ -306,8 +305,8 @@ class ProbeItem(QStandardItem):
         self._initColumnItems()
 
     def _initColumnItems(self):
-        loggers = list(self.probeDict['value']['loggers'].keys())
-        self.row1_log   = LoggerItem(loggers)
+        #loggers = list(self.probeDict['value']['loggers'].keys())
+        #self.row1_log   = LoggerItem(loggers)
 
         timeout = self.probeDict['value']['timeout']
         step    = self.probeDict['value']['step']
@@ -335,6 +334,7 @@ class ProbeItem(QStandardItem):
 
 
     def handleReturn(self, msg):
+        self.setToolTip(msg['value']['originalRep'])
         val = msg['value']['nextReturn']
         self.row2_progress.setRemaining(val)
 
