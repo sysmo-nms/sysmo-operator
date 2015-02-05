@@ -139,4 +139,5 @@ class RrdtoolThread(QObject):
                 else:
                     responce['status'] = 'ok'
                 break
+        #print("reply is: ", responce['string'])
         return responce

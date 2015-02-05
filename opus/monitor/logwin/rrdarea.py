@@ -157,12 +157,16 @@ class RrdGraph(QLabel):
 --color FONT%s \
 --color AXIS%s \
 --color FRAME%s \
+--color SHADEA%s \
+--color SHADEB%s \
 --color ARROW%s ' % (
                 nocapi.nGetRgba('Base'),
                 nocapi.nGetRgba('Dark'),
                 nocapi.nGetRgba('Shadow'),
                 nocapi.nGetRgba('WindowText'),
                 nocapi.nGetRgba('Dark'),
+                nocapi.nGetRgba('Window'),
+                nocapi.nGetRgba('Window'),
                 nocapi.nGetRgba('Window'),
                 nocapi.nGetRgba('Shadow')
             )
