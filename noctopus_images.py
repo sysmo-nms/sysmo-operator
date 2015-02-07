@@ -61,6 +61,9 @@ def initPixmaps():
         'console': QPixmap(os.path.join(iconsPath, "console.png")),
         'radar': QPixmap(os.path.join(iconsPath, "radar.png")),
         'document-stack': QPixmap(os.path.join(iconsPath, "document-stack.png")),
+        'emblem-system': QPixmap(os.path.join(iconsPath, "emblem-system.png")),
+        'list-add': QPixmap(os.path.join(iconsPath, "list-add.png")),
+        'edit-clear': QPixmap(os.path.join(iconsPath, "edit-clear.png")),
     }
 
 def initIcons():

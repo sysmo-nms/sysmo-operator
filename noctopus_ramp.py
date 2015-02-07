@@ -9,6 +9,7 @@ from    PyQt5.QtCore   import (
     QSize
 )
 
+from    PyQt5.QtGui    import QIcon
 from    PyQt5.QtWidgets    import (
     QAction,
     QActionGroup,
@@ -23,7 +24,7 @@ from    PyQt5.QtWidgets    import (
 from PyQt5.QtSvg   import QSvgWidget
 
 # local dependencies
-from    noctopus_images     import getIcon, getImage
+from    noctopus_images     import getIcon, getImage, getPixmap
 from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame, NGrid
 
 # opus
@@ -93,7 +94,7 @@ class NSelector(NFrameContainer):
             action.triggered.connect(partial(self._selectHide, key))
             self._buttons[key]['action'] = action
         self.menuButton.setMenu(self._menuHide)
-        self.menuButton.setIcon(getIcon('emblem-system'))
+        self.menuButton.setIcon(QIcon(getPixmap('emblem-system')))
         
     def _selectHide(self, key):
         if self._buttons[key]['action'].isChecked():

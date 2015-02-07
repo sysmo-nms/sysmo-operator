@@ -1,3 +1,4 @@
+from    PyQt5.QtGui    import QIcon
 from    PyQt5.QtWidgets    import (
     QLineEdit,
     QPushButton,
@@ -30,7 +31,7 @@ class ElementsActions(NFrameContainer):
         #self.createMenu = QMenu(self)
         create = QPushButton(self)
         create.setFixedWidth(30)
-        create.setIcon(nocapi.nGetIcon('list-add'))
+        create.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
         create.setContentsMargins(0,0,0,0)
         #create.setMenu(NewTargetDialog(self))
         create.clicked.connect(self._launchWizard)
@@ -42,7 +43,7 @@ class ElementsActions(NFrameContainer):
 
         clear = QPushButton(self)
         clear.setFixedWidth(30)
-        clear.setIcon(nocapi.nGetIcon('edit-clear'))
+        clear.setIcon(QIcon(nocapi.nGetPixmap('edit-clear')))
         clear.clicked.connect(self.line.clear)
 
         info = NInfoButton(self)
