@@ -163,6 +163,57 @@ class StatusSummary(QPushButton):
 ##############
 # OSM WIDGET #
 ##############
+class OSMGetLonlat(NFrameContainer):
+    def __init__(self, parent):
+        super(OSMGetLonLat, self).__init__(parent)
+
+        self.osm    = QWebView(self)
+        mapFile = 'html/map.html'
+        mapPath = QDir().absoluteFilePath(mapFile)
+        mapUrl  = QUrl().fromLocalFile(mapPath)
+        self.osm.load(mapUrl)
+
+        page = self.osm.page()
+        self._frame = self.osm.page().currentFrame()
+        self._frame.addToJavaScriptWindowObject("qtCom",self)
+
+        self.shade = QFrame(self)
+        self.shade.setAutoFillBackground(False)
+        self.shade.hide()
+        self._browsable = True
+
+        testbutton = QPushButton('test',self)
+        testbutton.clicked.connect(self._clic)
+        self.grid = NGridContainer(self)
+        self.grid.addWidget(testbutton, 0,0)
+        self.grid.addWidget(self.osm,   1,0)
+        self.setLayout(self.grid)
+
+    def _clic(self):
+        self._frame.evaluateJavaScript('alert("hello")')
+
+    @pyqtSlot(str)
+    def thanksOsm(self, wrd):
+        QDesktopServices.openUrl(QUrl('http://www.openstreetmap.org/copyright/en'))
+
+    @pyqtSlot(str)
+    def clac(self, wrd):
+        print("word is ", wrd)
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+    def setBrowsable(self, bol):
+        if  bol == False and self._browsable == True:
+            self.shade.show()
+            self.grid.addWidget(self.shade, 0,0)
+            selfshadeStatus = False
+        elif bol == True and self._browsable == False:
+            self.shade.hide()
+            self.grid.removeWidget(self.shade)
+            self.shadeStatus = True
+
+
+
 class OSMView(NFrameContainer):
     def __init__(self, parent):
         super(OSMView, self).__init__(parent)

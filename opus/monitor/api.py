@@ -18,6 +18,16 @@ def rrdCmd(cmd, pyCallable=None):
 def getTargetsDict():
     return opus.monitor.proxy.ChanHandler.singleton.targets
 
+def getTarget(target):
+    return opus.monitor.proxy.ChanHandler.singleton.targets[target]
+
+def getProbesFor(target):
+    probes = opus.monitor.proxy.ChanHandler.singleton.probes
+    probeList = list()
+    for key in probes.keys():
+        probe = probes[key]
+        if  probe['target'] == target: probeList.append(probe)
+    return probeList
 
 def getProbesDict():
     return opus.monitor.proxy.ChanHandler.singleton.probes
