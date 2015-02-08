@@ -1,3 +1,4 @@
+from    PyQt5.QtGui            import QIcon
 from    PyQt5.QtWidgets        import (
     QDialog,
     QLineEdit,
@@ -57,20 +58,20 @@ class Query(QDialog):
 
         # button area
         ok = QPushButton(
-            nocapi.nGetIcon('applications-development'),
+            QIcon(nocapi.nGetPixmap('applications-development')),
             self.tr("&Engage"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self.tryValidate)
 
         ko = QPushButton(
-            nocapi.nGetIcon('process-stop'),
+            QIcon(nocapi.nGetPixmap('process-stop')),
             self.tr("&Abort"),
             self)
         ko.clicked.connect(self._loginAbort)
 
         helpB = QPushButton(
-            nocapi.nGetIcon('dialog-information'),
+            QIcon(nocapi.nGetPixmap('dialog-information')),
             self.tr("&Help"),
             self)
         helpB.setEnabled(False)

@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import (
     QObject,
     QSettings,
@@ -27,13 +28,13 @@ class DocConfigurator(QDialog):
     def __init__(self, parent=None):
         super(DocConfigurator, self).__init__(parent)
         self.setWindowTitle('Documentation engine configurator')
-        self.setWindowIcon(nocapi.nGetIcon('list-add'))
+        self.setWindowIcon(QIcon(nocapi.nGetPixmap('list-add')))
         dialogButtons = QDialogButtonBox(self)
         save = QPushButton('Save', self)
-        save.setIcon(nocapi.nGetIcon('document-save'))
+        save.setIcon(QIcon(nocapi.nGetPixmap('document-save')))
         dialogButtons.addButton(save,    QDialogButtonBox.AcceptRole)
         cancel = QPushButton('Cancel', self)
-        cancel.setIcon(nocapi.nGetIcon('process-stop'))
+        cancel.setIcon(QIcon(nocapi.nGetPixmap('process-stop')))
         dialogButtons.addButton(cancel,  QDialogButtonBox.RejectRole)
         dialogButtons.accepted.connect(self.accept)
         dialogButtons.rejected.connect(self.reject)

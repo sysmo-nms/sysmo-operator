@@ -1,3 +1,4 @@
+from    PyQt5.QtGui        import QIcon
 from    PyQt5.QtWidgets    import (
     QMenu,
     QAction,
@@ -20,14 +21,14 @@ class ProbeMenu(QMenu):
         super(ProbeMenu, self).__init__(parent)
         self._puActionWiz   = None
         self._showPerfs     = None
-        self.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        self.setIcon(QIcon(nocapi.nGetPixmap('folder-saved-search')))
 
         self._infoBox = QErrorMessage(self)
         self._infoBox.setModal(True)
 
         action = QAction(self.tr('Force check'), self)
         action.triggered.connect(self._forceCheck)
-        action.setIcon(nocapi.nGetIcon('software-update-available'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('software-update-available')))
         self.addAction(action)
 
         action = QAction(self.tr('Suspend probe'), self)
@@ -38,21 +39,21 @@ class ProbeMenu(QMenu):
 
         action = QAction(self.tr('Delete this probe'), self)
         action.triggered.connect(self._deleteProbe)
-        action.setIcon(nocapi.nGetIcon('process-stop'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('process-stop')))
         self.addAction(action)
 
         self.addSeparator()
 
         self._performances = QAction(self.tr('Performances...'), self)
         self._performances.triggered.connect(self._openPerformances)
-        self._performances.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
+        self._performances.setIcon(QIcon(nocapi.nGetPixmap('utilities-system-monitor')))
         self.addAction(self._performances)
 
         self.addSeparator()
 
         action = QAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
-        action.setIcon(nocapi.nGetIcon('edit-paste'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
         self.addAction(action)
 
     def showMenuFor(self, probe, point):

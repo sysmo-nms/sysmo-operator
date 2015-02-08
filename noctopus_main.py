@@ -30,10 +30,11 @@ from    PyQt5.QtWidgets    import (
     QWidgetAction
 )
 
+from PyQt5.QtGui import QIcon
 
 # local dependencies
 from    noctopus_colors     import getPalette
-from    noctopus_images     import getIcon, noctopusGraphicsInit, dumpPalette
+from    noctopus_images     import getIcon, noctopusGraphicsInit, dumpPalette, getPixmap
 from    noctopus_dialogs    import Proxy
 from    noctopus_statusbar  import NStatusBar
 from    noctopus_centerwidget   import NCentralFrame
@@ -74,7 +75,7 @@ class NMainWindow(QMainWindow):
         noctopusGraphicsInit()
 
         self.setObjectName('MainWindow')
-        self.setWindowIcon(getIcon('applications-development'))
+        self.setWindowIcon(QIcon(getPixmap('applications-development')))
         self.setWindowTitle('Noctopus')
 
         self._initSupercast()
@@ -132,7 +133,7 @@ class NMainWindow(QMainWindow):
     # Tray
     def _initTray(self):
         self._trayIcon = QSystemTrayIcon(self)
-        self._trayIcon.setIcon(getIcon('applications-development'))
+        self._trayIcon.setIcon(QIcon(getPixmap('applications-development')))
         self._trayIcon.setVisible(True)
         self._trayIcon.activated.connect(self._trayClic)
 
@@ -279,7 +280,7 @@ class NMainWindow(QMainWindow):
         communityButton = QPushButton(self)
         communityButton.setLayoutDirection(Qt.RightToLeft)
         communityButton.setContentsMargins(0,0,0,0)
-        communityButton.setIcon(getIcon('system-users'))
+        communityButton.setIcon(QIcon(getPixmap('system-users')))
         communityButton.setFlat(True)
         communityAction = QWidgetAction(self)
         communityAction.setDefaultWidget(Community(self))
@@ -293,9 +294,9 @@ class NMainWindow(QMainWindow):
         _dumpPaletteAction = QAction('dump palette', self)
         _dumpPaletteAction.triggered.connect(self._dumpPalette)
 
-        exitAction      = QAction(getIcon('system-log-out'), self.tr('&Exit'), self)
+        exitAction      = QAction(QIcon(getPixmap('system-log-out')), self.tr('&Exit'), self)
         updateAction    = QAction(
-            getIcon('software-update-available'),
+            QIcon(getPixmap('software-update-available')),
             self.tr('Check for update'),
             self
         )
@@ -311,7 +312,7 @@ class NMainWindow(QMainWindow):
     
         "Win"
         fullScreenAction  = QAction(
-            getIcon('video-display'), self.tr('&Full screen'), self)
+            QIcon(getPixmap('video-display')), self.tr('&Full screen'), self)
         fullScreenAction.setShortcut('Ctrl+F')
         fullScreenAction.triggered.connect(self._toggleFullScreen)
     
@@ -369,7 +370,7 @@ class NMainWindow(QMainWindow):
         menuStyle.addAction(cdeAction)
 
         "color sub menu"
-        self.menuColor = menuStyle.addMenu(getIcon('preferences-desktop-theme'),self.tr('Colors'))
+        self.menuColor = menuStyle.addMenu(QIcon(getPixmap('preferences-desktop-theme')),self.tr('Colors'))
         nativeThemeAction = QAction(self.tr('Native'), self)
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))

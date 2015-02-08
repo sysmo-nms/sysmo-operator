@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QLabel,
     QFrame,
@@ -40,10 +41,10 @@ class DashboardControls(NFrameContainer):
         " edit buttons "
         saveButton = QPushButton(self)
         saveButton.setToolTip(self.tr('Save modifications'))
-        saveButton.setIcon(nocapi.nGetIcon('document-save-as'))
+        saveButton.setIcon(QIcon(nocapi.nGetPixmap('document-save-as')))
         backButton = QPushButton(self)
         backButton.setToolTip(self.tr('Restore last saved state'))
-        backButton.setIcon(nocapi.nGetIcon('edit-undo'))
+        backButton.setIcon(QIcon(nocapi.nGetPixmap('edit-undo')))
         separator = QFrame(self)
         separator.setFixedWidth(6)
         separator.setFrameShape(QFrame.NoFrame)
@@ -58,22 +59,22 @@ class DashboardControls(NFrameContainer):
 
         mdi = QPushButton(self)
         mdi.setToolTip(self.tr('mdi'))
-        mdi.setIcon(nocapi.nGetIcon('preferences-system-windows'))
+        mdi.setIcon(QIcon(nocapi.nGetPixmap('preferences-system-windows')))
         mdi.setCheckable(True)
 
         graphic = QPushButton(self)
         graphic.setToolTip(self.tr('graphic'))
-        graphic.setIcon(nocapi.nGetIcon('x-office-drawing'))
+        graphic.setIcon(QIcon(nocapi.nGetPixmap('x-office-drawing')))
         graphic.setCheckable(True)
 
         wmap = QPushButton(self)
         wmap.setToolTip(self.tr('wmap'))
-        wmap.setIcon(nocapi.nGetIcon('internet-web-browser'))
+        wmap.setIcon(QIcon(nocapi.nGetPixmap('internet-web-browser')))
         wmap.setCheckable(True)
 
         timeline = QPushButton(self)
         timeline.setToolTip(self.tr('timeline'))
-        timeline.setIcon(nocapi.nGetIcon('appointment-new'))
+        timeline.setIcon(QIcon(nocapi.nGetPixmap('appointment-new')))
         timeline.setCheckable(True)
 
         self.buttonGroup.addButton(mdi,       0)

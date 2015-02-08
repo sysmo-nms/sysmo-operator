@@ -1,6 +1,7 @@
 from    PyQt5.QtGui    import (
     QDesktopServices,
-    QFont
+    QFont,
+    QIcon
 )
 from    PyQt5.QtWidgets    import (
     QMenu,
@@ -28,7 +29,7 @@ class TargetMenu(QMenu):
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
         self.localMenu    = QMenu(self.tr('Local Actions'), self)
-        self.localMenu.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        self.localMenu.setIcon(QIcon(nocapi.nGetPixmap('utilities-terminal')))
 
         self.configureAction = NAction(self.tr('Configure new action'), self)
         self.configureAction.setPriority(QAction.HighPriority)
@@ -40,7 +41,7 @@ class TargetMenu(QMenu):
 
         action = NAction(self.tr('Add a new probe'), self)
         action.triggered.connect(self._newProbe)
-        action.setIcon(nocapi.nGetIcon('list-add'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
         self.addAction(action)
 
         action = NAction(self.tr('Locate on map'), self)
@@ -49,20 +50,20 @@ class TargetMenu(QMenu):
 
         action = NAction(self.tr('Delete this target...'), self)
         action.triggered.connect(self._deleteTarget)
-        action.setIcon(nocapi.nGetIcon('process-stop'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('process-stop')))
         self.addAction(action)
 
         self.addSeparator()
 
         action = NAction(self.tr('Documentation...'), self)
         action.triggered.connect(self._openDocEngine)
-        action.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('folder-saved-search')))
         self.addAction(action)
 
         self.addSeparator()
         action = NAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
-        action.setIcon(nocapi.nGetIcon('edit-paste'))
+        action.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
         self.addAction(action)
 
         self.addSeparator()

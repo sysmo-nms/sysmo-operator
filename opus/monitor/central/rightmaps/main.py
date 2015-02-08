@@ -1,4 +1,5 @@
 from    PyQt5.QtCore   import Qt, QSize
+from    PyQt5.QtGui    import QIcon
 from    PyQt5.QtWidgets   import (
     QFrame,
     QPushButton,
@@ -38,7 +39,7 @@ class RightMapsControls(NFrameContainer):
         toOsm = QPushButton(self)
         toOsm.setFixedWidth(30)
         toOsm.setContentsMargins(0,0,0,0)
-        toOsm.setIcon(nocapi.nGetIcon('list-add'))
+        toOsm.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
         grid.addWidget(toOsm, 0,0)
 
         grid.setColumnStretch(0,0)
@@ -57,8 +58,8 @@ class RightMapsTabs(QTabWidget):
 
         self._osmc = OSMContainer(self)
         self._depc = DepContainer(self)
-        osmicon = nocapi.nGetIcon('internet-web-browser')
-        depicon = nocapi.nGetIcon('network-workgroup')
+        osmicon = QIcon(nocapi.nGetPixmap('internet-web-browser'))
+        depicon = QIcon(nocapi.nGetPixmap('network-workgroup'))
         self.insertTab(0,self._depc,depicon,self.tr('Dependencies'))
         self.insertTab(1,self._osmc,osmicon,self.tr('Map'))
         self.setTabEnabled(0, False)

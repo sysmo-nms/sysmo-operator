@@ -1,3 +1,4 @@
+from    PyQt5.QtGui    import QIcon
 from    PyQt5.QtWidgets    import (
     QLineEdit,
     QPushButton
@@ -21,10 +22,10 @@ class DashActions(NFrameContainer):
         self._line.textChanged.connect(self._lineChanged)
 
         add   = QPushButton(self)
-        add.setIcon(nocapi.nGetIcon('list-add'))
+        add.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
 
         clear = QPushButton(self)
-        clear.setIcon(nocapi.nGetIcon('edit-clear'))
+        clear.setIcon(QIcon(nocapi.nGetPixmap('edit-clear')))
         clear.clicked.connect(self._line.clear)
 
         grid.addWidget(add,         0,0)

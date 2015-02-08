@@ -8,6 +8,7 @@ from    PyQt5.QtGui import (
     QPixmap
 )
 
+iconPixSet  = dict()
 pixmapSet   = dict()
 iconSet     = dict()
 imageSet    = dict()
@@ -22,15 +23,18 @@ iconsPath   = os.path.join(currentPath, 'graphics')
 imagesPath  = os.path.join(currentPath, 'graphics')
 
 def noctopusGraphicsInit():
-    initPixmaps()
     initIcons()
     initImages()
     initHexSet()
 
-def getPixmap(pixmap):
-    global pixmapSet
-    return pixmapSet[pixmap]
-
+def getPixmap(name):
+    if name in pixmapSet: return pixmapSet[name]
+    global iconsPath
+    filename = "%s.png" % name
+    filepath = os.path.join(iconsPath, filename)
+    pixmapSet[name] = QPixmap(filepath)
+    return pixmapSet[name]
+    
 def getIcon(icon):
     global iconSet
     return iconSet[icon]
@@ -46,25 +50,6 @@ def getRgb(pal):
 def getRgba(pal):
     global hexRgbaSet
     return hexRgbaSet[pal]
-
-# ICONS
-def initPixmaps():
-    global iconsPath
-    global pixmapSet
-    pixmapSet = {
-        'dialog-information': QPixmap(os.path.join(iconsPath, "dialog-information.png")),
-        'system-search': QPixmap(os.path.join(iconsPath, "system-search.png")),
-        'applications-system': QPixmap(os.path.join(iconsPath, "applications-system.png")),
-        'rrdtool-logo': QPixmap(os.path.join(iconsPath, "rrdtool_logo.png")),
-        'server-bay': QPixmap(os.path.join(iconsPath, "server-bay.png")),
-        'network-bay': QPixmap(os.path.join(iconsPath, "network-bay.png")),
-        'console': QPixmap(os.path.join(iconsPath, "console.png")),
-        'radar': QPixmap(os.path.join(iconsPath, "radar.png")),
-        'document-stack': QPixmap(os.path.join(iconsPath, "document-stack.png")),
-        'emblem-system': QPixmap(os.path.join(iconsPath, "emblem-system.png")),
-        'list-add': QPixmap(os.path.join(iconsPath, "list-add.png")),
-        'edit-clear': QPixmap(os.path.join(iconsPath, "edit-clear.png")),
-    }
 
 def initIcons():
     global iconsPath

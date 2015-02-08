@@ -1,5 +1,6 @@
 from    PyQt5.QtGui    import (
-    QPalette
+    QPalette,
+    QIcon
 )
 from    PyQt5.QtWidgets    import (
     QTreeView,
@@ -83,7 +84,7 @@ class TimelineCommands(NFrameContainer):
         super(TimelineCommands, self).__init__(parent)
         # minimize
         self.minimizeButton = QPushButton(self)
-        self.minimizeButton.setIcon(nocapi.nGetIcon('go-up'))
+        self.minimizeButton.setIcon(QIcon(nocapi.nGetPixmap('go-up')))
         self.minimizeButton.setToolTip('minimize')
 
         self.sep0 = QFrame(self)
@@ -99,11 +100,11 @@ class TimelineCommands(NFrameContainer):
         self.stackGroup.setExclusive(True)
 
         timeStack = QPushButton(self)
-        timeStack.setIcon(nocapi.nGetIcon('appointment-new'))
+        timeStack.setIcon(QIcon(nocapi.nGetPixmap('appointment-new')))
         timeStack.setCheckable(True)
 
         textStack = QPushButton(self)
-        textStack.setIcon(nocapi.nGetIcon('edit-paste'))
+        textStack.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
         textStack.setCheckable(True)
 
         self.stackGroup.addButton(timeStack, 0)
@@ -118,7 +119,7 @@ class TimelineCommands(NFrameContainer):
 
         # search commands
         clearButton = QPushButton(self)
-        clearButton.setIcon(nocapi.nGetIcon('edit-clear'))
+        clearButton.setIcon(QIcon(nocapi.nGetPixmap('edit-clear')))
         searchLine  = QLineEdit(self)
 
 
@@ -170,7 +171,7 @@ class TimelineSlide(NFrameContainer):
         grid = NGridContainer(self)
 
         self.minimizeButton = QPushButton(self)
-        self.minimizeButton.setIcon(nocapi.nGetIcon('go-down'))
+        self.minimizeButton.setIcon(QIcon(nocapi.nGetPixmap('go-down')))
         self.minimizeButton.setToolTip('minimize')
 
         sep0 = QFrame(self)

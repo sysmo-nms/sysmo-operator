@@ -6,6 +6,7 @@ from    PyQt5.QtWidgets        import (
     QMenu
 )
 from    PyQt5.QtCore       import Qt
+from    PyQt5.QtGui        import QIcon
 from    noctopus_widgets    import (
     NFrame,
     NGridContainer
@@ -20,7 +21,7 @@ class Central(NFrame):
         super(Central, self).__init__(parent)
         self.setFrameShape(QFrame.NoFrame)
         menu = QMenu('dashboard',self)
-        menu.setIcon(nocapi.nGetIcon('preferences-system-session'))
+        menu.setIcon(QIcon(nocapi.nGetPixmap('preferences-system-session')))
         nocapi.nAddMainMenu(menu)
         #self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
@@ -41,7 +42,7 @@ class DashTab(QTabWidget):
         tabBar.setExpanding(True)
         helpButton = NInfoButton(self)
         addButton = QPushButton(self)
-        addButton.setIcon(nocapi.nGetIcon('list-add'))
+        addButton.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
         addButton.setFlat(True)
         addButton.setToolTip(self.tr('Create a new tab'))
         self.setElideMode(Qt.ElideRight)
@@ -50,6 +51,6 @@ class DashTab(QTabWidget):
         self.setCornerWidget(helpButton, corner=Qt.TopRightCorner)
         self.addTab(
             Dashboard(self),
-            nocapi.nGetIcon('applications-development'),
+            QIcon(nocapi.nGetPixmap('applications-development')),
             self.tr('Default')
         )

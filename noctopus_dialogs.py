@@ -11,6 +11,7 @@ from    PyQt5.QtWidgets        import (
     QLabel
 )
 from    PyQt5.QtSvg        import QSvgWidget
+from    PyQt5.QtGui        import QIcon
 from    noctopus_widgets    import NFrame, NGrid
 import  nocapi
 
@@ -95,20 +96,20 @@ class Proxy(QDialog):
     def _initButtonFrame(self):
         # button area
         ok = QPushButton(
-            nocapi.nGetIcon('applications-development'),
+            QIcon(nocapi.nGetPixmap('applications-development')),
             self.tr("&Validate"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self._validate)
 
         ko = QPushButton(
-            nocapi.nGetIcon('process-stop'),
+            QIcon(nocapi.nGetPixmap('process-stop')),
             self.tr("&Abort"),
             self)
         ko.clicked.connect(self.close)
 
         helpB = QPushButton(
-            nocapi.nGetIcon('dialog-information'),
+            QIcon(nocapi.nGetPixmap('dialog-information')),
             self.tr("&Help"),
             self)
         helpB.setEnabled(False)

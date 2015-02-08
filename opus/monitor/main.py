@@ -1,3 +1,4 @@
+from    PyQt5.QtGui   import QIcon
 from    PyQt5.QtCore   import (
     QSettings,
     QTimeLine,
@@ -22,9 +23,9 @@ class Central(NFrameContainer):
         Central.singleton = self
         nocapi.nConnectWillClose(self._willClose)
         menu = QMenu('monitor', self)
-        menu.setIcon(nocapi.nGetIcon('utilities-system-monitor'))
+        menu.setIcon(QIcon(nocapi.nGetPixmap('utilities-system-monitor')))
         wikiConf = QAction('Configure documentation engine...', self)
-        wikiConf.setIcon(nocapi.nGetIcon('folder-saved-search'))
+        wikiConf.setIcon(QIcon(nocapi.nGetPixmap('folder-saved-search')))
         wikiConf.triggered.connect(self._configureDoc)
         menu.addAction(wikiConf)
         nocapi.nAddMainMenu(menu)

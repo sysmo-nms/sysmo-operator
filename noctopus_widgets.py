@@ -11,7 +11,8 @@ from    PyQt5.QtCore   import (
 from    PyQt5.QtGui    import (
     QRegExpValidator,
     QValidator,
-    QDesktopServices
+    QDesktopServices,
+    QIcon
 )
 from    PyQt5.QtWidgets    import (
     QFrame,
@@ -96,7 +97,7 @@ class NInfoButton(QPushButton):
     def __init__(self, parent=None):
         super(NInfoButton, self).__init__(parent)
         #self.showInfo.connect(noctopus_centerwidget.NCentralFrame.singleton.showInfo)
-        self.setIcon(noctopus_images.getIcon('dialog-information'))
+        self.setIcon(QIcon(noctopus_images.getPixmap('dialog-information')))
         self.setFlat(True)
         self.pressed.connect(self._showInfo)
         self.released.connect(self._hideInfo)
@@ -157,13 +158,13 @@ class Community(NFrame):
             self.tr('Take a look at the functionnality planning and vote for the most usefull for you!'),
             self
         )
-        helpButton.setIcon(noctopus_images.getIcon('help-browser'))
+        helpButton.setIcon(QIcon(noctopus_images.getPixmap('help-browser')))
         helpButton.clicked.connect(self._goHelp)
-        ideaButton.setIcon(noctopus_images.getIcon('dialog-information'))
+        ideaButton.setIcon(QIcon(noctopus_images.getPixmap('dialog-information')))
         ideaButton.clicked.connect(self._goIdea)
-        bugButton.setIcon(noctopus_images.getIcon('dialog-warning'))
+        bugButton.setIcon(QIcon(noctopus_images.getPixmap('dialog-warning')))
         bugButton.clicked.connect(self._goBug)
-        functionButton.setIcon(noctopus_images.getIcon('applications-system'))
+        functionButton.setIcon(QIcon(noctopus_images.getPixmap('applications-system')))
         functionButton.clicked.connect(self._goFun)
 
         lab = QLabel('<h2>%s</h2' % self.tr('The community side'), self)

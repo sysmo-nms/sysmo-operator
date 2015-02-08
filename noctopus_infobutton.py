@@ -6,18 +6,20 @@ from    PyQt5.QtCore   import (
 )
 
 from    PyQt5.QtGui    import (
-    QDrag
+    QDrag,
+    QIcon
 )
 from    PyQt5.QtWidgets    import (
     QPushButton
 )
+
 import noctopus_images
 import noctopus_centerwidget
 
 class NInfoButton(QPushButton):
     def __init__(self, parent=None):
         super(NInfoButton, self).__init__(parent)
-        self.setIcon(noctopus_images.getIcon('dialog-information'))
+        self.setIcon(QIcon(noctopus_images.getPixmap('dialog-information')))
         self.setFlat(True)
         self._showInfoEnabled = False
 

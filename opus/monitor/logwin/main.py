@@ -10,7 +10,7 @@ from    PyQt5.QtGui    import (
     QPixmap,
     QIcon,
     QPalette,
-    QFont,
+    QFont
 )
 
 from    PyQt5.QtWidgets    import (
@@ -114,12 +114,12 @@ class LogArea(NFrameContainer):
 
         if text == True:
             self._rrds = QLabel('text', self)
-            self._tabs.insertTab(1, self._rrds, nocapi.nGetIcon('accessories-text-editor'), 'Text')
+            self._tabs.insertTab(1, self._rrds, QIcon(nocapi.nGetPixmap('accessories-text-editor')), 'Text')
             if self._tabs.isTabEnabled(0) == False:
                 self._tabs.setCurrentIndex(1)
         else:
             self._rrds = QLabel('text', self)
-            self._tabs.insertTab(1, self._rrds, nocapi.nGetIcon('accessories-text-editor'), 'Text')
+            self._tabs.insertTab(1, self._rrds, QIcon(nocapi.nGetPixmap('accessories-text-editor')), 'Text')
             self._tabs.setTabEnabled(1, False)
 
 
@@ -133,18 +133,18 @@ class ProbeMenus(NFrameContainer):
         super(ProbeMenus, self).__init__(parent)
         self._force = QPushButton(self)
         self._force.setIconSize(QSize(30,30))
-        self._force.setIcon(nocapi.nGetIcon('software-update-available'))
+        self._force.setIcon(QIcon(nocapi.nGetPixmap('software-update-available')))
         self._pause = QPushButton(self)
         self._pause.setIconSize(QSize(30,30))
-        self._pause.setIcon(nocapi.nGetIcon('media-playback-pause'))
+        self._pause.setIcon(QIcon(nocapi.nGetPixmap('media-playback-pause')))
         self._pause.setCheckable(True)
         self._pause.setChecked(False)
         self._action = QPushButton(self)
         self._action.setIconSize(QSize(30,30))
-        self._action.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        self._action.setIcon(QIcon(nocapi.nGetPixmap('utilities-terminal')))
         self._prop = QPushButton(self)
         self._prop.setIconSize(QSize(30,30))
-        self._prop.setIcon(nocapi.nGetIcon('edit-paste'))
+        self._prop.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
 
         grid = NGridContainer(self)
         grid.setVerticalSpacing(4)
