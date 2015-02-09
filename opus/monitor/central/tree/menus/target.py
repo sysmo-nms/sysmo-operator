@@ -12,7 +12,7 @@ from PyQt5.QtCore import QUrl
 
 from    functools import partial
 from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.commands.probe_utils       import CreateProbeDialog
+from    opus.monitor.central.tree.add_probe             import AddProbe
 #from    opus.monitor.central.tree.logwin        import LoggerView
 from    opus.monitor.central.tree.toolbox       import openTargetPropertiesFor
 from    noctopus_widgets                        import NAction
@@ -130,7 +130,7 @@ class TargetMenu(QMenu):
         print(("reply, ", msg))
 
     def _newProbe(self):
-        cpWiz = CreateProbeDialog(self, self._currentTarget)
+        cpWiz = AddProbe(self._currentTarget, self)
 
     def _openProperties(self):
         openTargetPropertiesFor(self._currentTarget)

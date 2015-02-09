@@ -66,13 +66,11 @@ class TargetProperties(QDialog):
         p1 = TargetPropertiesP1(self)
         p2 = TargetPropertiesP2(self)
         p3 = TargetPropertiesP3(self)
-        p4 = TargetPropertiesP4(self)
 
         self._stack = QStackedWidget(self)
         self._stack.addWidget(p1)
         self._stack.addWidget(p2)
         self._stack.addWidget(p3)
-        self._stack.addWidget(p4)
     
         close = QPushButton('Close', self)
         close.clicked.connect(self.close)
@@ -92,25 +90,19 @@ class TargetProperties(QDialog):
 
     def createIcons(self):
         confButton = QListWidgetItem(self._confList)
-        confButton.setIcon(QIcon(nocapi.nGetPixmap('preferences-system')))
+        confButton.setIcon(nocapi.nGetIcon('preferences-system'))
         confButton.setText('Properties')
         confButton.setTextAlignment(Qt.AlignHCenter)
         confButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 
         probesButton = QListWidgetItem(self._confList)
-        probesButton.setIcon(QIcon(nocapi.nGetPixmap('satellite')))
+        probesButton.setIcon(nocapi.nGetIcon('satellite'))
         probesButton.setText('Probes')
         probesButton.setTextAlignment(Qt.AlignHCenter)
         probesButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 
-        locationButton = QListWidgetItem(self._confList)
-        locationButton.setIcon(QIcon(nocapi.nGetPixmap('internet-web-browser')))
-        locationButton.setText('Location')
-        locationButton.setTextAlignment(Qt.AlignHCenter)
-        locationButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-
         tieButton = QListWidgetItem(self._confList)
-        tieButton.setIcon(QIcon(nocapi.nGetPixmap('applications-system')))
+        tieButton.setIcon(nocapi.nGetIcon('applications-system'))
         tieButton.setText('Tie scripts')
         tieButton.setTextAlignment(Qt.AlignHCenter)
         tieButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -146,19 +138,8 @@ class TargetPropertiesP3(NFrame):
     def __init__(self, element, parent = None):
         super(TargetPropertiesP3, self).__init__(parent)
         layout = QGridLayout(self)
-        osm = OSMView(self)
-        osm.setFixedHeight(400)
-        osm.setFixedWidth(300)
-        layout.addWidget(QLabel('<h2>Location</h2>', self), 0, 0, 1,2)
-        layout.addWidget(osm, 1,1)
-        layout.setColumnStretch(0,1)
-        layout.setColumnStretch(1,0)
-
-class TargetPropertiesP4(NFrame):
-    def __init__(self, element, parent = None):
-        super(TargetPropertiesP4, self).__init__(parent)
-        layout = QGridLayout(self)
         layout.addWidget(QLabel('p4', self))
+
 
 class TargetPropertiesX(QDialog):
     Elements = dict()

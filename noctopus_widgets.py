@@ -45,6 +45,14 @@ class NTemporaryFile(QObject):
     def _deleteFile(f):
         print(("will delete file: ", f))
 
+# temporary file 2
+#class NTempFile(QTemporaryFile):
+#    def __init__(self, parent):
+#        super(NTempFile, self).__init__(parent)
+#        self.setFileTemplate(
+#            os.path.join(QDir.tempPath(), 'nc_temp-XXXXXXX')
+#        )
+
 
 # SPLITER
 class NSplitter(QSplitter):
