@@ -2,7 +2,11 @@
 from    PyQt5.QtWidgets    import (
     #QToolBox,
     QDialog,
-    QProgressDialog
+    QProgressDialog,
+    QAbstractScrollArea,
+    QLabel,
+    QCommandLinkButton
+
     #QWidget,
     #QLabel,
     #QFrame,
@@ -33,10 +37,29 @@ import xml.etree.ElementTree as ET
 class AddProbe(QDialog):
     def __init__(self, target, parent = None):
         super(AddProbe, self).__init__(parent)
+        self._initLayout()
         self._progress = QProgressDialog(self)
         self._fetchInfos()
         self._target = target
 
+    def _initLayout(self):
+        area = QAbstractScrollArea(self)
+        mgrid   = NGrid(self)
+        mgrid.addWidget(area)
+        self._cgrid = NGrid(area)
+        #self._cgrid.addWidget(QLabel('hello', self), 0,0)
+
+        
+    def _finalizeLayout(self):
+        self._buttons = list()
+        for key in self._checks.keys():
+            x = self._checks[key]['def']
+            y = x.find('descr')
+            b = QCommandLinkButton(key, y.text, self) 
+            b.setFixedHeight(50)
+            self._cgrid.addWidget(b)
+        
+        
     def _fetchInfos(self):
         self._progress.setMinimum(0)
         self._progress.setMaximum(0)
@@ -87,18 +110,5 @@ class AddProbe(QDialog):
 
         self._progress.hide()
         self._progress.deleteLater()
+        self._finalizeLayout()
         self.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-

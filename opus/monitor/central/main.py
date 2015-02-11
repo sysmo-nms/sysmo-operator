@@ -44,10 +44,10 @@ class MainSplitter(QSplitter):
 
     def _toggle(self, msg):
         if msg['id'] != 'monitor': return
-        if self._ptree.isVisible() == True:
-            self._ptree.hide()
+        if self._maps.isVisible() == True:
+            self._maps.hide()
         else:
-            self._ptree.show()
+            self._maps.show()
 
     def _loadSettings(self):
         nocapi.nConnectWillClose(self._saveSettings)

@@ -29,7 +29,8 @@ class ProbeModel(QStandardItemModel):
                 "Status",
                 "Step/Timeout",
                 "State",
-                "Ip|Host"
+                "Host",
+                "Last 72 hours timeline"
         ])
         monapi.connectToEvent('infoTarget', self._handleTargetInfo)
         monapi.connectToEvent('infoProbe',  self._handleProbeInfo)
@@ -66,7 +67,7 @@ class ProbeModel(QStandardItemModel):
             t = TargetItem(msg)
             self.appendRow([
                 t, t.row2, t.row3_status,
-                t.row4, t.row5, t.row6_host])
+                t.row4, t.row5, t.row6_host, t.row7_timeline])
                 #t.row4, t.row5, t.row6_host, t.row7_timeline])
         else:
             self._updateRow(target, msg)
@@ -133,11 +134,11 @@ class TargetItem(QStandardItem):
 
         self.row3_status    = QStandardItem()
         self.row6_host      = QStandardItem()
-        #self.row7_timeline  = QStandardItem()
+        self.row7_timeline  = QStandardItem()
 
         #self.row3_status.setData('status', role=Qt.DisplayRole)
         self.row6_host.setData(self.targetDict['value']['properties']['host'], role=Qt.DisplayRole)
-        #self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
+        self.row7_timeline.setData('', role=Qt.DisplayRole)
 
     def data(self, role):
         name = self.targetDict['value']['properties']['name']
@@ -176,7 +177,7 @@ class TargetItem(QStandardItem):
             p = ProbeItem(msg, self)
             self.appendRow([
                 p, p.row2_progress, p.row3_status, 
-                p.row4_trigger, p.row5_state, p.row6_host])
+                p.row4_trigger, p.row5_state, p.row6_host, p.row7_timeline])
                 #p.row4_trigger, p.row5_state, p.row6_host, p.row7_time])
         else:
             child.updateState(msg)
@@ -329,8 +330,8 @@ class ProbeItem(QStandardItem):
         self.row6_host  = QStandardItem()
         #self.row6_host.setData('host', role=Qt.DisplayRole)
 
-        #self.row7_time  = QStandardItem()
-        #self.row7_time.setData('timeline', role=Qt.DisplayRole)
+        self.row7_timeline  = QStandardItem()
+        self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
 
 
     def handleReturn(self, msg):
