@@ -41,7 +41,6 @@ def openProbePropertiesFor(target):
         ProbeProperties.Elements[target] = v
     else:
         ProbeProperties.Elements[target].show()
-        
 
 class TargetProperties(QDialog):
     Elements = dict()

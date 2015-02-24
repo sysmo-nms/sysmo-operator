@@ -19,13 +19,17 @@ import re
 import subprocess
 import monitor.proxy
 
-# TODO possibilite de:
-# - declancher un evenement lors de l'execution d'une action.
-# Sera logguee sur le serveur.
-# ET/OU
-# - declancher une action serveur via api locale, pour executer une commande
-# serveur. Exemple, ouverture d'un terminal [...] fermeture du terminal
-# et sauvegarde eventuelle de configuration sur un element (action serveur)
+def launchOperationFor(obj, target):
+    from monitor.commands.wizards import UserActionsWizard
+    ua = UserActions.singleton
+    ac = ua.getUActionsFor(target)
+    if len(ac) == 0:
+        uw = UserActionsWizard(obj, target)
+    else:
+        action = ac[0]
+        ua.execUAction(action, target)
+        
+        
 
 class UserActions(QObject):
     

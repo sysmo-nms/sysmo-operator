@@ -18,6 +18,7 @@ from    monitor.logwin.main                import openLoggerFor
 from    monitor.central.tree.tree_model    import ProbeModel
 from    monitor.central.tree.menus.probe   import ProbeMenu
 from    monitor.central.tree.menus.target  import TargetMenu
+import  monitor.commands.user_actions
 import  monitor.central.tree.tree_delegate as pdelegate
 import  monitor.api                        as monapi
 import  sysmapi
@@ -89,11 +90,15 @@ class ProbesTreeview(QTreeView):
         settings.setValue('monitor/probe_treeview_header', header.saveState())
 
     def _doubleClicked(self, index):
-        probeItem = index.sibling(index.row(), 0)
-        if probeItem.data(Qt.UserRole + 1) == "Probe":
-            probe = probeItem.data(Qt.UserRole + 3)
-            display = probeItem.data(Qt.DisplayRole)
+        item = index.sibling(index.row(), 0)
+        if item.data(Qt.UserRole + 1) == "Probe":
+            print(item)
+            probe   = item.data(Qt.UserRole + 3)
+            display = item.data(Qt.DisplayRole)
             openLoggerFor(probe, display)
+        else:
+            targetid = item.data(Qt.UserRole + 1)
+            monitor.commands.user_actions.launchOperationFor(self, targetid)
 
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)

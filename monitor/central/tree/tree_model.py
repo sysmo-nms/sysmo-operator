@@ -156,8 +156,8 @@ class TargetItem(QStandardItem):
             for i in range(self.rowCount()):
                 searchString += self.child(i).descr
             return self.data(Qt.DisplayRole) + searchString
-        #elif role == (Qt.UserRole + 1):
-            #return "Target"
+        elif role == (Qt.UserRole + 1):
+            return self.targetDict['value']['properties']['staticName']
         #elif role == (Qt.UserRole + 2):
             #return self.targetDict['value']['properties']['host']
         else:

@@ -73,6 +73,7 @@ TYPE_OTHER       = 6
 class NewTargetDialog(QWizard):
     def __init__(self, parent=None):
         super(NewTargetDialog, self).__init__(parent)
+        self.setWizardStyle(QWizard.ModernStyle)
         self.setModal(True)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
         self.setPage(1, TargetConfFrame(self))
