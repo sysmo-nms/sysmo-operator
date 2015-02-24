@@ -22,7 +22,6 @@ class Central(NFrame):
         self.setFrameShape(QFrame.NoFrame)
         menu = QMenu('dashboard',self)
         menu.setIcon(QIcon(sysmapi.nGetPixmap('preferences-system-session')))
-        sysmapi.nAddMainMenu(menu)
         #self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 

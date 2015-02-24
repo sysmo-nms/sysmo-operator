@@ -68,18 +68,6 @@ def nConnectProxySettings(pyCallable):
     '''
     return sysmo_main.NMainWindow.singleton.proxySettings.connect(pyCallable)
 
-def nConnectViewMode(pyCallable):
-    ''' return: None
-    Connect every view mode modification to the pyCallable given as argument.
-    pyCallable will receive: pyqtSignal(dict)
-    {
-        'screen':   'full' | 'normal',
-        'mode':     'minimal' | 'simple' | 'expert',
-        'tray':     'traymin' | 'traymax'
-    }
-    '''
-    sysmo_main.NMainWindow.singleton.viewMode.connect(pyCallable)
-
 def nConnectAppToggled(pyCallable):
     ''' return: None
     Connect every toggle event from the left ramp buttons to pyCallable.

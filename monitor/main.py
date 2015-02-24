@@ -22,8 +22,7 @@ class Central(NFrameContainer):
         super(Central, self).__init__(parent)
         Central.singleton = self
         sysmapi.nConnectWillClose(self._willClose)
-        menu = QMenu('monitor', self)
-        menu.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
+        menu = QMenu('Monitor', self)
         wikiConf = QAction('Configure documentation engine...', self)
         wikiConf.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
         wikiConf.triggered.connect(self._configureDoc)

@@ -29,7 +29,7 @@ from    sysmo_widgets    import NFrameContainer, NGridContainer, NFrame, NGrid
 
 # opus
 import  monitor.main
-import  dashboard.main
+#import  dashboard.main
 #import  opus.netman.main
 #import  opus.knowledge.main
 #import  opus.schedule.main
@@ -53,7 +53,7 @@ class NSelector(NFrameContainer):
 
         self._initButtons()
         self._initButtonGroup()
-        self._initButtonSelector()
+        #self._initButtonSelector()
         self._initStack()
 
         self._restoreSettings()
@@ -63,7 +63,7 @@ class NSelector(NFrameContainer):
     def _initGrid(self):
         self.grid = NGridContainer(self)
         self.grid.setVerticalSpacing(4)
-        self.grid.addWidget(self.menuButton, 0,0)
+        #self.grid.addWidget(self.menuButton, 0,0)
         self.setLayout(self.grid)
 
     def _updateGrid(self):
@@ -127,10 +127,10 @@ class NSelector(NFrameContainer):
         self._buttons['monitor']['widget'] = NSelectorButton(self, 'monitor')
         self._buttons['monitor']['widget'].setIcon('monitor-black')
 
-        self._buttons['dashboard'] = dict()
-        self._buttons['dashboard']['row'] = 2
-        self._buttons['dashboard']['widget'] = NSelectorButton(self, 'dashboard')
-        self._buttons['dashboard']['widget'].setIcon('dashboard-black')
+        #self._buttons['dashboard'] = dict()
+        #self._buttons['dashboard']['row'] = 2
+        #self._buttons['dashboard']['widget'] = NSelectorButton(self, 'dashboard')
+        #self._buttons['dashboard']['widget'].setIcon('dashboard-black')
 
         #self._buttons['netman'] = dict()
         #self._buttons['netman']['row'] = 3
@@ -146,7 +146,7 @@ class NSelector(NFrameContainer):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
 
         self._stackWidget.addLayer(monitor.main.Central,    'monitor')
-        self._stackWidget.addLayer(dashboard.main.Central,  'dashboard')
+        #self._stackWidget.addLayer(dashboard.main.Central,  'dashboard')
         #self._stackWidget.addLayer(opus.netman.main.Central,      'netman')
         #self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
 ##############################################################################

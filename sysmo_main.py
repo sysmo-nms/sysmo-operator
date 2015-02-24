@@ -55,13 +55,6 @@ class NMainWindow(QMainWindow):
     #   'port': int
     # }
 
-    viewMode        = pyqtSignal(dict)
-    # emit self.activeViewMode dict: {
-    #   'screen':   'full' | 'normal',
-    #   'mode':     'minimal' | 'simple' | 'expert',
-    #   'tray':     'traymin' | 'traymax'
-    # }
-
     willClose       = pyqtSignal()
     # emit when the application will close
 
@@ -127,7 +120,6 @@ class NMainWindow(QMainWindow):
     def _initViewModes(self):
         self.activeViewMode = dict()
         self.activeViewMode['screen']   = "normal"
-        self.activeViewMode['mode']     = "normal"
         self.activeViewMode['tray']     = "traymax"
 
     # Tray
@@ -151,23 +143,9 @@ class NMainWindow(QMainWindow):
         if self.isFullScreen() == False:
             self.showFullScreen()
             self.activeViewMode['screen'] = 'full'
-            self.viewMode.emit(self.activeViewMode)
         else:
             self.showNormal()
             self.activeViewMode['screen'] = 'normal'
-            self.viewMode.emit(self.activeViewMode)
-
-    def _setMinimalView(self):
-        self.activeViewMode['mode'] = 'minimal'
-        self.viewMode.emit(self.activeViewMode)
-
-    def _setSimpleView(self):
-        self.activeViewMode['mode'] = 'simple'
-        self.viewMode.emit(self.activeViewMode)
-
-    def _setExpertView(self):
-        self.activeViewMode['mode'] = 'expert'
-        self.viewMode.emit(self.activeViewMode)
 
     def _trayClic(self, reason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
@@ -180,19 +158,6 @@ class NMainWindow(QMainWindow):
                 self.hide()
                 self.activeViewMode['tray'] = 'traymin'
                 self.viewMode.emit(self.activeViewMode)
-
-    def addTopDockWidget(self, widget, name):
-        newDock = QDockWidget(self)
-        newDock.setObjectName(name)
-        newDock.setAllowedAreas(Qt.TopDockWidgetArea)
-        newDock.setFeatures(
-        QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetVerticalTitleBar
-        )
-        newDock.setWidget(widget)
-        newDock.setSizePolicy(
-            QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
-        newDock.setContentsMargins(0,0,0,0)
-
 
     ###########
     # DIALOGS #
@@ -310,40 +275,12 @@ class NMainWindow(QMainWindow):
         menuFile.addSeparator()
         menuFile.addAction(exitAction)
     
-        "Win"
+        "View menu"
         fullScreenAction  = QAction(
             QIcon(getPixmap('video-display')), self.tr('&Full screen'), self)
         fullScreenAction.setShortcut('Ctrl+F')
         fullScreenAction.triggered.connect(self._toggleFullScreen)
     
-        actionSimpleView    = QAction(self.tr('Simplified view'), self)
-        actionSimpleView.setCheckable(True)
-        actionSimpleView.triggered.connect(self._setSimpleView)
-    
-        actionMinimalView    = QAction(self.tr('Minimal view'), self)
-        actionMinimalView.setCheckable(True)
-        actionMinimalView.triggered.connect(self._setMinimalView)
-    
-        actionExpertView    = QAction(self.tr('Expert view'), self)
-        actionExpertView.setCheckable(True)
-        actionExpertView.triggered.connect(self._setExpertView)
-        actionExpertView.setChecked(True)
-    
-        toggleSimpleView    = QActionGroup(self)
-        toggleSimpleView.addAction(actionMinimalView)
-        toggleSimpleView.addAction(actionSimpleView)
-        toggleSimpleView.addAction(actionExpertView)
-        toggleSimpleView.setExclusive(True)
-    
-        menuWin     = menu.addMenu(self.tr('Views'))
-        menuWin.addAction(actionMinimalView)
-        menuWin.addAction(actionSimpleView)
-        menuWin.addAction(actionExpertView)
-        menuWin.addSeparator()
-        menuWin.addAction(fullScreenAction)
-    
-    
-        " style menu "
         nativeAction    = QAction(self.tr('Native'), self)
         nativeAction.setCheckable(True)
         nativeAction.triggered.connect(partial(self._setStyle, 'native'))
@@ -363,7 +300,9 @@ class NMainWindow(QMainWindow):
         styleToggle.addAction(nativeAction)
         styleToggle.setExclusive(True)
     
-        menuStyle = menu.addMenu(self.tr('Style'))
+        menuStyle = menu.addMenu(self.tr('View'))
+        menuStyle.addAction(fullScreenAction)
+        menuStyle.addSeparator()
         menuStyle.addAction(nativeAction)
         menuStyle.addSeparator()
         menuStyle.addAction(plastiqueAction)

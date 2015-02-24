@@ -122,8 +122,3 @@ class NCentralStack(NFrameContainer):
         self._stackElements[app] = qWidget
         self._stack.addWidget(qWidget)
 
-
-
-
-
-
