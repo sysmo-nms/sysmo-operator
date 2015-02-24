@@ -5,7 +5,6 @@ A=`find . -name "*.py"`
 T="tmpfile"
 for f in $A;
 do
-    echo "Processing: $f"
-    cat $f | sed s/PyQt4/PyQt5/g > $T
+    cat $f | sed s/opus\.monitor/monitor/g > $T
     mv $T $f
 done
