@@ -19,6 +19,7 @@ win32Binary: clean
 clean:
 	rm -rf dist
 	rm -rf build
+	rm -rf __pycache__
 	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
 	find . -name "*.pyc" -print | xargs rm -f
 
