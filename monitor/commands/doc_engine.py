@@ -44,7 +44,7 @@ class DocConfigurator(QDialog):
         config.setLayout(configLay)
         #engine = QComboBox(self)
         #engine.addItem('Standard Wiki')
-        #engine.addItem('Noctopus advanced wiki')
+        #engine.addItem('Sysmo advanced wiki')
         #engine.setEnabled(False)
 
         proto = QComboBox(self)

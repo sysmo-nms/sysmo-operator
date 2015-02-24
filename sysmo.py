@@ -11,7 +11,7 @@ import  sysmo_colors
 
 def main():
     osType           = platform.platform()
-    sysmoSettings = QSettings("Noctopus NMS", "sysmo-client")
+    sysmoSettings = QSettings("Sysmo NMS", "sysmo-client")
     sysmoStyle    = sysmoSettings.value("NMainWindow/style")
     sysmoTheme    = sysmoSettings.value("NMainWindow/theme")
     
@@ -47,7 +47,7 @@ def main():
     
     sysmoApp  = QApplication(sys.argv)
     sysmoApp.installTranslator(translator)
-    sysmoApp.setOrganizationName("Noctopus NMS")
+    sysmoApp.setOrganizationName("Sysmo NMS")
     sysmoApp.setOrganizationDomain("sysmo-nms.com")
     sysmoApp.setApplicationName("sysmo-client")
     

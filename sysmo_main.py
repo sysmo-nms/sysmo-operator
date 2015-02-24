@@ -76,7 +76,7 @@ class NMainWindow(QMainWindow):
 
         self.setObjectName('MainWindow')
         self.setWindowIcon(QIcon(getPixmap('applications-development')))
-        self.setWindowTitle('Noctopus')
+        self.setWindowTitle('Sysmo')
 
         self._initSupercast()
 
@@ -210,7 +210,7 @@ class NMainWindow(QMainWindow):
     #############
     def closeEvent(self, event):
         self.willClose.emit()
-        #settings = QSettings("Noctopus NMS", "sysmo-client")
+        #settings = QSettings("Sysmo NMS", "sysmo-client")
         settings    = QSettings()
         settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
@@ -227,7 +227,7 @@ class NMainWindow(QMainWindow):
     # SETTINGS #
     ############
     def _restoreSettings(self):
-        #settings = QSettings("Noctopus NMS", "sysmo-client")
+        #settings = QSettings("Sysmo NMS", "sysmo-client")
         settings = QSettings()
 
         # TOPYQT ERROR BEGIN
@@ -290,7 +290,7 @@ class NMainWindow(QMainWindow):
         menu.setCornerWidget(communityButton)
 
         "File"
-        menuFile    = menu.addMenu('Noctopus')
+        menuFile    = menu.addMenu('Sysmo')
         _dumpPaletteAction = QAction('dump palette', self)
         _dumpPaletteAction.triggered.connect(self._dumpPalette)
 
