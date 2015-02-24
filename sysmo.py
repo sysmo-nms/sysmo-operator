@@ -11,7 +11,7 @@ import  sysmo_colors
 
 def main():
     osType           = platform.platform()
-    sysmoSettings = QSettings("Sysmo NMS", "sysmo-client")
+    sysmoSettings = QSettings("Sysmo Monitor", "sysmo-operator")
     sysmoStyle    = sysmoSettings.value("NMainWindow/style")
     sysmoTheme    = sysmoSettings.value("NMainWindow/theme")
     
@@ -25,12 +25,6 @@ def main():
         elif re.match('^Windows-8..*',     osType) != None: pass # native
         elif re.match('^Mac..*',           osType) != None: pass # native
     
-    # TOPYQT ERROR BEGIN
-    # force dark fusion
-    #sysmoStyle = 'fusion'
-    #sysmoTheme = 'dark'
-    # TOPYQT ERROR END
-
     if      sysmoStyle == None:      pass
     elif    sysmoStyle == 'native':  pass
     else:
@@ -47,12 +41,12 @@ def main():
     
     sysmoApp  = QApplication(sys.argv)
     sysmoApp.installTranslator(translator)
-    sysmoApp.setOrganizationName("Sysmo NMS")
-    sysmoApp.setOrganizationDomain("sysmo-nms.com")
-    sysmoApp.setApplicationName("sysmo-client")
+    sysmoApp.setOrganizationName("Sysmo Monitor")
+    sysmoApp.setOrganizationDomain("sysmo.com")
+    sysmoApp.setApplicationName("sysmo-operator")
     
     currentStyle = sysmoApp.style().objectName()
-    sysmo     = sysmo_main.NMainWindow(currentStyle)
+    sysmo        = sysmo_main.NMainWindow(currentStyle)
     
     sys.exit(sysmoApp.exec_())
 

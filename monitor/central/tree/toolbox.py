@@ -175,8 +175,8 @@ class TargetPropertiesX(QDialog):
         self.close()
 
     def show(self):
-        self._restoreSettings()
-        self.raise_()
+        #self._restoreSettings()
+        #self.raise_()
         QDialog.show(self)
 
     def closeEvent(self, event):
@@ -217,8 +217,8 @@ class ProbeProperties(QDialog):
         self.close()
 
     def show(self):
-        self._restoreSettings()
-        self.raise_()
+        #self._restoreSettings()
+        #self.raise_()
         QDialog.show(self)
 
     def closeEvent(self, event):

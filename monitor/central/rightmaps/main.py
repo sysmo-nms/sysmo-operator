@@ -26,10 +26,11 @@ class RightMapsContainer(NFrame):
         #self._mapsControls = RightMapsControls(self)
         grid = NGrid(self)
         #grid.addWidget(self._mapsControls,  0,0)
-        grid.addWidget(RightMapsTabs(self), 1,0)
-        grid.setRowStretch(0,0)
-        grid.setRowStretch(1,1)
-        grid.setVerticalSpacing(6)
+        #grid.addWidget(RightMapsTabs(self), 1,0)
+        grid.addWidget(OSMContainer(self))
+        #grid.setRowStretch(0,0)
+        #grid.setRowStretch(1,1)
+        #grid.setVerticalSpacing(6)
 
 class RightMapsControls(NFrameContainer):
     def __init__(self, parent):

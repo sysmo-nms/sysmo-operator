@@ -16,21 +16,22 @@ class TreeContainer(NFrameContainer):
         super(TreeContainer, self).__init__(parent)
         TreeContainer.singleton = self
         self._splitter   = MainSplitter(self)
-        self._timeline   = Timeline(self)
+        #self._timeline   = Timeline(self)
         self._grid = NGridContainer(self)
         self._grid.setVerticalSpacing(6)
 
         self._grid.addWidget(self._splitter, 1, 0)
-        self._grid.addWidget(self._timeline, 2, 0)
+        #self._grid.addWidget(self._timeline, 2, 0)
 
         self._grid.setRowStretch(1,1)
-        self._grid.setRowStretch(2,0)
+        #self._grid.setRowStretch(2,0)
         self.setLayout(self._grid)
 
 class MainSplitter(QSplitter):
     def __init__(self, parent):
         super(MainSplitter, self).__init__(parent)
         sysmapi.nConnectAppToggled(self._toggle)
+        sysmapi.nConnectWillClose(self._saveSettings)
         self._maps  = RightMapsContainer(self)
         self._ptree = ProbesTree(self)
         self.insertWidget(0,self._ptree)
@@ -50,14 +51,19 @@ class MainSplitter(QSplitter):
             self._maps.show()
 
     def _loadSettings(self):
-        sysmapi.nConnectWillClose(self._saveSettings)
-        self._settings = QSettings()
-        state = self._settings.value('monitor/main_splitter')
-        if state == None: return
-        # TOPYQT ERROR BEGIN
-        # TypeError: QSplitter.restoreState(QByteArray): argument 1 has unexpected type 'QVariant'
-        #self.restoreState(state)
-        # TOPYQT ERROR END
+        settings = QSettings()
+        state  = settings.value('monitor/main_splitter')
+        mapvis = settings.value('monitor/main_splitter_map')
+        geom   = settings.value('monitor/main_splitter_geo')
 
+        if state is not None: self.restoreState(state)
+
+        if geom  is not None: self.restoreGeometry(geom)
+        if mapvis == 'false':
+            self._maps.hide()
+    
     def _saveSettings(self):
-        self._settings.setValue('monitor/main_splitter', self.saveState())
+        settings = QSettings()
+        settings.setValue('monitor/main_splitter', self.saveState())
+        settings.setValue('monitor/main_splitter_geo', self.saveGeometry())
+        settings.setValue('monitor/main_splitter_map', self._maps.isVisible())

@@ -175,41 +175,53 @@ class NMainWindow(QMainWindow):
     #############
     def closeEvent(self, event):
         self.willClose.emit()
-        #settings = QSettings("Sysmo NMS", "sysmo-client")
         settings    = QSettings()
-        settings.setValue("NMainWindow/geometry",       self.saveGeometry())
+        #settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
+        settings.setValue("NMainWindow/windowGeo",      self.saveGeometry())
         settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
-        settings.setValue("NMainWindow/viewMode",       self.activeViewMode)
         settings.setValue("NMainWindow/style",          self._sysmoStyle)
         settings.setValue("NMainWindow/theme",          self._sysmoTheme)
-        # TOPYQT ERROR BEGIN
-        #self.supercast.supercastClose()
-        # TOPYQT ERROR END
+        self.supercast.supercastClose()
         QMainWindow.closeEvent(self, event)
 
     ############
     # SETTINGS #
     ############
     def _restoreSettings(self):
-        #settings = QSettings("Sysmo NMS", "sysmo-client")
         settings = QSettings()
+        theme = settings.value("NMainWindow/theme")
+        style = settings.value("NMainWindow/style")
 
-        # TOPYQT ERROR BEGIN
-        # QWidget.restoreGeometry(QByteArray): argument 1 has unexpected type 'QVariant'
-        #self.restoreGeometry(settings.value("NMainWindow/geometry"))
-        #self.restoreState(settings.value("NMainWindow/windowState"))
-        # TOPYQT ERROR END
+        if theme is not None:
+            self._sysmoTheme = theme 
+        else:
+            self._sysmoTheme = 'native'
+
+        if style is not None:
+            self._sysmoStyle = style 
+        else:
+            self._sysmoStyle = 'native'
 
         proxySet = settings.value("NMainWindow/proxySettings")
-        if proxySet != None: self.activeProxySettings = proxySet
 
-        self._sysmoTheme = settings.value("NMainWindow/theme")
-        self._sysmoStyle = settings.value("NMainWindow/style")
+        if proxySet is not None:
+            self.activeProxySettings = proxySet
 
-        #viewMode = settings.value("NMainWindow/viewMode")
-        #if viewMode != None: self.activeViewMode = viewMode
-        #activeOpus = ...
+    def show(self):
+        settings = QSettings()
+        state = settings.value("NMainWindow/windowState")
+        geo   = settings.value("NMainWindow/windowGeo")
+
+        if geo is not None:
+            self.restoreGeometry(geo)
+
+        if state is not None: 
+            self.restoreState(state)
+
+        QMainWindow.show(self)
+
+
 
     #####################
     # STYLES AND THEMES #
