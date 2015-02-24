@@ -24,20 +24,20 @@ from PyQt5.QtWidgets   import (
 )
 from PyQt5.QtCore import Qt
 
-from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
-import nocapi
-import opus.monitor.api as monapi
+from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
+import sysmapi
+import monitor.api as monapi
 import supercast.main   as supercast
 
 
-import opus.monitor.commands.net_element_wizard.wizard_pages  as NetElement
-#import opus.monitor.commands.net_server_wizard.wizard_pages   as SrvElement
-import opus.monitor.commands.probe_wizard.wizard_pages        as ProbeElement
-import opus.monitor.commands.user_actions_wizard.wizard_pages as UActionPages
-import opus.monitor.commands.properties as PropInfo
+import monitor.commands.net_element_wizard.wizard_pages  as NetElement
+#import monitor.commands.net_server_wizard.wizard_pages   as SrvElement
+import monitor.commands.probe_wizard.wizard_pages        as ProbeElement
+import monitor.commands.user_actions_wizard.wizard_pages as UActionPages
+import monitor.commands.properties as PropInfo
 
-import opus.monitor.commands.add_element_pages as AddElementPages
-from opus.monitor.commands.properties import SnmpConfigFrame
+import monitor.commands.add_element_pages as AddElementPages
+from monitor.commands.properties import SnmpConfigFrame
 
 
 # OLD WIZARDS
@@ -57,8 +57,8 @@ class UserActionsWizard(QWizard):
         self.setStartId(1)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
         self.setWizardStyle(QWizard.ModernStyle)
-        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('console'))
-        self.setPixmap(QWizard.LogoPixmap,nocapi.nGetPixmap('applications-system'))
+        self.setPixmap(QWizard.WatermarkPixmap, sysmapi.nGetPixmap('console'))
+        self.setPixmap(QWizard.LogoPixmap,sysmapi.nGetPixmap('applications-system'))
         self.show()
 
 
@@ -81,8 +81,8 @@ class ProbeWizard(QWizard):
         self.setStartId(1)
         self.page1_config = None
         self.page3_config = None
-        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('radar'))
-        self.setPixmap(QWizard.LogoPixmap,nocapi.nGetPixmap('applications-system'))
+        self.setPixmap(QWizard.WatermarkPixmap, sysmapi.nGetPixmap('radar'))
+        self.setPixmap(QWizard.LogoPixmap,sysmapi.nGetPixmap('applications-system'))
         # page2 use QWizard.registerField
         # self.page2_config = None 
         self.show()
@@ -108,10 +108,10 @@ class NetworkServerWizard(QWizard):
     def __init__(self, parent=None):
         super(NetworkServerWizard, self).__init__(parent)
         self.setWizardStyle(QWizard.ModernStyle)
-        self.setPixmap(QWizard.WatermarkPixmap, nocapi.nGetPixmap('server-bay'))
+        self.setPixmap(QWizard.WatermarkPixmap, sysmapi.nGetPixmap('server-bay'))
 
         self.setModal(True)
-        pix = nocapi.nGetPixmap('applications-system')
+        pix = sysmapi.nGetPixmap('applications-system')
         self.setPixmap(QWizard.LogoPixmap, pix)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
         npage1   = SrvElement.Page1(self)

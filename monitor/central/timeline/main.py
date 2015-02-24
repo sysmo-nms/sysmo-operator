@@ -16,7 +16,7 @@ from    PyQt5.QtWidgets    import (
 )
 
 from PyQt5.QtCore import Qt
-from noctopus_widgets   import (
+from sysmo_widgets   import (
     NFrame,
     NFrameContainer,
     NGridContainer,
@@ -24,7 +24,7 @@ from noctopus_widgets   import (
     NInfoButton
 )
 
-import nocapi
+import sysmapi
 
 
 class Timeline(NFrame):
@@ -84,7 +84,7 @@ class TimelineCommands(NFrameContainer):
         super(TimelineCommands, self).__init__(parent)
         # minimize
         self.minimizeButton = QPushButton(self)
-        self.minimizeButton.setIcon(QIcon(nocapi.nGetPixmap('go-up')))
+        self.minimizeButton.setIcon(QIcon(sysmapi.nGetPixmap('go-up')))
         self.minimizeButton.setToolTip('minimize')
 
         self.sep0 = QFrame(self)
@@ -100,11 +100,11 @@ class TimelineCommands(NFrameContainer):
         self.stackGroup.setExclusive(True)
 
         timeStack = QPushButton(self)
-        timeStack.setIcon(QIcon(nocapi.nGetPixmap('appointment-new')))
+        timeStack.setIcon(QIcon(sysmapi.nGetPixmap('appointment-new')))
         timeStack.setCheckable(True)
 
         textStack = QPushButton(self)
-        textStack.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
+        textStack.setIcon(QIcon(sysmapi.nGetPixmap('edit-paste')))
         textStack.setCheckable(True)
 
         self.stackGroup.addButton(timeStack, 0)
@@ -119,7 +119,7 @@ class TimelineCommands(NFrameContainer):
 
         # search commands
         clearButton = QPushButton(self)
-        clearButton.setIcon(QIcon(nocapi.nGetPixmap('edit-clear')))
+        clearButton.setIcon(QIcon(sysmapi.nGetPixmap('edit-clear')))
         searchLine  = QLineEdit(self)
 
 
@@ -171,7 +171,7 @@ class TimelineSlide(NFrameContainer):
         grid = NGridContainer(self)
 
         self.minimizeButton = QPushButton(self)
-        self.minimizeButton.setIcon(QIcon(nocapi.nGetPixmap('go-down')))
+        self.minimizeButton.setIcon(QIcon(sysmapi.nGetPixmap('go-down')))
         self.minimizeButton.setToolTip('minimize')
 
         sep0 = QFrame(self)

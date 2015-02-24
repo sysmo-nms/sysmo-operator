@@ -12,8 +12,8 @@ from    PyQt5.QtWidgets        import (
 )
 from    PyQt5.QtSvg        import QSvgWidget
 from    PyQt5.QtGui        import QIcon
-from    noctopus_widgets    import NFrame, NGrid
-import  nocapi
+from    sysmo_widgets    import NFrame, NGrid
+import  sysmapi
 
 class Proxy(QDialog):
     def __init__(self, callback, parent=None):
@@ -25,7 +25,7 @@ class Proxy(QDialog):
         self.show()
 
     def _initState(self):
-        proxySet = nocapi.nGetProxySettings()
+        proxySet = sysmapi.nGetProxySettings()
         host = proxySet['host']
         port = proxySet['port']
         self.serverLineEdit.setText(host)
@@ -96,20 +96,20 @@ class Proxy(QDialog):
     def _initButtonFrame(self):
         # button area
         ok = QPushButton(
-            QIcon(nocapi.nGetPixmap('applications-development')),
+            QIcon(sysmapi.nGetPixmap('applications-development')),
             self.tr("&Validate"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self._validate)
 
         ko = QPushButton(
-            QIcon(nocapi.nGetPixmap('process-stop')),
+            QIcon(sysmapi.nGetPixmap('process-stop')),
             self.tr("&Abort"),
             self)
         ko.clicked.connect(self.close)
 
         helpB = QPushButton(
-            QIcon(nocapi.nGetPixmap('dialog-information')),
+            QIcon(sysmapi.nGetPixmap('dialog-information')),
             self.tr("&Help"),
             self)
         helpB.setEnabled(False)

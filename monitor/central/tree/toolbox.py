@@ -15,7 +15,7 @@ from    PyQt5.QtWidgets    import (
 )
 
 from    PyQt5.QtCore   import QSettings, QSize, Qt
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NFrame,
@@ -24,9 +24,9 @@ from    noctopus_widgets    import (
 )
 
 
-import  nocapi
-import  opus.monitor.api    as monapi
-from    opus.monitor.widgets import OSMView
+import  sysmapi
+import  monitor.api    as monapi
+from    monitor.widgets import OSMView
 
 def openTargetPropertiesFor(target):
     if target not in list(TargetProperties.Elements.keys()):
@@ -90,19 +90,19 @@ class TargetProperties(QDialog):
 
     def createIcons(self):
         confButton = QListWidgetItem(self._confList)
-        confButton.setIcon(nocapi.nGetIcon('preferences-system'))
+        confButton.setIcon(sysmapi.nGetIcon('preferences-system'))
         confButton.setText('Properties')
         confButton.setTextAlignment(Qt.AlignHCenter)
         confButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 
         probesButton = QListWidgetItem(self._confList)
-        probesButton.setIcon(nocapi.nGetIcon('satellite'))
+        probesButton.setIcon(sysmapi.nGetIcon('satellite'))
         probesButton.setText('Probes')
         probesButton.setTextAlignment(Qt.AlignHCenter)
         probesButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 
         tieButton = QListWidgetItem(self._confList)
-        tieButton.setIcon(nocapi.nGetIcon('applications-system'))
+        tieButton.setIcon(sysmapi.nGetIcon('applications-system'))
         tieButton.setText('Tie scripts')
         tieButton.setTextAlignment(Qt.AlignHCenter)
         tieButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -145,7 +145,7 @@ class TargetPropertiesX(QDialog):
     Elements = dict()
     def __init__(self, element, parent = None):
         super(TargetPropertiesX, self).__init__()
-        nocapi.nConnectWillClose(self._willClose)
+        sysmapi.nConnectWillClose(self._willClose)
         self._element = element
         self.setWindowTitle(element)
         grid = NGridContainer(self)
@@ -189,7 +189,7 @@ class ProbeProperties(QDialog):
         super(ProbeProperties, self).__init__()
         self.setWindowTitle(element)
         self._element = element
-        nocapi.nConnectWillClose(self._willClose)
+        sysmapi.nConnectWillClose(self._willClose)
         grid = NGridContainer(self)
         toolbox = QToolBox(self)
         toolbox.addItem(QLabel('item1', self), 'item1')

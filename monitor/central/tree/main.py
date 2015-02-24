@@ -1,8 +1,8 @@
 from    PyQt5.QtWidgets     import QFrame
-from    noctopus_widgets import (NFrame, NGrid)
+from    sysmo_widgets import (NFrame, NGrid)
 
-from    opus.monitor.central.tree.controls      import ElementsActions
-from    opus.monitor.central.tree.tree_view     import ProbesTreeview
+from    monitor.central.tree.controls      import ElementsActions
+from    monitor.central.tree.tree_view     import ProbesTreeview
 
 class ProbesTree(NFrame):
     def __init__(self, parent):

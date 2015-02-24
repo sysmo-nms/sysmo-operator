@@ -24,12 +24,12 @@ from    PyQt5.QtWidgets    import (
 from PyQt5.QtSvg   import QSvgWidget
 
 # local dependencies
-from    noctopus_images     import getIcon, getImage, getPixmap
-from    noctopus_widgets    import NFrameContainer, NGridContainer, NFrame, NGrid
+from    sysmo_images     import getIcon, getImage, getPixmap
+from    sysmo_widgets    import NFrameContainer, NGridContainer, NFrame, NGrid
 
 # opus
-import  opus.monitor.main
-import  opus.dashboard.main
+import  monitor.main
+import  dashboard.main
 #import  opus.netman.main
 #import  opus.knowledge.main
 #import  opus.schedule.main
@@ -145,8 +145,8 @@ class NSelector(NFrameContainer):
     def _initStack(self):
         self.appButtonPressed.connect(self._stackWidget.selectEvent)
 
-        self._stackWidget.addLayer(opus.monitor.main.Central,    'monitor')
-        self._stackWidget.addLayer(opus.dashboard.main.Central,  'dashboard')
+        self._stackWidget.addLayer(monitor.main.Central,    'monitor')
+        self._stackWidget.addLayer(dashboard.main.Central,  'dashboard')
         #self._stackWidget.addLayer(opus.netman.main.Central,      'netman')
         #self._stackWidget.addLayer(opus.knowledge.main.Central,  'knowledge')
 ##############################################################################

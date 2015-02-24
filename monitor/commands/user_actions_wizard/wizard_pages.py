@@ -22,7 +22,7 @@ from PyQt5.QtWidgets   import (
 )
 from PyQt5.QtCore import Qt
 
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NFrame,
     NGridContainer,
@@ -30,8 +30,8 @@ from noctopus_widgets import (
     NMenuButton
 )
 from functools import partial
-import nocapi
-import opus.monitor.api as monapi
+import sysmapi
+import monitor.api as monapi
 
 
 class Page1(QWizardPage):
@@ -54,7 +54,7 @@ class Page1(QWizardPage):
         # layout
 
         self._commButton = NMenuButton(self)
-        self._commButton.setIcon(nocapi.nGetIcon('list-add'))
+        self._commButton.setIcon(sysmapi.nGetIcon('list-add'))
         self._commButton.setText(self.tr('Add action'))
         self._commMenu  = QMenu(self)
         self._commButton.setMenu(self._commMenu)

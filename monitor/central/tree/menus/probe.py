@@ -9,11 +9,11 @@ from    PyQt5.QtWidgets    import (
 
 
 from    functools import partial
-from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.logwin.main                import openLoggerFor
-from    opus.monitor.central.tree.toolbox       import openProbePropertiesFor
-import  opus.monitor.api    as monapi
-import  nocapi
+from    monitor.commands.wizards           import UserActionsWizard
+from    monitor.logwin.main                import openLoggerFor
+from    monitor.central.tree.toolbox       import openProbePropertiesFor
+import  monitor.api    as monapi
+import  sysmapi
 import  supercast.main as supercast
 
 class ProbeMenu(QMenu):
@@ -21,39 +21,39 @@ class ProbeMenu(QMenu):
         super(ProbeMenu, self).__init__(parent)
         self._puActionWiz   = None
         self._showPerfs     = None
-        self.setIcon(QIcon(nocapi.nGetPixmap('folder-saved-search')))
+        self.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
 
         self._infoBox = QErrorMessage(self)
         self._infoBox.setModal(True)
 
         action = QAction(self.tr('Force check'), self)
         action.triggered.connect(self._forceCheck)
-        action.setIcon(QIcon(nocapi.nGetPixmap('software-update-available')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('software-update-available')))
         self.addAction(action)
 
         action = QAction(self.tr('Suspend probe'), self)
         action.triggered.connect(self._suspendProbe)
-        #action.setIcon(nocapi.nGetIcon('media-playback-pause'))
+        #action.setIcon(sysmapi.nGetIcon('media-playback-pause'))
         self.addAction(action)
 
 
         action = QAction(self.tr('Delete this probe'), self)
         action.triggered.connect(self._deleteProbe)
-        action.setIcon(QIcon(nocapi.nGetPixmap('process-stop')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('process-stop')))
         self.addAction(action)
 
         self.addSeparator()
 
         self._performances = QAction(self.tr('Performances...'), self)
         self._performances.triggered.connect(self._openPerformances)
-        self._performances.setIcon(QIcon(nocapi.nGetPixmap('utilities-system-monitor')))
+        self._performances.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
         self.addAction(self._performances)
 
         self.addSeparator()
 
         action = QAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
-        action.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('edit-paste')))
         self.addAction(action)
 
     def showMenuFor(self, probe, point):
@@ -71,7 +71,7 @@ class ProbeMenu(QMenu):
         monapi.execUAction(action, element)
 
     def _suspendProbe(self):
-        trayicon = nocapi.nGetSystemTrayIcon()
+        trayicon = sysmapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Suspend check succeeded blablabla bla...', msecs=3000)
         print(("suspend probe ", self._currentProbe))
 
@@ -83,7 +83,7 @@ class ProbeMenu(QMenu):
         )
 
     def _forceProbeReply(self, msg):
-        trayicon = nocapi.nGetSystemTrayIcon()
+        trayicon = sysmapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Force check succeeded...', msecs=3000)
 
     def _locateOnMap(self):

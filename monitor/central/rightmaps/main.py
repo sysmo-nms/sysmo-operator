@@ -8,16 +8,16 @@ from    PyQt5.QtWidgets   import (
     QMdiArea
 )
 
-from    opus.monitor.widgets         import OSMView
-from    opus.monitor.central.rightmaps.dependencies import MDIDependencies
-from    noctopus_widgets             import (
+from    monitor.widgets         import OSMView
+from    monitor.central.rightmaps.dependencies import MDIDependencies
+from    sysmo_widgets             import (
     NFrameContainer,
     NGridContainer,
     NGrid,
     NFrame
 )
 
-import  nocapi
+import  sysmapi
 
 class RightMapsContainer(NFrame):
     def __init__(self, parent):
@@ -39,7 +39,7 @@ class RightMapsControls(NFrameContainer):
         toOsm = QPushButton(self)
         toOsm.setFixedWidth(30)
         toOsm.setContentsMargins(0,0,0,0)
-        toOsm.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
+        toOsm.setIcon(QIcon(sysmapi.nGetPixmap('list-add')))
         grid.addWidget(toOsm, 0,0)
 
         grid.setColumnStretch(0,0)
@@ -58,8 +58,8 @@ class RightMapsTabs(QTabWidget):
 
         self._osmc = OSMContainer(self)
         self._depc = DepContainer(self)
-        osmicon = QIcon(nocapi.nGetPixmap('internet-web-browser'))
-        depicon = QIcon(nocapi.nGetPixmap('network-workgroup'))
+        osmicon = QIcon(sysmapi.nGetPixmap('internet-web-browser'))
+        depicon = QIcon(sysmapi.nGetPixmap('network-workgroup'))
         self.insertTab(0,self._depc,depicon,self.tr('Dependencies'))
         self.insertTab(1,self._osmc,osmicon,self.tr('Map'))
         self.setTabEnabled(0, False)

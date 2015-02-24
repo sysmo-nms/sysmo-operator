@@ -22,7 +22,7 @@ else:
 iconsPath   = os.path.join(currentPath, 'graphics')
 imagesPath  = os.path.join(currentPath, 'graphics')
 
-def noctopusGraphicsInit():
+def sysmoGraphicsInit():
     initIcons()
     initImages()
     initHexSet()

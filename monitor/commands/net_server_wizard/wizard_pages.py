@@ -18,7 +18,7 @@ from PyQt5.QtWidgets   import (
 )
 from PyQt5.QtCore import Qt, QPoint, QRegExp
 
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NFrame,
     NGridContainer,
@@ -27,9 +27,9 @@ from noctopus_widgets import (
 )
 
 import copy
-import nocapi
-import opus.monitor.api as monapi
-import opus.monitor.commands.wizards
+import sysmapi
+import monitor.api as monapi
+import monitor.commands.wizards
 import supercast.main   as supercast
 
 class Page1(QWizardPage):
@@ -87,7 +87,7 @@ class Page1(QWizardPage):
             action.triggered.connect(partial(self._openProbeConfig, key))
 
         checkAddButton = QPushButton(self)
-        checkAddButton.setIcon(nocapi.nGetIcon('list-add'))
+        checkAddButton.setIcon(sysmapi.nGetIcon('list-add'))
         checkAddButton.setMenu(checkMenu)
 
         self._checksTree = QTreeWidget(self)
@@ -133,7 +133,7 @@ class Page1(QWizardPage):
         self._checksTree.addTopLevelItem(QTreeWidgetItem(None, [name, descr]))
 
     def _openProbeConfig(self, key):
-        wiz = opus.monitor.commands.wizards.ProbeWizard(
+        wiz = monitor.commands.wizards.ProbeWizard(
             self._checkDefs, key, self, 
             self._probeConfigCallback, self._ipLine.text()
         )

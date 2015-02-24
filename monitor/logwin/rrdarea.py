@@ -26,7 +26,7 @@ from    PyQt5.QtWidgets    import (
     QTabWidget
 )
 
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NFrame,
@@ -34,12 +34,12 @@ from    noctopus_widgets    import (
     QLabel
 )
 
-from    opus.monitor.proxy  import AbstractChannelWidget, ChanHandler
-import  opus.monitor.api    as monapi
-import  opus.monitor.norrd  as norrd
-from    noctopus_widgets import NTemporaryFile
+from    monitor.proxy  import AbstractChannelWidget, ChanHandler
+import  monitor.api    as monapi
+import  monitor.norrd  as norrd
+from    sysmo_widgets import NTemporaryFile
 
-import  nocapi
+import  sysmapi
 import  platform
 import  tempfile
 import  re
@@ -159,15 +159,15 @@ class RrdGraph(QLabel):
 --color SHADEA%s \
 --color SHADEB%s \
 --color ARROW%s ' % (
-                nocapi.nGetRgba('Base'),
-                nocapi.nGetRgba('Dark'),
-                nocapi.nGetRgba('Shadow'),
-                nocapi.nGetRgba('WindowText'),
-                nocapi.nGetRgba('Dark'),
-                nocapi.nGetRgba('Window'),
-                nocapi.nGetRgba('Window'),
-                nocapi.nGetRgba('Window'),
-                nocapi.nGetRgba('Shadow')
+                sysmapi.nGetRgba('Base'),
+                sysmapi.nGetRgba('Dark'),
+                sysmapi.nGetRgba('Shadow'),
+                sysmapi.nGetRgba('WindowText'),
+                sysmapi.nGetRgba('Dark'),
+                sysmapi.nGetRgba('Window'),
+                sysmapi.nGetRgba('Window'),
+                sysmapi.nGetRgba('Window'),
+                sysmapi.nGetRgba('Shadow')
             )
 
     def rrdUpdateEvent(self):

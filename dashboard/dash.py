@@ -6,18 +6,18 @@ from PyQt5.QtWidgets import (
     QButtonGroup,
     QStackedLayout
 )
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NGrid
 )
-import nocapi
+import sysmapi
 
 
-from opus.dashboard.dash_mdi.main       import MdiDash
-from opus.dashboard.dash_wmap.main      import WmapDash
-from opus.dashboard.dash_graphic.main   import GraphicDash
-from opus.dashboard.dash_timeline.main  import TimelineDash
+from dashboard.dash_mdi.main       import MdiDash
+from dashboard.dash_wmap.main      import WmapDash
+from dashboard.dash_graphic.main   import GraphicDash
+from dashboard.dash_timeline.main  import TimelineDash
 
 class Dashboard(NFrameContainer):
     def __init__(self, parent):
@@ -41,10 +41,10 @@ class DashboardControls(NFrameContainer):
         " edit buttons "
         saveButton = QPushButton(self)
         saveButton.setToolTip(self.tr('Save modifications'))
-        saveButton.setIcon(QIcon(nocapi.nGetPixmap('document-save-as')))
+        saveButton.setIcon(QIcon(sysmapi.nGetPixmap('document-save-as')))
         backButton = QPushButton(self)
         backButton.setToolTip(self.tr('Restore last saved state'))
-        backButton.setIcon(QIcon(nocapi.nGetPixmap('edit-undo')))
+        backButton.setIcon(QIcon(sysmapi.nGetPixmap('edit-undo')))
         separator = QFrame(self)
         separator.setFixedWidth(6)
         separator.setFrameShape(QFrame.NoFrame)
@@ -59,22 +59,22 @@ class DashboardControls(NFrameContainer):
 
         mdi = QPushButton(self)
         mdi.setToolTip(self.tr('mdi'))
-        mdi.setIcon(QIcon(nocapi.nGetPixmap('preferences-system-windows')))
+        mdi.setIcon(QIcon(sysmapi.nGetPixmap('preferences-system-windows')))
         mdi.setCheckable(True)
 
         graphic = QPushButton(self)
         graphic.setToolTip(self.tr('graphic'))
-        graphic.setIcon(QIcon(nocapi.nGetPixmap('x-office-drawing')))
+        graphic.setIcon(QIcon(sysmapi.nGetPixmap('x-office-drawing')))
         graphic.setCheckable(True)
 
         wmap = QPushButton(self)
         wmap.setToolTip(self.tr('wmap'))
-        wmap.setIcon(QIcon(nocapi.nGetPixmap('internet-web-browser')))
+        wmap.setIcon(QIcon(sysmapi.nGetPixmap('internet-web-browser')))
         wmap.setCheckable(True)
 
         timeline = QPushButton(self)
         timeline.setToolTip(self.tr('timeline'))
-        timeline.setIcon(QIcon(nocapi.nGetPixmap('appointment-new')))
+        timeline.setIcon(QIcon(sysmapi.nGetPixmap('appointment-new')))
         timeline.setCheckable(True)
 
         self.buttonGroup.addButton(mdi,       0)

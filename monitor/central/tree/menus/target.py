@@ -11,13 +11,13 @@ from    PyQt5.QtWidgets    import (
 from PyQt5.QtCore import QUrl
 
 from    functools import partial
-from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.central.tree.add_probe             import AddProbe
-#from    opus.monitor.central.tree.logwin        import LoggerView
-from    opus.monitor.central.tree.toolbox       import openTargetPropertiesFor
-from    noctopus_widgets                        import NAction
-import  opus.monitor.api                        as monapi
-import  nocapi
+from    monitor.commands.wizards           import UserActionsWizard
+from    monitor.central.tree.add_probe             import AddProbe
+#from    monitor.central.tree.logwin        import LoggerView
+from    monitor.central.tree.toolbox       import openTargetPropertiesFor
+from    sysmo_widgets                        import NAction
+import  monitor.api                        as monapi
+import  sysmapi
 import  supercast.main as supercast
 
 
@@ -29,7 +29,7 @@ class TargetMenu(QMenu):
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
         self.localMenu    = QMenu(self.tr('Local Actions'), self)
-        self.localMenu.setIcon(QIcon(nocapi.nGetPixmap('utilities-terminal')))
+        self.localMenu.setIcon(QIcon(sysmapi.nGetPixmap('utilities-terminal')))
 
         self.configureAction = NAction(self.tr('Configure new action'), self)
         self.configureAction.setPriority(QAction.HighPriority)
@@ -41,7 +41,7 @@ class TargetMenu(QMenu):
 
         action = NAction(self.tr('Add a new probe'), self)
         action.triggered.connect(self._newProbe)
-        action.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('list-add')))
         self.addAction(action)
 
         action = NAction(self.tr('Locate on map'), self)
@@ -50,20 +50,20 @@ class TargetMenu(QMenu):
 
         action = NAction(self.tr('Delete this target...'), self)
         action.triggered.connect(self._deleteTarget)
-        action.setIcon(QIcon(nocapi.nGetPixmap('process-stop')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('process-stop')))
         self.addAction(action)
 
         self.addSeparator()
 
         action = NAction(self.tr('Documentation...'), self)
         action.triggered.connect(self._openDocEngine)
-        action.setIcon(QIcon(nocapi.nGetPixmap('folder-saved-search')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
         self.addAction(action)
 
         self.addSeparator()
         action = NAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
-        action.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
+        action.setIcon(QIcon(sysmapi.nGetPixmap('edit-paste')))
         self.addAction(action)
 
         self.addSeparator()

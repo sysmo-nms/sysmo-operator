@@ -1,15 +1,15 @@
 from PyQt5.QtWidgets import QSplitter, QStackedWidget
 from PyQt5.QtCore import QSettings, QTimeLine
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer, NFrame,
     NGridContainer, NGrid
 )
 
-from    opus.monitor.central.tree.main          import ProbesTree
-from    opus.monitor.central.timeline.main      import Timeline
-from    opus.monitor.central.rightmaps.main         import RightMapsContainer
-#import  opus.monitor.api as monapi
-import  nocapi
+from    monitor.central.tree.main          import ProbesTree
+from    monitor.central.timeline.main      import Timeline
+from    monitor.central.rightmaps.main         import RightMapsContainer
+#import  monitor.api as monapi
+import  sysmapi
 
 class TreeContainer(NFrameContainer):
     def __init__(self, parent):
@@ -30,7 +30,7 @@ class TreeContainer(NFrameContainer):
 class MainSplitter(QSplitter):
     def __init__(self, parent):
         super(MainSplitter, self).__init__(parent)
-        nocapi.nConnectAppToggled(self._toggle)
+        sysmapi.nConnectAppToggled(self._toggle)
         self._maps  = RightMapsContainer(self)
         self._ptree = ProbesTree(self)
         self.insertWidget(0,self._ptree)
@@ -50,7 +50,7 @@ class MainSplitter(QSplitter):
             self._maps.show()
 
     def _loadSettings(self):
-        nocapi.nConnectWillClose(self._saveSettings)
+        sysmapi.nConnectWillClose(self._saveSettings)
         self._settings = QSettings()
         state = self._settings.value('monitor/main_splitter')
         if state == None: return

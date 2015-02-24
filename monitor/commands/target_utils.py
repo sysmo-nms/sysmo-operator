@@ -27,20 +27,20 @@ from PyQt5.QtWidgets   import (
 )
 from PyQt5.QtCore import Qt
 
-from noctopus_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
-import nocapi
-import opus.monitor.api as monapi
+from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
+import sysmapi
+import monitor.api as monapi
 import supercast.main   as supercast
 
 
-import opus.monitor.commands.net_element_wizard.wizard_pages  as NetElement
-import opus.monitor.commands.net_server_wizard.wizard_pages   as SrvElement
-import opus.monitor.commands.probe_wizard.wizard_pages        as ProbeElement
-import opus.monitor.commands.user_actions_wizard.wizard_pages as UActionPages
-import opus.monitor.commands.properties as PropInfo
+import monitor.commands.net_element_wizard.wizard_pages  as NetElement
+import monitor.commands.net_server_wizard.wizard_pages   as SrvElement
+import monitor.commands.probe_wizard.wizard_pages        as ProbeElement
+import monitor.commands.user_actions_wizard.wizard_pages as UActionPages
+import monitor.commands.properties as PropInfo
 
-import opus.monitor.commands.add_element_pages as AddElementPages
-from opus.monitor.commands.properties import SnmpConfigFrame
+import monitor.commands.add_element_pages as AddElementPages
+from monitor.commands.properties import SnmpConfigFrame
 
 IP_V4 = 0
 IP_V6 = 1
@@ -92,13 +92,13 @@ class TargetConfFrame(QWizardPage):
         formFrame = NFrame(self)
         form = QFormLayout(formFrame)
 
-        otherIcon = nocapi.nGetIcon('computer')
-        srvIcon         = nocapi.nGetIcon('server')
-        routerIcon      = nocapi.nGetIcon('router')
-        switchIcon      = nocapi.nGetIcon('switch')
-        wirelessIcon    = nocapi.nGetIcon('wireless')
-        firewallIcon    = nocapi.nGetIcon('firewall')
-        printerIcon     = nocapi.nGetIcon('printer')
+        otherIcon = sysmapi.nGetIcon('computer')
+        srvIcon         = sysmapi.nGetIcon('server')
+        routerIcon      = sysmapi.nGetIcon('router')
+        switchIcon      = sysmapi.nGetIcon('switch')
+        wirelessIcon    = sysmapi.nGetIcon('wireless')
+        firewallIcon    = sysmapi.nGetIcon('firewall')
+        printerIcon     = sysmapi.nGetIcon('printer')
         self._typeCombo = QComboBox(self)
         self._typeCombo.insertItem(TYPE_SERVER, srvIcon,    'Server')
         self._typeCombo.insertItem(TYPE_ROUTER, routerIcon, 'Router')
@@ -493,7 +493,7 @@ class CreateTargetDialog(QProgressDialog):
         if reply['value']['status'] == False:
             err = QMessageBox(self)
             err.setModal(True)
-            err.setIconPixmap(nocapi.nGetPixmap('dialog-information'))
+            err.setIconPixmap(sysmapi.nGetPixmap('dialog-information'))
             err.setText("Snmp manager failed to get information for element:")
             err.setInformativeText("ERROR: " + reply['value']['reply'])
             err.finished[int].connect(self._closeMe)
@@ -522,7 +522,7 @@ class CreateTargetDialog(QProgressDialog):
         else:
             err = QMessageBox(self)
             err.setModal(True)
-            err.setIconPixmap(nocapi.nGetPixmap('dialog-information'))
+            err.setIconPixmap(sysmapi.nGetPixmap('dialog-information'))
             err.setText("Monitor failed to create target:")
             err.setInformativeText("ERROR: " + reply['value']['reply'])
             err.finished[int].connect(self._closeMe)

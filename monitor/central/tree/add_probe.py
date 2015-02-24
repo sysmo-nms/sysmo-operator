@@ -20,7 +20,7 @@ from    PyQt5.QtWidgets    import (
 )
 
 #from    PyQt5.QtCore   import QSettings, QSize, Qt
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NFrame,
@@ -28,10 +28,10 @@ from    noctopus_widgets    import (
 )
 
 import supercast.main as supercast
-from noctopus_widgets import NTemporaryFile
+from sysmo_widgets import NTemporaryFile
 import xml.etree.ElementTree as ET
-#import  nocapi
-#import  opus.monitor.api    as monapi
+#import  sysmapi
+#import  monitor.api    as monapi
 
 
 class AddProbe(QDialog):

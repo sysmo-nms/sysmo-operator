@@ -4,14 +4,14 @@ from    PyQt5.QtWebKitWidgets     import QWebView
 from    PyQt5.QtCore       import *
 from    PyQt5.QtSvg        import *
 from    PyQt5.QtWebKit     import *
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrame,
     NFrameContainer,
     NGridContainer,
     NGrid
 )
 from    .proxy               import AbstractChannelWidget
-import  nocapi
+import  sysmapi
 import sys
 
 
@@ -107,17 +107,17 @@ class StatusSummary(QPushButton):
 
         # set blinkingPalette and picutre
         if status == 'OK':
-            picture = QSvgWidget(nocapi.nGetImage('weather-clear'), self)
+            picture = QSvgWidget(sysmapi.nGetImage('weather-clear'), self)
         elif status == 'WARNING':
-            picture = QSvgWidget(nocapi.nGetImage('weather-showers'), self)
+            picture = QSvgWidget(sysmapi.nGetImage('weather-showers'), self)
             self.blinkingPalette.setColor(self.blinkingPalette.Light, QColor(255,255,0))
             self.blinkingPalette.setColor(self.blinkingPalette.Dark, QColor(255,255,0))
         elif status == 'CRITICAL':
-            picture = QSvgWidget(nocapi.nGetImage('weather-severe-alert'), self)
+            picture = QSvgWidget(sysmapi.nGetImage('weather-severe-alert'), self)
             self.blinkingPalette.setColor(self.blinkingPalette.Light, QColor(255,0,0))
             self.blinkingPalette.setColor(self.blinkingPalette.Dark, QColor(255,0,0))
         elif status == 'DOWN':
-            picture = QSvgWidget(nocapi.nGetImage('weather-clear-night'), self)
+            picture = QSvgWidget(sysmapi.nGetImage('weather-clear-night'), self)
 
         picture.setFixedHeight(30)
         picture.setFixedWidth(30)

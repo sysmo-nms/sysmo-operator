@@ -7,16 +7,16 @@ from    PyQt5.QtWidgets    import (
     QMenu
 )
 
-from    noctopus_widgets        import (
+from    sysmo_widgets        import (
     NFrameContainer,
     NGridContainer,
     NInfoButton,
     NGrid
 )
 
-from    opus.monitor.commands.target_utils import NewTargetDialog
+from    monitor.commands.target_utils import NewTargetDialog
 
-import nocapi
+import sysmapi
 
 class ElementsActions(NFrameContainer):
     def __init__(self, parent):
@@ -31,7 +31,7 @@ class ElementsActions(NFrameContainer):
         #self.createMenu = QMenu(self)
         create = QPushButton(self)
         create.setFixedWidth(30)
-        create.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
+        create.setIcon(QIcon(sysmapi.nGetPixmap('list-add')))
         create.setContentsMargins(0,0,0,0)
         #create.setMenu(NewTargetDialog(self))
         create.clicked.connect(self._launchWizard)
@@ -43,7 +43,7 @@ class ElementsActions(NFrameContainer):
 
         clear = QPushButton(self)
         clear.setFixedWidth(30)
-        clear.setIcon(QIcon(nocapi.nGetPixmap('edit-clear')))
+        clear.setIcon(QIcon(sysmapi.nGetPixmap('edit-clear')))
         clear.clicked.connect(self.line.clear)
 
         info = NInfoButton(self)

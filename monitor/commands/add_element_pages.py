@@ -30,7 +30,7 @@ from PyQt5.QtWidgets   import (
 )
 from PyQt5.QtCore import Qt
 
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NFrame,
     NGridContainer,
@@ -40,8 +40,8 @@ from noctopus_widgets import (
 )
 import pprint
 
-import nocapi
-import opus.monitor.api as monapi
+import sysmapi
+import monitor.api as monapi
 import supercast.main   as supercast
 
 SNMP_V3  = 0
@@ -794,7 +794,7 @@ class WaitSnmpInfoBox(QProgressDialog):
         if reply['value']['status'] == False:
             err = QMessageBox(self)
             err.setModal(True)
-            err.setIconPixmap(nocapi.nGetPixmap('dialog-information'))
+            err.setIconPixmap(sysmapi.nGetPixmap('dialog-information'))
             err.setText("Snmp manager failed to get information for element:")
             err.setInformativeText("ERROR: " + reply['value']['reply'])
             err.finished[int].connect(self._closeMe)
@@ -1046,6 +1046,6 @@ class WaitRegisterElementBox(QProgressDialog):
         )
 
     def _elementInfoReply(self, value):
-        trayicon = nocapi.nGetSystemTrayIcon()
+        trayicon = sysmapi.nGetSystemTrayIcon()
         trayicon.showMessage('Create SNMP element return:', 'Sucess', msecs=3000)
         self.deleteLater()

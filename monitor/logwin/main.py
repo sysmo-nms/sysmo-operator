@@ -26,7 +26,7 @@ from    PyQt5.QtWidgets    import (
     QTabWidget
 )
 
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NFrame,
@@ -34,12 +34,12 @@ from    noctopus_widgets    import (
     QLabel
 )
 
-from    opus.monitor.proxy           import AbstractChannelWidget, ChanHandler
-from    opus.monitor.logwin.rrdarea  import RrdArea
-import  opus.monitor.api    as monapi
-import  opus.monitor.norrd  as norrd
+from    monitor.proxy           import AbstractChannelWidget, ChanHandler
+from    monitor.logwin.rrdarea  import RrdArea
+import  monitor.api    as monapi
+import  monitor.norrd  as norrd
 
-import  nocapi
+import  sysmapi
 import  platform
 import  re
 
@@ -106,20 +106,20 @@ class LogArea(NFrameContainer):
 
         if rrd == True:
             self._rrds = RrdArea(self, probe)
-            self._tabs.insertTab(0, self._rrds, QIcon(nocapi.nGetPixmap('rrdtool-logo')), 'RRD')
+            self._tabs.insertTab(0, self._rrds, QIcon(sysmapi.nGetPixmap('rrdtool-logo')), 'RRD')
         else:
             self._rrds = QLabel('rrds', self)
-            self._tabs.insertTab(0, self._rrds, QIcon(nocapi.nGetPixmap('rrdtool-logo')), 'RRD')
+            self._tabs.insertTab(0, self._rrds, QIcon(sysmapi.nGetPixmap('rrdtool-logo')), 'RRD')
             self._tabs.setTabEnabled(0, False)
 
         if text == True:
             self._rrds = QLabel('text', self)
-            self._tabs.insertTab(1, self._rrds, QIcon(nocapi.nGetPixmap('accessories-text-editor')), 'Text')
+            self._tabs.insertTab(1, self._rrds, QIcon(sysmapi.nGetPixmap('accessories-text-editor')), 'Text')
             if self._tabs.isTabEnabled(0) == False:
                 self._tabs.setCurrentIndex(1)
         else:
             self._rrds = QLabel('text', self)
-            self._tabs.insertTab(1, self._rrds, QIcon(nocapi.nGetPixmap('accessories-text-editor')), 'Text')
+            self._tabs.insertTab(1, self._rrds, QIcon(sysmapi.nGetPixmap('accessories-text-editor')), 'Text')
             self._tabs.setTabEnabled(1, False)
 
 
@@ -133,18 +133,18 @@ class ProbeMenus(NFrameContainer):
         super(ProbeMenus, self).__init__(parent)
         self._force = QPushButton(self)
         self._force.setIconSize(QSize(30,30))
-        self._force.setIcon(QIcon(nocapi.nGetPixmap('software-update-available')))
+        self._force.setIcon(QIcon(sysmapi.nGetPixmap('software-update-available')))
         self._pause = QPushButton(self)
         self._pause.setIconSize(QSize(30,30))
-        self._pause.setIcon(QIcon(nocapi.nGetPixmap('media-playback-pause')))
+        self._pause.setIcon(QIcon(sysmapi.nGetPixmap('media-playback-pause')))
         self._pause.setCheckable(True)
         self._pause.setChecked(False)
         self._action = QPushButton(self)
         self._action.setIconSize(QSize(30,30))
-        self._action.setIcon(QIcon(nocapi.nGetPixmap('utilities-terminal')))
+        self._action.setIcon(QIcon(sysmapi.nGetPixmap('utilities-terminal')))
         self._prop = QPushButton(self)
         self._prop.setIconSize(QSize(30,30))
-        self._prop.setIcon(QIcon(nocapi.nGetPixmap('edit-paste')))
+        self._prop.setIcon(QIcon(sysmapi.nGetPixmap('edit-paste')))
 
         grid = NGridContainer(self)
         grid.setVerticalSpacing(4)
@@ -165,7 +165,7 @@ class ProbeMenus(NFrameContainer):
 #     Elements = dict()
 #     def __init__(self, probe, displayName, parent=None):
 #         super(LoggerView2, self).__init__(parent)
-#         nocapi.nConnectWillClose(self._willClose)
+#         sysmapi.nConnectWillClose(self._willClose)
 #         self._element = probe
 #         self.setWindowTitle(displayName)
 # 
@@ -221,18 +221,18 @@ class ProbeMenus(NFrameContainer):
 #         super(ProbeMenus, self).__init__(parent)
 #         self._force = QPushButton(self)
 #         self._force.setIconSize(QSize(30,30))
-#         self._force.setIcon(nocapi.nGetIcon('software-update-available'))
+#         self._force.setIcon(sysmapi.nGetIcon('software-update-available'))
 #         self._pause = QPushButton(self)
 #         self._pause.setIconSize(QSize(30,30))
-#         self._pause.setIcon(nocapi.nGetIcon('media-playback-pause'))
+#         self._pause.setIcon(sysmapi.nGetIcon('media-playback-pause'))
 #         self._pause.setCheckable(True)
 #         self._pause.setChecked(False)
 #         self._action = QPushButton(self)
 #         self._action.setIconSize(QSize(30,30))
-#         self._action.setIcon(nocapi.nGetIcon('utilities-terminal'))
+#         self._action.setIcon(sysmapi.nGetIcon('utilities-terminal'))
 #         self._prop = QPushButton(self)
 #         self._prop.setIconSize(QSize(30,30))
-#         self._prop.setIcon(nocapi.nGetIcon('edit-paste'))
+#         self._prop.setIcon(sysmapi.nGetIcon('edit-paste'))
 # 
 #         grid = NGridContainer(self)
 #         grid.setVerticalSpacing(4)

@@ -12,9 +12,9 @@ from    PyQt5.QtWidgets    import (
     QLabel,
     QFrame
 )
-import noctopus_ramp
-import noctopus_main
-from noctopus_widgets import NFrameContainer, NGrid, NFrame
+import sysmo_ramp
+import sysmo_main
+from sysmo_widgets import NFrameContainer, NGrid, NFrame
 
 class NCentralFrame(NFrame):
 
@@ -27,7 +27,7 @@ class NCentralFrame(NFrame):
         self.grid.setHorizontalSpacing(6)
         self.grid.setVerticalSpacing(6)
         self.centralStack   = NCentralStack(self)
-        self.selector       = noctopus_ramp.NSelector(self, self.centralStack)
+        self.selector       = sysmo_ramp.NSelector(self, self.centralStack)
         #self.menuFrame  = NMenuFrame(self)
         #self.grid.addWidget(self.menuFrame,      0,0,1,2)
         self.grid.addWidget(self.selector,       1,0)

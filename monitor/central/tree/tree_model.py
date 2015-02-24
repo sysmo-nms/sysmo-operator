@@ -8,8 +8,8 @@ from    PyQt5.QtGui    import (
     QIcon
 )
 
-import nocapi
-import opus.monitor.api as monapi
+import sysmapi
+import monitor.api as monapi
 
 class ProbeModel(QStandardItemModel):
     def __init__(self, parent):
@@ -112,19 +112,19 @@ class TargetItem(QStandardItem):
 
     def _initIcon(self):
         if self.nodeIconType == 'server':
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('server'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('server'))
         elif self.nodeIconType == 'router':
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('router'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('router'))
         elif self.nodeIconType == 'switch':
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('switch'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('switch'))
         elif self.nodeIconType == 'wireless':
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('wireless'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('wireless'))
         elif self.nodeIconType == 'firewall':
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('firewall'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('firewall'))
         elif self.nodeIconType == 'printer':
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('printer'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('printer'))
         else:
-            self.nodeIcon = QIcon(nocapi.nGetPixmap('computer'))
+            self.nodeIcon = QIcon(sysmapi.nGetPixmap('computer'))
 
     def _initColumnItems(self):
         #self.row1       = QStandardItem()
@@ -225,13 +225,13 @@ class TargetItem(QStandardItem):
             status.append(probe.status)
 
         if 'DOWN' in status:
-            self.row3_status.setIcon(QIcon(nocapi.nGetPixmap('weather-clear-night')))
+            self.row3_status.setIcon(QIcon(sysmapi.nGetPixmap('weather-clear-night')))
         elif 'CRITICAL' in status:
-            self.row3_status.setIcon(QIcon(nocapi.nGetPixmap('weather-severe-alert')))
+            self.row3_status.setIcon(QIcon(sysmapi.nGetPixmap('weather-severe-alert')))
         elif 'WARNING' in status:
-            self.row3_status.setIcon(QIcon(nocapi.nGetPixmap('weather-showers')))
+            self.row3_status.setIcon(QIcon(sysmapi.nGetPixmap('weather-showers')))
         elif 'OK' in status:
-            self.row3_status.setIcon(QIcon(nocapi.nGetPixmap('weather-clear')))
+            self.row3_status.setIcon(QIcon(sysmapi.nGetPixmap('weather-clear')))
         else:
             self.row3_status.setIcon(QIcon())
 
@@ -291,7 +291,7 @@ class ProbeItem(QStandardItem):
         #ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
 
 
-        self._decoIcon = QIcon(nocapi.nGetPixmap('satellite'))
+        self._decoIcon = QIcon(sysmapi.nGetPixmap('satellite'))
         self._parentItem = parentItem
         self._lastReturn = ""
         self._type      = data['value']['probeMod']
@@ -380,10 +380,10 @@ class ProbeItem(QStandardItem):
 
     def _getIconStatus(self):
         if self.status == 'DOWN':
-            return QIcon(nocapi.nGetPixmap('weather-clear-night'))
+            return QIcon(sysmapi.nGetPixmap('weather-clear-night'))
         if self.status == 'WARNING':
-            return QIcon(nocapi.nGetPixmap('weather-showers'))
+            return QIcon(sysmapi.nGetPixmap('weather-showers'))
         if self.status == 'CRITICAL':
-            return QIcon(nocapi.nGetPixmap('weather-severe-alert'))
+            return QIcon(sysmapi.nGetPixmap('weather-severe-alert'))
         if self.status == 'OK':
-            return QIcon(nocapi.nGetPixmap('weather-clear'))
+            return QIcon(sysmapi.nGetPixmap('weather-clear'))

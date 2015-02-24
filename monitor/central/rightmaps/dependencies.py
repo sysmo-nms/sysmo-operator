@@ -16,7 +16,7 @@ from    PyQt5.QtWidgets   import (
     QGridLayout,
 )
 
-import  nocapi
+import  sysmapi
 
 class MDIDependencies(QGraphicsView):
     def __init__(self, parent):

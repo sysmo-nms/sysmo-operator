@@ -5,12 +5,12 @@ from    PyQt5.QtCore   import (
     QDir
 )
 from    collections         import deque
-from    noctopus_widgets    import NFrameContainer
-import  nocapi
+from    sysmo_widgets    import NFrameContainer
+import  sysmapi
 import  re
 import  os
 import  supercast.main              as supercast
-import  opus.monitor.norrd          as norrd
+import  monitor.norrd          as norrd
 import  xml.etree.ElementTree as ET
 
 
@@ -26,13 +26,13 @@ class ChanHandler(QObject):
         super(ChanHandler, self).__init__(parent)
         ChanHandler.singleton = self
         
-        nocapi.nConnectSupercastEnabled(self._initSupercast)
+        sysmapi.nConnectSupercastEnabled(self._initSupercast)
 
         self._initChanHandling()
         self._initpyqtSignals()
 
     def _initSupercast(self):
-        nocapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
+        sysmapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
 
     def _initChanHandling(self):
         self._masterChan        = 'target-MasterChan'
@@ -117,11 +117,11 @@ class ChanHandler(QObject):
 
     def _subscribe(self, channel):
         self._pendingSubscribe.append(channel)
-        nocapi.nSubscribe(self.handleSupercastMsg, channel)
+        sysmapi.nSubscribe(self.handleSupercastMsg, channel)
 
     def _unsubscribe(self, channel):
         self.pendingUnsubscribe.append(channel)
-        nocapi.nUnsubscribe(self.handleSupercastMsg, channel)
+        sysmapi.nUnsubscribe(self.handleSupercastMsg, channel)
 
     def _handleSubscribeOk(self, msg):
         channel = msg['value']
@@ -177,7 +177,7 @@ class ChanHandler(QObject):
 
     # startup subscribe
     def _autoSubscribe(self):
-        nocapi.nSubscribe(self._handleAutoSubscribe, self._masterChan)
+        sysmapi.nSubscribe(self._handleAutoSubscribe, self._masterChan)
 
     def _handleAutoSubscribe(self, msg):
         if msg['msgType'] == 'subscribeOk':

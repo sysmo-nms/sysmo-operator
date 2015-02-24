@@ -13,19 +13,19 @@ from    PyQt5.QtWidgets    import (
 )
 
 from    functools import partial
-from    opus.monitor.commands.wizards           import UserActionsWizard
-from    opus.monitor.logwin.main                import openLoggerFor
-from    opus.monitor.central.tree.tree_model    import ProbeModel
-from    opus.monitor.central.tree.menus.probe   import ProbeMenu
-from    opus.monitor.central.tree.menus.target  import TargetMenu
-import  opus.monitor.central.tree.tree_delegate as pdelegate
-import  opus.monitor.api                        as monapi
-import  nocapi
+from    monitor.commands.wizards           import UserActionsWizard
+from    monitor.logwin.main                import openLoggerFor
+from    monitor.central.tree.tree_model    import ProbeModel
+from    monitor.central.tree.menus.probe   import ProbeMenu
+from    monitor.central.tree.menus.target  import TargetMenu
+import  monitor.central.tree.tree_delegate as pdelegate
+import  monitor.api                        as monapi
+import  sysmapi
 
 class ProbesTreeview(QTreeView):
     def __init__(self, parent):
         super(ProbesTreeview, self).__init__(parent)
-        nocapi.nConnectWillClose(self._saveSettings)
+        sysmapi.nConnectWillClose(self._saveSettings)
         ProbesTreeview.singleton = self
         self._viewDialogs = dict()
         
@@ -48,7 +48,7 @@ class ProbesTreeview(QTreeView):
             background-repeat: no-repeat;
             background-color: %s;
             background-attachment: fixed; 
-            background-position: bottom right}''' % nocapi.nGetRgb('Base'))
+            background-position: bottom right}''' % sysmapi.nGetRgb('Base'))
         self.setSortingEnabled(True)
         self.doubleClicked.connect(self._doubleClicked)
 

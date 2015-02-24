@@ -17,13 +17,13 @@ from    PyQt5.QtWidgets    import (
 )
 
 from    functools import partial
-from    opus.monitor.central.tree.tree_model    import ProbeModel
-from    opus.monitor.commands.wizards           import UserActionsWizard
+from    monitor.central.tree.tree_model    import ProbeModel
+from    monitor.commands.wizards           import UserActionsWizard
 
-import opus.monitor.central.tree.tree_model as treemod
+import monitor.central.tree.tree_model as treemod
 
-import  opus.monitor.api    as monapi
-import  nocapi
+import  monitor.api    as monapi
+import  sysmapi
 
 
 class StatusItemDelegate(QStyledItemDelegate):
@@ -43,13 +43,13 @@ class StatusItemDelegate(QStyledItemDelegate):
 #             
 #         cartouche.setSize(self._imageSize)
 #         if status == 'DOWN':
-#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe-alert')))
+#             painter.drawImage(cartouche, QImage(sysmapi.nGetImage('weather-severe-alert')))
 #         elif status == 'OK':
-#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-clear')))
+#             painter.drawImage(cartouche, QImage(sysmapi.nGetImage('weather-clear')))
 #         elif status == 'WARNING':
-#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-showers')))
+#             painter.drawImage(cartouche, QImage(sysmapi.nGetImage('weather-showers')))
 #         elif status == 'CRITICAL':
-#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('weather-severe')))
+#             painter.drawImage(cartouche, QImage(sysmapi.nGetImage('weather-severe')))
 
             #QStyledItemDelegate.paint(self, painter, option, index)
             #return
@@ -65,7 +65,7 @@ class StatusItemDelegate(QStyledItemDelegate):
 class LoggerItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):
         super(LoggerItemDelegate, self).__init__(parent)
-        self._rrdToolLogo   = QImage(nocapi.nGetImage('rrdtool-logo'))
+        self._rrdToolLogo   = QImage(sysmapi.nGetImage('rrdtool-logo'))
         self._rrdToolSize   = QSize(80,25)
 
     def paint(self, painter, option, index):
@@ -150,9 +150,9 @@ class StateItemDelegate(QStyledItemDelegate):
 #             
 #         cartouche.setSize(self._imageSize)
 #         if state == 'running':
-#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-start')))
+#             painter.drawImage(cartouche, QImage(sysmapi.nGetImage('media-playback-start')))
 #         elif state == 'paused':
-#             painter.drawImage(cartouche, QImage(nocapi.nGetImage('media-playback-pause')))
+#             painter.drawImage(cartouche, QImage(sysmapi.nGetImage('media-playback-pause')))
         QStyledItemDelegate.paint(self, painter, option, index)
 
         

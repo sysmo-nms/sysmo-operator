@@ -5,30 +5,30 @@ from    PyQt5.QtCore   import (
 )
 
 from PyQt5.QtWidgets import QMenu, QAction
-from    opus.monitor                 import norrd
-from    opus.monitor.commands.user_actions  import UserActions
-from    opus.monitor.commands.doc_engine    import DocConfigurator
-from    opus.monitor.central.main    import TreeContainer
-from    opus.monitor.proxy           import ChanHandler
-from    noctopus_widgets             import (
+from    monitor                 import norrd
+from    monitor.commands.user_actions  import UserActions
+from    monitor.commands.doc_engine    import DocConfigurator
+from    monitor.central.main    import TreeContainer
+from    monitor.proxy           import ChanHandler
+from    sysmo_widgets             import (
     NFrameContainer,
     NGridContainer
 )
 
-import  nocapi
+import  sysmapi
 
 class Central(NFrameContainer):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         Central.singleton = self
-        nocapi.nConnectWillClose(self._willClose)
+        sysmapi.nConnectWillClose(self._willClose)
         menu = QMenu('monitor', self)
-        menu.setIcon(QIcon(nocapi.nGetPixmap('utilities-system-monitor')))
+        menu.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
         wikiConf = QAction('Configure documentation engine...', self)
-        wikiConf.setIcon(QIcon(nocapi.nGetPixmap('folder-saved-search')))
+        wikiConf.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
         wikiConf.triggered.connect(self._configureDoc)
         menu.addAction(wikiConf)
-        nocapi.nAddMainMenu(menu)
+        sysmapi.nAddMainMenu(menu)
 
         self._initRrdtool()
         self._initChanProxy()
@@ -43,7 +43,7 @@ class Central(NFrameContainer):
 
     def _initRrdtool(self):
         norrd.start(self)
-        nocapi.nConnectWillClose(norrd.stop)
+        sysmapi.nConnectWillClose(norrd.stop)
 
     def _configureDoc(self):
         ret = DocConfigurator(self)

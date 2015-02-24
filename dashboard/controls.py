@@ -4,12 +4,12 @@ from    PyQt5.QtWidgets    import (
     QPushButton
 )
 
-from    noctopus_widgets        import (
+from    sysmo_widgets        import (
     NFrameContainer,
     NGridContainer
 )
 
-import nocapi
+import sysmapi
 
 class DashActions(NFrameContainer):
     def __init__(self, parent):
@@ -22,10 +22,10 @@ class DashActions(NFrameContainer):
         self._line.textChanged.connect(self._lineChanged)
 
         add   = QPushButton(self)
-        add.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
+        add.setIcon(QIcon(sysmapi.nGetPixmap('list-add')))
 
         clear = QPushButton(self)
-        clear.setIcon(QIcon(nocapi.nGetPixmap('edit-clear')))
+        clear.setIcon(QIcon(sysmapi.nGetPixmap('edit-clear')))
         clear.clicked.connect(self._line.clear)
 
         grid.addWidget(add,         0,0)

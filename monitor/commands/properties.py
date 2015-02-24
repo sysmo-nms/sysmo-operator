@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets   import *
 from PyQt5.QtCore import Qt
 
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NFrame,
     NGridContainer,
@@ -10,8 +10,8 @@ from noctopus_widgets import (
     NIpv6Form
 )
 
-import nocapi
-import opus.monitor.api as monapi
+import sysmapi
+import monitor.api as monapi
 
 IP_V4 = 0
 IP_V6 = 1
@@ -278,7 +278,7 @@ class HelpUtil(NFrameContainer):
         grid = NGridContainer(self)
         self._helpButton = QPushButton(self)
         self._helpButton.setFlat(True)
-        self._helpButton.setIcon(nocapi.nGetIcon('dialog-information'))
+        self._helpButton.setIcon(sysmapi.nGetIcon('dialog-information'))
         grid.addWidget(self._helpButton, 0,1)
         grid.setColumnStretch(0,1)
         grid.setColumnStretch(1,0)

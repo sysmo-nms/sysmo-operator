@@ -8,16 +8,16 @@ from PyQt5.QtWidgets import (
     QLabel,
     QListWidget
 )
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NGridContainer
 )
 
-import nocapi
+import sysmapi
 import shlex
 import re
 import subprocess
-import opus.monitor.proxy
+import monitor.proxy
 
 # TODO possibilite de:
 # - declancher un evenement lors de l'execution d'une action.
@@ -36,7 +36,7 @@ class UserActions(QObject):
         self._settings = QSettings()
         UserActions.singleton = self
         self._createConfExample()
-        nocapi.nConnectWillClose(self._saveSettings)
+        sysmapi.nConnectWillClose(self._saveSettings)
         self._loadSettings()
 
     def getUActionsFor(self, element):
@@ -63,7 +63,7 @@ class UserActions(QObject):
         return self._UACmds
 
     def _getTargetsDict(self):
-        return opus.monitor.proxy.ChanHandler.singleton.targets
+        return monitor.proxy.ChanHandler.singleton.targets
 
     def _loadSettings(self):
         UACmds = self._settings.value('monitor/user_actions_cmds')

@@ -7,22 +7,22 @@ from    PyQt5.QtWidgets        import (
 )
 from    PyQt5.QtCore       import Qt
 from    PyQt5.QtGui        import QIcon
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrame,
     NGridContainer
 )
-from    opus.dashboard.controls     import DashActions
-from    opus.dashboard.dash         import Dashboard
-from    noctopus_infobutton                 import NInfoButton
-import  nocapi
+from    dashboard.controls     import DashActions
+from    dashboard.dash         import Dashboard
+from    sysmo_infobutton                 import NInfoButton
+import  sysmapi
 
 class Central(NFrame):
     def __init__(self, parent):
         super(Central, self).__init__(parent)
         self.setFrameShape(QFrame.NoFrame)
         menu = QMenu('dashboard',self)
-        menu.setIcon(QIcon(nocapi.nGetPixmap('preferences-system-session')))
-        nocapi.nAddMainMenu(menu)
+        menu.setIcon(QIcon(sysmapi.nGetPixmap('preferences-system-session')))
+        sysmapi.nAddMainMenu(menu)
         #self._controls  = DashActions(self)
         self._tabs      = DashTab(self)
 
@@ -42,7 +42,7 @@ class DashTab(QTabWidget):
         tabBar.setExpanding(True)
         helpButton = NInfoButton(self)
         addButton = QPushButton(self)
-        addButton.setIcon(QIcon(nocapi.nGetPixmap('list-add')))
+        addButton.setIcon(QIcon(sysmapi.nGetPixmap('list-add')))
         addButton.setFlat(True)
         addButton.setToolTip(self.tr('Create a new tab'))
         self.setElideMode(Qt.ElideRight)
@@ -51,6 +51,6 @@ class DashTab(QTabWidget):
         self.setCornerWidget(helpButton, corner=Qt.TopRightCorner)
         self.addTab(
             Dashboard(self),
-            QIcon(nocapi.nGetPixmap('applications-development')),
+            QIcon(sysmapi.nGetPixmap('applications-development')),
             self.tr('Default')
         )

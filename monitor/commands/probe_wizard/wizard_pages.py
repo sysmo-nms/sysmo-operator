@@ -15,14 +15,14 @@ from PyQt5.QtWidgets import (
 )
 
 from PyQt5.QtCore import QSize
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NGridContainer,
     NFrame,
     NFrameContainer
 )
 import supercast.main as supercast
-import nocapi
+import sysmapi
 
 class Page1(QWizardPage):
     def __init__(self, parent):
@@ -82,7 +82,7 @@ class Page1(QWizardPage):
         #self._simulateButton = QPushButton(self.tr('Simulate'), self)
         self._simulateButton = QPushButton(self)
         self._simulateButton.setIconSize(QSize(80,80))
-        self._simulateButton.setIcon(nocapi.nGetIcon('utilities-terminal'))
+        self._simulateButton.setIcon(sysmapi.nGetIcon('utilities-terminal'))
         self._simulateButton.clicked.connect(self._simulateComm)
         buttonPol = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         self._simulateButton.setSizePolicy(buttonPol)
@@ -341,7 +341,7 @@ class Page3(QWizardPage):
         self._alertsD['DOWN']    = onUnk
         self._alertsD['OK']         = onOk
 
-        groups  = nocapi.nGetGroups()
+        groups  = sysmapi.nGetGroups()
         glay    = NGrid(pageGroup)
         pageGroup.setLayout(glay)
         self._groupsD = dict()

@@ -1,6 +1,6 @@
 from    PyQt5.QtWidgets        import QLabel
-from    noctopus_widgets    import NFrameContainer, NGridContainer
-from    opus.dashboard.dash_widgets    import OSMView
+from    sysmo_widgets    import NFrameContainer, NGridContainer
+from    dashboard.dash_widgets    import OSMView
 
 class WmapDash(NFrameContainer):
     def __init__(self, parent):

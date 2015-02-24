@@ -16,25 +16,25 @@ from PyQt5.QtWidgets import (
     QSpinBox
 )
 
-from noctopus_widgets import (
+from sysmo_widgets import (
     NGrid,
     NFrameContainer,
     NGridContainer
 )
 
-import nocapi
+import sysmapi
 
 class DocConfigurator(QDialog):
     def __init__(self, parent=None):
         super(DocConfigurator, self).__init__(parent)
         self.setWindowTitle('Documentation engine configurator')
-        self.setWindowIcon(QIcon(nocapi.nGetPixmap('list-add')))
+        self.setWindowIcon(QIcon(sysmapi.nGetPixmap('list-add')))
         dialogButtons = QDialogButtonBox(self)
         save = QPushButton('Save', self)
-        save.setIcon(QIcon(nocapi.nGetPixmap('document-save')))
+        save.setIcon(QIcon(sysmapi.nGetPixmap('document-save')))
         dialogButtons.addButton(save,    QDialogButtonBox.AcceptRole)
         cancel = QPushButton('Cancel', self)
-        cancel.setIcon(QIcon(nocapi.nGetPixmap('process-stop')))
+        cancel.setIcon(QIcon(sysmapi.nGetPixmap('process-stop')))
         dialogButtons.addButton(cancel,  QDialogButtonBox.RejectRole)
         dialogButtons.accepted.connect(self.accept)
         dialogButtons.rejected.connect(self.reject)
@@ -72,7 +72,7 @@ class DocConfigurator(QDialog):
         configLay.addRow('Root path:',  root)
 
         image = QLabel(self)
-        image.setPixmap(nocapi.nGetPixmap('document-stack'))
+        image.setPixmap(sysmapi.nGetPixmap('document-stack'))
 
         grid = NGrid(self)
         grid.addWidget(config,          0,1)

@@ -33,12 +33,12 @@ from    PyQt5.QtWidgets    import (
 from PyQt5.QtGui import QIcon
 
 # local dependencies
-from    noctopus_colors     import getPalette
-from    noctopus_images     import getIcon, noctopusGraphicsInit, dumpPalette, getPixmap
-from    noctopus_dialogs    import Proxy
-from    noctopus_statusbar  import NStatusBar
-from    noctopus_centerwidget   import NCentralFrame
-from    noctopus_widgets    import Community
+from    sysmo_colors     import getPalette
+from    sysmo_images     import getIcon, sysmoGraphicsInit, dumpPalette, getPixmap
+from    sysmo_dialogs    import Proxy
+from    sysmo_statusbar  import NStatusBar
+from    sysmo_centerwidget   import NCentralFrame
+from    sysmo_widgets    import Community
 
 # supercast
 from  supercast.main    import Supercast
@@ -46,7 +46,7 @@ from  supercast.main    import Supercast
 
 class NMainWindow(QMainWindow):
 
-    " The noctopus QMainWindow "
+    " The sysmo QMainWindow "
 
     proxySettings   = pyqtSignal(dict)
     # emit self.activeProxySettings dict: {
@@ -71,8 +71,8 @@ class NMainWindow(QMainWindow):
     def __init__(self, style, parent=None):
         super(NMainWindow, self).__init__(parent)
         NMainWindow.singleton   = self
-        self._noctopusStyle     = style
-        noctopusGraphicsInit()
+        self._sysmoStyle     = style
+        sysmoGraphicsInit()
 
         self.setObjectName('MainWindow')
         self.setWindowIcon(QIcon(getPixmap('applications-development')))
@@ -210,14 +210,14 @@ class NMainWindow(QMainWindow):
     #############
     def closeEvent(self, event):
         self.willClose.emit()
-        #settings = QSettings("Noctopus NMS", "noctopus-client")
+        #settings = QSettings("Noctopus NMS", "sysmo-client")
         settings    = QSettings()
         settings.setValue("NMainWindow/geometry",       self.saveGeometry())
         settings.setValue("NMainWindow/windowState",    self.saveState())
         settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
         settings.setValue("NMainWindow/viewMode",       self.activeViewMode)
-        settings.setValue("NMainWindow/style",          self._noctopusStyle)
-        settings.setValue("NMainWindow/theme",          self._noctopusTheme)
+        settings.setValue("NMainWindow/style",          self._sysmoStyle)
+        settings.setValue("NMainWindow/theme",          self._sysmoTheme)
         # TOPYQT ERROR BEGIN
         #self.supercast.supercastClose()
         # TOPYQT ERROR END
@@ -227,7 +227,7 @@ class NMainWindow(QMainWindow):
     # SETTINGS #
     ############
     def _restoreSettings(self):
-        #settings = QSettings("Noctopus NMS", "noctopus-client")
+        #settings = QSettings("Noctopus NMS", "sysmo-client")
         settings = QSettings()
 
         # TOPYQT ERROR BEGIN
@@ -239,8 +239,8 @@ class NMainWindow(QMainWindow):
         proxySet = settings.value("NMainWindow/proxySettings")
         if proxySet != None: self.activeProxySettings = proxySet
 
-        self._noctopusTheme = settings.value("NMainWindow/theme")
-        self._noctopusStyle = settings.value("NMainWindow/style")
+        self._sysmoTheme = settings.value("NMainWindow/theme")
+        self._sysmoStyle = settings.value("NMainWindow/style")
 
         #viewMode = settings.value("NMainWindow/viewMode")
         #if viewMode != None: self.activeViewMode = viewMode
@@ -250,13 +250,13 @@ class NMainWindow(QMainWindow):
     # STYLES AND THEMES #
     #####################
     def _setStyle(self, style):
-        self._noctopusStyle = style
+        self._sysmoStyle = style
         if style == 'native':   self.menuColor.setDisabled(True)
         else:                   self.menuColor.setDisabled(False)
         self._needRestart()
 
     def _setTheme(self, theme):
-        self._noctopusTheme = theme
+        self._sysmoTheme = theme
         self._needRestart()
 
     def _needRestart(self):
@@ -414,19 +414,19 @@ class NMainWindow(QMainWindow):
         groupColor.addAction(snowAction)
         groupColor.setExclusive(True)
 
-        if self._noctopusTheme == 'lagoon':
+        if self._sysmoTheme == 'lagoon':
             lagoonAction.setChecked(True)
-        elif self._noctopusTheme == 'dark':
+        elif self._sysmoTheme == 'dark':
             deepWaterAction.setChecked(True)
-        elif self._noctopusTheme == 'terra':
+        elif self._sysmoTheme == 'terra':
             islandAction.setChecked(True)
-        elif self._noctopusTheme == 'krita':
+        elif self._sysmoTheme == 'krita':
             kritaAction.setChecked(True)
-        elif self._noctopusTheme == 'desert':
+        elif self._sysmoTheme == 'desert':
             desertAction.setChecked(True)
-        elif self._noctopusTheme == 'honey':
+        elif self._sysmoTheme == 'honey':
             honeyAction.setChecked(True)
-        elif self._noctopusTheme == 'snow':
+        elif self._sysmoTheme == 'snow':
             snowAction.setChecked(True)
         else:
             nativeThemeAction.setChecked(True)
@@ -441,12 +441,12 @@ class NMainWindow(QMainWindow):
         self.menuColor.addAction(honeyAction)
         self.menuColor.addAction(snowAction)
 
-        if self._noctopusStyle == 'native':
+        if self._sysmoStyle == 'native':
             nativeAction.setChecked(True)
             self.menuColor.setDisabled(True)
-        elif self._noctopusStyle == 'fusion':
+        elif self._sysmoStyle == 'fusion':
             plastiqueAction.setChecked(True)
-        elif self._noctopusStyle == 'cde':
+        elif self._sysmoStyle == 'cde':
             cdeAction.setChecked(True)
         else:
             nativeAction.setChecked(True)

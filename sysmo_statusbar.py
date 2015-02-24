@@ -5,7 +5,7 @@ from    PyQt5.QtWidgets    import (
     QStatusBar,
     QToolButton
 )
-from    noctopus_images import getIcon, getPixmap
+from    sysmo_images import getIcon, getPixmap
 
 class NStatusBar(QStatusBar):
     def __init__(self, parent):

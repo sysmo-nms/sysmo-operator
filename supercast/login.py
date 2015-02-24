@@ -10,7 +10,7 @@ from    PyQt5.QtWidgets        import (
     QGridLayout
 )
 from    PyQt5.QtSvg        import QSvgWidget
-import  nocapi
+import  sysmapi
 
 class Query(QDialog):
     def __init__(self, parent, uncle):
@@ -58,20 +58,20 @@ class Query(QDialog):
 
         # button area
         ok = QPushButton(
-            QIcon(nocapi.nGetPixmap('applications-development')),
+            QIcon(sysmapi.nGetPixmap('applications-development')),
             self.tr("&Engage"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self.tryValidate)
 
         ko = QPushButton(
-            QIcon(nocapi.nGetPixmap('process-stop')),
+            QIcon(sysmapi.nGetPixmap('process-stop')),
             self.tr("&Abort"),
             self)
         ko.clicked.connect(self._loginAbort)
 
         helpB = QPushButton(
-            QIcon(nocapi.nGetPixmap('dialog-information')),
+            QIcon(sysmapi.nGetPixmap('dialog-information')),
             self.tr("&Help"),
             self)
         helpB.setEnabled(False)
@@ -83,7 +83,7 @@ class Query(QDialog):
 
 
         # graphic area
-        svgImage = QSvgWidget(nocapi.nGetImage('weather-showers'), self)
+        svgImage = QSvgWidget(sysmapi.nGetImage('weather-showers'), self)
         svgImage.setFixedSize(150, 150)
 
 

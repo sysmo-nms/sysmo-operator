@@ -1,5 +1,5 @@
 from    PyQt5.QtWidgets        import QGraphicsScene, QGraphicsView
-from    noctopus_widgets    import NFrameContainer, NGridContainer
+from    sysmo_widgets    import NFrameContainer, NGridContainer
 
 class GraphicDash(NFrameContainer):
     def __init__(self, parent):

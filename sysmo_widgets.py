@@ -25,7 +25,7 @@ from    PyQt5.QtWidgets    import (
     QLineEdit
 )
 
-import noctopus_images
+import sysmo_images
 import tempfile
 from   functools import partial
 
@@ -104,8 +104,8 @@ class NInfoButton(QPushButton):
     showInfo = pyqtSignal(bool)
     def __init__(self, parent=None):
         super(NInfoButton, self).__init__(parent)
-        #self.showInfo.connect(noctopus_centerwidget.NCentralFrame.singleton.showInfo)
-        self.setIcon(QIcon(noctopus_images.getPixmap('dialog-information')))
+        #self.showInfo.connect(sysmo_centerwidget.NCentralFrame.singleton.showInfo)
+        self.setIcon(QIcon(sysmo_images.getPixmap('dialog-information')))
         self.setFlat(True)
         self.pressed.connect(self._showInfo)
         self.released.connect(self._hideInfo)
@@ -166,17 +166,17 @@ class Community(NFrame):
             self.tr('Take a look at the functionnality planning and vote for the most usefull for you!'),
             self
         )
-        helpButton.setIcon(QIcon(noctopus_images.getPixmap('help-browser')))
+        helpButton.setIcon(QIcon(sysmo_images.getPixmap('help-browser')))
         helpButton.clicked.connect(self._goHelp)
-        ideaButton.setIcon(QIcon(noctopus_images.getPixmap('dialog-information')))
+        ideaButton.setIcon(QIcon(sysmo_images.getPixmap('dialog-information')))
         ideaButton.clicked.connect(self._goIdea)
-        bugButton.setIcon(QIcon(noctopus_images.getPixmap('dialog-warning')))
+        bugButton.setIcon(QIcon(sysmo_images.getPixmap('dialog-warning')))
         bugButton.clicked.connect(self._goBug)
-        functionButton.setIcon(QIcon(noctopus_images.getPixmap('applications-system')))
+        functionButton.setIcon(QIcon(sysmo_images.getPixmap('applications-system')))
         functionButton.clicked.connect(self._goFun)
 
         lab = QLabel('<h2>%s</h2' % self.tr('The community side'), self)
-        ima = QSvgWidget(noctopus_images.getImage('face-devilish'), self)
+        ima = QSvgWidget(sysmo_images.getImage('face-devilish'), self)
 
         # layout is right to left
         grid.addWidget(ima,             0,0,1,1)

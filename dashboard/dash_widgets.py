@@ -5,7 +5,7 @@ from    PyQt5.QtWidgets        import (
 )
 from    PyQt5.QtWebKitWidgets     import *
 from    PyQt5.QtCore       import Qt, QSize
-from    noctopus_widgets    import (
+from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NGrid

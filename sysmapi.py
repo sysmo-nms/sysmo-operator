@@ -1,6 +1,6 @@
-import noctopus_main
-import noctopus_ramp
-import noctopus_images
+import sysmo_main
+import sysmo_ramp
+import sysmo_images
 
 ######################
 # MODULES API HELPER #
@@ -13,7 +13,7 @@ def nGetProxySettings():
         'port': int
     }
     '''
-    return noctopus_main.NMainWindow.singleton.activeProxySettings
+    return sysmo_main.NMainWindow.singleton.activeProxySettings
 
 def nGetViewMode():
     ''' return:
@@ -23,37 +23,37 @@ def nGetViewMode():
         'tray':     'traymin' | 'traymax'
     }
     '''
-    return noctopus_main.NMainWindow.singleton.activeViewMode
+    return sysmo_main.NMainWindow.singleton.activeViewMode
 
 def nGetPixmap(pixmapName):
     ''' return:
         PyQt5.QtGui.QPixmap()
     '''
-    return noctopus_images.getPixmap(pixmapName)
+    return sysmo_images.getPixmap(pixmapName)
 
 def nGetIcon(iconName):
     ''' return:
         PyQt5.QtGui.QIcon()
     '''
-    return noctopus_images.getIcon(iconName)
+    return sysmo_images.getIcon(iconName)
 
 def nGetImage(imageName):
     ''' return:
         str = path to svg file
     '''
-    return noctopus_images.getImage(imageName)
+    return sysmo_images.getImage(imageName)
 
 def nGetRgb(paletteKey):
     ''' return:
         str = "%R%G%B"
     '''
-    return noctopus_images.getRgb(paletteKey)
+    return sysmo_images.getRgb(paletteKey)
 
 def nGetRgba(paletteKey):
     ''' return:
         str = "%R%G%B%A"
     '''
-    return noctopus_images.getRgba(paletteKey)
+    return sysmo_images.getRgba(paletteKey)
 
 def nConnectProxySettings(pyCallable):
     ''' return: None
@@ -66,7 +66,7 @@ def nConnectProxySettings(pyCallable):
         'port': int
     }
     '''
-    return noctopus_main.NMainWindow.singleton.proxySettings.connect(pyCallable)
+    return sysmo_main.NMainWindow.singleton.proxySettings.connect(pyCallable)
 
 def nConnectViewMode(pyCallable):
     ''' return: None
@@ -78,7 +78,7 @@ def nConnectViewMode(pyCallable):
         'tray':     'traymin' | 'traymax'
     }
     '''
-    noctopus_main.NMainWindow.singleton.viewMode.connect(pyCallable)
+    sysmo_main.NMainWindow.singleton.viewMode.connect(pyCallable)
 
 def nConnectAppToggled(pyCallable):
     ''' return: None
@@ -87,7 +87,7 @@ def nConnectAppToggled(pyCallable):
     is already visible.
     pyCallable will receive: {'button': 'left'|'right', 'id': 'appname'}.
     '''
-    noctopus_ramp.NSelector.singleton.appButtonToggled.connect(pyCallable)
+    sysmo_ramp.NSelector.singleton.appButtonToggled.connect(pyCallable)
     return None
 
 def nConnectAppSelect(pyCallable):
@@ -97,7 +97,7 @@ def nConnectAppSelect(pyCallable):
     is not visible.
     pyCallable will receive: str, when str = module name. pyqtSignal(str)
     '''
-    noctopus_ramp.NSelector.singleton.appButtonPressed.connect(pyCallable)
+    sysmo_ramp.NSelector.singleton.appButtonPressed.connect(pyCallable)
     return None
 
 def nConnectWillClose(pyCallable):
@@ -107,53 +107,53 @@ def nConnectWillClose(pyCallable):
     visible.
     pyCallable will receive nothing. pyqtSignal()
     '''
-    noctopus_main.NMainWindow.singleton.willClose.connect(pyCallable)
+    sysmo_main.NMainWindow.singleton.willClose.connect(pyCallable)
     return None
 
 def nSetStatusMsg(msg):
     ''' return: None
         Set a message to the statusbar.
     '''
-    return noctopus_main.NMainWindow.singleton.statusBar.showMessage(msg)
+    return sysmo_main.NMainWindow.singleton.statusBar.showMessage(msg)
     return None
 
 def nSetMessageProcessor(key, pyCallable):
     ''' return: None
         Set the supercast message processor for messages from key.
     '''
-    noctopus_main.NMainWindow.singleton.supercast.setMessageProcessor(key,pyCallable)
+    sysmo_main.NMainWindow.singleton.supercast.setMessageProcessor(key,pyCallable)
     return None
 
 def nConnectSupercastEnabled(pyCallable):
     '''
-        Emit when noctopus + supercast have finished their initialisation 
+        Emit when sysmo + supercast have finished their initialisation 
         (the user is logged in).
     '''
-    noctopus_main.NMainWindow.singleton.supercastEnabled.connect(pyCallable)
+    sysmo_main.NMainWindow.singleton.supercastEnabled.connect(pyCallable)
 
 def nSubscribe(pyCallable, channel):
     '''
         Subscribe to a supercast channel.
     '''
-    noctopus_main.NMainWindow.singleton.supercast.subscribe(pyCallable, channel)
+    sysmo_main.NMainWindow.singleton.supercast.subscribe(pyCallable, channel)
 
 def nUnsubscribe(pyCallable, channel):
     '''
         Unsubscribe to a supercast channel.
     '''
-    noctopus_main.NMainWindow.singleton.supercast.unsubscribe(pyCallable, channel)
+    sysmo_main.NMainWindow.singleton.supercast.unsubscribe(pyCallable, channel)
 
 def nQuery(key, callback):
-    sc = noctopus_main.NMainWindow.singleton.supercast
+    sc = sysmo_main.NMainWindow.singleton.supercast
     sc.send('query', key, callback)
 
 def nGetGroups():
-    sc = noctopus_main.NMainWindow.singleton.supercast
+    sc = sysmo_main.NMainWindow.singleton.supercast
     return sc.groups
 
 def nAddMainMenu(menu):
-    mw = noctopus_main.NMainWindow.singleton
+    mw = sysmo_main.NMainWindow.singleton
     mw.setApplicationMenu(menu)
 
 def nGetSystemTrayIcon():
-    return noctopus_main.NMainWindow.singleton._trayIcon
+    return sysmo_main.NMainWindow.singleton._trayIcon
