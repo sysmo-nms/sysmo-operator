@@ -82,15 +82,15 @@ class LoggerItemDelegate(QStyledItemDelegate):
             QStyledItemDelegate.paint(self, painter, option, index)
 
 
-class ProgressItemDelegate(QStyledItemDelegate):
-    def __init__(self, parent):
-        super(ProgressItemDelegate, self).__init__(parent)
-    def paint(self,painter,option,index):
-        QStyledItemDelegate.paint(self, painter, option, index)
-
 class ProgressItemDelegate2(QStyledItemDelegate):
     def __init__(self, parent):
         super(ProgressItemDelegate2, self).__init__(parent)
+    def paint(self,painter,option,index):
+        QStyledItemDelegate.paint(self, painter, option, index)
+
+class ProgressItemDelegate(QStyledItemDelegate):
+    def __init__(self, parent):
+        super(ProgressItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
         step    = index.data(treemod.ProgressItem.StepRole)

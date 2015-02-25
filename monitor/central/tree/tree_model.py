@@ -130,7 +130,7 @@ class TargetItem(QStandardItem):
         #self.row1       = QStandardItem()
         self.row2       = QStandardItem()
         self.row4       = QStandardItem()
-        self.row5       = QStandardItem('nodata')
+        self.row5       = QStandardItem()
 
         self.row3_status    = QStandardItem()
         self.row6_host      = QStandardItem()
@@ -314,6 +314,7 @@ class ProbeItem(QStandardItem):
         self.row2_progress = ProgressItem((step, timeout))
 
         self.row3_status = QStandardItem('b')
+        self.row3_status.setIcon(QIcon(sysmapi.nGetPixmap('satellite')))
         self.row3_status.setData(self.probeDict['value']['status'], role=Qt.DisplayRole)
 
         self.row4_trigger = QStandardItem()
@@ -322,10 +323,11 @@ class ProbeItem(QStandardItem):
 
         self.row5_state = QStandardItem()
         if self.probeDict['value']['active']:
-            state = 'running'
+            self.row5_state.setIcon(QIcon(sysmapi.nGetPixmap('satellite')))
+            self.row5_state.setData('running', role=Qt.DisplayRole)
         else:
-            state = 'stopped'
-        self.row5_state.setData(state, role=Qt.DisplayRole)
+            self.row5_state.setIcon(QIcon(sysmapi.nGetPixmap('satellite')))
+            self.row5_state.setData('stopped', role=Qt.DisplayRole)
 
         self.row6_host  = QStandardItem()
         #self.row6_host.setData('host', role=Qt.DisplayRole)

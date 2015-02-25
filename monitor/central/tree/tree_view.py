@@ -41,7 +41,7 @@ class ProbesTreeview(QTreeView):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._showMenu)
         self.setObjectName('backTree')
-        self.setIconSize(QSize(16, 16)) 
+        self.setIconSize(QSize(20, 20)) 
         self.setAnimated(False)
         self.setAlternatingRowColors(True)
         self.setStyleSheet('''QFrame#backTree { 
@@ -66,7 +66,7 @@ class ProbesTreeview(QTreeView):
 
         # delegates
         #self.setItemDelegateForColumn(1, pdelegate.LoggerItemDelegate(self))
-        #self.setItemDelegateForColumn(1, pdelegate.ProgressItemDelegate(self))
+        self.setItemDelegateForColumn(1, pdelegate.ProgressItemDelegate(self))
         #self.setItemDelegateForColumn(2, pdelegate.StatusItemDelegate(self))
         #self.setItemDelegateForColumn(3, pdelegate.TriggerItemDelegate(self))
         #self.setItemDelegateForColumn(4, pdelegate.StateItemDelegate(self))
