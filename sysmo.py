@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+import os
+
+if '__file__' in locals(): pass
+else:
+    platformPluginsDir = os.getcwd() + '\plugins\platforms'
+    os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = platformPluginsDir
+
 from    PyQt5.QtWidgets    import QApplication
 from    PyQt5.QtCore   import QSettings, QTranslator
 import  sys
@@ -58,3 +65,8 @@ def main():
 # p.print_callers('norrd')
 # p.sort_stats('call').print_stats('norrd')
 main()
+#!/bin/sh
+
+#export QT_QPA_PLATFORM_PLUGIN_PATH="C:\Windows\System32"
+
+#/cygdrive/c/Python34/python.exe ./sysmo.py
