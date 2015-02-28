@@ -297,18 +297,13 @@ class NMainWindow(QMainWindow):
         nativeAction.setCheckable(True)
         nativeAction.triggered.connect(partial(self._setStyle, 'native'))
     
-        plastiqueAction = QAction(self.tr('Balanced'), self)
+        plastiqueAction = QAction(self.tr('Customizable'), self)
         plastiqueAction.setCheckable(True)
         plastiqueAction.triggered.connect(partial(self._setStyle, 'fusion'))
-
-        cdeAction = QAction(self.tr('CDE'), self)
-        cdeAction.setCheckable(True)
-        cdeAction.triggered.connect(partial(self._setStyle, 'cde'))
 
     
         styleToggle = QActionGroup(self)
         styleToggle.addAction(plastiqueAction)
-        styleToggle.addAction(cdeAction)
         styleToggle.addAction(nativeAction)
         styleToggle.setExclusive(True)
     
@@ -316,13 +311,11 @@ class NMainWindow(QMainWindow):
         menuStyle.addAction(fullScreenAction)
         menuStyle.addSeparator()
         menuStyle.addAction(nativeAction)
-        menuStyle.addSeparator()
         menuStyle.addAction(plastiqueAction)
-        menuStyle.addAction(cdeAction)
 
         "color sub menu"
         self.menuColor = menuStyle.addMenu(QIcon(getPixmap('preferences-desktop-theme')),self.tr('Colors'))
-        nativeThemeAction = QAction(self.tr('Native'), self)
+        nativeThemeAction = QAction(self.tr('Native colors'), self)
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))
 
@@ -397,8 +390,6 @@ class NMainWindow(QMainWindow):
             self.menuColor.setDisabled(True)
         elif self._sysmoStyle == 'fusion':
             plastiqueAction.setChecked(True)
-        elif self._sysmoStyle == 'cde':
-            cdeAction.setChecked(True)
         else:
             nativeAction.setChecked(True)
 

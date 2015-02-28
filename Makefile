@@ -37,5 +37,5 @@ translate-clean:
 	rm -f sysmo.pro
 	rm -f *.ts
 
-exe: win32Binary
+exe:
 	cd $(RELEASE_NAME)-$(RELEASE_VERSION); ./sysmo.exe
