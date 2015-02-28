@@ -10,8 +10,8 @@ html/build
 build
 dist
 translate-dir
-noctopus.pro
-noctopus-win32*
-noctopus.stderr.txt
-noctopus.stdout.txt
+sysmo.pro
+sysmo-operator-win32*
+sysmo.stderr.txt
+sysmo.stdout.txt
 palette.dump

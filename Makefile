@@ -1,8 +1,8 @@
 PYTHON_EXE   = /cygdrive/c/Python34/python.exe
 DIST_DIR     = dist
 BUILD_DIR    = build
-RELEASE_NAME = sysmo-win32
-RELEASE_VERSION = 0.1
+RELEASE_NAME = sysmo-operator-win32
+RELEASE_VERSION = 0.2.1
 QT_PLUGINS_DIR  = /cygdrive/c/Python34/lib/site-packages/PyQt5/plugins
 EXECUTABLE = $(RELEASE_NAME)-$(RELEASE_VERSION)/sysmo.exe
 
