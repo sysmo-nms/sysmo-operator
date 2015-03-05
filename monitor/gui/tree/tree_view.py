@@ -14,12 +14,12 @@ from    PyQt5.QtWidgets    import (
 
 from    functools import partial
 from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.logwin.main                import openLoggerFor
-from    monitor.central.tree.tree_model    import ProbeModel
-from    monitor.central.tree.menus.probe   import ProbeMenu
-from    monitor.central.tree.menus.target  import TargetMenu
+from    monitor.elements_properties.probe.main import openPropertiesFor
+from    monitor.gui.tree.tree_model    import ProbeModel
+from    monitor.context_menus.probe   import ProbeMenu
+from    monitor.context_menus.target  import TargetMenu
 import  monitor.commands.user_actions
-import  monitor.central.tree.tree_delegate as pdelegate
+import  monitor.gui.tree.tree_delegate as pdelegate
 import  monitor.api                        as monapi
 import  sysmapi
 
@@ -95,7 +95,7 @@ class ProbesTreeview(QTreeView):
             print(item)
             probe   = item.data(Qt.UserRole + 3)
             display = item.data(Qt.DisplayRole)
-            openLoggerFor(probe, display)
+            openPropertiesFor(probe, display)
         else:
             targetid = item.data(Qt.UserRole + 1)
             monitor.commands.user_actions.launchOperationFor(self, targetid)

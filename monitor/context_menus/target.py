@@ -12,9 +12,8 @@ from PyQt5.QtCore import QUrl
 
 from    functools import partial
 from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.central.tree.add_probe             import AddProbe
-#from    monitor.central.tree.logwin        import LoggerView
-from    monitor.central.tree.toolbox       import openTargetPropertiesFor
+from    monitor.gui.tree.add_probe             import AddProbe
+from    monitor.elements_properties.target import openPropertiesFor
 from    sysmo_widgets                        import NAction
 import  monitor.api                        as monapi
 import  sysmapi
@@ -133,7 +132,7 @@ class TargetMenu(QMenu):
         cpWiz = AddProbe(self._currentTarget, self)
 
     def _openProperties(self):
-        openTargetPropertiesFor(self._currentTarget)
+        openPropertiesFor(self._currentTarget)
         print(("properties: ", self._currentTarget))
 
     def _locateOnMap(self):

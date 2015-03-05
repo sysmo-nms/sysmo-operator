@@ -35,7 +35,7 @@ from    sysmo_widgets    import (
 )
 
 from    monitor.proxy           import AbstractChannelWidget, ChanHandler
-from    monitor.logwin.rrdarea  import RrdArea
+from    monitor.elements_properties.probe.rrdarea  import RrdArea
 import  monitor.api    as monapi
 import  monitor.norrd  as norrd
 
@@ -50,7 +50,7 @@ import  re
 # - ajouter indicateur "redrawing"
 
 
-def openLoggerFor(probe, displayName):
+def openPropertiesFor(probe, displayName):
     if probe in list(LoggerView.Elements.keys()):
         LoggerView.Elements[probe].show()
         return

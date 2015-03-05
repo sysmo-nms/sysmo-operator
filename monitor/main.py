@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QMenu, QAction
 from    monitor                 import norrd
 from    monitor.commands.user_actions  import UserActions
 from    monitor.commands.doc_engine    import DocConfigurator
-from    monitor.central.main    import TreeContainer
+from    monitor.gui.main    import TreeContainer
 from    monitor.proxy           import ChanHandler
 from    sysmo_widgets             import (
     NFrameContainer,

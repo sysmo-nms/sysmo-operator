@@ -17,10 +17,10 @@ from    PyQt5.QtWidgets    import (
 )
 
 from    functools import partial
-from    monitor.central.tree.tree_model    import ProbeModel
+from    monitor.gui.tree.tree_model    import ProbeModel
 from    monitor.commands.wizards           import UserActionsWizard
 
-import monitor.central.tree.tree_model as treemod
+import monitor.gui.tree.tree_model as treemod
 
 import  monitor.api    as monapi
 import  sysmapi

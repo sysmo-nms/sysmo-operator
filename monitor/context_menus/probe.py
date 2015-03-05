@@ -10,8 +10,7 @@ from    PyQt5.QtWidgets    import (
 
 from    functools import partial
 from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.logwin.main                import openLoggerFor
-from    monitor.central.tree.toolbox       import openProbePropertiesFor
+from    monitor.elements_properties.probe.main   import openPropertiesFor
 import  monitor.api    as monapi
 import  sysmapi
 import  supercast.main as supercast
@@ -45,16 +44,9 @@ class ProbeMenu(QMenu):
         self.addSeparator()
 
         self._performances = QAction(self.tr('Performances...'), self)
-        self._performances.triggered.connect(self._openPerformances)
+        self._performances.triggered.connect(self._openProperties)
         self._performances.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
         self.addAction(self._performances)
-
-        self.addSeparator()
-
-        action = QAction(self.tr('Properties...'), self)
-        action.triggered.connect(self._openProperties)
-        action.setIcon(QIcon(sysmapi.nGetPixmap('edit-paste')))
-        self.addAction(action)
 
     def showMenuFor(self, probe, point):
         self._currentProbe = probe
@@ -107,7 +99,4 @@ class ProbeMenu(QMenu):
         print(("delete probe: ", msg))
 
     def _openProperties(self):
-        openProbePropertiesFor(self._currentProbe)
-
-    def _openPerformances(self):
-        openLoggerFor(self._currentProbe, 'performances')
+        openPropertiesFor(self._currentProbe, 'performances')

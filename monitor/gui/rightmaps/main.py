@@ -9,7 +9,7 @@ from    PyQt5.QtWidgets   import (
 )
 
 from    monitor.widgets         import OSMView
-from    monitor.central.rightmaps.dependencies import MDIDependencies
+from    monitor.gui.rightmaps.dependencies import MDIDependencies
 from    sysmo_widgets             import (
     NFrameContainer,
     NGridContainer,

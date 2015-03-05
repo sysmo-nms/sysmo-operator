@@ -5,9 +5,9 @@ from    sysmo_widgets    import (
     NGridContainer, NGrid
 )
 
-from    monitor.central.tree.main          import ProbesTree
-from    monitor.central.timeline.main      import Timeline
-from    monitor.central.rightmaps.main         import RightMapsContainer
+from    monitor.gui.tree.main          import ProbesTree
+from    monitor.gui.timeline.main      import Timeline
+from    monitor.gui.rightmaps.main         import RightMapsContainer
 #import  monitor.api as monapi
 import  sysmapi
 
