@@ -34,9 +34,9 @@ import xml.etree.ElementTree as ET
 #import  monitor.api    as monapi
 
 
-class AddProbe(QDialog):
+class NewProbe(QDialog):
     def __init__(self, target, parent = None):
-        super(AddProbe, self).__init__(parent)
+        super(NewProbe, self).__init__(parent)
         self._initLayout()
         self._progress = QProgressDialog(self)
         self._fetchInfos()

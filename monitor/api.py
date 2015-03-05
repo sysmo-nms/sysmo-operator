@@ -1,5 +1,5 @@
 import  monitor.proxy
-import  monitor.gui.tree.main
+import  monitor.gui.tree
 import  monitor.norrd
 import  monitor.commands.user_actions
 
@@ -9,7 +9,7 @@ def connectToEvent(eventType, pyCallable):
 
 def getProbeSelection():
     "Return a list of probes actualy selected in the left tree view"
-    singleton = monitor.gui.tree.main.ProbesTreeview.singleton
+    singleton = monitor.gui.tree.ProbesTreeview.singleton
     return singleton.getSelectedElements()
 
 def rrdCmd(cmd, pyCallable=None):

@@ -12,7 +12,7 @@ from PyQt5.QtCore import QUrl
 
 from    functools import partial
 from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.gui.tree.add_probe             import AddProbe
+from    monitor.configuration_forms.new_probe import NewProbe
 from    monitor.elements_properties.target import openPropertiesFor
 from    sysmo_widgets                        import NAction
 import  monitor.api                        as monapi
@@ -129,7 +129,7 @@ class TargetMenu(QMenu):
         print(("reply, ", msg))
 
     def _newProbe(self):
-        cpWiz = AddProbe(self._currentTarget, self)
+        cpWiz = NewProbe(self._currentTarget, self)
 
     def _openProperties(self):
         openPropertiesFor(self._currentTarget)
