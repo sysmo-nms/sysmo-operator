@@ -1,5 +1,4 @@
 import sysmo_main
-import sysmo_ramp
 import sysmo_images
 
 ######################
@@ -75,7 +74,7 @@ def nConnectAppToggled(pyCallable):
     is already visible.
     pyCallable will receive: {'button': 'left'|'right', 'id': 'appname'}.
     '''
-    sysmo_ramp.NSelector.singleton.appButtonToggled.connect(pyCallable)
+    sysmo_main.NSelector.singleton.appButtonToggled.connect(pyCallable)
     return None
 
 def nConnectAppSelect(pyCallable):
@@ -85,7 +84,7 @@ def nConnectAppSelect(pyCallable):
     is not visible.
     pyCallable will receive: str, when str = module name. pyqtSignal(str)
     '''
-    sysmo_ramp.NSelector.singleton.appButtonPressed.connect(pyCallable)
+    sysmo_main.NSelector.singleton.appButtonPressed.connect(pyCallable)
     return None
 
 def nConnectWillClose(pyCallable):

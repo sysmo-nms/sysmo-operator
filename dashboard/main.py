@@ -13,7 +13,6 @@ from    sysmo_widgets    import (
 )
 from    dashboard.controls     import DashActions
 from    dashboard.dash         import Dashboard
-from    sysmo_infobutton                 import NInfoButton
 import  sysmapi
 
 class Central(NFrame):
@@ -39,7 +38,9 @@ class DashTab(QTabWidget):
         tabBar = self.tabBar()
         tabBar.setUsesScrollButtons(True)
         tabBar.setExpanding(True)
-        helpButton = NInfoButton(self)
+        helpButton = QPushButton(self)
+        helpButton.setIcon(QIcon(sysmapi.nGetPixmap('dialog-information')))
+        helpButton.setFlat(True)
         addButton = QPushButton(self)
         addButton.setIcon(QIcon(sysmapi.nGetPixmap('list-add')))
         addButton.setFlat(True)

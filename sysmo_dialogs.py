@@ -3,9 +3,9 @@ from PyQt5.QtGui import QIcon
 from sysmo_widgets import NFrame, NGrid
 import sysmapi
 
-class Proxy(QDialog):
+class ProxyConf(QDialog):
     def __init__(self, callback, parent=None):
-        super(Proxy, self).__init__(parent)
+        super(ProxyConf, self).__init__(parent)
         self._callback = callback
         self._initLayout()
         self._initState()

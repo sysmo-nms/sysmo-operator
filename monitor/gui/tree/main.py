@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLineEdit, QPushButton
-from sysmo_widgets import NFrameContainer, NGridContainer, NInfoButton, NGrid, NFrame
+from sysmo_widgets import NFrameContainer, NGridContainer, NGrid, NFrame
 from monitor.gui.tree.tree_view import ProbesTreeview
 from monitor.dialogs.new_target import NewTargetDialog
 import sysmapi
@@ -54,7 +54,9 @@ class ElementsActions(NFrameContainer):
         clear.setIcon(QIcon(sysmapi.nGetPixmap('edit-clear')))
         clear.clicked.connect(self.line.clear)
 
-        info = NInfoButton(self)
+        info = QPushButton(self)
+        info.setFlat(True)
+        info.setIcon(QIcon(sysmapi.nGetIcon('dialog-information')))
 
         grid.addWidget(create,      0,0)
         grid.addWidget(clear,       0,1)

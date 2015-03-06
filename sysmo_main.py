@@ -1,13 +1,20 @@
-from PyQt5.QtCore import Qt, pyqtSignal, QSettings
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction
+from PyQt5.QtCore import Qt, pyqtSignal, QSettings, QSize
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy, QStackedLayout, QLabel, QStatusBar
 from PyQt5.QtGui import QIcon
-from functools import partial
-from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap
-from sysmo_dialogs import Proxy
-from sysmo_statusbar import NStatusBar
-from sysmo_centerwidget import NCentralFrame
-from sysmo_widgets import Community
+from PyQt5.QtSvg import QSvgWidget
+from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap, getImage
+from sysmo_dialogs import ProxyConf
+from sysmo_widgets import NFrameContainer, NFrame, NGridContainer, NGrid, CommunityMenu
+
 from supercast.main import Supercast
+from functools import partial
+
+import monitor.main
+import dashboard.main
+
+MONITOR   = 0
+DASHBOARD = 1
+
 
 class NMainWindow(QMainWindow):
 
@@ -225,7 +232,7 @@ class NMainWindow(QMainWindow):
         communityButton.setIcon(QIcon(getPixmap('system-users')))
         communityButton.setFlat(True)
         communityAction = QWidgetAction(self)
-        communityAction.setDefaultWidget(Community(self))
+        communityAction.setDefaultWidget(CommunityMenu(self))
         communityMenu   = QMenu(self)
         communityMenu.addAction(communityAction)
         communityButton.setMenu(communityMenu)
@@ -369,3 +376,118 @@ class NMainWindow(QMainWindow):
 
     def _dumpPalette(self):
         dumpPalette()
+
+# central widget
+class NCentralFrame(NFrame):
+
+    " central widget container "
+
+    def __init__(self, parent):
+        super(NCentralFrame, self).__init__(parent)
+        NCentralFrame.singleton = self
+        self.grid = NGrid(self)
+        self.grid.setHorizontalSpacing(6)
+        self.grid.setVerticalSpacing(6)
+        self.selector       = NSelector(self)
+        self.centralStack   = NCentralStack(self)
+        self.selector.buttonGroup.buttonClicked[int].connect(self.centralStack.stack.setCurrentIndex)
+        self.grid.addWidget(self.selector,       1,0)
+        self.grid.addWidget(self.centralStack,   1,1)
+
+        self.grid.setColumnStretch(0, 0)
+        self.grid.setColumnStretch(1, 1)
+        self.setLayout(self.grid)
+
+class NCentralStack(NFrameContainer):
+
+    " main stack container "
+
+    def __init__(self, parent):
+        super(NCentralStack, self).__init__(parent)
+        self.stack = QStackedLayout(self)
+        self.stack.setContentsMargins(0,0,0,0)
+        self.stack.insertWidget(MONITOR,   monitor.main.Central(self))
+        self.stack.insertWidget(DASHBOARD, dashboard.main.Central(self))
+
+class NSelector(NFrameContainer):
+
+    appButtonPressed = pyqtSignal(str)
+    appButtonToggled = pyqtSignal(dict)
+
+
+    def __init__(self, parent):
+        super(NSelector, self).__init__(parent)
+        NSelector.singleton = self
+        self.setContentsMargins(0,2,0,2)
+        self.setFixedWidth(30)
+        grid = NGridContainer(self)
+        grid.setVerticalSpacing(4)
+        buttonMonit = MonitorButton(self)
+        buttonDash  = DashboardButton(self)
+        self.buttonGroup = QButtonGroup(self)
+        self.buttonGroup.setExclusive(True)
+        self.buttonGroup.addButton(buttonMonit, MONITOR)
+        self.buttonGroup.addButton(buttonDash,  DASHBOARD)
+        self.buttonGroup.buttonClicked[int].connect(self._signalAll)
+        buttonMonit.setChecked(True)
+        self.currentIndex = MONITOR
+        grid.addWidget(buttonMonit, 0,0)
+        grid.addWidget(buttonDash,  1,0)
+
+    def _signalAll(self, index):
+        if self.currentIndex == index:
+            if index == MONITOR:
+                self.appButtonToggled.emit({'button': 'left', 'id': 'monitor'})
+            elif index == DASHBOARD:
+                self.appButtonToggled.emit({'button': 'left', 'id': 'dashboard'})
+        else:
+            self.currentIndex = index
+            if index == MONITOR:
+                self.appButtonPressed.emit('monitor')
+            elif self.currentIndex == DASHBOARD:
+                self.appButtonPressed.emit('dashboard')
+                
+class MonitorButton(QPushButton):
+    toggle = pyqtSignal(dict)
+    def __init__(self, parent):
+        super(MonitorButton, self).__init__(parent)
+        buttonPol = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.setSizePolicy(buttonPol)
+        self.setIconSize(QSize(30,100))
+        self.setCheckable(True)
+        grid = NGrid(self)
+        icon = QSvgWidget(getImage('monitor-black'), self)
+        renderer = icon.renderer()
+        size = renderer.defaultSize()
+        icon.setFixedWidth(size.width() / 2)
+        icon.setFixedHeight(size.height() / 2)
+        grid.addWidget(icon, 0,0)
+        grid.setAlignment(icon, Qt.AlignHCenter)
+        grid.setAlignment(icon, Qt.AlignBottom)
+
+class DashboardButton(QPushButton):
+    toggle = pyqtSignal(dict)
+    def __init__(self, parent):
+        super(DashboardButton, self).__init__(parent)
+        buttonPol = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.setSizePolicy(buttonPol)
+        self.setIconSize(QSize(30,100))
+        self.setCheckable(True)
+        grid = NGrid(self)
+        icon = QSvgWidget(getImage('dashboard-black'), self)
+        renderer = icon.renderer()
+        size = renderer.defaultSize()
+        icon.setFixedWidth(size.width() / 2)
+        icon.setFixedHeight(size.height() / 2)
+        grid.addWidget(icon, 0,0)
+        grid.setAlignment(icon, Qt.AlignHCenter)
+        grid.setAlignment(icon, Qt.AlignBottom)
+
+
+# status bar
+class NStatusBar(QStatusBar):
+    def __init__(self, parent):
+        super(NStatusBar, self).__init__(parent)
+        #debugButton = QToolButton(self)
+        #debugButton.setIcon(QIcon(getPixmap('applications-development')))
+        #self.addPermanentWidget(debugButton)

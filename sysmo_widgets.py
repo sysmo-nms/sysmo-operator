@@ -77,22 +77,6 @@ class NMenuButton(QPushButton):
             }
         ''')
 
-class NInfoButton(QPushButton):
-    showInfo = pyqtSignal(bool)
-    def __init__(self, parent=None):
-        super(NInfoButton, self).__init__(parent)
-        #self.showInfo.connect(sysmo_centerwidget.NCentralFrame.singleton.showInfo)
-        self.setIcon(QIcon(sysmo_images.getPixmap('dialog-information')))
-        self.setFlat(True)
-        self.pressed.connect(self._showInfo)
-        self.released.connect(self._hideInfo)
-
-    def _showInfo(self):
-        self.showInfo.emit(True)
-
-    def _hideInfo(self):
-        self.showInfo.emit(False)
-
 class NIpv4Validator(QRegExpValidator):
     def __init__(self, parent=None):
         super(NIpv4Validator, self).__init__(parent)
@@ -118,9 +102,9 @@ class NIpv6Form(QLineEdit):
         self.setValidator(NIpv6Validator(self))
 
 
-class Community(NFrame):
+class CommunityMenu(NFrame):
     def __init__(self, parent=None):
-        super(Community, self).__init__(parent)
+        super(CommunityMenu, self).__init__(parent)
         self.setFixedWidth(400)
         grid = NGrid(self)
         helpButton  = QCommandLinkButton(
