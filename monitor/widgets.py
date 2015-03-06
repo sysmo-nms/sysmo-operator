@@ -1,17 +1,11 @@
-from    PyQt5.QtWidgets     import *
-from    PyQt5.QtGui         import QDesktopServices
-from    PyQt5.QtWebKitWidgets     import QWebView
-from    PyQt5.QtCore       import *
-from    PyQt5.QtSvg        import *
-from    PyQt5.QtWebKit     import *
-from    sysmo_widgets    import (
-    NFrame,
-    NFrameContainer,
-    NGridContainer,
-    NGrid
-)
-from    .proxy               import AbstractChannelWidget
-import  sysmapi
+from PyQt5.QtWidgets import QGridLayout, QPushButton, QLCDNumber, QFrame, QTextEdit, QSizePolicy 
+from PyQt5.QtGui import QDesktopServices, QPalette, QColor
+from PyQt5.QtWebKitWidgets import QWebView
+from PyQt5.QtCore import QTimer, QDir, QUrl, Qt, pyqtSlot
+from PyQt5.QtSvg import QSvgWidget
+from sysmo_widgets import NFrame, NFrameContainer, NGridContainer
+from monitor.proxy import AbstractChannelWidget
+import sysmapi
 import sys
 
 
