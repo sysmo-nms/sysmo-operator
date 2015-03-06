@@ -1,20 +1,11 @@
-from    PyQt5.QtGui   import QIcon
-from    PyQt5.QtCore   import (
-    QSettings,
-    QTimeLine,
-)
-
-from PyQt5.QtWidgets import QMenu, QAction
-from    monitor                 import norrd
-from    monitor.user_operations    import UserOperations
-from    monitor.dialogs.doc_engine    import DocConfigurator
-from    monitor.gui.main    import TreeContainer
-from    monitor.proxy           import ChanHandler
-from    sysmo_widgets             import (
-    NFrameContainer,
-    NGridContainer
-)
-
+from    PyQt5.QtGui import QIcon
+from    PyQt5.QtWidgets import QMenu, QAction
+from    monitor import norrd
+from    monitor.user_operations import UserOperations
+from    monitor.dialogs.doc_engine import DocConfigurator
+from    monitor.gui.main import TreeContainer
+from    monitor.proxy import ChanHandler
+from    sysmo_widgets import NFrameContainer, NGridContainer
 import  sysmapi
 
 class Central(NFrameContainer):

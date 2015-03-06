@@ -1,17 +1,9 @@
-from    PyQt5.QtCore   import (
-    QObject,
-    pyqtSignal,
-    QTemporaryFile,
-    QDir
-)
-from    collections         import deque
-from    sysmo_widgets    import NFrameContainer
+from    PyQt5.QtCore import QObject, pyqtSignal, QTemporaryFile, QDir
+from    sysmo_widgets import NFrameContainer
+import  supercast.main as supercast
+import  monitor.norrd as norrd
 import  sysmapi
-import  re
 import  os
-import  supercast.main              as supercast
-import  monitor.norrd          as norrd
-import  xml.etree.ElementTree as ET
 
 
 class ChanHandler(QObject):

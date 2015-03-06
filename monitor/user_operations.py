@@ -3,15 +3,6 @@ from PyQt5.QtCore import (
     QSettings,
     pyqtSignal
 )
-from PyQt5.QtWidgets import (
-    QDialog,
-    QLabel,
-    QListWidget
-)
-from sysmo_widgets import (
-    NGrid,
-    NGridContainer
-)
 
 import sysmapi
 import shlex
@@ -50,7 +41,7 @@ class UserOperations(QObject):
             return []
             
     def execUOperation(self, action, target):
-        targets = self._getTargetsDict()
+        targets = monitor.proxy.ChanHandler.singleton.targets
         tprop   = targets[target]['properties']
 
         cmd     = self._UACmds[action]
@@ -65,9 +56,6 @@ class UserOperations(QObject):
 
     def getUOperationsCmds(self):
         return self._UACmds
-
-    def _getTargetsDict(self):
-        return monitor.proxy.ChanHandler.singleton.targets
 
     def _loadSettings(self):
         UACmds = self._settings.value('monitor/user_operations_cmds')

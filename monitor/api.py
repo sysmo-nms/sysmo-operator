@@ -1,7 +1,7 @@
-import  monitor.proxy
-import  monitor.gui.tree
-import  monitor.norrd
-import  monitor.user_operations
+import monitor.proxy
+import monitor.gui.tree
+import monitor.norrd
+import monitor.user_operations
 
 def connectToEvent(eventType, pyCallable):
     "Connect to events emited by the server."
