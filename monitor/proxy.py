@@ -335,7 +335,6 @@ class Channel(QObject):
 
     def handleLoggerRrdEvent(self, msg):
         updates = msg['value']['updates']
-        print(updates)
         for index in list(updates.keys()):
             if updates[index] != '':
                 self._maybeUpdateRrd(index, updates[index])
