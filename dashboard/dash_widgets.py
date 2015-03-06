@@ -3,7 +3,7 @@ from    PyQt5.QtWidgets        import (
     QTreeWidgetItem,
     QFrame
 )
-from    PyQt5.QtWebKitWidgets     import *
+from    PyQt5.QtWebKitWidgets import QWebView
 from    PyQt5.QtCore       import Qt, QSize
 from    sysmo_widgets    import (
     NFrameContainer,

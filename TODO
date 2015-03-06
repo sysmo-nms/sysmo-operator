@@ -1,6 +1,11 @@
 ##################
 # MODULE MONITOR #
 ##################
+# NOW
+- timeline
+- nchecks
+- osm
+- obfuscate
 ### HIGH
 - Dashboards
 
