@@ -1,22 +1,5 @@
-from    PyQt5.QtCore   import (
-    Qt,
-    QRectF,
-)
-from    PyQt5.QtGui   import (
-    QPalette
-)
-from    PyQt5.QtWidgets   import (
-    QGraphicsView,
-    QGraphicsScene,
-    QGraphicsSimpleTextItem,
-    QGraphicsItem,
-    QGraphicsDropShadowEffect,
-    QLabel,
-    QWidget,
-    QGridLayout,
-)
-
-import  sysmapi
+from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsItem, QLabel, QWidget, QGridLayout
 
 class MDIDependencies(QGraphicsView):
     def __init__(self, parent):

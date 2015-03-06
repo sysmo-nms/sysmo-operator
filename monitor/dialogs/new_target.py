@@ -1,36 +1,26 @@
-from PyQt5.QtWidgets   import (
+from PyQt5.QtWidgets import (
     QAbstractItemView,
     QProgressDialog,
     QSpinBox,
     QDoubleSpinBox,
     QDialog,
+    QDialogButtonBox,
     QWizard,
     QWizardPage,
     QLabel,
-    QVBoxLayout,
-    QCommandLinkButton,
-    QButtonGroup,
     QFormLayout,
     QCheckBox,
-    QFrame,
     QLineEdit,
-    QGridLayout,
     QComboBox,
-    QPushButton,
-    QGroupBox,
     QTreeWidget,
     QTreeWidgetItem,
-    QMessageBox,
-    QMenu,
-    QWidgetAction,
-    QDialogButtonBox
+    QMessageBox
 )
 from PyQt5.QtCore import Qt
 
 from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
 import sysmapi
-import monitor.api as monapi
-import supercast.main   as supercast
+import supercast.main as supercast
 
 IP_V4 = 0
 IP_V6 = 1

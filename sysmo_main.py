@@ -1,48 +1,13 @@
-# python lib
-from functools import partial
-
-# PyQt5
-from    PyQt5.QtNetwork import QAbstractSocket
-from    PyQt5.QtCore   import (
-    Qt,
-    pyqtSignal,
-    QSettings,
-    QSize,
-    QObject
-)
-
-from    PyQt5.QtWidgets    import (
-    QMainWindow,
-    QApplication,
-    QSystemTrayIcon,
-    QAction,
-    QActionGroup,
-    QStatusBar,
-    QDockWidget,
-    QSizePolicy,
-    QPushButton,
-    QButtonGroup,
-    QMenu,
-    QStackedLayout,
-    QLabel,
-    QToolButton,
-    QMessageBox,
-    QWidgetAction
-)
-
+from PyQt5.QtCore import Qt, pyqtSignal, QSettings
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction
 from PyQt5.QtGui import QIcon
-
-# local dependencies
-from    sysmo_colors     import getPalette
-from    sysmo_images     import getIcon, sysmoGraphicsInit, dumpPalette, getPixmap
-from    sysmo_dialogs    import Proxy
-from    sysmo_statusbar  import NStatusBar
-from    sysmo_centerwidget   import NCentralFrame
-from    sysmo_widgets    import Community
-
-# supercast
-from  supercast.main    import Supercast
-
+from functools import partial
+from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap
+from sysmo_dialogs import Proxy
+from sysmo_statusbar import NStatusBar
+from sysmo_centerwidget import NCentralFrame
+from sysmo_widgets import Community
+from supercast.main import Supercast
 
 class NMainWindow(QMainWindow):
 

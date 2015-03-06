@@ -1,36 +1,8 @@
-from PyQt5.QtWidgets   import (
-    QSpinBox,
-    QDialog,
-    QWizard,
-    QWizardPage,
-    QLabel,
-    QVBoxLayout,
-    QCommandLinkButton,
-    QButtonGroup,
-    QFormLayout,
-    QCheckBox,
-    QFrame,
-    QLineEdit,
-    QGridLayout,
-    QComboBox,
-    QPushButton,
-    QGroupBox,
-    QTreeWidget,
-    QTreeWidgetItem,
-    QMessageBox,
-    QMenu,
-    QWidgetAction,
-    QDialogButtonBox,
-    QListWidget,
-    QAction
-
-)
-from PyQt5.QtCore import Qt
-
+from PyQt5.QtWidgets import QWizard, QWizardPage, QMenu, QListWidget, QAction
 from functools import partial
-from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer, NMenuButton
+from sysmo_widgets import NGrid, NMenuButton
 import sysmapi
-import monitor.api      as monapi
+import monitor.api as monapi
 
 
 class UserOperationsWizard(QWizard):

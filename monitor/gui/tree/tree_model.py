@@ -1,13 +1,5 @@
-from    PyQt5.QtCore   import (
-    Qt,
-    QTimer
-)
-from    PyQt5.QtGui    import (
-    QStandardItemModel,
-    QStandardItem,
-    QIcon
-)
-
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 import sysmapi
 import monitor.api as monapi
 

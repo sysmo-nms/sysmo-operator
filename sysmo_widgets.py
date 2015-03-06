@@ -1,33 +1,10 @@
-# PyQt5
-from    PyQt5.QtSvg    import QSvgWidget
-from    PyQt5.QtCore   import (
-    QObject,
-    Qt,
-    QUrl,
-    pyqtSignal,
-    QRegExp
-)
-
-from    PyQt5.QtGui    import (
-    QRegExpValidator,
-    QValidator,
-    QDesktopServices,
-    QIcon
-)
-from    PyQt5.QtWidgets    import (
-    QFrame,
-    QLabel,
-    QGridLayout,
-    QSplitter,
-    QCommandLinkButton,
-    QPushButton,
-    QAction,
-    QLineEdit
-)
-
+from PyQt5.QtSvg import QSvgWidget
+from PyQt5.QtCore import QObject, QUrl, pyqtSignal, QRegExp
+from PyQt5.QtGui import QRegExpValidator, QDesktopServices, QIcon
+from PyQt5.QtWidgets import QFrame, QLabel, QGridLayout, QSplitter, QCommandLinkButton, QPushButton, QAction, QLineEdit
+from functools import partial
 import sysmo_images
 import tempfile
-from   functools import partial
 
 # temporary file
 class NTemporaryFile(QObject):

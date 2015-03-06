@@ -1,23 +1,14 @@
-from    PyQt5.QtGui    import (
-    QDesktopServices,
-    QFont,
-    QIcon
-)
-from    PyQt5.QtWidgets    import (
-    QMenu,
-    QAction,
-    QMessageBox
-)
+from PyQt5.QtGui import QDesktopServices, QFont, QIcon
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox
 from PyQt5.QtCore import QUrl
-
-from    monitor.dialogs.user_operations     import UserOperationsWizard
-from    monitor.dialogs.new_probe           import NewProbe
-from    monitor.dialogs.properties.target   import openPropertiesFor
-from    sysmo_widgets                       import NAction
-from    functools                           import partial
-import  monitor.api     as monapi
-import  supercast.main  as supercast
-import  sysmapi
+from monitor.dialogs.user_operations import UserOperationsWizard
+from monitor.dialogs.new_probe import NewProbe
+from monitor.dialogs.properties.target import openPropertiesFor
+from sysmo_widgets import NAction
+from functools import partial
+import monitor.api as monapi
+import supercast.main as supercast
+import sysmapi
 
 
 class TargetMenu(QMenu):
@@ -108,6 +99,7 @@ class TargetMenu(QMenu):
         monapi.execUOperation(action, element)
 
     def _openDocEngine(self):
+        # WTF TODO docengine not used?
         url = QUrl('http://www.wikipedia.org/wiki/%s' % self._currentTarget)
         QDesktopServices.openUrl(url)
 

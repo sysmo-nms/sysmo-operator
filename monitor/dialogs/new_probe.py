@@ -1,38 +1,8 @@
-#from    PyQt5.QtGui        import QIcon
-from    PyQt5.QtWidgets    import (
-    #QToolBox,
-    QDialog,
-    QProgressDialog,
-    QAbstractScrollArea,
-    QLabel,
-    QCommandLinkButton
-
-    #QWidget,
-    #QLabel,
-    #QFrame,
-    #QGridLayout,
-    #QListView,
-    #QListWidget,
-    #QListWidgetItem,
-    #QAbstractItemView,
-    #QStackedWidget,
-    #QPushButton
-)
-
-#from    PyQt5.QtCore   import QSettings, QSize, Qt
-from    sysmo_widgets    import (
-    NFrameContainer,
-    NGridContainer,
-    NFrame,
-    NGrid
-)
-
+from PyQt5.QtWidgets import QDialog, QProgressDialog, QAbstractScrollArea, QCommandLinkButton
+from sysmo_widgets import NGrid
 import supercast.main as supercast
 from sysmo_widgets import NTemporaryFile
 import xml.etree.ElementTree as ET
-#import  sysmapi
-#import  monitor.api    as monapi
-
 
 class NewProbe(QDialog):
     def __init__(self, target, parent = None):
@@ -47,7 +17,6 @@ class NewProbe(QDialog):
         mgrid   = NGrid(self)
         mgrid.addWidget(area)
         self._cgrid = NGrid(area)
-        #self._cgrid.addWidget(QLabel('hello', self), 0,0)
 
         
     def _finalizeLayout(self):

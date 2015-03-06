@@ -1,20 +1,7 @@
-# PyQt5
-from    PyQt5.QtCore   import QRect
-from    PyQt5.QtGui    import (
-    QPainter,
-    QColor,
-    QRadialGradient,
-    QBrush
-)
-from    PyQt5.QtWidgets    import (
-    QStackedLayout,
-    QGridLayout,
-    QLabel,
-    QFrame
-)
-import sysmo_ramp
-import sysmo_main
+from PyQt5.QtGui import QPainter, QColor, QRadialGradient, QBrush
+from PyQt5.QtWidgets import QStackedLayout, QLabel, QFrame
 from sysmo_widgets import NFrameContainer, NGrid, NFrame
+import sysmo_ramp
 
 class NCentralFrame(NFrame):
 

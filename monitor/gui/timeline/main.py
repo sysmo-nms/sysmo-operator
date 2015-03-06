@@ -1,29 +1,7 @@
-from    PyQt5.QtGui    import (
-    QPalette,
-    QIcon
-)
-from    PyQt5.QtWidgets    import (
-    QTreeView,
-    QFrame,
-    QPushButton,
-    QLabel,
-    QLineEdit,
-    QTextEdit,
-    QSlider,
-    QButtonGroup,
-    QStackedLayout,
-    QScrollArea
-)
-
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QPushButton, QLabel, QLineEdit, QTextEdit, QSlider, QButtonGroup, QStackedLayout, QScrollArea
 from PyQt5.QtCore import Qt
-from sysmo_widgets   import (
-    NFrame,
-    NFrameContainer,
-    NGridContainer,
-    NGrid,
-    NInfoButton
-)
-
+from sysmo_widgets import NFrame, NFrameContainer, NGridContainer, NGrid
 import sysmapi
 
 

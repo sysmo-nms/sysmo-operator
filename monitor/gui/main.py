@@ -1,15 +1,10 @@
-from PyQt5.QtWidgets import QSplitter, QStackedWidget
-from PyQt5.QtCore import QSettings, QTimeLine
-from    sysmo_widgets    import (
-    NFrameContainer, NFrame,
-    NGridContainer, NGrid
-)
-
-from    monitor.gui.tree.main          import ProbesTree
-from    monitor.gui.timeline.main      import Timeline
-from    monitor.gui.rightmaps.main         import RightMapsContainer
-#import  monitor.api as monapi
-import  sysmapi
+from PyQt5.QtWidgets import QSplitter
+from PyQt5.QtCore import QSettings
+from sysmo_widgets import NFrameContainer, NGridContainer
+from monitor.gui.tree.main import ProbesTree
+from monitor.gui.timeline.main import Timeline
+from monitor.gui.rightmaps.main import RightMapsContainer
+import sysmapi
 
 class TreeContainer(NFrameContainer):
     def __init__(self, parent):

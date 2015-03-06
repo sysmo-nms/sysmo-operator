@@ -1,23 +1,10 @@
-from    PyQt5.QtCore   import Qt, QSize
-from    PyQt5.QtGui    import QIcon
-from    PyQt5.QtWidgets   import (
-    QFrame,
-    QPushButton,
-    QTabWidget,
-    QTabBar,
-    QMdiArea
-)
-
-from    monitor.widgets         import OSMView
-from    monitor.gui.rightmaps.dependencies import MDIDependencies
-from    sysmo_widgets             import (
-    NFrameContainer,
-    NGridContainer,
-    NGrid,
-    NFrame
-)
-
-import  sysmapi
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QPushButton, QTabWidget
+from monitor.widgets import OSMView
+from monitor.gui.rightmaps.dependencies import MDIDependencies
+from sysmo_widgets import NFrameContainer, NGridContainer, NGrid, NFrame
+import sysmapi
 
 class RightMapsContainer(NFrame):
     def __init__(self, parent):

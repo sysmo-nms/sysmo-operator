@@ -1,19 +1,7 @@
-#!/usr/bin/env python2
-from    PyQt5.QtWidgets        import (
-    QDialog,
-    QLineEdit,
-    QSpinBox,
-    QDialogButtonBox,
-    QPushButton,
-    QFormLayout,
-    QCheckBox,
-    QButtonGroup,
-    QLabel
-)
-from    PyQt5.QtSvg        import QSvgWidget
-from    PyQt5.QtGui        import QIcon
-from    sysmo_widgets    import NFrame, NGrid
-import  sysmapi
+from PyQt5.QtWidgets import QDialog, QLineEdit, QSpinBox, QDialogButtonBox, QPushButton, QCheckBox, QButtonGroup, QLabel
+from PyQt5.QtGui import QIcon
+from sysmo_widgets import NFrame, NGrid
+import sysmapi
 
 class Proxy(QDialog):
     def __init__(self, callback, parent=None):

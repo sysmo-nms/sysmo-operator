@@ -1,27 +1,6 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import (
-    QObject,
-    QSettings,
-    pyqtSignal
-)
-from PyQt5.QtWidgets import (
-    QDialog,
-    QDialogButtonBox,
-    QPushButton,
-    QFormLayout,
-    QLabel,
-    QLineEdit,
-    QComboBox,
-    QFrame,
-    QSpinBox
-)
-
-from sysmo_widgets import (
-    NGrid,
-    NFrameContainer,
-    NGridContainer
-)
-
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox
+from sysmo_widgets import NGrid, NFrameContainer
 import sysmapi
 
 class DocConfigurator(QDialog):

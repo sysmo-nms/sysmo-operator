@@ -1,18 +1,6 @@
-# PyQt5
-from    PyQt5.QtCore   import (
-    pyqtSignal,
-    Qt,
-    QMimeData
-)
-
-from    PyQt5.QtGui    import (
-    QDrag,
-    QIcon
-)
-from    PyQt5.QtWidgets    import (
-    QPushButton
-)
-
+from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtGui import QDrag, QIcon
+from PyQt5.QtWidgets import QPushButton
 import sysmo_images
 import sysmo_centerwidget
 

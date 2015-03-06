@@ -1,26 +1,12 @@
-from    PyQt5.QtCore   import (
-    Qt,
-    QSize,
-    QSortFilterProxyModel,
-    QSettings
-)
-
-from    PyQt5.QtWidgets    import (
-    QTreeView,
-    QMenu,
-    QAction,
-    QAbstractItemView
-)
-
-from    functools import partial
-from    monitor.dialogs.properties.probe.main import openPropertiesFor
-from    monitor.gui.tree.tree_model    import ProbeModel
-from    monitor.menus.tree_probe   import ProbeMenu
-from    monitor.menus.tree_target  import TargetMenu
-import  monitor.user_operations
-import  monitor.gui.tree.tree_delegate as pdelegate
-import  monitor.api                        as monapi
-import  sysmapi
+from PyQt5.QtCore import Qt, QSize, QSortFilterProxyModel, QSettings
+from PyQt5.QtWidgets import QTreeView, QAbstractItemView
+from monitor.dialogs.properties.probe.main import openPropertiesFor
+from monitor.gui.tree.tree_model import ProbeModel
+from monitor.menus.tree_probe import ProbeMenu
+from monitor.menus.tree_target import TargetMenu
+import monitor.gui.tree.tree_delegate as pdelegate
+import monitor.user_operations
+import sysmapi
 
 class ProbesTreeview(QTreeView):
     def __init__(self, parent):

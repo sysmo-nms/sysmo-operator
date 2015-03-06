@@ -1,31 +1,10 @@
-# python lib
+from PyQt5.QtCore import Qt, pyqtSignal, QSize
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QSizePolicy, QPushButton, QButtonGroup, QMenu
+from PyQt5.QtSvg import QSvgWidget
+from sysmo_images import getImage, getPixmap
+from sysmo_widgets import NFrameContainer, NGridContainer, NGrid
 from functools import partial
-
-# PyQt5
-from    PyQt5.QtCore   import (
-    Qt,
-    pyqtSignal,
-    QSettings,
-    QSize
-)
-
-from    PyQt5.QtGui    import QIcon
-from    PyQt5.QtWidgets    import (
-    QAction,
-    QActionGroup,
-    QSizePolicy,
-    QPushButton,
-    QButtonGroup,
-    QMenu,
-    QLabel,
-    QToolButton,
-)
-
-from PyQt5.QtSvg   import QSvgWidget
-
-# local dependencies
-from    sysmo_images     import getIcon, getImage, getPixmap
-from    sysmo_widgets    import NFrameContainer, NGridContainer, NFrame, NGrid
 
 # opus
 import  monitor.main

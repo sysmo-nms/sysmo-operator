@@ -1,29 +1,8 @@
-from    PyQt5.QtCore   import (
-    Qt,
-    QSize,
-    QRect
-)
-
-from    PyQt5.QtGui    import (
-    QPalette,
-    QColor,
-    QImage
-)
-from    PyQt5.QtWidgets    import (
-    QStyle,
-    QStyledItemDelegate,
-    QStyleOptionProgressBar,
-    QApplication,
-)
-
-from    functools import partial
-from    monitor.gui.tree.tree_model    import ProbeModel
-
+from PyQt5.QtCore import Qt, QSize, QRect
+from PyQt5.QtGui import QPalette, QColor, QImage
+from PyQt5.QtWidgets import QStyle, QStyledItemDelegate, QStyleOptionProgressBar, QApplication
 import monitor.gui.tree.tree_model as treemod
-
-import  monitor.api    as monapi
-import  sysmapi
-
+import sysmapi
 
 class StatusItemDelegate(QStyledItemDelegate):
     def __init__(self, parent):

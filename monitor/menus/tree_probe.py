@@ -1,18 +1,8 @@
-from    PyQt5.QtGui        import QIcon
-from    PyQt5.QtWidgets    import (
-    QMenu,
-    QAction,
-    QErrorMessage,
-    QMessageBox
-
-)
-
-
-from    functools import partial
-from    monitor.dialogs.properties.probe.main   import openPropertiesFor
-import  monitor.api    as monapi
-import  sysmapi
-import  supercast.main as supercast
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMenu, QAction, QErrorMessage, QMessageBox
+from monitor.dialogs.properties.probe.main import openPropertiesFor
+import supercast.main as supercast
+import sysmapi
 
 class ProbeMenu(QMenu):
     def __init__(self, parent):

@@ -1,26 +1,9 @@
-from    PyQt5.QtWidgets     import QFrame
-from    sysmo_widgets import (NFrame, NGrid)
-
-from    monitor.gui.tree.tree_view     import ProbesTreeview
-
-from    PyQt5.QtGui    import QIcon
-from    PyQt5.QtWidgets    import (
-    QLineEdit,
-    QPushButton,
-    QCommandLinkButton,
-    QWidgetAction,
-    QMenu
-)
-
-from    sysmo_widgets        import (
-    NFrameContainer,
-    NGridContainer,
-    NInfoButton,
-    NGrid
-)
-
-from    monitor.dialogs.new_target import NewTargetDialog
-
+from PyQt5.QtWidgets import QFrame
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QLineEdit, QPushButton
+from sysmo_widgets import NFrameContainer, NGridContainer, NInfoButton, NGrid, NFrame
+from monitor.gui.tree.tree_view import ProbesTreeview
+from monitor.dialogs.new_target import NewTargetDialog
 import sysmapi
 
 
