@@ -35,7 +35,7 @@ from    sysmo_widgets    import (
 )
 
 from    monitor.proxy           import AbstractChannelWidget, ChanHandler
-from    monitor.elements_properties.probe.rrdarea  import RrdArea
+from    monitor.dialogs.properties.probe.rrdarea  import RrdArea
 import  monitor.api    as monapi
 import  monitor.norrd  as norrd
 

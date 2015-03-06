@@ -9,8 +9,7 @@ from    PyQt5.QtWidgets    import (
 
 
 from    functools import partial
-from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.elements_properties.probe.main   import openPropertiesFor
+from    monitor.dialogs.properties.probe.main   import openPropertiesFor
 import  monitor.api    as monapi
 import  sysmapi
 import  supercast.main as supercast
@@ -18,7 +17,6 @@ import  supercast.main as supercast
 class ProbeMenu(QMenu):
     def __init__(self, parent):
         super(ProbeMenu, self).__init__(parent)
-        self._puActionWiz   = None
         self._showPerfs     = None
         self.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
 
@@ -56,12 +54,6 @@ class ProbeMenu(QMenu):
     #######
     # API #
     #######
-    def _launchUserActionsWiz(self, elem):
-        uaWiz = UserActionsWizard(self, element=elem)
-
-    def _userAction(self, element, action):
-        monapi.execUAction(action, element)
-
     def _suspendProbe(self):
         trayicon = sysmapi.nGetSystemTrayIcon()
         trayicon.showMessage('Command return:', 'Suspend check succeeded blablabla bla...', msecs=3000)

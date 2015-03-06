@@ -1,7 +1,7 @@
 import  monitor.proxy
 import  monitor.gui.tree
 import  monitor.norrd
-import  monitor.commands.user_actions
+import  monitor.user_operations
 
 def connectToEvent(eventType, pyCallable):
     "Connect to events emited by the server."
@@ -32,23 +32,23 @@ def getProbesFor(target):
 def getProbesDict():
     return monitor.proxy.ChanHandler.singleton.probes
 
-def connectToUActionSettings(pyCallable):
-    ua = monitor.commands.user_actions.UserActions.singleton
+def connectToUOperationSettings(pyCallable):
+    ua = monitor.user_operations.UserOperations.singleton
     ua.uactionsSettings.connect(pyCallable)
 
-def addTargetAction(action, target):
-    ua = monitor.commands.user_actions.UserActions.singleton
-    ua.addTargetAction(action, target)
+def addTargetOperation(action, target):
+    ua = monitor.user_operations.UserOperations.singleton
+    ua.addTargetOperation(action, target)
 
-def getUActionsFor(element):
-    ua = monitor.commands.user_actions.UserActions.singleton
-    return ua.getUActionsFor(element)
+def getUOperationsFor(element):
+    ua = monitor.user_operations.UserOperations.singleton
+    return ua.getUOperationsFor(element)
 
-def getUActionsCmds():
-    sin = monitor.commands.user_actions.UserActions.singleton
-    cmd = sin.getUActionsCmds()
+def getUOperationsCmds():
+    sin = monitor.user_operations.UserOperations.singleton
+    cmd = sin.getUOperationsCmds()
     return cmd
 
-def execUAction(action, target):
-    ua = monitor.commands.user_actions.UserActions.singleton
-    return ua.execUAction(action, target)
+def execUOperation(action, target):
+    ua = monitor.user_operations.UserOperations.singleton
+    return ua.execUOperation(action, target)

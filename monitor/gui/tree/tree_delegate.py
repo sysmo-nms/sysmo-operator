@@ -18,7 +18,6 @@ from    PyQt5.QtWidgets    import (
 
 from    functools import partial
 from    monitor.gui.tree.tree_model    import ProbeModel
-from    monitor.commands.wizards           import UserActionsWizard
 
 import monitor.gui.tree.tree_model as treemod
 

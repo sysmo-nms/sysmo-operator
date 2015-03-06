@@ -19,7 +19,7 @@ from    sysmo_widgets        import (
     NGrid
 )
 
-from    monitor.commands.target_utils import NewTargetDialog
+from    monitor.dialogs.new_target import NewTargetDialog
 
 import sysmapi
 

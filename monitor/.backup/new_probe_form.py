@@ -370,3 +370,74 @@ class Page3(QWizardPage):
         self._wizard.page3_config = confDict
         self._wizard.validateConfig() 
         return True
+from PyQt5.QtWidgets   import (
+    QSpinBox,
+    QDialog,
+    QWizard,
+    QWizardPage,
+    QLabel,
+    QVBoxLayout,
+    QCommandLinkButton,
+    QButtonGroup,
+    QFormLayout,
+    QCheckBox,
+    QFrame,
+    QLineEdit,
+    QGridLayout,
+    QComboBox,
+    QPushButton,
+    QGroupBox,
+    QTreeWidget,
+    QTreeWidgetItem,
+    QMessageBox,
+    QMenu,
+    QWidgetAction,
+    QDialogButtonBox
+)
+from PyQt5.QtCore import Qt
+
+from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
+import sysmapi
+import monitor.api as monapi
+import supercast.main   as supercast
+
+class ProbeWizard(QWizard):
+    def __init__(self, defs, key, parent, pyCall, defaultIp=None):
+        super(ProbeWizard, self).__init__(parent)
+        self._callback = pyCall
+        #self.setFixedWidth(800)
+        self.setModal(True)
+        self.probeKey   = key
+        self.defaultIp  = defaultIp
+        self.defs       = defs
+        ppage1 = ProbeElement.Page1(self)
+        ppage2 = ProbeElement.Page2(self)
+        ppage3 = ProbeElement.Page3(self)
+        self.setOption(QWizard.NoBackButtonOnStartPage, True)
+        self.setPage(1, ppage1)
+        self.setPage(2, ppage2)
+        self.setPage(3, ppage3)
+        self.setStartId(1)
+        self.page1_config = None
+        self.page3_config = None
+        self.setPixmap(QWizard.WatermarkPixmap, sysmapi.nGetPixmap('radar'))
+        self.setPixmap(QWizard.LogoPixmap,sysmapi.nGetPixmap('applications-system'))
+        # page2 use QWizard.registerField
+        # self.page2_config = None 
+        self.show()
+
+    def validateConfig(self):
+        checkDef = dict()
+        checkDef['def']     = self.page1_config
+        checkDef['display_name'] = self.field('p2_display_name')
+        checkDef['step']    = self.field('p2_check_step')
+        checkDef['alert']   = self.page3_config
+        checkDef['exe']     = self.probeKey
+
+        descr   = self.field('p2_description')
+        if descr == None:
+            checkDef['descr'] = ""
+        else:
+            checkDef['descr'] = descr
+
+        self._callback(checkDef)

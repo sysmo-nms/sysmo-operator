@@ -13,12 +13,11 @@ from    PyQt5.QtWidgets    import (
 )
 
 from    functools import partial
-from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.elements_properties.probe.main import openPropertiesFor
+from    monitor.dialogs.properties.probe.main import openPropertiesFor
 from    monitor.gui.tree.tree_model    import ProbeModel
-from    monitor.context_menus.probe   import ProbeMenu
-from    monitor.context_menus.target  import TargetMenu
-import  monitor.commands.user_actions
+from    monitor.menus.tree_probe   import ProbeMenu
+from    monitor.menus.tree_target  import TargetMenu
+import  monitor.user_operations
 import  monitor.gui.tree.tree_delegate as pdelegate
 import  monitor.api                        as monapi
 import  sysmapi
@@ -98,7 +97,7 @@ class ProbesTreeview(QTreeView):
             openPropertiesFor(probe, display)
         else:
             targetid = item.data(Qt.UserRole + 1)
-            monitor.commands.user_actions.launchOperationFor(self, targetid)
+            monitor.user_operations.launchOperationFor(self, targetid)
 
     def filterThis(self, text):
         self.proxy.setFilterFixedString(text)

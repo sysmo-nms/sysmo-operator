@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets   import (
+    QSpinBox,
+    QDialog,
     QWizard,
     QWizardPage,
     QLabel,
@@ -15,24 +17,35 @@ from PyQt5.QtWidgets   import (
     QGroupBox,
     QTreeWidget,
     QTreeWidgetItem,
-    QListWidget,
     QMessageBox,
     QMenu,
+    QWidgetAction,
+    QDialogButtonBox,
+    QListWidget,
     QAction
+
 )
 from PyQt5.QtCore import Qt
 
-from sysmo_widgets import (
-    NGrid,
-    NFrame,
-    NGridContainer,
-    NFrameContainer,
-    NMenuButton
-)
 from functools import partial
+from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer, NMenuButton
 import sysmapi
-import monitor.api as monapi
+import monitor.api      as monapi
 
+
+class UserOperationsWizard(QWizard):
+    def __init__(self, parent=None, element=None):
+        super(UserOperationsWizard, self).__init__(parent)
+
+        self.setModal(True)
+        page1 = Page1(self, element)
+        self.setPage(1, page1)
+        self.setStartId(1)
+        self.setOption(QWizard.NoBackButtonOnStartPage, True)
+        self.setWizardStyle(QWizard.ModernStyle)
+        self.setPixmap(QWizard.WatermarkPixmap, sysmapi.nGetPixmap('console'))
+        self.setPixmap(QWizard.LogoPixmap,sysmapi.nGetPixmap('applications-system'))
+        self.show()
 
 class Page1(QWizardPage):
     def __init__(self, parent=None, element=None):
@@ -49,8 +62,8 @@ class Page1(QWizardPage):
         #self._propertyBox = QGroupBox(self.tr('Property binds'), self)
         #self._fillPropertiesBox()
 
-        #self._actionsBox  = QGroupBox(self.tr('Actions'), self)
-        #self._fillActionBox()
+        #self._actionsBox  = QGroupBox(self.tr('Operations'), self)
+        #self._fillOperationBox()
         # layout
 
         self._commButton = NMenuButton(self)
@@ -61,7 +74,7 @@ class Page1(QWizardPage):
         self._fillCommButton()
 
         self._actionList = QListWidget(self)
-        self._fillActionList()
+        self._fillOperationList()
 
         grid = NGrid(self)
         grid.setContentsMargins(5,10,5,5)
@@ -75,23 +88,23 @@ class Page1(QWizardPage):
         self.setLayout(grid)
         # layout end
 
-    def _fillActionList(self):
-        actions = monapi.getUActionsFor(self._elementName)
+    def _fillOperationList(self):
+        actions = monapi.getUOperationsFor(self._elementName)
         for i in range(len(actions)):
             self._actionList.addItem(actions[i])
 
 
     def _fillCommButton(self):
-        self._uactions = monapi.getUActionsCmds()
+        self._uactions = monapi.getUOperationsCmds()
         self._commList  = list()
         index           = 0
         for key in list(self._uactions.keys()):
             qact = QAction(key,self)
-            qact.triggered.connect(partial(self._addAction, key))
+            qact.triggered.connect(partial(self._addOperation, key))
             self._commMenu.addAction(qact)
 
-    def _addAction(self, action):
-        monapi.addTargetAction(action, self._elementName)
+    def _addOperation(self, action):
+        monapi.addTargetOperation(action, self._elementName)
         self._actionList.addItem(action)
 
     def nextId(self):

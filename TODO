@@ -10,8 +10,7 @@
 - proxy.py in a thread (lock the main loop)
 
 MAYBE:
-- Use a python version (3.x?) compiled with visual studio 2010
-- Rewrite client in pyqt5 or C++ qt5
+- Rewrite client in C++ qt5
 - keep an average packet time travel from server to client and add this in
 the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
@@ -20,8 +19,3 @@ entries of the treeview).
 
 ESTHETIC:
 - higlight selection in treeview
-
-
-BUGS
-- tko do not have updated property list. The problem dit not come 
-from the server.

@@ -6,8 +6,8 @@ from    PyQt5.QtCore   import (
 
 from PyQt5.QtWidgets import QMenu, QAction
 from    monitor                 import norrd
-from    monitor.commands.user_actions  import UserActions
-from    monitor.commands.doc_engine    import DocConfigurator
+from    monitor.user_operations    import UserOperations
+from    monitor.dialogs.doc_engine    import DocConfigurator
 from    monitor.gui.main    import TreeContainer
 from    monitor.proxy           import ChanHandler
 from    sysmo_widgets             import (
@@ -31,14 +31,14 @@ class Central(NFrameContainer):
 
         self._initRrdtool()
         self._initChanProxy()
-        self._initUserActions()
+        self._initUserOperations()
 
         grid  = NGridContainer(self)
         grid.addWidget(TreeContainer(self))
         self.setLayout(grid)
 
-    def _initUserActions(self):
-        self._userActions = UserActions(self)
+    def _initUserOperations(self):
+        self._userOperations = UserOperations(self)
 
     def _initRrdtool(self):
         norrd.start(self)

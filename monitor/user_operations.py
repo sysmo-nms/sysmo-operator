@@ -20,36 +20,36 @@ import subprocess
 import monitor.proxy
 
 def launchOperationFor(obj, target):
-    from monitor.commands.wizards import UserActionsWizard
-    ua = UserActions.singleton
-    ac = ua.getUActionsFor(target)
+    from monitor.dialogs.user_operations import UserOperationsWizard
+    ua = UserOperations.singleton
+    ac = ua.getUOperationsFor(target)
     if len(ac) == 0:
-        uw = UserActionsWizard(obj, target)
+        uw = UserOperationsWizard(obj, target)
     else:
         action = ac[0]
-        ua.execUAction(action, target)
+        ua.execUOperation(action, target)
         
         
 
-class UserActions(QObject):
+class UserOperations(QObject):
     
     signal = pyqtSignal()
 
     def __init__(self, parent=None):
-        super(UserActions, self).__init__(parent)
+        super(UserOperations, self).__init__(parent)
         self._settings = QSettings()
-        UserActions.singleton = self
+        UserOperations.singleton = self
         self._createConfExample()
         sysmapi.nConnectWillClose(self._saveSettings)
         self._loadSettings()
 
-    def getUActionsFor(self, element):
+    def getUOperationsFor(self, element):
         if element in list(self._UACfg.keys()):
             return self._UACfg[element]
         else:
             return []
             
-    def execUAction(self, action, target):
+    def execUOperation(self, action, target):
         targets = self._getTargetsDict()
         tprop   = targets[target]['properties']
 
@@ -63,30 +63,30 @@ class UserActions(QObject):
         args = shlex.split(line)
         subprocess.Popen(args)
 
-    def getUActionsCmds(self):
+    def getUOperationsCmds(self):
         return self._UACmds
 
     def _getTargetsDict(self):
         return monitor.proxy.ChanHandler.singleton.targets
 
     def _loadSettings(self):
-        UACmds = self._settings.value('monitor/user_actions_cmds')
+        UACmds = self._settings.value('monitor/user_operations_cmds')
         if UACmds == None:
             self._createConfExample()
-            self._UACmds = self._settings.value('monitor/user_actions_cmds')
+            self._UACmds = self._settings.value('monitor/user_operations_cmds')
         else:
             self._UACmds = UACmds
 
-        UACfg = self._settings.value('monitor/user_actions_cfg')
+        UACfg = self._settings.value('monitor/user_operations_cfg')
         if UACfg == None:
             UACfg = dict()
         self._UACfg  = UACfg
 
     def _saveSettings(self):
-        self._settings.setValue('monitor/user_actions_cmds', self._UACmds)
-        self._settings.setValue('monitor/user_actions_cfg',  self._UACfg)
+        self._settings.setValue('monitor/user_operations_cmds', self._UACmds)
+        self._settings.setValue('monitor/user_operations_cfg',  self._UACfg)
 
-    def addTargetAction(self, action, target):
+    def addTargetOperation(self, action, target):
         if target in list(self._UACfg.keys()):
             actionList = self._UACfg[target]
             actionList.append(action)
@@ -119,4 +119,4 @@ class UserActions(QObject):
 
         commandDb = dict()
         commandDb['Access SSH'] = command
-        self._settings.setValue('monitor/user_actions_cmds', commandDb)
+        self._settings.setValue('monitor/user_operations_cmds', commandDb)

@@ -32,16 +32,6 @@ import sysmapi
 import monitor.api as monapi
 import supercast.main   as supercast
 
-
-import monitor.commands.net_element_wizard.wizard_pages  as NetElement
-import monitor.commands.net_server_wizard.wizard_pages   as SrvElement
-import monitor.commands.probe_wizard.wizard_pages        as ProbeElement
-import monitor.commands.user_actions_wizard.wizard_pages as UActionPages
-import monitor.commands.properties as PropInfo
-
-import monitor.commands.add_element_pages as AddElementPages
-from monitor.commands.properties import SnmpConfigFrame
-
 IP_V4 = 0
 IP_V6 = 1
 

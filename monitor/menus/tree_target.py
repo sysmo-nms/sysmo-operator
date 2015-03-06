@@ -10,24 +10,24 @@ from    PyQt5.QtWidgets    import (
 )
 from PyQt5.QtCore import QUrl
 
-from    functools import partial
-from    monitor.commands.wizards           import UserActionsWizard
-from    monitor.configuration_forms.new_probe import NewProbe
-from    monitor.elements_properties.target import openPropertiesFor
-from    sysmo_widgets                        import NAction
-import  monitor.api                        as monapi
+from    monitor.dialogs.user_operations     import UserOperationsWizard
+from    monitor.dialogs.new_probe           import NewProbe
+from    monitor.dialogs.properties.target   import openPropertiesFor
+from    sysmo_widgets                       import NAction
+from    functools                           import partial
+import  monitor.api     as monapi
+import  supercast.main  as supercast
 import  sysmapi
-import  supercast.main as supercast
 
 
 class TargetMenu(QMenu):
     def __init__(self, parent):
         super(TargetMenu, self).__init__(parent)
-        self._tuActionWiz  = None
+        self._tuOperationWiz  = None
         #######################################################################
         ## DYNAMIC TARGETS MENUS ##############################################
         #######################################################################
-        self.localMenu    = QMenu(self.tr('Local Actions'), self)
+        self.localMenu    = QMenu(self.tr('Local operations'), self)
         self.localMenu.setIcon(QIcon(sysmapi.nGetPixmap('utilities-terminal')))
 
         self.configureAction = NAction(self.tr('Configure new action'), self)
@@ -69,12 +69,12 @@ class TargetMenu(QMenu):
 
 
     def showMenuFor(self, target, point):
-        uactions = monapi.getUActionsFor(target)
+        uactions = monapi.getUOperationsFor(target)
         self._currentTarget = target
-        if self._tuActionWiz != None:
-            self.configureAction.triggered.disconnect(self._tuActionWiz)
-        self._tuActionWiz = partial(self._launchUserActionsWiz, target)
-        self.configureAction.triggered.connect(self._tuActionWiz)
+        if self._tuOperationWiz != None:
+            self.configureAction.triggered.disconnect(self._tuOperationWiz)
+        self._tuOperationWiz = partial(self._launchUserOperationsWiz, target)
+        self.configureAction.triggered.connect(self._tuOperationWiz)
         if len(uactions) == 0:
             self.localMenu.setDisabled(True)
         else:
@@ -88,7 +88,7 @@ class TargetMenu(QMenu):
                 if bold == True:
                     qa.setFont(bfont)
                     bold = False
-                callback = partial(self._userAction, target, uactions[i])
+                callback = partial(self._userOperation, target, uactions[i])
                 qa.triggered.connect(callback)
                 self.localMenu.addAction(qa)
 
@@ -98,14 +98,14 @@ class TargetMenu(QMenu):
     #######
     # API #
     #######
-    def _launchUserActionsWiz(self, elem):
-        uaWiz = UserActionsWizard(self, element=elem)
+    def _launchUserOperationsWiz(self, elem):
+        uaWiz = UserOperationsWizard(self, element=elem)
 
-    def _createProbeAction(self, msg):
+    def _createProbeOperation(self, msg):
         print(("create prboe ", msg))
 
-    def _userAction(self, element, action):
-        monapi.execUAction(action, element)
+    def _userOperation(self, element, action):
+        monapi.execUOperation(action, element)
 
     def _openDocEngine(self):
         url = QUrl('http://www.wikipedia.org/wiki/%s' % self._currentTarget)
