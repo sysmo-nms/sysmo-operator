@@ -187,7 +187,7 @@ class TargetItem(QStandardItem):
 
     def handleProbeReturn(self, msg):
         count = self.rowCount()
-        probe = msg['value']['id']
+        probe = msg['value']['name']
         for i in range(count):
             if self.child(i).name == probe:
                 self.child(i).handleReturn(msg)

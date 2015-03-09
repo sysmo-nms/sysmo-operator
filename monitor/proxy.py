@@ -129,20 +129,20 @@ class ChanHandler(QObject):
         del self.chanpyqtSignals[channel]
 
     def _handleProbeDump(self, msg):
-        channel = msg['value']['id']
+        channel = msg['value']['name']
         self._chanProxy[channel].handleDump(msg)
 
     def _handleProbeReturn(self, msg):
-        channel = msg['value']['id']
+        channel = msg['value']['name']
         if channel in list(self._chanProxy.keys()):
             self._chanProxy[channel].handleReturn(msg)
 
     def _handleLoggerRrdEventMsg(self, msg):
-        channel = msg['value']['id']
+        channel = msg['value']['name']
         self._chanProxy[channel].handleLoggerRrdEvent(msg)
 
     def _handleEventMsg(self, msg):
-        channel = msg['value']['id']
+        channel = msg['value']['name']
         self._chanProxy[channel].handleEvent(msg)
 
     def _handleProbeInfo(self, msg):

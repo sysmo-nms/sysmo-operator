@@ -50,11 +50,14 @@ class ProbeMenu(QMenu):
         print(("suspend probe ", self._currentProbe))
 
     def _forceCheck(self):
-        supercast.send(
-            'monitorForceProbeQuery',
-            (self._currentProbe),
-            self._forceProbeReply
-        )
+        pdu = {
+            'from': 'monitor',
+            'type': 'forceProbeQuery',
+            'value': {
+                'name': self._currentProbe
+            }
+        }
+        supercast.send(pdu, self._forceProbeReply)
 
     def _forceProbeReply(self, msg):
         trayicon = sysmapi.nGetSystemTrayIcon()
@@ -71,11 +74,14 @@ class ProbeMenu(QMenu):
         msgBox.setIcon(QMessageBox.Warning)
         r = msgBox.exec_()
         if r == QMessageBox.Apply:
-            supercast.send(
-                'monitorDeleteProbeQuery',
-                (self._currentProbe),
-                self._deleteProbeReply
-            )
+            pdu = {
+                'from': 'monitor',
+                'type': 'deleteProbeQuery',
+                'value': {
+                    'name': self._currentProbe
+                }
+            }
+            supercast.send(pdu, self._deleteProbeReply)
 
     def _deleteProbeReply(self, msg):
         print(("delete probe: ", msg))

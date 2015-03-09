@@ -463,7 +463,7 @@ class CreateTargetDialog(QProgressDialog):
         self.setLabel(QLabel('Getting SNMP interfaces informations...',self))
         pdu = {
             'from': 'monitor',
-            'type': 'monitorElementInterfaceQuery',
+            'type': 'SnmpElementInterfaceQuery',
             'value': {
                 'sysProperties': self._sprops,
                 'properties':    self._props
@@ -491,7 +491,7 @@ class CreateTargetDialog(QProgressDialog):
         self.setLabel(QLabel('Create target...',self))
         pdu = {
             'from': 'monitor',
-            'type': 'monitorCreateTargetQuery',
+            'type': 'createTargetQuery',
             'value': {
                 'sysProperties': self._sprops,
                 'properties':    self._props
