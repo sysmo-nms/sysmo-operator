@@ -148,13 +148,11 @@ class ChanHandler(QObject):
     def _handleProbeInfo(self, msg):
         infoProbe   = msg['value']
         probeName   = infoProbe['name']
-        #print(("probeName", probeName))
         self.probes[probeName] = infoProbe
 
     def _handleTargetInfo(self, msg):
         infoTarget  = msg['value']
         targetName  = infoTarget['name']
-        #print(("targetName", targetName))
         self.targets[targetName] = infoTarget
 
 

@@ -489,14 +489,15 @@ class CreateTargetDialog(QProgressDialog):
 
     def _createTargetQuery(self):
         self.setLabel(QLabel('Create target...',self))
-        supercast.send(
-            'monitorCreateTargetQuery',
-            (
-                self._sprops,
-                self._props
-            ),
-            self._createTargetReply
-        )
+        pdu = {
+            'from': 'monitor',
+            'type': 'monitorCreateTargetQuery',
+            'value': {
+                'sysProperties': self._sprops,
+                'properties':    self._props
+            }
+        }
+        supercast.send(pdu, self._createTargetReply)
 
     def _createTargetReply(self, reply):
         if reply['value']['status'] == True:
@@ -519,15 +520,16 @@ class CreateTargetDialog(QProgressDialog):
             self.deleteLater()
 
     def _createIcmpQuery(self):
-        supercast.send(
-            'monitorCreateNchecksQuery',
-            (
-                self._targetName,
-                'icmp',
-                dict()
-            ),
-            self._createIcmpReply
-        )
+        pdu = {
+            'from': 'monitor',
+            'type': 'createNchecksQuery',
+            'value': {
+                'target': self._targetName,
+                'name': 'icmp',
+                'properties': {}
+            }
+        }
+        supercast.send(pdu, self._createIcmpReply)
 
     def _createIcmpReply(self, msg):
         print(("reply icmp: ", msg))

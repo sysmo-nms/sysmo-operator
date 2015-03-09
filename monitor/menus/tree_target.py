@@ -111,11 +111,14 @@ class TargetMenu(QMenu):
         msgBox.setIcon(QMessageBox.Warning)
         r = msgBox.exec_()
         if r == QMessageBox.Apply:
-            supercast.send(
-                'monitorDeleteTargetQuery',
-                (self._currentTarget),
-                self._deleteTargetReply
-            )
+            pdu = {
+                'from': 'monitor',
+                'type': 'deleteTargetQuery',
+                'value': {
+                    'name': self._currentTarget
+                }
+            }
+            supercast.send(pdu, self._deleteTargetReply)
     
     def _deleteTargetReply(self, msg):
         print(("reply, ", msg))
