@@ -47,13 +47,43 @@ class SupercastSocket(QObject):
             (server, port) = payload
             self._socket.connectToHost(server, port)
         elif key == 'authResp':
-            (name, passw) = payload
-            pdu = encode('authResp', (name, passw))
-            self._sendToServer(pdu)
+            (name, password) = payload
+            pdu = {
+                'from': 'supercast',
+                'type': 'authResp',
+                'value': {
+                    'name':     name,
+                    'password': password}
+            }
+            self._sendToServer(encode(pdu))
+        elif key == 'subscribe':
+            (queryId, channel) = payload
+            pdu = {
+                'from': 'supercast',
+                'type': 'subscribe',
+                'value': {
+                    'queryId': queryId,
+                    'channel': channel
+                }
+            }
+            self._sendToServer(encode(pdu))
+        elif key == 'unsubscribe':
+            (queryId, channel) = payload
+            pdu = {
+                'from': 'supercast',
+                'type': 'unsubscribe',
+                'value': {
+                    'queryId': queryId,
+                    'channel': channel
+                }
+            }
+            self._sendToServer(encode(pdu))
+        elif key == None:
+            pdu = payload
+            self._sendToServer(encode(pdu))
         else:
-            pdu = encode(key, payload)
-            if pdu == False: return
-            else: self._sendToServer(pdu)
+            print("unknown key for mQueue", key)
+        
 
     def _sendToServer(self, pdu):
         request = QByteArray()

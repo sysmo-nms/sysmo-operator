@@ -67,7 +67,7 @@ class Supercast(QObject):
         self.staticChans        = dict()
         self._mpd               = dict()
         self._queries           = dict()
-        self.setMessageProcessor('modSupercastPDU', self._handleSupercastPDU)
+        self.setMessageProcessor('supercast', self._handleSupercastPDU)
 
     # from client to socket
     def setMessageProcessor(self, fromKey, pyCallable):
@@ -83,7 +83,7 @@ class Supercast(QObject):
 
     def send(self, pduType, message, callback):
         queryId = self._getQueryId(callback)
-        self.lQueue.emit((pduType, (queryId, message)))
+        self.lQueue.emit((None, (queryId, message)))
 
     def _getQueryId(self, pyCallable):
         queryId = 0
@@ -103,13 +103,14 @@ class Supercast(QObject):
             del self._queries[queryId]
 
     def _queryNotify(self, msg):
-        queryId = msg['queryId']
+        queryId = msg['value']['queryId']
         caller  = self._queries[queryId]
         caller(msg)
         del self._queries[queryId]
 
     # from socket
     def _handleThreadMsg(self, msg):
+        print("handleThreadMsg", msg)
         (msgType, payload) = msg
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])
@@ -163,19 +164,19 @@ class Supercast(QObject):
 
 
     def _handleSupercastPDU(self, msg):
-        msgType = msg['msgType']
+        msgType = msg['type']
         if (msgType == 'serverInfo'):
             self._setSupConn(True)
-            self.serverAuthProto    = msg['authProto']
-            self.dataPort           = msg['dataPort']
-            self.dataProto          = msg['dataProto']
+            self.serverAuthProto    = msg['value']['authType']
+            self.dataPort           = msg['value']['dataPort']
+            self.dataProto          = msg['value']['dataProto']
             self._initHttpManager()
             self.lQueue.emit(('authResp', (self.userName, self.userPass)))
         elif (msgType == 'authAck'):
             self._setUserConn(True)
             self.groups = msg['value']['groups']
-            for item in msg['value']['chans']:
-                self._handleChanInfo(item)
+            for channel in msg['value']['staticChans']:
+                self._handleChanInfo(channel)
         elif (msgType == 'subscribeOk'):
             self._subscribeSuccess(msg['value'])
             self._queryNotify(msg)
@@ -199,18 +200,16 @@ class Supercast(QObject):
     def _unsubscribeSuccess(self, chan):
         self.activeChannels.remove(chan)
 
-    def _handleChanInfo(self, item):
-        if (item['eventType'] == 'create'):
-            self.staticChans.update({item['channelId']: None})
-            msg = dict()
-            msg['msgType']  = 'staticChanInfo'
-            msg['event']    = item['eventType']
-            msg['value']    = item['channelId']
-            self._broadcast(msg)
+    def _handleChanInfo(self, channel):
+        msg = {
+            'type':  'staticChanInfo',
+            'value': channel
+        }
+        self._broadcast(msg)
 
     def _broadcast(self, msg):
         for key in self._mpd:
-            if key == 'modSupercastPDU': pass
+            if key == 'supercast': pass
             else:
                 handler = self._mpd.get(key)
                 handler(msg)

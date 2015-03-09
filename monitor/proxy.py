@@ -24,7 +24,7 @@ class ChanHandler(QObject):
         self._initpyqtSignals()
 
     def _initSupercast(self):
-        sysmapi.nSetMessageProcessor('modMonitorPDU', self.handleSupercastMsg)
+        sysmapi.nSetMessageProcessor('monitor', self.handleSupercastMsg)
 
     def _initChanHandling(self):
         self._masterChan        = 'target-MasterChan'
@@ -58,40 +58,39 @@ class ChanHandler(QObject):
         # END
 
     def handleSupercastMsg(self, msg):
-        if      msg['msgType'] == 'probeReturn':
+        if      msg['type'] == 'probeReturn':
             self.masterpyqtSignalsDict['probeReturn'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'loggerRrdDump':
+        elif    msg['type'] == 'loggerRrdDump':
             self.masterpyqtSignalsDict['loggerRrdDump'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'loggerRrdEvent':
+        elif    msg['type'] == 'loggerRrdEvent':
             self.masterpyqtSignalsDict['loggerRrdEvent'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'infoProbe':
+        elif    msg['type'] == 'infoProbe':
             self.masterpyqtSignalsDict['infoProbe'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'infoTarget':
+        elif    msg['type'] == 'infoTarget':
             self.masterpyqtSignalsDict['infoTarget'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'deleteTarget':
+        elif    msg['type'] == 'deleteTarget':
             self.masterpyqtSignalsDict['deleteTarget'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'deleteProbe':
+        elif    msg['type'] == 'deleteProbe':
             self.masterpyqtSignalsDict['deleteProbe'].signal.emit(msg)
 
-        elif    msg['msgType'] == 'staticChanInfo':
+        elif    msg['type'] == 'staticChanInfo':
             chan    = msg['value']
-            action  = msg['event']
-            if chan == self._masterChan and action == 'create':
+            if chan == self._masterChan:
                 self._autoSubscribe()
 
-        elif    msg['msgType'] == 'subscribeOk':
+        elif    msg['type'] == 'subscribeOk':
             self._handleSubscribeOk(msg)
 
-        elif    msg['msgType'] == 'unSubscribeOk':
+        elif    msg['type'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
         else: 
-            print(("unknown msg received", msg['msgType']))
+            print(("unknown msg received", msg['type']))
 
     def subscribe(self, viewObject, channel):
         if channel in self._subscribedChans:
@@ -172,7 +171,7 @@ class ChanHandler(QObject):
         sysmapi.nSubscribe(self._handleAutoSubscribe, self._masterChan)
 
     def _handleAutoSubscribe(self, msg):
-        if msg['msgType'] == 'subscribeOk':
+        if msg['type'] == 'subscribeOk':
             self._masterchanRunning = True
         else:
             print(("error: ", msg))
@@ -216,7 +215,7 @@ class Channel(QObject):
                 data=index)
             return
         dumpMsg = dict()
-        dumpMsg['msgType']  = 'probeDump'
+        dumpMsg['type']  = 'probeDump'
         dumpMsg['logger']   = 'bmonitor_logger_rrd2'
         dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
         self.signal.emit(dumpMsg)
@@ -225,7 +224,7 @@ class Channel(QObject):
         index = msg['data']
         if len(self._rrdUpdatesPending[index]) == 0:
             dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['type']  = 'probeDump'
             dumpMsg['logger']   = 'bmonitor_logger_rrd2'
             dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
             self.signal.emit(dumpMsg)
@@ -266,7 +265,7 @@ class Channel(QObject):
     def synchronizeView(self, view):
         if self.loggerTextState != None:
             dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['type']  = 'probeDump'
             dumpMsg['logger']   = 'bmonitor_logger_text'
             dumpMsg['data']     = self.loggerTextState
             view.handleProbeEvent(dumpMsg)
@@ -275,14 +274,14 @@ class Channel(QObject):
             for i in list(self._rrdFilesReady.keys()):
                 if self._rrdFilesReady[i] == True:
                     dumpMsg = dict()
-                    dumpMsg['msgType']  = 'probeDump'
+                    dumpMsg['type']  = 'probeDump'
                     dumpMsg['logger']   = 'bmonitor_logger_rrd2'
                     dumpMsg['data']     = (i, self._rrdFiles[i].fileName())
                     self.signal.emit(dumpMsg)
 
         if self.loggerEventState != None:
             dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['type']  = 'probeDump'
             dumpMsg['logger']   = 'monitor_events'
             dumpMsg['data']     = self.loggerEventState
             view.handleProbeEvent(dumpMsg)
@@ -293,14 +292,14 @@ class Channel(QObject):
         if   dumpType == 'bmonitor_logger_text':
             self.loggerTextState = deque(data.split('\n'))
             dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['type']  = 'probeDump'
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerTextState
             self.signal.emit(dumpMsg)
         elif dumpType == 'bmonitor_logger_events':
             self.loggerEventState = msg['value']['data']
             dumpMsg = dict()
-            dumpMsg['msgType']  = 'probeDump'
+            dumpMsg['type']  = 'probeDump'
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
@@ -332,7 +331,7 @@ class Channel(QObject):
                 self._maybeUpdateRrd(index, updates[index])
             else:
                 updateMsg = dict()
-                updateMsg['msgType'] = 'loggerRrdEvent'
+                updateMsg['type'] = 'loggerRrdEvent'
                 updateMsg['logger']  = 'bmonitor_logger_rrd2'
                 updateMsg['data']    = index
                 self.signal.emit(updateMsg)
@@ -368,7 +367,7 @@ class Channel(QObject):
         index   = reply['data']
         if status == 'ok':
             updateMsg = dict()
-            updateMsg['msgType'] = 'loggerRrdEvent'
+            updateMsg['type'] = 'loggerRrdEvent'
             updateMsg['logger']  = 'bmonitor_logger_rrd2'
             updateMsg['data']    = index
             self.signal.emit(updateMsg)
@@ -403,7 +402,7 @@ class AbstractChannelWidget(NFrameContainer):
         self.__connected = True
 
     def handleProbeEvent(self, msg): 
-        print((self, ":you should handle this message: ", msg['msgType']))
+        print((self, ":you should handle this message: ", msg['type']))
 
     def __disconnectProbe(self):
         print("ABS: disconnect probe")
