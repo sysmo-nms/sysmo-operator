@@ -461,14 +461,15 @@ class CreateTargetDialog(QProgressDialog):
 
     def _elementInterfaceQuery(self):
         self.setLabel(QLabel('Getting SNMP interfaces informations...',self))
-        supercast.send(
-            'monitorElementInterfaceQuery',
-            (
-                self._sprops,
-                self._props
-            ),
-            self._elementInterfaceReply
-        )
+        pdu = {
+            'from': 'monitor',
+            'type': 'monitorElementInterfaceQuery',
+            'value': {
+                'sysProperties': self._sprops,
+                'properties':    self._props
+            }
+        }
+        supercast.send(pdu, self._elementInterfaceReply)
 
     def _elementInterfaceReply(self, reply):
         if reply['value']['status'] == False:
@@ -481,7 +482,7 @@ class CreateTargetDialog(QProgressDialog):
             err.open()
             return
 
-        SelectInterfaceDialog(reply['value']['reply'], self)
+        SelectInterfaceDialog(reply['value']['ifInfo'], self)
 
     def _closeMe(self):
         self.deleteLater()
@@ -604,7 +605,7 @@ class SelectInterfaceDialog(QDialog):
             ifSpeed = ifDef['ifSpeed']
             ifType  = ifDef['ifType']
             ifLastChange = ifDef['ifLastChange']
-            ifPhysaddress = ifDef['ifPhysaddress']
+            ifPhysaddress = ifDef['ifPhysAddress']
             ifAdminStatus = ifDef['ifAdminStatus']
             ifDescr = ifDef['ifDescr']
             ifIndex = ifDef['ifIndex']

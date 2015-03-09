@@ -11,8 +11,8 @@ from    supercast.socket        import SupercastSocket
 import  supercast.login
 import sys
 
-def send(pduType, message, callback):
-    Supercast.singleton.send(pduType, message, callback)
+def send(message, callback):
+    Supercast.singleton.send(message, callback)
 
 def requestUrl(request):
     Supercast.singleton.httpManager.requestUrl(request)
@@ -81,9 +81,9 @@ class Supercast(QObject):
         queryId = self._getQueryId(callback)
         self.lQueue.emit(('unsubscribe', (queryId, channel)))
 
-    def send(self, pduType, message, callback):
-        queryId = self._getQueryId(callback)
-        self.lQueue.emit((None, (queryId, message)))
+    def send(self, message, callback):
+        message['value']['queryId'] = self._getQueryId(callback)
+        self.lQueue.emit((None, message))
 
     def _getQueryId(self, pyCallable):
         queryId = 0
@@ -95,10 +95,10 @@ class Supercast(QObject):
                 queryId = queryId + 1
 
     def _extendedQueryNotify(self, msg):
-        queryId = msg['queryId']
+        queryId = msg['value']['queryId']
         caller  = self._queries[queryId]
         caller(msg)
-        lastPdu = msg['lastPdu']
+        lastPdu = msg['value']['lastPdu']
         if (lastPdu == True):
             del self._queries[queryId]
 
@@ -115,8 +115,8 @@ class Supercast(QObject):
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])
             if (handler == None):
-                if 'queryId' in payload:
-                    if 'lastPdu' in payload:
+                if 'queryId' in payload['value']:
+                    if 'lastPdu' in payload['value']:
                         self._extendedQueryNotify(payload)
                     else:
                         self._queryNotify(payload)
