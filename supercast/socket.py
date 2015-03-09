@@ -8,12 +8,19 @@ from    PyQt5.QtCore       import (
         pyqtSignal
 )
 
-from    supercast.pdu       import (
-        decode,
-        encode
-)
-
 import sys
+import json
+
+def encode(pyTerm):
+    jsonStr = json.dumps(pyTerm)
+    jsonBin = jsonStr.encode('utf-8')
+    return jsonBin
+
+def decode(jsonBin):
+    jsonStr = jsonBin.decode('utf-8')
+    pyTerm  = json.loads(jsonStr)
+    return pyTerm
+
 class SupercastSocket(QObject):
     mQueue      = pyqtSignal(tuple)
     # datas queue from self to Supercast()
@@ -108,3 +115,4 @@ class SupercastSocket(QObject):
             payload = stream.readRawData(self._nextBlockSize)
             self._nextBlockSize = 0
             self._handleServerMessage(payload)
+
