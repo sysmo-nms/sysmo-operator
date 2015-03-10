@@ -115,8 +115,7 @@ class ChanHandler(QObject):
         sysmapi.nUnsubscribe(self.handleSupercastMsg, channel)
 
     def _handleSubscribeOk(self, msg):
-        print("subscribe ok for: ", msg)
-        channel = msg['value']
+        channel = msg['value']['channel']
         if channel == self._masterChan: pass
         self._pendingSubscribe.remove(channel)
         self._subscribedChans.append(channel)
