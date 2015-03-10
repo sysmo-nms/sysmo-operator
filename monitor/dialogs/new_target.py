@@ -463,7 +463,7 @@ class CreateTargetDialog(QProgressDialog):
         self.setLabel(QLabel('Getting SNMP interfaces informations...',self))
         pdu = {
             'from': 'monitor',
-            'type': 'SnmpElementInterfaceQuery',
+            'type': 'snmpElementInterfaceQuery',
             'value': {
                 'sysProperties': self._sprops,
                 'properties':    self._props
@@ -539,14 +539,15 @@ class CreateTargetDialog(QProgressDialog):
             self.deleteLater()
 
     def _createIfPerfQuery(self):
-        supercast.send(
-            'monitorCreateIfPerfQuery',
-            (
-                self._targetName,
-                self._ifSelection
-            ),
-            self._createIfPerfReply
-        )
+        pdu = {
+            'from': 'monitor',
+            'type': 'createIfPerfQuery',
+            'value': {
+                'target':       self._targetName,
+                'ifSelection':  self._ifSelection
+            }
+        }
+        supercast.send(pdu, self._createIfPerfReply)
 
     def _createIfPerfReply(self, msg):
         self.deleteLater()

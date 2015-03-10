@@ -324,6 +324,7 @@ class Channel(QObject):
             print(("unknown dump type ", dumpType))
 
     def handleLoggerRrdEvent(self, msg):
+        print("WWWWWWtFFFFFFFFFFFFFFF", msg)
         updates = msg['value']['updates']
         for index in list(updates.keys()):
             if updates[index] != '':

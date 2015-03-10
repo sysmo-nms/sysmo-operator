@@ -83,13 +83,13 @@ class RrdFrame(AbstractChannelWidget):
         self.connectProbe()
 
     def handleProbeEvent(self, msg):
-        if msg['msgType'] == 'loggerRrdEvent':
+        if msg['type'] == 'loggerRrdEvent':
             index = msg['data']
-            self._graphElements[index].rrdUpdateEvent()
-        elif msg['msgType'] == 'probeDump':
+            self._graphElements[int(index)].rrdUpdateEvent()
+        elif msg['type'] == 'probeDump':
             if msg['logger'] == 'bmonitor_logger_rrd2':
                 (index, rrdDbFile) = msg['data']
-                self._graphElements[index].setRrdDbFile(rrdDbFile)
+                self._graphElements[int(index)].setRrdDbFile(rrdDbFile)
 
 class RrdGraphArea(NFrameContainer):
     def __init__(self, parent, index, graphConf):
@@ -98,7 +98,8 @@ class RrdGraphArea(NFrameContainer):
         self._graphs    = dict()
         self._index     = index
         self._graphConf = graphConf
-        for gindex in list(graphConf.keys()):
+        print("graph is:" , graphConf)
+        for gindex, _ in enumerate(graphConf):
             self._graphs[gindex] = RrdGraph(self, graphConf[gindex])
             self._layout.addWidget(self._graphs[gindex], 0,gindex)
 
