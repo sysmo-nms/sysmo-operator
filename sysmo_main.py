@@ -5,6 +5,7 @@ from PyQt5.QtSvg import QSvgWidget
 from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap, getImage
 from sysmo_dialogs import ProxyConf
 from sysmo_widgets import NFrameContainer, NFrame, NGridContainer, NGrid, CommunityMenu
+from monitor.gui.timeline.main import Timeline
 
 from supercast.main import Supercast
 from functools import partial
@@ -390,12 +391,16 @@ class NCentralFrame(NFrame):
         self.grid.setVerticalSpacing(6)
         self.selector       = NSelector(self)
         self.centralStack   = NCentralStack(self)
+        self.monitorTimeline = Timeline(self)
         self.selector.buttonGroup.buttonClicked[int].connect(self.centralStack.stack.setCurrentIndex)
         self.grid.addWidget(self.selector,       1,0)
         self.grid.addWidget(self.centralStack,   1,1)
+        self.grid.addWidget(self.monitorTimeline, 2,0,1,2)
 
         self.grid.setColumnStretch(0, 0)
         self.grid.setColumnStretch(1, 1)
+        self.grid.setRowStretch(0,0)
+        self.grid.setRowStretch(1,1)
         self.setLayout(self.grid)
 
 class NCentralStack(NFrameContainer):
