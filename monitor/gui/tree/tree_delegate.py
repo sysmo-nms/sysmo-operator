@@ -50,7 +50,7 @@ class LoggerItemDelegate(QStyledItemDelegate):
         loggers = index.data(treemod.LoggerItem.LoggersRole)
         if loggers == None:
             QStyledItemDelegate.paint(self, painter, option, index)
-        elif 'bmonitor_logger_rrd2' in loggers:
+        elif 'rrd_snmp_table_logger' in loggers:
             cartouche = QRect(option.rect)
             cartouche.setSize(self._rrdToolSize)
             if option.state & QStyle.State_Selected:

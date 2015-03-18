@@ -525,7 +525,7 @@ class CreateTargetDialog(QProgressDialog):
             'type': 'createNchecksQuery',
             'value': {
                 'target': self._targetName,
-                'name': 'icmp',
+                'name': 'CheckICMP',
                 'properties': {}
             }
         }

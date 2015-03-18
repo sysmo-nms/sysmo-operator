@@ -417,7 +417,7 @@ class TextLog(AbstractChannelWidget):
     
     def _append(self, value):
         status = value['status']
-        data   = value['originalRep']
+        data   = value['replyString']
         ts     = value['timestamp']
         if status == 'OK':
             color = '#73d216'

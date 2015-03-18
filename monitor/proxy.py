@@ -214,7 +214,7 @@ class Channel(QObject):
             return
         dumpMsg = dict()
         dumpMsg['type']  = 'probeDump'
-        dumpMsg['logger']   = 'bmonitor_logger_rrd2'
+        dumpMsg['logger']   = 'rrd_snmp_table_logger'
         dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
         self.signal.emit(dumpMsg)
 
@@ -223,7 +223,7 @@ class Channel(QObject):
         if len(self._rrdUpdatesPending[index]) == 0:
             dumpMsg = dict()
             dumpMsg['type']  = 'probeDump'
-            dumpMsg['logger']   = 'bmonitor_logger_rrd2'
+            dumpMsg['logger']   = 'rrd_snmp_table_logger'
             dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
             self.signal.emit(dumpMsg)
             print("succcccccccesss! restorependingupdatescontinue")
@@ -273,7 +273,7 @@ class Channel(QObject):
                 if self._rrdFilesReady[i] == True:
                     dumpMsg = dict()
                     dumpMsg['type']  = 'probeDump'
-                    dumpMsg['logger']   = 'bmonitor_logger_rrd2'
+                    dumpMsg['logger']   = 'rrd_snmp_table_logger'
                     dumpMsg['data']     = (i, self._rrdFiles[i].fileName())
                     self.signal.emit(dumpMsg)
 
@@ -301,7 +301,7 @@ class Channel(QObject):
             dumpMsg['logger']   = dumpType
             dumpMsg['data']     = self.loggerEventState
             self.signal.emit(dumpMsg)
-        elif dumpType == 'bmonitor_logger_rrd2':
+        elif dumpType == 'rrd_snmp_table_logger':
             self.rrdEnabled = True
             self._initRrdUpdate()
             path = msg['value']['path']
@@ -331,14 +331,14 @@ class Channel(QObject):
             else:
                 updateMsg = dict()
                 updateMsg['type'] = 'loggerRrdEvent'
-                updateMsg['logger']  = 'bmonitor_logger_rrd2'
+                updateMsg['logger']  = 'rrd_snmp_table_logger'
                 updateMsg['data']    = index
                 self.signal.emit(updateMsg)
  
                 
 
     def _initRrdUpdate(self):
-        self._rrdUpdateString = self.probeDict['loggers']['bmonitor_logger_rrd2']['rrdUpdate']
+        self._rrdUpdateString = self.probeDict['loggers']['rrd_snmp_table_logger']['rrdUpdate']
 
     def _maybeUpdateRrd(self, key, updateString):
 
@@ -367,7 +367,7 @@ class Channel(QObject):
         if status == 'ok':
             updateMsg = dict()
             updateMsg['type'] = 'loggerRrdEvent'
-            updateMsg['logger']  = 'bmonitor_logger_rrd2'
+            updateMsg['logger']  = 'rrd_snmp_table_logger'
             updateMsg['data']    = index
             self.signal.emit(updateMsg)
         else:
@@ -383,7 +383,7 @@ class Channel(QObject):
         self.signal.emit(msg)
 
     def _updateLoggerText(self, msg):
-        self.loggerTextState.append(msg['value']['originalRep'])
+        self.loggerTextState.append(msg['value']['replyString'])
         if len(self.loggerTextState) > 50:
             self.loggerTextState.popleft()
 

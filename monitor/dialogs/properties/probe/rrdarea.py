@@ -72,7 +72,7 @@ class RrdFrame(AbstractChannelWidget):
         self._graphElements = dict()
         self._probeName = probe
         self._probeConf = monapi.getProbesDict()[probe]
-        rrdConf = self._probeConf['loggers']['bmonitor_logger_rrd2']
+        rrdConf = self._probeConf['loggers']['rrd_snmp_table_logger']
         for i in range(len(rrdConf['indexes'])):
             index = rrdConf['indexes'][i]
             self._graphElements[index] = RrdGraphArea(self, index, rrdConf['rgraphs'])
@@ -87,7 +87,7 @@ class RrdFrame(AbstractChannelWidget):
             index = msg['data']
             self._graphElements[int(index)].rrdUpdateEvent()
         elif msg['type'] == 'probeDump':
-            if msg['logger'] == 'bmonitor_logger_rrd2':
+            if msg['logger'] == 'rrd_snmp_table_logger':
                 (index, rrdDbFile) = msg['data']
                 self._graphElements[int(index)].setRrdDbFile(rrdDbFile)
 

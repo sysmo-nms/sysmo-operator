@@ -330,7 +330,7 @@ class ProbeItem(QStandardItem):
 
 
     def handleReturn(self, msg):
-        self.setToolTip(msg['value']['originalRep'])
+        self.setToolTip(msg['value']['replyString'])
         val = msg['value']['nextReturn']
         self.row2_progress.setRemaining(val)
 
