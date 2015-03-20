@@ -136,7 +136,7 @@ class NMainWindow(QMainWindow):
     # DIALOGS #
     ###########
     def _launchProxySettings(self):
-        proxyUi = Proxy(self._setProxySettings, parent=self)
+        proxyUi = ProxyConf(self._setProxySettings, parent=self)
         
     def _setProxySettings(self, proxySet):
         self.activeProxySettings = proxySet
