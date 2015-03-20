@@ -4,40 +4,24 @@ else:
     platformPluginsDir = os.getcwd() + '\plugins\platforms'
     os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = platformPluginsDir
 
-from    PyQt5.QtWidgets    import QApplication
-from    PyQt5.QtCore   import QSettings, QTranslator
+from    PyQt5.QtWidgets import QApplication
+from    PyQt5.QtCore    import QSettings, QTranslator
 import  sys
-import  re
-import  platform
 import  sysmo_main
 import  sysmo_colors
 
+DEFAULT_PALETTE = 'dark'
 
-osType           = platform.platform()
-sysmoSettings = QSettings("Sysmo Monitor", "sysmo-operator")
-sysmoStyle    = sysmoSettings.value("NMainWindow/style")
-sysmoTheme    = sysmoSettings.value("NMainWindow/theme")
+QApplication.setStyle('fusion')
+sysmoSettings   = QSettings("Sysmo Monitor", "sysmo-operator")
+sysmoTheme      = sysmoSettings.value("NMainWindow/theme")
 
-if sysmoStyle == None:
-    if   re.match('^Windows-XP..*',    osType) != None:
-        sysmoStyle = 'fusion'
-    elif re.match('^Linux..*',         osType) != None:
-        sysmoStyle = 'fusion'
-    elif re.match('^Windows-Vista..*', osType) != None: pass # native
-    elif re.match('^Windows-7..*',     osType) != None: pass # native
-    elif re.match('^Windows-8..*',     osType) != None: pass # native
-    elif re.match('^Mac..*',           osType) != None: pass # native
+if (sysmoTheme == None):
+   sysmoTheme = DEFAULT_PALETTE
 
-if      sysmoStyle == None:      pass
-elif    sysmoStyle == 'native':  pass
-else:
-    QApplication.setStyle(sysmoStyle)
-
-    if      sysmoTheme == None:      pass
-    elif    sysmoTheme == 'native':  pass
-    else:
-        colorPalette = sysmo_colors.getPalette(sysmoTheme)
-        QApplication.setPalette(colorPalette)
+if (sysmoTheme != 'native'):
+    colorPalette = sysmo_colors.getPalette(sysmoTheme)
+    QApplication.setPalette(colorPalette)
 
 translator   = QTranslator()
 translator.load('fr_FR')

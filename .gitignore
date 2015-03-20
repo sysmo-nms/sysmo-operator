@@ -15,3 +15,5 @@ sysmo-operator-win32*
 sysmo.stderr.txt
 sysmo.stdout.txt
 palette.dump
+pyrrd4j/java_bin/io/*
+pyrrd4j/java_lib/*.jar

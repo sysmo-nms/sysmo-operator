@@ -6,7 +6,10 @@ RELEASE_VERSION = 0.2.1
 QT_PLUGINS_DIR  = /cygdrive/c/Python34/lib/site-packages/PyQt5/plugins
 EXECUTABLE = $(RELEASE_NAME)-$(RELEASE_VERSION)/sysmo.exe
 
-compile: $(EXECUTABLE)
+compile: $(EXECUTABLE) pyrrd4j/java_lib/Pyrrd4j.jar
+
+pyrrd4j/java_lib/Pyrrd4j.jar:
+	make -C pyrrd4j compile
 
 $(EXECUTABLE): clean
 	$(PYTHON_EXE) setup.py py2exe --include sip,ctypes,PyQt5.QtWebKit,PyQt5.QtPrintSupport

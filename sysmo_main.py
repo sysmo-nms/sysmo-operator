@@ -199,12 +199,6 @@ class NMainWindow(QMainWindow):
     #####################
     # STYLES AND THEMES #
     #####################
-    def _setStyle(self, style):
-        self._sysmoStyle = style
-        if style == 'native':   self.menuColor.setDisabled(True)
-        else:                   self.menuColor.setDisabled(False)
-        self._needRestart()
-
     def _setTheme(self, theme):
         self._sysmoTheme = theme
         self._needRestart()
@@ -266,25 +260,8 @@ class NMainWindow(QMainWindow):
         fullScreenAction.setShortcut('Ctrl+F')
         fullScreenAction.triggered.connect(self._toggleFullScreen)
     
-        nativeAction    = QAction(self.tr('Native'), self)
-        nativeAction.setCheckable(True)
-        nativeAction.triggered.connect(partial(self._setStyle, 'native'))
-    
-        plastiqueAction = QAction(self.tr('Customizable'), self)
-        plastiqueAction.setCheckable(True)
-        plastiqueAction.triggered.connect(partial(self._setStyle, 'fusion'))
-
-    
-        styleToggle = QActionGroup(self)
-        styleToggle.addAction(plastiqueAction)
-        styleToggle.addAction(nativeAction)
-        styleToggle.setExclusive(True)
-    
         menuStyle = menu.addMenu(self.tr('View'))
         menuStyle.addAction(fullScreenAction)
-        menuStyle.addSeparator()
-        menuStyle.addAction(nativeAction)
-        menuStyle.addAction(plastiqueAction)
 
         "color sub menu"
         self.menuColor = menuStyle.addMenu(QIcon(getPixmap('preferences-desktop-theme')),self.tr('Colors'))
@@ -292,7 +269,7 @@ class NMainWindow(QMainWindow):
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))
 
-        deepWaterAction = QAction(self.tr('Dark'), self)
+        deepWaterAction = QAction(self.tr('Sysmo (default)'), self)
         deepWaterAction.setCheckable(True)
         deepWaterAction.triggered.connect(partial(self._setTheme, 'dark'))
     
@@ -357,14 +334,6 @@ class NMainWindow(QMainWindow):
         self.menuColor.addAction(desertAction)
         self.menuColor.addAction(honeyAction)
         self.menuColor.addAction(snowAction)
-
-        if self._sysmoStyle == 'native':
-            nativeAction.setChecked(True)
-            self.menuColor.setDisabled(True)
-        elif self._sysmoStyle == 'fusion':
-            plastiqueAction.setChecked(True)
-        else:
-            nativeAction.setChecked(True)
 
         " application menu defined by the differents extentions"
         menu.addSeparator()
