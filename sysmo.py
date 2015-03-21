@@ -20,7 +20,6 @@ sysmoMenuTheme  = sysmoSettings.value("NMainWindow/menuTheme")
 sysmoMenuBarTheme = sysmoSettings.value("NMainWindow/menuBarTheme")
 
 
-
 if (sysmoTheme != None and sysmoTheme != 'native'):
     colorPalette = sysmo_colors.getPalette(sysmoTheme)
     QApplication.setPalette(colorPalette)

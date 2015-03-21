@@ -463,6 +463,7 @@ class DashboardButton(QPushButton):
 class NStatusBar(QStatusBar):
     def __init__(self, parent):
         super(NStatusBar, self).__init__(parent)
+        self.setAutoFillBackground(True)
         #debugButton = QToolButton(self)
         #debugButton.setIcon(QIcon(getPixmap('applications-development')))
         #self.addPermanentWidget(debugButton)

@@ -2,10 +2,14 @@
 # MODULE MONITOR #
 ##################
 # NOW
+- theming QMenu QMenuBar
+- double click sur probe (choisir entre force, perfs...)
+- double click sur target (choisir entre ajout probe, centrer map, operation)
 - timeline
 - nchecks
 - osm
 - obfuscate
+
 ### HIGH
 - Dashboards
 
@@ -19,8 +23,6 @@ MAYBE:
 - keep an average packet time travel from server to client and add this in
 the status bar. Move it red when the latency it to high. Use this value
 to calculate the probes QProgressBars (step and timeout)
-- perf: build the maximum number of view widget at startup (total of probe
-entries of the treeview).
 
 ESTHETIC:
 - higlight selection in treeview
