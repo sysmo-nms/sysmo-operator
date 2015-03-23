@@ -62,6 +62,7 @@ class Rrd4jAsync(QObject):
         # msg = JSON
         pr("it is a big reply: " + msg)
 
+
 class Rrd4jAsyncReader(QObject):
     signal = pyqtSignal(str)
     def __init__(self, fd, parent=None):
@@ -72,6 +73,7 @@ class Rrd4jAsyncReader(QObject):
         while True:
             v = self._fd.readline()
             self.signal.emit(v)
+
 
 class SimpleSignal(QObject):
     signal = pyqtSignal()

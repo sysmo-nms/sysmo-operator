@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, QSize, QSortFilterProxyModel, QSettings
 from PyQt5.QtWidgets import QTreeView, QAbstractItemView
-from monitor.dialogs.performances import openPerformancesFor
+from monitor.windows.performances import openPerformancesFor
 from monitor.gui.tree.tree_model import ProbeModel
 from monitor.menus.tree_probe import ProbeMenu
 from monitor.menus.tree_target import TargetMenu

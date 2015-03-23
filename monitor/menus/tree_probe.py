@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMenu, QAction, QErrorMessage, QMessageBox
-from monitor.dialogs.performances import openPerformancesFor
+from monitor.windows.performances import openPerformancesFor
 
 import supercast.main as supercast
 import sysmapi

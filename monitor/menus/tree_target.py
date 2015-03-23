@@ -45,12 +45,18 @@ class TargetMenu(QMenu):
 
         self.addSeparator()
 
+        action = NAction(self.tr('Performances Dashboard...'), self)
+        action.triggered.connect(self._openDocEngine)
+        action.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
+        self.addAction(action)
+
         action = NAction(self.tr('Documentation...'), self)
         action.triggered.connect(self._openDocEngine)
         action.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
         self.addAction(action)
 
         self.addSeparator()
+
         action = NAction(self.tr('Properties...'), self)
         action.triggered.connect(self._openProperties)
         action.setIcon(QIcon(sysmapi.nGetPixmap('edit-paste')))
@@ -59,6 +65,8 @@ class TargetMenu(QMenu):
         self.addSeparator()
 
 
+    def _openPerfDash(self): pass
+    
     def showMenuFor(self, target, point):
         uactions = monapi.getUOperationsFor(target)
         self._currentTarget = target

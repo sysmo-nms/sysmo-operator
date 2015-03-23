@@ -64,32 +64,58 @@ class LoggerView(QDialog):
         textlogger  = False
         eventlogger = False
         
+        self._layout    = NGrid(self)
+        self._layout.addWidget(self._menus,     0,0)
+        self._layout.addWidget(self._statusBar, 1,0,1,2)
+    
+        self._layout.setRowStretch(0,1)
+        self._layout.setRowStretch(1,0)
+    
+        self._layout.setColumnStretch(0,0)
+        self._layout.setColumnStretch(1,1)
+
         print("open logger for: " + str(probeee))
         if probeee['probeMod'] == 'probe_nchecks':
             cl = probeee['probeClass']
+            self._logArea   = NChecksLogArea(self, probe)
+            self._layout.addWidget(self._logArea,   0,1)
             print("mod is: " + str(cl))
-            pass
             
+        # old code begin
         else:
             if 'rrd_snmp_table_logger'  in loggers: rrdlogger   = True
             if 'bmonitor_logger_text'   in loggers: textlogger  = True
             if 'bmonitor_logger_event'  in loggers: eventlogger = True
 
             self._logArea   = LogArea(self, rrdlogger, textlogger, eventlogger, probe)
-
-            self._layout    = NGrid(self)
-            self._layout.addWidget(self._menus,     0,0)
             self._layout.addWidget(self._logArea,   0,1)
-            self._layout.addWidget(self._statusBar, 1,0,1,2)
-    
-            self._layout.setRowStretch(0,1)
-            self._layout.setRowStretch(1,0)
-    
-            self._layout.setColumnStretch(0,0)
-            self._layout.setColumnStretch(1,1)
-
+        # old code end
+       
         self.show()
  
+class NChecksLogArea(AbstractChannelWidget):
+    def __init__(self, parent, channel):
+        super(NChecksLogArea, self).__init__(parent, channel)
+        self.connectProbe()
+        self._layout    = NGridContainer(self)
+        self._rrd4jArea = NChecksRrdArea(self)
+        self._layout.addWidget(self._rrd4jArea, 0,0)
+
+class NChecksRrdArea(NFrame):
+    def __init__(self, parent=None):
+        super(NChecksRrdArea, self).__init__(parent)
+        lab = QLabel('hello', self)
+
+
+
+
+
+
+
+
+
+
+# old code
 class LogArea(NFrameContainer):
     def __init__(self, parent, rrd, text, event, probe):
         super(LogArea, self).__init__(parent)
