@@ -9,6 +9,7 @@ from monitor.gui.timeline.main import Timeline
 
 from supercast.main import Supercast
 from functools import partial
+import nchecks
 
 import monitor.main
 import dashboard.main
@@ -72,9 +73,13 @@ class NMainWindow(QMainWindow):
         if    key == 'success':
             self._supercastLogged = True
             self.supercastEnabled.emit()
+            self._finalizeInit()
             self.show()
         elif  key == 'abort':
             self.close()
+
+    def _finalizeInit(self):
+        nchecks.start(self)
 
     # Layout
     def _initLayout(self):

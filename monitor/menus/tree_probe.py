@@ -1,6 +1,7 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMenu, QAction, QErrorMessage, QMessageBox
-from monitor.dialogs.properties.probe.main import openPropertiesFor
+from monitor.dialogs.performances import openPerformancesFor
+
 import supercast.main as supercast
 import sysmapi
 
@@ -32,7 +33,7 @@ class ProbeMenu(QMenu):
         self.addSeparator()
 
         self._performances = QAction(self.tr('Performances...'), self)
-        self._performances.triggered.connect(self._openProperties)
+        self._performances.triggered.connect(self._openPerformances)
         self._performances.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
         self.addAction(self._performances)
 
@@ -86,5 +87,5 @@ class ProbeMenu(QMenu):
     def _deleteProbeReply(self, msg):
         print(("delete probe: ", msg))
 
-    def _openProperties(self):
-        openPropertiesFor(self._currentProbe, 'performances')
+    def _openPerformances(self):
+        openPerformancesFor(self._currentProbe, 'performances')

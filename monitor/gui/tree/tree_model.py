@@ -358,10 +358,10 @@ class ProbeItem(QStandardItem):
         elif role == (Qt.UserRole + 7):
             return self.probeDict['value']['active']
         elif role == (Qt.UserRole + 8):
-            if self._type == 'bmonitor_probe_ncheck':
-                return self.probeDict['value']['probeconf']
-            else:
-                return ''
+            #if self._type == 'bmonitor_probe_ncheck':
+                #return self.probeDict['value']['probeconf']
+            #else:
+            return ''
         else:
             return QStandardItem.data(self, role)
 

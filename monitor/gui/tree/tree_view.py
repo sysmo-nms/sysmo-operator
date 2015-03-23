@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, QSize, QSortFilterProxyModel, QSettings
 from PyQt5.QtWidgets import QTreeView, QAbstractItemView
-from monitor.dialogs.properties.probe.main import openPropertiesFor
+from monitor.dialogs.performances import openPerformancesFor
 from monitor.gui.tree.tree_model import ProbeModel
 from monitor.menus.tree_probe import ProbeMenu
 from monitor.menus.tree_target import TargetMenu
@@ -80,7 +80,7 @@ class ProbesTreeview(QTreeView):
             print(item)
             probe   = item.data(Qt.UserRole + 3)
             display = item.data(Qt.DisplayRole)
-            openPropertiesFor(probe, display)
+            openPerformancesFor(probe, display)
         else:
             targetid = item.data(Qt.UserRole + 1)
             monitor.user_operations.launchOperationFor(self, targetid)
