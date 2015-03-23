@@ -57,7 +57,7 @@ class Rrd4jAsync(QObject):
         # dict {id, callback}
         # msg = JSON
         queryId = self._getQueryId(command['callback'])
-        cmdString = "%i:%s" % (queryId, command['msg'])
+        cmdString = "%i:%s" % (queryId, command['string'])
         self._rrd4jProcess.stdin.write(cmdString + '\n')
 
     def _handleReply(self, msg):

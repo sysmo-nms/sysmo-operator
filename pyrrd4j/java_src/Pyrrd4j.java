@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.Arrays;
 
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.ArcDef;
@@ -45,45 +46,111 @@ import java.awt.image.BufferedImage;
 import java.awt.Color;
 
 
-class GraphRunnable implements Runnable
+class RrdRunnable implements Runnable
 {
     private String strArgument;
+    private String queryId;
+    private String reply;
 
-    public GraphRunnable(String strArg)
+    public RrdRunnable(String line)
     {
-        strArgument = strArg.trim();
+        strArgument = line.trim();
     }
 
     @Override
     public void run()
     {
-        Pyrrd4j.rrdReply(strArgument);
+        
+        String[] rrdcmd = strArgument.split(":");
+
+        queryId         = rrdcmd[0];
+        String cmdType  = rrdcmd[1];
+        String other    = rrdcmd[2];
+
+        int intDebugVal = 0;
+        String debugVal = null;
+        if (cmdType.equals("GRAPH")) {
+            
+            String graphCfg[] = other.split(";");
+            String title    = graphCfg[0];
+            String name     = graphCfg[1];
+            String vlabel   = graphCfg[2];
+            String rrdFile  = graphCfg[3];
+            String pngFile  = graphCfg[4];
+            String spanBegin = graphCfg[5];
+            String spanEnd  = graphCfg[6];
+            String width    = graphCfg[8];
+            String height   = graphCfg[9];
+            String dsDefs   = graphCfg[10];
+
+            // create graphDef and set elements
+             RrdGraphDef graphDef = new RrdGraphDef();
+            int spanBeginInt = Integer.parseInt(spanBegin);
+            int spanEndInt   = Integer.parseInt(spanEnd);
+            graphDef.setTimeSpan(spanBeginInt, spanEndInt);
+            graphDef.setTitle(title);
+            graphDef.setVerticalLabel(vlabel);
+            graphDef.setFilename(pngFile);
+            graphDef.setShowSignature(false);
+
+            /*
+            graphDef.setColor("BACK", Color.decode("#000000"));
+            graphDef.setColor("CANVAS", Color.decode("#000000"));
+            graphDef.setColor("SHADEA", Color.decode("#000000"));
+            graphDef.setColor("SHADEB", Color.decode("#000000"));
+            graphDef.setColor("GRID", Color.decode("#000000"));
+            graphDef.setColor("MGRID", Color.decode("#000000"));
+            graphDef.setColor("FONT", Color.decode("#000000"));
+            graphDef.setColor("FRAME", Color.decode("#000000"));
+            graphDef.setColor("ARROW", Color.decode("#000000"));
+            */
+
+
+            // loop over ds and add DS and Line elements
+            String[] dsDefList = dsDefs.split("\\@");
+            for (String s: dsDefList) {
+                dsDefs = s;
+                String[] dsD    = s.split(",");
+                String dsName   = dsD[0];
+                String gType    = dsD[1];
+                String gLegend  = dsD[2];
+                String gColor   = dsD[3];
+                String csFun    = dsD[4];
+                ConsolFun csVal = ConsolFun.valueOf(csFun);
+                graphDef.datasource(dsName, rrdFile, dsName, csVal);
+                
+                Color col = Color.decode(gColor);
+                if (gType.equals("area")) {
+                    graphDef.area(dsName, col, gLegend);
+                } else if (gType.equals("line")) {
+                    graphDef.line(dsName, col, gLegend, 2);
+                }
+            }
+            int widthInt    = Integer.parseInt(width);
+            int heightInt   = Integer.parseInt(height);
+            graphDef.setWidth(widthInt);
+            graphDef.setHeight(heightInt);
+
+            try {
+                RrdGraph graph   = new RrdGraph(graphDef);
+                BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
+                graph.render(bi.getGraphics());
+            } catch (Exception|Error e) {
+                Pyrrd4j.rrdReply(queryId + ":" + "ERROR:" + e);
+                return;
+            }
+                       
+        }
+        else if (cmdType.equals("UPDATE")) 
+        {
+        } 
+
+        Pyrrd4j.rrdReply(queryId + ":OK");
     }
 
-    public String getArg()
+    public String getQueryId()
     {
-        return strArgument;
-    }
-}
-
-class UpdateRunnable implements Runnable
-{
-    private String strArgument;
-
-    public UpdateRunnable(String strArg)
-    {
-        strArgument = strArg.trim();
-    }
-
-    @Override
-    public void run()
-    {
-        Pyrrd4j.rrdReply(strArgument);
-    }
-
-    public String getArg()
-    {
-        return strArgument;
+        return queryId;
     }
 }
 
@@ -93,7 +160,7 @@ public class Pyrrd4j
     private static ThreadPoolExecutor threadPool = null;
     private static int threadMaxPoolSize    = 20;
     private static int threadCorePoolSize   = 12;
-    private static int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs is possible
+    private static int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs
 
     // java.exe -classpath java_lib\*; io.sysmo.pyrrd4j.Pyrrd4j --die-on-broken-pipe
     public static void main(String[] args) throws Exception {
@@ -103,7 +170,7 @@ public class Pyrrd4j
             10,
             TimeUnit.MINUTES,
             new ArrayBlockingQueue<Runnable>(threadQueueCapacity),
-            new GraphReject()
+            new RrdReject()
         );
 
         rrdDbPool = RrdDbPool.getInstance();
@@ -114,13 +181,13 @@ public class Pyrrd4j
     {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            String s;
+            String line;
             while (true) {
-                s = in.readLine();
-                if (s == null && s.length() == 0) {
+                line = in.readLine();
+                if (line == null && line.length() == 0) {
                     break;    // An empty line or Ctrl-Z terminates the program
                 }
-                startWorkder(s);
+                startWorkder(line);
             }
         }
         catch (Exception|Error e)
@@ -132,7 +199,7 @@ public class Pyrrd4j
 
     private static void startWorkder(String arg)
     {
-        GraphRunnable   worker = new GraphRunnable(arg);
+        RrdRunnable   worker = new RrdRunnable(arg);
         threadPool.execute(worker);
     }
 
@@ -142,13 +209,13 @@ public class Pyrrd4j
     }
 }
 
-class GraphReject implements RejectedExecutionHandler
+class RrdReject implements RejectedExecutionHandler
 {
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
     {
-        GraphRunnable failRunner = (GraphRunnable) r;
-        String failArg = failRunner.getArg();
-        Pyrrd4j.rrdReply(failArg);
+        RrdRunnable failRunner = (RrdRunnable) r;
+        String queryId = failRunner.getQueryId();
+        Pyrrd4j.rrdReply(queryId + ":ERROR:Max thread queue reached");
     }
 }
 

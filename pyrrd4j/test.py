@@ -1,7 +1,50 @@
-from pipe import Rrd4jSimple
-from pipe import Rrd4jAsync
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 import sys
+
+
+import pipe
+
+
+
+
+## __init__ api begin
+def init(parent=None):
+    return pipe.Rrd4jAsync(parent)
+
+def graph(graph, callback):
+    cmd = "%s;%s;%s;%s;%s;%i;%i;%s;%i;%i;" % (
+        graph['title'],
+        graph['name'],
+        graph['vlabel'],
+        graph['rrdSrc'],
+        graph['pngDst'],
+        graph['spanBegin'],
+        graph['spanEnd'],
+        graph['consolFun'],
+        graph['width'],
+        graph['height'])
+    for g in graph['DS']:
+        cmd += g
+        cmd += '@'
+    # remove last pipe character
+    cmd = cmd[:-1]
+    command = dict()
+    command['string'] = 'GRAPH:' + cmd
+    command['callback'] = callback
+    print("command is" + cmd)
+    pipe.Rrd4jAsync.singleton.execute(command)
+
+def update(command, callback):
+    command['string'] = 'UPDATE:' + command['string']
+    call(command, callback)
+
+def call(command, callback):
+    command['callback'] = callback
+    pipe.Rrd4jAsync.singleton.execute(command)
+## __init__ api end
+
+
+
 
 def pr(val):
     print(val)
@@ -13,27 +56,32 @@ class MyWidget(QWidget):
         super(MyWidget, self).__init__(parent)
         button = QPushButton(self)
         button.clicked.connect(self._ccc)
-        self._rrd = Rrd4jAsync()
+        self._rrd = init(self)
     
     def _ccc(self):
-        command = dict()
-        command['callback'] = self.callback
-        command['msg'] = "jojo"
-        pr("hello ccc" + command['msg'])
-        self._rrd.execute(command)
-        command['msg'] = "juju"
-        pr("hello ccc" + command['msg'])
-        self._rrd.execute(command)
+        graph2 = dict()
+        graph2['title']  = "ICMP performances"
+        graph2['name']   = "ICMPPerfs"
+        graph2['vlabel'] = "Milliseconds"
+        graph2['rrdSrc'] = "./test.rrd"
+        graph2['pngDst'] = "./test.png"
+        graph2['spanBegin'] = -12000
+        graph2['spanEnd']   = -1
+        graph2['consolFun'] = "AVERAGE"
+        graph2['width']     = 300
+        graph2['height']    = 100
+        graph2['DS'] = list()
+        graph2['DS'].append("MinRoundTrip,area,Minimum round trip,#FF0000,AVERAGE")
+        graph2['DS'].append("MaxRoundTrip,area,Maximum round trip,#00FF00,AVERAGE")
+        graph2['DS'].append("AverageRoundTrip,area,Average round trip,#0000FF,AVERAGE")
+
+        graph(graph2, self.callback)
 
     def callback(self, msg):
         pr("callback msg: " + str(msg))
 
-
 app = QApplication(sys.argv)
-#r = Rrd4jAsync()
-#r.execute("lkj")
-#r.execute("lkqsdfqj")
-#r.execute("aaabbc")
 wid = MyWidget()
 wid.show()
 sys.exit(app.exec_())
+
