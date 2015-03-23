@@ -3,6 +3,9 @@ from pipe import Rrd4jAsync
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 import sys
 
+def pr(val):
+    print(val)
+    sys.stdout.flush()
 
 
 class MyWidget(QWidget):
@@ -13,12 +16,17 @@ class MyWidget(QWidget):
         self._rrd = Rrd4jAsync()
     
     def _ccc(self):
-        print("hello ccc")
-        sys.stdout.flush()
-        self._rrd.execute("hello")
-        print("hello ccc")
-        sys.stdout.flush()
-        self._rrd.execute("hello")
+        command = dict()
+        command['callback'] = self.callback
+        command['msg'] = "jojo"
+        pr("hello ccc" + command['msg'])
+        self._rrd.execute(command)
+        command['msg'] = "juju"
+        pr("hello ccc" + command['msg'])
+        self._rrd.execute(command)
+
+    def callback(self, msg):
+        pr("callback msg: " + str(msg))
 
 
 app = QApplication(sys.argv)

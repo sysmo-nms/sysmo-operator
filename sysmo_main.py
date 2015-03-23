@@ -13,6 +13,7 @@ import nchecks
 
 import monitor.main
 import dashboard.main
+import pyrrd4j
 
 MONITOR   = 0
 DASHBOARD = 1
@@ -45,6 +46,7 @@ class NMainWindow(QMainWindow):
         self.setWindowIcon(QIcon(getPixmap('applications-development')))
         self.setWindowTitle('Sysmo')
 
+        pyrrd4j.init(self)
         self._initSupercast()
 
         self._initProxySettings()

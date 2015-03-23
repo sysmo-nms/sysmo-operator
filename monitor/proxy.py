@@ -44,7 +44,8 @@ class ChanHandler(QObject):
         self.masterpyqtSignalsDict['deleteProbe']   = SimplepyqtSignal(self)
 
         self.masterpyqtSignalsDict['loggerRrdDump']  = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['loggerRrdEvent'] = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['loggerRrdEvent']    = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['nchecksDumpMessage'] = SimplepyqtSignal(self)
 
         # connect myself
         self.masterpyqtSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
@@ -53,6 +54,7 @@ class ChanHandler(QObject):
         self.masterpyqtSignalsDict['deleteProbe'].signal.connect(self._handleDeleteProbe)
         self.masterpyqtSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
 
+        self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.connect(self._handleNchecksDump)
         self.masterpyqtSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
         self.masterpyqtSignalsDict['loggerRrdEvent'].signal.connect(self._handleLoggerRrdEventMsg)
         # END
@@ -78,6 +80,9 @@ class ChanHandler(QObject):
 
         elif    msg['type'] == 'deleteProbe':
             self.masterpyqtSignalsDict['deleteProbe'].signal.emit(msg)
+
+        elif    msg['type'] == 'nchecksDumpMessage':
+            self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.emit(msg)
 
         elif    msg['type'] == 'staticChanInfo':
             chan    = msg['value']
@@ -127,6 +132,10 @@ class ChanHandler(QObject):
         self.chanpyqtSignals[channel].destroy()
         del self.chanpyqtSignals[channel]
 
+    def _handleNchecksDump(self,msg):
+        channel = msg['value']['name']
+        self._chanProxy[channel].handleNchecksDump(msg)
+        
     def _handleProbeDump(self, msg):
         channel = msg['value']['name']
         self._chanProxy[channel].handleDump(msg)
@@ -284,6 +293,35 @@ class Channel(QObject):
             dumpMsg['data']     = self.loggerEventState
             view.handleProbeEvent(dumpMsg)
         
+    # new code begin
+    def handleNchecksDump(self,msg):
+        httpDir = msg['value']['httpDumpDir']
+        rrdFile = msg['value']['rrdFile']
+        rrd4jFile = NTempFile(self)
+        rrd4jFile.open()
+        rrd4jFile.close()
+        rrd4jFileName = rrd4jFile.fileName()
+
+        # prevent garbage collection?
+        self._ncheckRrdFile = rrd4jFile
+
+        request = dict()
+        request['url']      = "%s/%s" % (httpDir, rrdFile)
+        request['callback'] = self.handleNchecksDump2nd
+        request['outfile']  = rrd4jFileName
+        supercast.requestUrl(request)
+        
+    def handleNchecksDump2nd(self, msg):
+        if msg['success'] == True: 
+            dumpMsg = dict()
+            dumpMsg['type']     = 'nchecksDumpMessage'
+            dumpMsg['file']     = msg['outfile']
+            self.signal.emit(dumpMsg)
+
+    def handleNcheckEvent(self,msg): pass
+    # new code end
+    
+
     def handleDump(self, msg):
         dumpType = msg['value']['logger']
         data     = msg['value']['data']

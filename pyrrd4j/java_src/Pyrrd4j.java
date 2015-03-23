@@ -51,13 +51,13 @@ class GraphRunnable implements Runnable
 
     public GraphRunnable(String strArg)
     {
-        strArgument = strArg;
+        strArgument = strArg.trim();
     }
 
     @Override
     public void run()
     {
-        Pyrrd4j.rrdReply("have succesfully processed: " + strArgument);
+        Pyrrd4j.rrdReply(strArgument);
     }
 
     public String getArg()
@@ -72,13 +72,13 @@ class UpdateRunnable implements Runnable
 
     public UpdateRunnable(String strArg)
     {
-        strArgument = strArg;
+        strArgument = strArg.trim();
     }
 
     @Override
     public void run()
     {
-        Pyrrd4j.rrdReply("have succesfully processed: " + strArgument);
+        Pyrrd4j.rrdReply(strArgument);
     }
 
     public String getArg()
@@ -148,7 +148,7 @@ class GraphReject implements RejectedExecutionHandler
     {
         GraphRunnable failRunner = (GraphRunnable) r;
         String failArg = failRunner.getArg();
-        Pyrrd4j.rrdReply("fail to process: " + failArg);
+        Pyrrd4j.rrdReply(failArg);
     }
 }
 

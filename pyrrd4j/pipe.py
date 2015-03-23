@@ -17,11 +17,13 @@ def pr(v):
 class Rrd4jAsync(QObject):
     def __init__(self, parent=None):
         super(Rrd4jAsync, self).__init__(parent)
+        Rrd4jAsync.singleton = self
+        self._queries = dict()
         curdir = os.path.dirname(__file__)
         classpath  = os.path.join(curdir, 'java_lib', '*') + ';'
 
         if platform.system() == 'Windows':
-            command = ["java", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
+            command = ["javaw", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
             customStartupinfo = subprocess.STARTUPINFO()
             customStartupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             self._rrd4jProcess = subprocess.Popen(
@@ -49,19 +51,36 @@ class Rrd4jAsync(QObject):
         self._runsig.signal.emit()
         
 
-    def execute(self, msg):
+    def execute(self, command):
         # TODO execute(self, callback, msg) 
         # id = getid()
         # dict {id, callback}
         # msg = JSON
-        self._rrd4jProcess.stdin.write(msg + '\n')
+        queryId = self._getQueryId(command['callback'])
+        cmdString = "%i:%s" % (queryId, command['msg'])
+        self._rrd4jProcess.stdin.write(cmdString + '\n')
 
     def _handleReply(self, msg):
         # TODO 
         # del dict {id, callback}
         # msg = JSON
-        pr("it is a big reply: " + msg)
+        # only split the first elent to have the query id
+        reply = msg.split(':', 1)
+        replyId     = reply[0]
+        replyIdInt  = int(replyId)
+        replyMsg    = reply[1]
+        callback = self._queries[replyIdInt]
+        del self._queries[replyIdInt]
+        callback(replyMsg.rstrip())
 
+    def _getQueryId(self, pyCallable):
+        queryId = 0
+        while True:
+            if queryId not in self._queries:
+                self._queries[queryId] = pyCallable
+                return queryId
+            else:
+                queryId = queryId + 1
 
 class Rrd4jAsyncReader(QObject):
     signal = pyqtSignal(str)
@@ -73,6 +92,7 @@ class Rrd4jAsyncReader(QObject):
         while True:
             v = self._fd.readline()
             self.signal.emit(v)
+
 
 
 class SimpleSignal(QObject):
