@@ -50,6 +50,7 @@ class RrdRunnable implements Runnable
 {
     private String strArgument;
     private String queryId;
+    private String cmdArgs;
     private String reply;
 
     public RrdRunnable(String line)
@@ -65,94 +66,144 @@ class RrdRunnable implements Runnable
 
         queryId         = rrdcmd[0];
         String cmdType  = rrdcmd[1];
-        String other    = rrdcmd[2];
+        cmdArgs         = rrdcmd[2];
 
         int intDebugVal = 0;
         String debugVal = null;
-        if (cmdType.equals("GRAPH")) {
-            
-            String graphCfg[] = other.split(";");
-            String title    = graphCfg[0];
-            String name     = graphCfg[1];
-            String vlabel   = graphCfg[2];
-            String rrdFile  = graphCfg[3];
-            String pngFile  = graphCfg[4];
-            String spanBegin = graphCfg[5];
-            String spanEnd  = graphCfg[6];
-            String width    = graphCfg[8];
-            String height   = graphCfg[9];
-            String dsDefs   = graphCfg[10];
-
-            // create graphDef and set elements
-             RrdGraphDef graphDef = new RrdGraphDef();
-            int spanBeginInt = Integer.parseInt(spanBegin);
-            int spanEndInt   = Integer.parseInt(spanEnd);
-            graphDef.setTimeSpan(spanBeginInt, spanEndInt);
-            graphDef.setTitle(title);
-            graphDef.setVerticalLabel(vlabel);
-            graphDef.setFilename(pngFile);
-            graphDef.setShowSignature(false);
-
-            /*
-            graphDef.setColor("BACK", Color.decode("#000000"));
-            graphDef.setColor("CANVAS", Color.decode("#000000"));
-            graphDef.setColor("SHADEA", Color.decode("#000000"));
-            graphDef.setColor("SHADEB", Color.decode("#000000"));
-            graphDef.setColor("GRID", Color.decode("#000000"));
-            graphDef.setColor("MGRID", Color.decode("#000000"));
-            graphDef.setColor("FONT", Color.decode("#000000"));
-            graphDef.setColor("FRAME", Color.decode("#000000"));
-            graphDef.setColor("ARROW", Color.decode("#000000"));
-            */
-
-
-            // loop over ds and add DS and Line elements
-            String[] dsDefList = dsDefs.split("\\@");
-            for (String s: dsDefList) {
-                dsDefs = s;
-                String[] dsD    = s.split(",");
-                String dsName   = dsD[0];
-                String gType    = dsD[1];
-                String gLegend  = dsD[2];
-                String gColor   = dsD[3];
-                String csFun    = dsD[4];
-                ConsolFun csVal = ConsolFun.valueOf(csFun);
-                graphDef.datasource(dsName, rrdFile, dsName, csVal);
-                
-                Color col = Color.decode(gColor);
-                if (gType.equals("area")) {
-                    graphDef.area(dsName, col, gLegend);
-                } else if (gType.equals("line")) {
-                    graphDef.line(dsName, col, gLegend, 2);
-                }
-            }
-            int widthInt    = Integer.parseInt(width);
-            int heightInt   = Integer.parseInt(height);
-            graphDef.setWidth(widthInt);
-            graphDef.setHeight(heightInt);
-
-            try {
-                RrdGraph graph   = new RrdGraph(graphDef);
-                BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
-                graph.render(bi.getGraphics());
-            } catch (Exception|Error e) {
-                Pyrrd4j.rrdReply(queryId + ":" + "ERROR:" + e);
-                return;
-            }
-                       
-        }
-        else if (cmdType.equals("UPDATE")) 
+        switch (cmdType)
         {
-        } 
+            case "GRAPH":
+                handleGraph();
+                break;
+            case "UPDATE":
+                handleUpdate();
+                break;
+            case "CONFIG":
+                handleConfig();
+                break;
+            default:
+                Pyrrd4j.rrdReply(queryId + ":ERROR");
+        }
+    }
 
+                
+    private void handleConfig()
+    {
+        String colorCfg[] = cmdArgs.split(";");
+        CustomRrdGraphDef.BACK_C      = Color.decode(colorCfg[0]);
+        CustomRrdGraphDef.CANVAS_C    = Color.decode(colorCfg[1]);
+        CustomRrdGraphDef.SHADEA_C    = Color.decode(colorCfg[2]);
+        CustomRrdGraphDef.SHADEB_C    = Color.decode(colorCfg[3]);
+        CustomRrdGraphDef.GRID_C      = Color.decode(colorCfg[4]);
+        CustomRrdGraphDef.MGRID_C     = Color.decode(colorCfg[5]);
+        CustomRrdGraphDef.FONT_C      = Color.decode(colorCfg[6]);
+        CustomRrdGraphDef.FRAME_C     = Color.decode(colorCfg[7]);
+        CustomRrdGraphDef.ARROW_C     = Color.decode(colorCfg[8]);
+        Pyrrd4j.rrdReply(queryId + ":OK" + cmdArgs);
+    }
+    
+    private void handleUpdate()
+    {
+    }
+
+    private void handleGraph()
+    {
+        String graphCfg[] = cmdArgs.split(";");
+        String title    = graphCfg[0];
+        String name     = graphCfg[1];
+        String vlabel   = graphCfg[2];
+        String rrdFile  = graphCfg[3];
+        String pngFile  = graphCfg[4];
+        String spanBegin = graphCfg[5];
+        String spanEnd  = graphCfg[6];
+        String width    = graphCfg[8];
+        String height   = graphCfg[9];
+        String dsDefs   = graphCfg[10];
+
+        // create graphDef and set elements
+        CustomRrdGraphDef graphDef = new CustomRrdGraphDef();
+        int spanBeginInt = Integer.parseInt(spanBegin);
+        int spanEndInt   = Integer.parseInt(spanEnd);
+        graphDef.setTimeSpan(spanBeginInt, spanEndInt);
+        graphDef.setTitle(title);
+        graphDef.setVerticalLabel(vlabel);
+        graphDef.setFilename(pngFile);
+        graphDef.setShowSignature(false);
+
+
+
+        // loop over ds and add DS and Line elements
+        String[] dsDefList = dsDefs.split("\\@");
+        for (String s: dsDefList) {
+            dsDefs = s;
+            String[] dsD    = s.split(",");
+            String dsName   = dsD[0];
+            String gType    = dsD[1];
+            String gLegend  = dsD[2];
+            String gColor   = dsD[3];
+            String csFun    = dsD[4];
+            ConsolFun csVal = ConsolFun.valueOf(csFun);
+            graphDef.datasource(dsName, rrdFile, dsName, csVal);
+
+            Color col = Color.decode(gColor);
+            if (gType.equals("area")) {
+                graphDef.area(dsName, col, gLegend);
+            } else if (gType.equals("line")) {
+                graphDef.line(dsName, col, gLegend, 2);
+            }
+        }
+        int widthInt    = Integer.parseInt(width);
+        int heightInt   = Integer.parseInt(height);
+        graphDef.setWidth(widthInt);
+        graphDef.setHeight(heightInt);
+
+        try {
+            RrdGraph graph   = new RrdGraph(graphDef);
+            BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
+            graph.render(bi.getGraphics());
+        } catch (Exception|Error e) {
+            Pyrrd4j.rrdReply(queryId + ":" + "ERROR:" + e);
+            return;
+        }
         Pyrrd4j.rrdReply(queryId + ":OK");
     }
+
 
     public String getQueryId()
     {
         return queryId;
     }
+
 }
+
+
+class CustomRrdGraphDef extends RrdGraphDef
+{        
+    public static Color BACK_C;
+    public static Color CANVAS_C;
+    public static Color SHADEA_C;
+    public static Color SHADEB_C;
+    public static Color GRID_C;
+    public static Color MGRID_C;
+    public static Color FONT_C;
+    public static Color FRAME_C;
+    public static Color ARROW_C;
+
+    public CustomRrdGraphDef()
+    {
+        super();
+        this.setColor("BACK",   BACK_C);
+        this.setColor("CANVAS", CANVAS_C);
+        this.setColor("SHADEA", SHADEA_C);
+        this.setColor("SHADEB", SHADEB_C);
+        this.setColor("GRID",   GRID_C);
+        this.setColor("MGRID",  MGRID_C);
+        this.setColor("FONT",   FONT_C);
+        this.setColor("FRAME",  FRAME_C);
+        this.setColor("ARROW",  ARROW_C);
+    }
+}
+
 
 public class Pyrrd4j
 {

@@ -8,8 +8,20 @@ import pipe
 
 
 ## __init__ api begin
-def init(parent=None):
-    return pipe.Rrd4jAsync(parent)
+def init(colorDict, parent=None):
+    cfg = "%s;%s;%s;%s;%s;%s;%s;%s;%s" % (
+        colorDict['BACK'],
+        colorDict['CANVAS'],
+        colorDict['SHADEA'],
+        colorDict['SHADEB'],
+        colorDict['GRID'],
+        colorDict['MGRID'],
+        colorDict['FONT'],
+        colorDict['FRAME'],
+        colorDict['ARROW']
+    )
+    cmd = "CONFIG:" + cfg
+    return pipe.Rrd4jAsync(parent, cmd)
 
 def graph(graph, callback):
     cmd = "%s;%s;%s;%s;%s;%i;%i;%s;%i;%i;" % (
@@ -56,7 +68,18 @@ class MyWidget(QWidget):
         super(MyWidget, self).__init__(parent)
         button = QPushButton(self)
         button.clicked.connect(self._ccc)
-        self._rrd = init(self)
+        colorDict = dict()
+        colorDict['BACK'] = "#000000"
+        colorDict['CANVAS'] = "#000000"
+        colorDict['SHADEA'] = "#000000"
+        colorDict['SHADEB'] = "#000000"
+        colorDict['GRID'] = "#000000"
+        colorDict['MGRID'] = "#000000"
+        colorDict['FONT'] = "#000000"
+        colorDict['FRAME'] = "#000000"
+        colorDict['ARROW'] = "#000000"
+
+        self._rrd = init(colorDict, self)
     
     def _ccc(self):
         graph2 = dict()

@@ -10,12 +10,8 @@ from PyQt5.QtCore import (
     pyqtSignal
 )
 
-def pr(v):
-    print(v)
-    sys.stdout.flush()
-
 class Rrd4jAsync(QObject):
-    def __init__(self, parent=None):
+    def __init__(self, parent, colorCommand):
         super(Rrd4jAsync, self).__init__(parent)
         Rrd4jAsync.singleton = self
         self._queries = dict()
@@ -49,22 +45,24 @@ class Rrd4jAsync(QObject):
         self._runsig.signal.connect(self._reader._loop, Qt.QueuedConnection)
         self._reader.signal.connect(self._handleReply, Qt.QueuedConnection)
         self._runsig.signal.emit()
-        
+        self._setConfig(colorCommand)
+
+    def _setConfig(self, colorCommand):
+        cfgC = dict()
+        cfgC['callback'] = self._setConfigReply
+        cfgC['string'] = colorCommand
+        self.execute(cfgC)
+
+    def _setConfigReply(self, msg): pass
+    
 
     def execute(self, command):
-        # TODO execute(self, callback, msg) 
-        # id = getid()
-        # dict {id, callback}
-        # msg = JSON
         queryId = self._getQueryId(command['callback'])
         cmdString = "%i:%s" % (queryId, command['string'])
         self._rrd4jProcess.stdin.write(cmdString + '\n')
+        self._rrd4jProcess.stdin.flush()
 
     def _handleReply(self, msg):
-        # TODO 
-        # del dict {id, callback}
-        # msg = JSON
-        # only split the first elent to have the query id
         reply = msg.split(':', 1)
         replyId     = reply[0]
         replyIdInt  = int(replyId)
@@ -93,43 +91,42 @@ class Rrd4jAsyncReader(QObject):
             v = self._fd.readline()
             self.signal.emit(v)
 
-
-
 class SimpleSignal(QObject):
     signal = pyqtSignal()
     def __init__(self, parent=None):
         super(SimpleSignal, self).__init__(parent)
 
 
-class Rrd4jSimple(object):
-    def __init__(self):
-        object.__init__(self)
-        curdir = os.path.dirname(__file__)
-        classpath  = os.path.join(curdir, 'java_lib', '*') + ';'
 
-        if platform.system() == 'Windows':
-            command = ["java", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
-            customStartupinfo = subprocess.STARTUPINFO()
-            customStartupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            self._rrd4jProcess = subprocess.Popen(
-                command, 
-                universal_newlines=True,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                startupinfo=customStartupinfo
-            )
-        else:
-            command = ["java", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
-            self._rrd4jProcess = subprocess.Popen(
-                command,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE
-            )
-
-    def execute(self, msg):
-        print("write stdin: " + msg)
-        msg += '\n'
-        self._rrd4jProcess.stdin.write(msg)
-        line = self._rrd4jProcess.stdout.readline()
-        print("read stdout: " + line)
-
+# class Rrd4jSimple(object):
+#     def __init__(self):
+#         object.__init__(self)
+#         curdir = os.path.dirname(__file__)
+#         classpath  = os.path.join(curdir, 'java_lib', '*') + ';'
+# 
+#         if platform.system() == 'Windows':
+#             command = ["java", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
+#             customStartupinfo = subprocess.STARTUPINFO()
+#             customStartupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+#             self._rrd4jProcess = subprocess.Popen(
+#                 command, 
+#                 universal_newlines=True,
+#                 stdin=subprocess.PIPE,
+#                 stdout=subprocess.PIPE,
+#                 startupinfo=customStartupinfo
+#             )
+#         else:
+#             command = ["java", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
+#             self._rrd4jProcess = subprocess.Popen(
+#                 command,
+#                 stdin=subprocess.PIPE,
+#                 stdout=subprocess.PIPE
+#             )
+# 
+#     def execute(self, msg):
+#         print("write stdin: " + msg)
+#         msg += '\n'
+#         self._rrd4jProcess.stdin.write(msg)
+#         line = self._rrd4jProcess.stdout.readline()
+#         print("read stdout: " + line)
+# 
