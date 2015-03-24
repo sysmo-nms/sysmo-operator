@@ -38,6 +38,7 @@ import org.rrd4j.core.Sample;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
 import org.rrd4j.core.RrdDbPool;
+import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.DsType;
@@ -99,6 +100,7 @@ class RrdRunnable implements Runnable
         CustomRrdGraphDef.FONT_C      = Color.decode(colorCfg[6]);
         CustomRrdGraphDef.FRAME_C     = Color.decode(colorCfg[7]);
         CustomRrdGraphDef.ARROW_C     = Color.decode(colorCfg[8]);
+        CustomRrdGraphDef.XAXIS_C     = Color.decode(colorCfg[9]);
         Pyrrd4j.rrdReply(queryId + ":OK" + cmdArgs);
     }
     
@@ -188,19 +190,21 @@ class CustomRrdGraphDef extends RrdGraphDef
     public static Color FONT_C;
     public static Color FRAME_C;
     public static Color ARROW_C;
+    public static Color XAXIS_C;
 
     public CustomRrdGraphDef()
     {
         super();
-        this.setColor("BACK",   BACK_C);
-        this.setColor("CANVAS", CANVAS_C);
-        this.setColor("SHADEA", SHADEA_C);
-        this.setColor("SHADEB", SHADEB_C);
-        this.setColor("GRID",   GRID_C);
-        this.setColor("MGRID",  MGRID_C);
-        this.setColor("FONT",   FONT_C);
-        this.setColor("FRAME",  FRAME_C);
-        this.setColor("ARROW",  ARROW_C);
+        this.setColor(RrdGraphConstants.COLOR_BACK,   BACK_C);
+        this.setColor(RrdGraphConstants.COLOR_CANVAS, CANVAS_C);
+        this.setColor(RrdGraphConstants.COLOR_SHADEA, SHADEA_C);
+        this.setColor(RrdGraphConstants.COLOR_SHADEB, SHADEB_C);
+        this.setColor(RrdGraphConstants.COLOR_GRID,   GRID_C);
+        this.setColor(RrdGraphConstants.COLOR_MGRID,  MGRID_C);
+        this.setColor(RrdGraphConstants.COLOR_FONT,   FONT_C);
+        this.setColor(RrdGraphConstants.COLOR_FRAME,  FRAME_C);
+        this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
+        this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
     }
 }
 

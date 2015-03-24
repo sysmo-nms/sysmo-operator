@@ -9,7 +9,7 @@ import pipe
 
 ## __init__ api begin
 def init(colorDict, parent=None):
-    cfg = "%s;%s;%s;%s;%s;%s;%s;%s;%s" % (
+    cfg = "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s" % (
         colorDict['BACK'],
         colorDict['CANVAS'],
         colorDict['SHADEA'],
@@ -18,7 +18,8 @@ def init(colorDict, parent=None):
         colorDict['MGRID'],
         colorDict['FONT'],
         colorDict['FRAME'],
-        colorDict['ARROW']
+        colorDict['ARROW'],
+        colorDict['XAXIS']
     )
     cmd = "CONFIG:" + cfg
     return pipe.Rrd4jAsync(parent, cmd)
@@ -78,6 +79,7 @@ class MyWidget(QWidget):
         colorDict['FONT'] = "#000000"
         colorDict['FRAME'] = "#000000"
         colorDict['ARROW'] = "#000000"
+        colorDict['XAXIS'] = "#FFFFFF"
 
         self._rrd = init(colorDict, self)
     
