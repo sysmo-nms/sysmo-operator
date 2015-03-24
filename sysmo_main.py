@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QSettings, QSize
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy, QStackedLayout, QLabel, QStatusBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtSvg import QSvgWidget
-from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap, getImage
+from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap, getImage, getRgba
 from sysmo_dialogs import ProxyConf
 from sysmo_widgets import NFrameContainer, NFrame, NGridContainer, NGrid, CommunityMenu
 from monitor.gui.timeline.main import Timeline
@@ -46,7 +46,7 @@ class NMainWindow(QMainWindow):
         self.setWindowIcon(QIcon(getPixmap('applications-development')))
         self.setWindowTitle('Sysmo')
 
-        pyrrd4j.init(self)
+        self._initPyrrd4j()
         self._initSupercast()
 
         self._initProxySettings()
@@ -62,6 +62,20 @@ class NMainWindow(QMainWindow):
     #########
     # INITS #
     #########
+
+    def _initPyrrd4j(self):
+        rrdColorTheme = dict()
+        rrdColorTheme['BACK']   = "#00000000"
+        rrdColorTheme['CANVAS'] = getRgba('Base')
+        rrdColorTheme['SHADEA'] = getRgba('Window')
+        rrdColorTheme['SHADEB'] = getRgba('Window')
+        rrdColorTheme['GRID']   = getRgba('Dark')
+        rrdColorTheme['MGRID']  = getRgba('Shadow')
+        rrdColorTheme['FONT']   = getRgba('WindowText')
+        rrdColorTheme['FRAME']  = getRgba('Window')
+        rrdColorTheme['ARROW']  = getRgba('Shadow')
+        rrdColorTheme['XAXIS']  = getRgba('Dark')
+        pyrrd4j.init(rrdColorTheme, self)
 
     # Supercast
     def _initSupercast(self):

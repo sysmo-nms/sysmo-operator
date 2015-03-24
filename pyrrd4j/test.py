@@ -70,16 +70,16 @@ class MyWidget(QWidget):
         button = QPushButton(self)
         button.clicked.connect(self._ccc)
         colorDict = dict()
-        colorDict['BACK'] = "#000000"
-        colorDict['CANVAS'] = "#000000"
-        colorDict['SHADEA'] = "#000000"
-        colorDict['SHADEB'] = "#000000"
-        colorDict['GRID'] = "#000000"
-        colorDict['MGRID'] = "#000000"
-        colorDict['FONT'] = "#000000"
-        colorDict['FRAME'] = "#000000"
-        colorDict['ARROW'] = "#000000"
-        colorDict['XAXIS'] = "#FFFFFF"
+        colorDict['BACK'] = "#000000FF"
+        colorDict['CANVAS'] = "#000000FF"
+        colorDict['SHADEA'] = "#000000FF"
+        colorDict['SHADEB'] = "#000000FF"
+        colorDict['GRID'] = "#000000FF"
+        colorDict['MGRID'] = "#000000FF"
+        colorDict['FONT'] = "#000000FF"
+        colorDict['FRAME'] = "#000000FF"
+        colorDict['ARROW'] = "#000000FF"
+        colorDict['XAXIS'] = "#FFFFFFFF"
 
         self._rrd = init(colorDict, self)
     

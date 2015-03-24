@@ -54,6 +54,7 @@ class Rrd4jAsync(QObject):
         self.execute(cfgC)
 
     def _setConfigReply(self, msg): pass
+        #print("seconfigreply: " + msg)
     
 
     def execute(self, command):

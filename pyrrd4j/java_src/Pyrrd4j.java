@@ -91,19 +91,10 @@ class RrdRunnable implements Runnable
     private void handleConfig()
     {
         String colorCfg[] = cmdArgs.split(";");
-        CustomRrdGraphDef.BACK_C      = Color.decode(colorCfg[0]);
-        CustomRrdGraphDef.CANVAS_C    = Color.decode(colorCfg[1]);
-        CustomRrdGraphDef.SHADEA_C    = Color.decode(colorCfg[2]);
-        CustomRrdGraphDef.SHADEB_C    = Color.decode(colorCfg[3]);
-        CustomRrdGraphDef.GRID_C      = Color.decode(colorCfg[4]);
-        CustomRrdGraphDef.MGRID_C     = Color.decode(colorCfg[5]);
-        CustomRrdGraphDef.FONT_C      = Color.decode(colorCfg[6]);
-        CustomRrdGraphDef.FRAME_C     = Color.decode(colorCfg[7]);
-        CustomRrdGraphDef.ARROW_C     = Color.decode(colorCfg[8]);
-        CustomRrdGraphDef.XAXIS_C     = Color.decode(colorCfg[9]);
+        CustomRrdGraphDef.setDefaultColors(colorCfg);
         Pyrrd4j.rrdReply(queryId + ":OK" + cmdArgs);
     }
-    
+   
     private void handleUpdate()
     {
     }
@@ -206,6 +197,31 @@ class CustomRrdGraphDef extends RrdGraphDef
         this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
         this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
     }
+
+    public static void setDefaultColors(String[] colorCfg)
+    {        
+        BACK_C      = decodeRGBA(colorCfg[0]);
+        CANVAS_C    = decodeRGBA(colorCfg[1]);
+        SHADEA_C    = decodeRGBA(colorCfg[2]);
+        SHADEB_C    = decodeRGBA(colorCfg[3]);
+        GRID_C      = decodeRGBA(colorCfg[4]);
+        MGRID_C     = decodeRGBA(colorCfg[5]);
+        FONT_C      = decodeRGBA(colorCfg[6]);
+        FRAME_C     = decodeRGBA(colorCfg[7]);
+        ARROW_C     = decodeRGBA(colorCfg[8]);
+        XAXIS_C     = decodeRGBA(colorCfg[9]);
+    }
+
+    private static Color decodeRGBA(String hexString)
+    {
+        return new Color(
+            Integer.valueOf(hexString.substring(1,3), 16),
+            Integer.valueOf(hexString.substring(3,5), 16),
+            Integer.valueOf(hexString.substring(5,7), 16),
+            Integer.valueOf(hexString.substring(7,9), 16)
+        );
+    }
+
 }
 
 
