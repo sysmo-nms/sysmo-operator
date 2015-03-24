@@ -110,7 +110,7 @@ class Supercast(QObject):
 
     # from socket
     def _handleThreadMsg(self, msg):
-        print("handleThreadMsg", msg)
+        #print("handleThreadMsg", msg)
         (msgType, payload) = msg
         if msgType == 'message':
             handler = self._mpd.get(payload['from'])

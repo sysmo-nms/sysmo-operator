@@ -41,6 +41,7 @@ import  monitor.norrd  as norrd
 
 import  sysmapi
 import  platform
+import  nchecks
 import  re
 
 def openPerformancesFor(probe, displayName):
@@ -77,7 +78,7 @@ class LoggerView(QDialog):
         print("open logger for: " + str(probeee))
         if probeee['probeMod'] == 'probe_nchecks':
             cl = probeee['probeClass']
-            self._logArea   = NChecksLogArea(self, probe)
+            self._logArea   = NChecksLogArea(self, probe, cl)
             self._layout.addWidget(self._logArea,   0,1)
             print("mod is: " + str(cl))
             
@@ -94,18 +95,30 @@ class LoggerView(QDialog):
         self.show()
  
 class NChecksLogArea(AbstractChannelWidget):
-    def __init__(self, parent, channel):
+    def __init__(self, parent, channel, cl):
         super(NChecksLogArea, self).__init__(parent, channel)
         self.connectProbe()
         self._layout    = NGridContainer(self)
         self._rrd4jArea = NChecksRrdArea(self)
         self._layout.addWidget(self._rrd4jArea, 0,0)
+        self._rrdFile       = None
+        self._rrdGraphDef   = nchecks.getGraphTemplateFor(cl)
+        print("get graphdef: " + str(self._rrdGraphDef))
+    
+    def handleProbeEvent(self, msg):
+        if msg['type'] == 'nchecksDumpMsg':
+            self._rrdFile = msg['file']
+
+
+
+
+
+
 
 class NChecksRrdArea(NFrame):
     def __init__(self, parent=None):
         super(NChecksRrdArea, self).__init__(parent)
         lab = QLabel('hello', self)
-
 
 
 

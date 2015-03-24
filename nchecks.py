@@ -9,16 +9,40 @@ def pr(val):
     sys.stdout.flush()
 
 def start(parent):
-    NChecksDefinition(parent)
+    return NChecksDefinition(parent)
 
-def getGraphSpecsFor(check):
-    NChecksDefinition.singleton.getGraphSpecFor(check)
+def getGraphTemplateFor(check):
+    gdefs = NChecksDefinition.singleton.getGraphSpecFor(check)
+    graphTemplates = list()
+    for gdef in gdefs:
+        graph = dict()
+        graph['title']  = gdef.find('graphTitle').text
+        graph['name']   = gdef.find('graphName').text
+        graph['vlabel'] = gdef.find('verticalLabel').text
+        graph['spanBegin']  = -1200
+        graph['spanEnd']    = -1
+        graph['width']      = 100
+        graph['height']     = 50
+        graph['DS']         = list()
+        for ds in gdef.findall('add'):
+            graph['DS'].append(
+                "%s,%s,%s,%s,%s" % (
+                    ds.find('name').text,
+                    ds.find('graphType').text,
+                    ds.find('legend').text,
+                    ds.find('color').text,
+                    ds.find('consolFun').text
+                )
+            )
+        graphTemplates.append(graph)
+    return graphTemplates
+    
 
 def getFlagSpecFor(check):
-    NChecksDefinition.singleton.getFlagSpecFor(check)
+    return NChecksDefinition.singleton.getFlagSpecFor(check)
 
 def getDescrFor(check):
-    NChecksDefinition.singleton.getDescrFor(check)
+    return NChecksDefinition.singleton.getDescrFor(check)
 
 class NChecksDefinition(QObject):
     def __init__(self, parent=None):
@@ -63,7 +87,7 @@ class NChecksDefinition(QObject):
         for i in self._checks.keys():
             if self._checks[i]['initialized'] != True: return
 
-    def getGraphSpecFor(self, check):
+    def getGraphSpecFor(self, name):
         root = self._checks[name]['def'].getroot()
         for child in root:
             if child.tag == 'performances':
@@ -71,13 +95,13 @@ class NChecksDefinition(QObject):
                     if pchild.tag == 'graphs':
                         return pchild
 
-    def getDescrFor(self, check):
+    def getDescrFor(self, name):
         root = self._checks[name]['def'].getroot()
         for child in root:
             if child.tag == 'descr':
                 return child.text
 
-    def getFlagSpecFor(self, check):
+    def getFlagSpecFor(self, name):
         root = self._checks[name]['def'].getroot()
         for child in root:
             if child.tag == 'flags_def':

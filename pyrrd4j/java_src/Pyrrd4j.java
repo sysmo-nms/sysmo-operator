@@ -109,9 +109,9 @@ class RrdRunnable implements Runnable
         String pngFile  = graphCfg[4];
         String spanBegin = graphCfg[5];
         String spanEnd  = graphCfg[6];
-        String width    = graphCfg[8];
-        String height   = graphCfg[9];
-        String dsDefs   = graphCfg[10];
+        String width    = graphCfg[7];
+        String height   = graphCfg[8];
+        String dsDefs   = graphCfg[9];
 
         // create graphDef and set elements
         CustomRrdGraphDef graphDef = new CustomRrdGraphDef();

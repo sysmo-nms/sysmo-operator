@@ -25,7 +25,7 @@ def init(colorDict, parent=None):
     return pipe.Rrd4jAsync(parent, cmd)
 
 def graph(graph, callback):
-    cmd = "%s;%s;%s;%s;%s;%i;%i;%s;%i;%i;" % (
+    cmd = "%s;%s;%s;%s;%s;%i;%i;%i;%i;" % (
         graph['title'],
         graph['name'],
         graph['vlabel'],
@@ -33,7 +33,6 @@ def graph(graph, callback):
         graph['pngDst'],
         graph['spanBegin'],
         graph['spanEnd'],
-        graph['consolFun'],
         graph['width'],
         graph['height'])
     for g in graph['DS']:
@@ -92,7 +91,6 @@ class MyWidget(QWidget):
         graph2['pngDst'] = "./test.png"
         graph2['spanBegin'] = -12000
         graph2['spanEnd']   = -1
-        graph2['consolFun'] = "AVERAGE"
         graph2['width']     = 300
         graph2['height']    = 100
         graph2['DS'] = list()

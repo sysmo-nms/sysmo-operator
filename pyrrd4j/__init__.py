@@ -18,7 +18,7 @@ def init(colorDict, parent=None):
     return pipe.Rrd4jAsync(parent, cmd)
 
 def graph(graph, callback):
-    cmd = "%s;%s;%s;%s;%s;%i;%i;%s;%i;%i;" % (
+    cmd = "%s;%s;%s;%s;%s;%i;%i;%i;%i;" % (
         graph['title'],
         graph['name'],
         graph['vlabel'],
@@ -26,7 +26,6 @@ def graph(graph, callback):
         graph['pngDst'],
         graph['spanBegin'],
         graph['spanEnd'],
-        graph['consolFun'],
         graph['width'],
         graph['height'])
     for g in graph['DS']:

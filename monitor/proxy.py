@@ -318,7 +318,9 @@ class Channel(QObject):
             dumpMsg['file']     = msg['outfile']
             self.signal.emit(dumpMsg)
 
-    def handleNcheckEvent(self,msg): pass
+    def handleNcheckEvent(self,msg):
+        print("handle ncheck event: " + msg)
+
     # new code end
     
 
