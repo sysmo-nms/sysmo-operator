@@ -21,7 +21,7 @@ def init(colorDict, parent=None):
         colorDict['ARROW'],
         colorDict['XAXIS']
     )
-    cmd = "CONFIG:" + cfg
+    cmd = "CONFIG|" + cfg
     return pipe.Rrd4jAsync(parent, cmd)
 
 def graph(graph, callback):
@@ -29,8 +29,8 @@ def graph(graph, callback):
         graph['title'],
         graph['name'],
         graph['vlabel'],
-        graph['rrdSrc'],
-        graph['pngDst'],
+        graph['filenameRrd'],
+        graph['filenamePng'],
         graph['spanBegin'],
         graph['spanEnd'],
         graph['width'],
@@ -41,13 +41,13 @@ def graph(graph, callback):
     # remove last pipe character
     cmd = cmd[:-1]
     command = dict()
-    command['string'] = 'GRAPH:' + cmd
+    command['string'] = 'GRAPH|' + cmd
     command['callback'] = callback
     print("command is" + cmd)
     pipe.Rrd4jAsync.singleton.execute(command)
 
 def update(command, callback):
-    command['string'] = 'UPDATE:' + command['string']
+    command['string'] = 'UPDATE|' + command['string']
     call(command, callback)
 
 def call(command, callback):
@@ -87,8 +87,8 @@ class MyWidget(QWidget):
         graph2['title']  = "ICMP performances"
         graph2['name']   = "ICMPPerfs"
         graph2['vlabel'] = "Milliseconds"
-        graph2['rrdSrc'] = "./test.rrd"
-        graph2['pngDst'] = "./test.png"
+        graph2['filenameRrd'] = "./test.rrd"
+        graph2['filenamePng'] = "./test.png"
         graph2['spanBegin'] = -12000
         graph2['spanEnd']   = -1
         graph2['width']     = 300

@@ -1,5 +1,6 @@
 import pyrrd4j.pipe
 
+
 ## __init__ api begin
 def init(colorDict, parent=None):
     cfg = "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s" % (
@@ -14,7 +15,7 @@ def init(colorDict, parent=None):
         colorDict['ARROW'],
         colorDict['XAXIS']
     )
-    cmd = "CONFIG:" + cfg
+    cmd = "CONFIG|" + cfg
     return pipe.Rrd4jAsync(parent, cmd)
 
 def graph(graph, callback):
@@ -22,8 +23,8 @@ def graph(graph, callback):
         graph['title'],
         graph['name'],
         graph['vlabel'],
-        graph['rrdSrc'],
-        graph['pngDst'],
+        graph['filenameRrd'],
+        graph['filenamePng'],
         graph['spanBegin'],
         graph['spanEnd'],
         graph['width'],
@@ -31,16 +32,16 @@ def graph(graph, callback):
     for g in graph['DS']:
         cmd += g
         cmd += '@'
-    # remove last separator character
-    cmd     = cmd[:-1]
+    # remove last pipe character
+    cmd = cmd[:-1]
     command = dict()
-    command['string'] = 'GRAPH:' + cmd
+    command['string'] = 'GRAPH|' + cmd
     command['callback'] = callback
     print("command is" + cmd)
     pipe.Rrd4jAsync.singleton.execute(command)
 
 def update(command, callback):
-    command['string'] = 'UPDATE:' + command['string']
+    command['string'] = 'UPDATE|' + command['string']
     call(command, callback)
 
 def call(command, callback):

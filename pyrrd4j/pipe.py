@@ -58,13 +58,15 @@ class Rrd4jAsync(QObject):
     
 
     def execute(self, command):
+        print("will execute: " + command['string'])
+        sys.stdout.flush()
         queryId = self._getQueryId(command['callback'])
-        cmdString = "%i:%s" % (queryId, command['string'])
+        cmdString = "%i|%s" % (queryId, command['string'])
         self._rrd4jProcess.stdin.write(cmdString + '\n')
         self._rrd4jProcess.stdin.flush()
 
     def _handleReply(self, msg):
-        reply = msg.split(':', 1)
+        reply = msg.split('|', 1)
         replyId     = reply[0]
         replyIdInt  = int(replyId)
         replyMsg    = reply[1]

@@ -34,15 +34,17 @@ from    sysmo_widgets    import (
     QLabel
 )
 
-from    monitor.proxy import AbstractChannelWidget, ChanHandler
+from    monitor.proxy import AbstractChannelWidget, ChanHandler, NTempFile
 from    monitor.dialogs.properties.probe.rrdarea  import RrdArea
 import  monitor.api    as monapi
 import  monitor.norrd  as norrd
 
 import  sysmapi
+import  pyrrd4j
 import  platform
 import  nchecks
 import  re
+import  os
 
 def openPerformancesFor(probe, displayName):
     if probe in list(LoggerView.Elements.keys()):
@@ -95,32 +97,51 @@ class LoggerView(QDialog):
         self.show()
  
 class NChecksLogArea(AbstractChannelWidget):
+    ncheckEvents = pyqtSignal(dict)
+
     def __init__(self, parent, channel, cl):
         super(NChecksLogArea, self).__init__(parent, channel)
         self.connectProbe()
-        self._layout    = NGridContainer(self)
-        self._rrd4jArea = NChecksRrdArea(self)
-        self._layout.addWidget(self._rrd4jArea, 0,0)
-        self._rrdFile       = None
-        self._rrdGraphDef   = nchecks.getGraphTemplateFor(cl)
-        print("get graphdef: " + str(self._rrdGraphDef))
-    
+        layout      = NGridContainer(self)
+        rrdGraphDef = nchecks.getGraphTemplateFor(cl)
+        for g in rrdGraphDef:
+            w = NChecksRrdGraph(g,self)
+            self.ncheckEvents.connect(w.handleProbeEvent)
+            layout.addWidget(w)
+            
+    def handleProbeEvent(self, msg): self.ncheckEvents.emit(msg)
+
+
+
+
+
+
+
+class NChecksRrdGraph(QLabel):
+    def __init__(self, graphDef, parent=None):
+        super(NChecksRrdGraph, self).__init__(parent)
+        self._graphDef = graphDef
+        self._pix = QPixmap()
+        self.setText("Generating graphic...")
+        tf = NTempFile(self)
+        tf.open()
+        tf.close()
+        self._tf = tf.fileName()
+        self._graphDef['filenamePng'] = self._tf
+
     def handleProbeEvent(self, msg):
-        if msg['type'] == 'nchecksDumpMsg':
-            self._rrdFile = msg['file']
+        if msg['type'] == 'nchecksDumpMessage':
+            self._graphDef['filenameRrd'] = msg['file']
+            self.drawRrd()
 
+    def drawRrd(self):
+        pyrrd4j.graph(self._graphDef, self.drawRrdReply)
 
-
-
-
-
-
-class NChecksRrdArea(NFrame):
-    def __init__(self, parent=None):
-        super(NChecksRrdArea, self).__init__(parent)
-        lab = QLabel('hello', self)
-
-
+    def drawRrdReply(self, msg):
+        self._pix.load(self._tf)
+        self.setPixmap(self._pix)
+        
+        
 
 
 

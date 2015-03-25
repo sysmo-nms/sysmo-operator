@@ -63,12 +63,11 @@ class RrdRunnable implements Runnable
     public void run()
     {
         
-        String[] rrdcmd = strArgument.split(":");
+        String[] rrdcmd = strArgument.split("\\|");
 
         queryId         = rrdcmd[0];
         String cmdType  = rrdcmd[1];
         cmdArgs         = rrdcmd[2];
-
         int intDebugVal = 0;
         String debugVal = null;
         switch (cmdType)
@@ -83,7 +82,7 @@ class RrdRunnable implements Runnable
                 handleConfig();
                 break;
             default:
-                Pyrrd4j.rrdReply(queryId + ":ERROR");
+                Pyrrd4j.rrdReply(queryId + "|ERROR" + cmdType);
         }
     }
 
@@ -92,7 +91,7 @@ class RrdRunnable implements Runnable
     {
         String colorCfg[] = cmdArgs.split(";");
         CustomRrdGraphDef.setDefaultColors(colorCfg);
-        Pyrrd4j.rrdReply(queryId + ":OK" + cmdArgs);
+        Pyrrd4j.rrdReply(queryId + "|OK" + cmdArgs);
     }
    
     private void handleUpdate()
@@ -143,7 +142,10 @@ class RrdRunnable implements Runnable
                 graphDef.area(dsName, col, gLegend);
             } else if (gType.equals("line")) {
                 graphDef.line(dsName, col, gLegend, 2);
+            } else {
+                graphDef.stack(dsName, col, gLegend);
             }
+
         }
         int widthInt    = Integer.parseInt(width);
         int heightInt   = Integer.parseInt(height);
@@ -155,10 +157,10 @@ class RrdRunnable implements Runnable
             BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
             graph.render(bi.getGraphics());
         } catch (Exception|Error e) {
-            Pyrrd4j.rrdReply(queryId + ":" + "ERROR:" + e);
+            Pyrrd4j.rrdReply(queryId + "|" + "ERROR|" + e);
             return;
         }
-        Pyrrd4j.rrdReply(queryId + ":OK");
+        Pyrrd4j.rrdReply(queryId + "|OK");
     }
 
 
@@ -196,6 +198,7 @@ class CustomRrdGraphDef extends RrdGraphDef
         this.setColor(RrdGraphConstants.COLOR_FRAME,  FRAME_C);
         this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
         this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
+        this.setImageFormat("png");
     }
 
     public static void setDefaultColors(String[] colorCfg)
@@ -286,7 +289,7 @@ class RrdReject implements RejectedExecutionHandler
     {
         RrdRunnable failRunner = (RrdRunnable) r;
         String queryId = failRunner.getQueryId();
-        Pyrrd4j.rrdReply(queryId + ":ERROR:Max thread queue reached");
+        Pyrrd4j.rrdReply(queryId + "|ERROR|Max thread queue reached");
     }
 }
 

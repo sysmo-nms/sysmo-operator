@@ -21,8 +21,10 @@ def getGraphTemplateFor(check):
         graph['vlabel'] = gdef.find('verticalLabel').text
         graph['spanBegin']  = -1200
         graph['spanEnd']    = -1
-        graph['width']      = 100
-        graph['height']     = 50
+        graph['width']      = 600
+        graph['height']     = 200
+        graph['filenameRrd'] = None
+        graph['filenamePng'] = None
         graph['DS']         = list()
         for ds in gdef.findall('add'):
             graph['DS'].append(
