@@ -3,7 +3,8 @@ from    PyQt5.QtCore   import (
     QSize,
     QTimeLine,
     pyqtSignal,
-    Qt
+    Qt,
+    QTimer
 )
 
 from    PyQt5.QtGui    import (
@@ -16,7 +17,7 @@ from    PyQt5.QtGui    import (
 from    PyQt5.QtWidgets    import (
     QWidget,
     QDialog,
-    QScrollArea,
+    QAbstractScrollArea,
     QStatusBar,
     QProgressBar,
     QPushButton,
@@ -24,7 +25,9 @@ from    PyQt5.QtWidgets    import (
     QCheckBox,
     QLineEdit,
     QTabWidget,
-    QFrame
+    QFrame,
+    QLayout,
+    QScrollArea
 )
 
 from    sysmo_widgets    import (
@@ -46,6 +49,7 @@ import  platform
 import  nchecks
 import  re
 import  os
+import  sys
 
 def openPerformancesFor(probe, displayName):
     if probe in list(LoggerView.Elements.keys()):
@@ -104,6 +108,10 @@ class NChecksLogArea(AbstractChannelWidget):
     def __init__(self, parent, channel, cl):
         super(NChecksLogArea, self).__init__(parent, channel)
         self.connectProbe()
+        self._widthTimer = QTimer(self)
+        self._widthTimer.setSingleShot(True)
+        self._widthTimer.setInterval(500)
+        self._widthTimer.timeout.connect(self._widthSignal)
         self.setAutoFillBackground(True)
         self.setBackgroundRole(QPalette.Light)
         self.setFrameShape(QFrame.StyledPanel)
@@ -113,32 +121,51 @@ class NChecksLogArea(AbstractChannelWidget):
         layout.setContentsMargins(7,5,5,5)
         rrdGraphDef = nchecks.getGraphTemplateFor(cl)
 
-        graphFrame = NFrameContainer(self)
+        graphFrame = NFrame(self)
         graphFrame.setAutoFillBackground(True)
         graphFrame.setBackgroundRole(QPalette.Window)
         graphFrame.setFrameShape(QFrame.Panel)
         graphFrame.setFrameShadow(QFrame.Sunken)
         graphGrid = NGrid(graphFrame)
         
+        scroll = QScrollArea(self)
+        scroll.setMinimumWidth(400)
+        scroll.setMinimumHeight(200)
+        scroll.setWidget(graphFrame)
+        scroll.setWidgetResizable(True)
         self._controls = NChecksRrdControls(self)
         layout.addWidget(self._controls,    0,0)
-        layout.addWidget(graphFrame,        1,0)
+        layout.addWidget(scroll,        1,0)
         layout.setRowStretch(0,0)
         layout.setRowStretch(1,1)
 
+        row = 0
         for g in rrdGraphDef:
             w = NChecksRrdGraph(g,self)
             self.ncheckEvents.connect(w.handleProbeEvent)
             self.widthEvents.connect(w.widthChanged)
             self._controls.heightCtrl.currentIndexChanged[int].connect(w.heightChanged)
             self._controls.timeLineCtrl.currentIndexChanged[int].connect(w.timeChanged)
-            graphGrid.addWidget(w)
+            graphGrid.addWidget(w, row, 0)
+            graphGrid.setRowStretch(row, 0)
+            row += 1
+        graphGrid.setRowStretch(row, 1)
             
     def handleProbeEvent(self, msg):
         self.ncheckEvents.emit(msg)
 
     def widthEvent(self, width):
         self.widthEvents.emit(width)
+
+    def resizeEvent(self, event):
+        self._widthTimer.start()
+    
+    def _widthSignal(self):
+        self.widthEvents.emit(self.size().width())
+
+def pr(val):
+    print(val)
+    sys.stdout.flush()
 
 class NChecksRrdGraph(NFrameContainer):
     def __init__(self, graphDef, parent=None):
@@ -174,10 +201,11 @@ class NChecksRrdGraph(NFrameContainer):
             self._graphDef['height'] = 300
 
     def widthChanged(self, size):
-        self._setGraphWidth(size)
+        self._setGraphWidth(size - 150)
         self.drawRrd()
 
-    def _setGraphWidth(self, size): pass
+    def _setGraphWidth(self, size):
+        self._graphDef['width'] = size
         
     def heightChanged(self, size):
         self._setGraphHeight(size)
