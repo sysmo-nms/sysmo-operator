@@ -23,7 +23,8 @@ from    PyQt5.QtWidgets    import (
     QComboBox,
     QCheckBox,
     QLineEdit,
-    QTabWidget
+    QTabWidget,
+    QFrame
 )
 
 from    sysmo_widgets    import (
@@ -98,29 +99,53 @@ class LoggerView(QDialog):
  
 class NChecksLogArea(AbstractChannelWidget):
     ncheckEvents = pyqtSignal(dict)
+    widthEvents  = pyqtSignal(int)
 
     def __init__(self, parent, channel, cl):
         super(NChecksLogArea, self).__init__(parent, channel)
         self.connectProbe()
-        layout      = NGridContainer(self)
+        self.setAutoFillBackground(True)
+        self.setBackgroundRole(QPalette.Light)
+        self.setFrameShape(QFrame.StyledPanel)
+        #self.setFrameShadow(QFrame.Raised)
+
+        layout      = NGrid(self)
+        layout.setContentsMargins(7,5,5,5)
         rrdGraphDef = nchecks.getGraphTemplateFor(cl)
+
+        graphFrame = NFrameContainer(self)
+        graphFrame.setAutoFillBackground(True)
+        graphFrame.setBackgroundRole(QPalette.Window)
+        graphFrame.setFrameShape(QFrame.Panel)
+        graphFrame.setFrameShadow(QFrame.Sunken)
+        graphGrid = NGrid(graphFrame)
+        
+        self._controls = NChecksRrdControls(self)
+        layout.addWidget(self._controls,    0,0)
+        layout.addWidget(graphFrame,        1,0)
+        layout.setRowStretch(0,0)
+        layout.setRowStretch(1,1)
+
         for g in rrdGraphDef:
             w = NChecksRrdGraph(g,self)
             self.ncheckEvents.connect(w.handleProbeEvent)
-            layout.addWidget(w)
+            self.widthEvents.connect(w.widthChanged)
+            self._controls.heightCtrl.currentIndexChanged[int].connect(w.heightChanged)
+            self._controls.timeLineCtrl.currentIndexChanged[int].connect(w.timeChanged)
+            graphGrid.addWidget(w)
             
-    def handleProbeEvent(self, msg): self.ncheckEvents.emit(msg)
+    def handleProbeEvent(self, msg):
+        self.ncheckEvents.emit(msg)
 
-
-
-
-
-
+    def widthEvent(self, width):
+        self.widthEvents.emit(width)
 
 class NChecksRrdGraph(NFrameContainer):
     def __init__(self, graphDef, parent=None):
         super(NChecksRrdGraph, self).__init__(parent)
         self._graphDef = graphDef
+        self._setGraphHeight(NChecksRrdControls.SIZE_NORMAL)
+        self._setGraphTime(NChecksRrdControls.TIME_SEVEN_DAYS)
         self._lab = QLabel(self)
         self._pix = QPixmap()
         self._lab.setText("Generating graphic...")
@@ -136,6 +161,54 @@ class NChecksRrdGraph(NFrameContainer):
         lay.setRowStretch(0,0)
         lay.setRowStretch(1,1)
 
+    def _setGraphHeight(self, size):
+        if size == NChecksRrdControls.SIZE_THUMBNAIL:
+            self._graphDef['height'] = 30
+        elif size == NChecksRrdControls.SIZE_SMALL:
+            self._graphDef['height'] = 50
+        elif size == NChecksRrdControls.SIZE_NORMAL:
+            self._graphDef['height'] = 100 
+        elif size == NChecksRrdControls.SIZE_LARGE:
+            self._graphDef['height'] = 180
+        elif size == NChecksRrdControls.SIZE_HUGE:
+            self._graphDef['height'] = 300
+
+    def widthChanged(self, size):
+        self._setGraphWidth(size)
+        self.drawRrd()
+
+    def _setGraphWidth(self, size): pass
+        
+    def heightChanged(self, size):
+        self._setGraphHeight(size)
+        self.drawRrd()
+    
+    def _setGraphTime(self, time):
+        if time == NChecksRrdControls.TIME_TWO_HOURS:
+            self._graphDef['spanBegin'] = -3600
+        elif time == NChecksRrdControls.TIME_TWELVE_HOURS:
+            self._graphDef['spanBegin'] = -43200
+        elif time == NChecksRrdControls.TIME_TWO_DAYS:
+            self._graphDef['spanBegin'] = -172800
+        elif time == NChecksRrdControls.TIME_SEVEN_DAYS:
+            self._graphDef['spanBegin'] = -604800
+        elif time == NChecksRrdControls.TIME_TWO_WEEKS:
+            self._graphDef['spanBegin'] = -1209600
+        elif time == NChecksRrdControls.TIME_ONE_MONTH:
+            self._graphDef['spanBegin'] = -2592000
+        elif time == NChecksRrdControls.TIME_SIX_MONTHS:
+            self._graphDef['spanBegin'] = -15552000
+        elif time == NChecksRrdControls.TIME_ONE_YEAR:
+            self._graphDef['spanBegin'] = -31104000
+        elif time == NChecksRrdControls.TIME_THREE_YEARS:
+            self._graphDef['spanBegin'] = -93312000
+        elif time == NChecksRrdControls.TIME_TEN_YEARS:
+            self._graphDef['spanBegin'] = -311040000
+
+    def timeChanged(self, time):
+        self._setGraphTime(time)
+        self.drawRrd()
+        
     def handleProbeEvent(self, msg):
         if msg['type'] == 'nchecksDumpMessage':
             self._graphDef['filenameRrd'] = msg['file']
@@ -148,9 +221,62 @@ class NChecksRrdGraph(NFrameContainer):
         self._pix.load(self._tf)
         self._lab.setPixmap(self._pix)
         
-        
 
+class NChecksRrdControls(NFrameContainer):
+    TIME_TWO_HOURS      = 0
+    TIME_TWELVE_HOURS   = 1
+    TIME_TWO_DAYS       = 2
+    TIME_SEVEN_DAYS     = 3
+    TIME_TWO_WEEKS      = 4
+    TIME_ONE_MONTH      = 5
+    TIME_SIX_MONTHS     = 6
+    TIME_ONE_YEAR       = 7
+    TIME_THREE_YEARS    = 8
+    TIME_TEN_YEARS      = 9
+    
+    SIZE_THUMBNAIL  = 0
+    SIZE_SMALL      = 1
+    SIZE_NORMAL     = 2
+    SIZE_LARGE      = 3
+    SIZE_HUGE       = 4
 
+    def __init__(self, parent):
+        super(NChecksRrdControls, self).__init__(parent)
+        self._layout = NGridContainer(self)
+
+        self._timeLineLabel = QLabel('Timeline:', self)
+        self.timeLineCtrl = QComboBox(self)
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_TWO_HOURS,     '2h  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_TWELVE_HOURS,  '12h from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_TWO_DAYS,      '2d  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_SEVEN_DAYS,    '7d  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_TWO_WEEKS,     '2w  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_ONE_MONTH,     '1m  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_SIX_MONTHS,    '6m  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_ONE_YEAR,      '1y  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_THREE_YEARS,   '3y  from now')
+        self.timeLineCtrl.insertItem(NChecksRrdControls.TIME_TEN_YEARS,     '10y from now')
+        self.timeLineCtrl.setCurrentIndex(NChecksRrdControls.TIME_SEVEN_DAYS)
+
+        self._layout.addWidget(self._timeLineLabel, 0,0)
+        self._layout.addWidget(self.timeLineCtrl,   0,1)
+
+        self._heightLabel = QLabel('Graph height:', self)
+        self.heightCtrl = QComboBox(self)
+        self.heightCtrl.insertItem(NChecksRrdControls.SIZE_THUMBNAIL,   'Thumbnail')
+        self.heightCtrl.insertItem(NChecksRrdControls.SIZE_SMALL,       'Small')
+        self.heightCtrl.insertItem(NChecksRrdControls.SIZE_NORMAL,      'Normal')
+        self.heightCtrl.insertItem(NChecksRrdControls.SIZE_LARGE,       'Large')
+        self.heightCtrl.insertItem(NChecksRrdControls.SIZE_HUGE,        'Huge')
+        self.heightCtrl.setCurrentIndex(NChecksRrdControls.SIZE_NORMAL)
+        self._layout.addWidget(self._heightLabel, 0,2)
+        self._layout.addWidget(self.heightCtrl,   0,3)
+
+        self._layout.setColumnStretch(0,0)
+        self._layout.setColumnStretch(1,0)
+        self._layout.setColumnStretch(2,0)
+        self._layout.setColumnStretch(3,0)
+        self._layout.setColumnStretch(4,1)
 
 
 
