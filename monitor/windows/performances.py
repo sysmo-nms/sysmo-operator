@@ -35,7 +35,7 @@ from    sysmo_widgets    import (
 )
 
 from    monitor.proxy import AbstractChannelWidget, ChanHandler, NTempFile
-from    monitor.dialogs.properties.probe.rrdarea  import RrdArea
+from    monitor.windows.rrdarea  import RrdArea
 import  monitor.api    as monapi
 import  monitor.norrd  as norrd
 
@@ -117,17 +117,24 @@ class NChecksLogArea(AbstractChannelWidget):
 
 
 
-class NChecksRrdGraph(QLabel):
+class NChecksRrdGraph(NFrameContainer):
     def __init__(self, graphDef, parent=None):
         super(NChecksRrdGraph, self).__init__(parent)
         self._graphDef = graphDef
+        self._lab = QLabel(self)
         self._pix = QPixmap()
-        self.setText("Generating graphic...")
+        self._lab.setText("Generating graphic...")
         tf = NTempFile(self)
         tf.open()
         tf.close()
         self._tf = tf.fileName()
         self._graphDef['filenamePng'] = self._tf
+        lay = NGridContainer(self)
+        lay.addWidget(self._lab, 0,0)
+        lay.setColumnStretch(0,0)
+        lay.setColumnStretch(1,1)
+        lay.setRowStretch(0,0)
+        lay.setRowStretch(1,1)
 
     def handleProbeEvent(self, msg):
         if msg['type'] == 'nchecksDumpMessage':
@@ -139,7 +146,7 @@ class NChecksRrdGraph(QLabel):
 
     def drawRrdReply(self, msg):
         self._pix.load(self._tf)
-        self.setPixmap(self._pix)
+        self._lab.setPixmap(self._pix)
         
         
 
