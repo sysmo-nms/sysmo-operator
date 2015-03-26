@@ -3,6 +3,7 @@ from    sysmo_widgets import NFrameContainer
 import  supercast.main as supercast
 import  monitor.norrd as norrd
 import  sysmapi
+import  pyrrd4j
 import  os
 
 
@@ -46,6 +47,7 @@ class ChanHandler(QObject):
         self.masterpyqtSignalsDict['loggerRrdDump']  = SimplepyqtSignal(self)
         self.masterpyqtSignalsDict['loggerRrdEvent']    = SimplepyqtSignal(self)
         self.masterpyqtSignalsDict['nchecksDumpMessage'] = SimplepyqtSignal(self)
+        self.masterpyqtSignalsDict['nchecksUpdateMessage'] = SimplepyqtSignal(self)
 
         # connect myself
         self.masterpyqtSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
@@ -55,6 +57,7 @@ class ChanHandler(QObject):
         self.masterpyqtSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
 
         self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.connect(self._handleNchecksDump)
+        self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.connect(self._handleNchecksUpdate)
         self.masterpyqtSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
         self.masterpyqtSignalsDict['loggerRrdEvent'].signal.connect(self._handleLoggerRrdEventMsg)
         # END
@@ -83,6 +86,9 @@ class ChanHandler(QObject):
 
         elif    msg['type'] == 'nchecksDumpMessage':
             self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.emit(msg)
+
+        elif    msg['type'] == 'nchecksUpdateMessage':
+            self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.emit(msg)
 
         elif    msg['type'] == 'staticChanInfo':
             chan    = msg['value']
@@ -135,6 +141,10 @@ class ChanHandler(QObject):
     def _handleNchecksDump(self,msg):
         channel = msg['value']['name']
         self._chanProxy[channel].handleNchecksDump(msg)
+
+    def _handleNchecksUpdate(self,msg):
+        channel = msg['value']['name']
+        self._chanProxy[channel].handleNchecksUpdate(msg)
         
     def _handleProbeDump(self, msg):
         channel = msg['value']['name']
@@ -187,6 +197,8 @@ class Channel(QObject):
     signal = pyqtSignal(dict)
     def __init__(self, parent, probeName):
         super(Channel, self).__init__(parent)
+        self._rrd4jReady = False
+        self._rrd4jWait  = list()
         self.probeDict = ChanHandler.singleton.probes[probeName]
         self.name = probeName
         self.loggerTextState    = None
@@ -300,7 +312,7 @@ class Channel(QObject):
         rrd4jFile = NTempFile(self)
         rrd4jFile.open()
         rrd4jFile.close()
-        rrd4jFileName = rrd4jFile.fileName()
+        self._rrd4jFileName = rrd4jFile.fileName()
 
         # prevent garbage collection?
         self._ncheckRrdFile = rrd4jFile
@@ -308,7 +320,7 @@ class Channel(QObject):
         request = dict()
         request['url']      = "%s/%s" % (httpDir, rrdFile)
         request['callback'] = self.handleNchecksDump2nd
-        request['outfile']  = rrd4jFileName
+        request['outfile']  = self._rrd4jFileName
         supercast.requestUrl(request)
         
     def handleNchecksDump2nd(self, msg):
@@ -317,10 +329,38 @@ class Channel(QObject):
             dumpMsg['type']     = 'nchecksDumpMessage'
             dumpMsg['file']     = msg['outfile']
             self.signal.emit(dumpMsg)
+        if len(self._rrd4jWait) == 0:
+            self._rrd4jReady = True
+        else:
+            up = self.rrd4jWait.pop()
+            self._doUpdateRrd(self, up)
 
-    def handleNcheckEvent(self,msg):
-        print("handle ncheck event: " + msg)
+    def handleNchecksUpdate(self, msg):
+        if self._rrd4jReady == False:
+            self._rrd4jWait.append(msg)
+        else:
+            self._doUpdateRrd(msg)
+        
+    def _doUpdateRrd(self, msg):
+        print("do update!!!!!!")
+        upKV    = msg['value']['rrdupdates']
+        rrdFile = self._rrd4jFileName
+        ts      = msg['value']['timestamp']
+        update  = dict()
+        update['updates']   = upKV
+        update['file']      = rrdFile
+        update['timestamp'] = ts
+        pyrrd4j.update(update, self._doUpdateRrdReply)
+        
 
+    def _doUpdateRrdReply(self, reply):
+        print("doupdatereply: " + reply)
+        self.signal.emit({'type': 'nchecksUpdateMessage'})
+        if len(self._rrd4jWait) == 0:
+            self._rrd4jReady = True
+        else:
+            msg = self._rrd4jWait.pop()
+            self._doUpdateRrd(msg)
     # new code end
     
 

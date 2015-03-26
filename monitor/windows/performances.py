@@ -241,6 +241,8 @@ class NChecksRrdGraph(NFrameContainer):
         if msg['type'] == 'nchecksDumpMessage':
             self._graphDef['filenameRrd'] = msg['file']
             self.drawRrd()
+        elif msg['type'] == 'nchecksUpdateMessage':
+            self.drawRrd()
 
     def drawRrd(self):
         pyrrd4j.graph(self._graphDef, self.drawRrdReply)

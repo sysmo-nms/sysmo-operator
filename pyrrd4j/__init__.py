@@ -40,8 +40,16 @@ def graph(graph, callback):
     print("command is" + cmd)
     pipe.Rrd4jAsync.singleton.execute(command)
 
-def update(command, callback):
-    command['string'] = 'UPDATE|' + command['string']
+def update(update, callback):
+    updates = update['updates']
+    cmd     = "%s;%i;" % (update['file'], update['timestamp'])
+    for k in updates.keys():
+        cmd += "%s,%i" % (k, updates[k])
+        cmd += '@'
+    cmd = cmd[:-1]
+    command = dict() 
+    command['string'] = 'UPDATE|' + cmd
+    command['callback'] = callback
     call(command, callback)
 
 def call(command, callback):

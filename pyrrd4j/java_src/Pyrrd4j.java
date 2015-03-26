@@ -96,6 +96,28 @@ class RrdRunnable implements Runnable
    
     private void handleUpdate()
     {
+        String updateCfg[] = cmdArgs.split(";");
+        String rrdFile      = updateCfg[0];
+        String timestamp    = updateCfg[1]; 
+        String updates      = updateCfg[2];
+
+        try {
+            RrdDb rrdDb = Pyrrd4j.rrdDbPool.requestRrdDb(rrdFile);
+            Sample sample = rrdDb.createSample();
+            sample.setTime(Long.valueOf(timestamp).longValue());
+            String[] ups = updates.split("\\@");
+            for (String up: ups)
+            {
+                String[] u = up.split(",");
+                String key = u[0];
+                long   val = Long.valueOf(u[1]).longValue();
+                sample.setValue(key, val);
+            }
+            sample.update();
+        } catch (Exception e) {
+            Pyrrd4j.rrdReply(queryId + "|ERROR" + e);
+        }
+        Pyrrd4j.rrdReply(queryId + "|OK");
     }
 
     private void handleGraph()
@@ -127,7 +149,6 @@ class RrdRunnable implements Runnable
         // loop over ds and add DS and Line elements
         String[] dsDefList = dsDefs.split("\\@");
         for (String s: dsDefList) {
-            dsDefs = s;
             String[] dsD    = s.split(",");
             String dsName   = dsD[0];
             String gType    = dsD[1];
@@ -230,7 +251,7 @@ class CustomRrdGraphDef extends RrdGraphDef
 
 public class Pyrrd4j
 {
-    private static RrdDbPool rrdDbPool = null;
+    public  static RrdDbPool rrdDbPool = null;
     private static ThreadPoolExecutor threadPool = null;
     private static int threadMaxPoolSize    = 20;
     private static int threadCorePoolSize   = 12;
