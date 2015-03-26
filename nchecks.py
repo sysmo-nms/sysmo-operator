@@ -19,6 +19,12 @@ def getGraphTemplateFor(check):
         graph['title']  = gdef.find('graphTitle').text
         graph['name']   = gdef.find('graphName').text
         graph['vlabel'] = gdef.find('verticalLabel').text
+        graph['maxValue'] = gdef.find('max').text
+        graph['minValue'] = gdef.find('min').text
+        graph['rigid']  = gdef.find('rigid').text
+        graph['base']   = gdef.find('base').text
+        graph['unit']   = gdef.find('unit').text
+        graph['unitExponent']   = gdef.find('unitExponent').text
         graph['spanBegin']  = -1200
         graph['spanEnd']    = -1
         graph['width']      = 600

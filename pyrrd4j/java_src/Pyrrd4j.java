@@ -129,11 +129,15 @@ class RrdRunnable implements Runnable
         String rrdFile  = graphCfg[3];
         String pngFile  = graphCfg[4];
         String spanBegin = graphCfg[5];
-        String spanEnd  = graphCfg[6];
+        String spanEnd   = graphCfg[6];
         String width    = graphCfg[7];
         String height   = graphCfg[8];
-        String dsDefs   = graphCfg[9];
-
+        String minVal   = graphCfg[9];
+        String maxVal   = graphCfg[10];
+        String rigid    = graphCfg[11];
+        String base     = graphCfg[12];
+        String unit     = graphCfg[13];
+        String unitExp  = graphCfg[14];
         // create graphDef and set elements
         CustomRrdGraphDef graphDef = new CustomRrdGraphDef();
         int spanBeginInt = Integer.parseInt(spanBegin);
@@ -142,10 +146,16 @@ class RrdRunnable implements Runnable
         graphDef.setTitle(title);
         graphDef.setVerticalLabel(vlabel);
         graphDef.setFilename(pngFile);
-        graphDef.setShowSignature(false);
+
+        graphDef.setBase(Double.parseDouble(base));
+        graphDef.setUnit(unit);
+        graphDef.setUnitsExponent(Integer.parseInt(unitExp));
+        if (!minVal.equals("undefined")) {graphDef.setMinValue(Double.parseDouble(minVal));}
+        if (!maxVal.equals("undefined")) {graphDef.setMaxValue(Double.parseDouble(maxVal));}
+        if (rigid.equals("true"))        {graphDef.setRigid(true);}
 
 
-
+        String dsDefs   = graphCfg[15];
         // loop over ds and add DS and Line elements
         String[] dsDefList = dsDefs.split("\\@");
         for (String s: dsDefList) {
@@ -178,7 +188,7 @@ class RrdRunnable implements Runnable
             BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
             graph.render(bi.getGraphics());
         } catch (Exception|Error e) {
-            Pyrrd4j.rrdReply(queryId + "|" + "ERROR|" + e);
+            Pyrrd4j.rrdReply(queryId + "|" + "ERROR" + e);
             return;
         }
         Pyrrd4j.rrdReply(queryId + "|OK");
@@ -195,16 +205,16 @@ class RrdRunnable implements Runnable
 
 class CustomRrdGraphDef extends RrdGraphDef
 {        
-    public static Color BACK_C;
-    public static Color CANVAS_C;
-    public static Color SHADEA_C;
-    public static Color SHADEB_C;
-    public static Color GRID_C;
-    public static Color MGRID_C;
-    public static Color FONT_C;
-    public static Color FRAME_C;
-    public static Color ARROW_C;
-    public static Color XAXIS_C;
+    private static Color BACK_C;
+    private static Color CANVAS_C;
+    private static Color SHADEA_C;
+    private static Color SHADEB_C;
+    private static Color GRID_C;
+    private static Color MGRID_C;
+    private static Color FONT_C;
+    private static Color FRAME_C;
+    private static Color ARROW_C;
+    private static Color XAXIS_C;
 
     public CustomRrdGraphDef()
     {
@@ -220,6 +230,7 @@ class CustomRrdGraphDef extends RrdGraphDef
         this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
         this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
         this.setImageFormat("png");
+        this.setShowSignature(false);
     }
 
     public static void setDefaultColors(String[] colorCfg)

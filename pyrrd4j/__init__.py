@@ -19,7 +19,7 @@ def init(colorDict, parent=None):
     return pipe.Rrd4jAsync(parent, cmd)
 
 def graph(graph, callback):
-    cmd = "%s;%s;%s;%s;%s;%i;%i;%i;%i;" % (
+    cmd = "%s;%s;%s;%s;%s;%i;%i;%i;%i;%s;%s;%s;%s;%s;%s;" % (
         graph['title'],
         graph['name'],
         graph['vlabel'],
@@ -28,7 +28,15 @@ def graph(graph, callback):
         graph['spanBegin'],
         graph['spanEnd'],
         graph['width'],
-        graph['height'])
+        graph['height'],
+
+        graph['minValue'],
+        graph['maxValue'],
+        graph['rigid'],
+        graph['base'],
+        graph['unit'],
+        graph['unitExponent']
+)
     for g in graph['DS']:
         cmd += g
         cmd += '@'

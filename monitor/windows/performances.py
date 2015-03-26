@@ -213,7 +213,7 @@ class NChecksRrdGraph(NFrameContainer):
     
     def _setGraphTime(self, time):
         if time == NChecksRrdControls.TIME_TWO_HOURS:
-            self._graphDef['spanBegin'] = -3600
+            self._graphDef['spanBegin'] = -7200
         elif time == NChecksRrdControls.TIME_TWELVE_HOURS:
             self._graphDef['spanBegin'] = -43200
         elif time == NChecksRrdControls.TIME_TWO_DAYS:
@@ -227,11 +227,11 @@ class NChecksRrdGraph(NFrameContainer):
         elif time == NChecksRrdControls.TIME_SIX_MONTHS:
             self._graphDef['spanBegin'] = -15552000
         elif time == NChecksRrdControls.TIME_ONE_YEAR:
-            self._graphDef['spanBegin'] = -31104000
+            self._graphDef['spanBegin'] = -31536000
         elif time == NChecksRrdControls.TIME_THREE_YEARS:
-            self._graphDef['spanBegin'] = -93312000
+            self._graphDef['spanBegin'] = -94608000
         elif time == NChecksRrdControls.TIME_TEN_YEARS:
-            self._graphDef['spanBegin'] = -311040000
+            self._graphDef['spanBegin'] = -315360000
 
     def timeChanged(self, time):
         self._setGraphTime(time)
