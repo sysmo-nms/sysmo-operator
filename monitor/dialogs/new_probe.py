@@ -1,10 +1,12 @@
-from PyQt5.QtWidgets import QWizard, QWizardPage
+from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel
+from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
+from PyQt5.QtCore import Qt, QSortFilterProxyModel
+from sysmo_widgets import NFrame, NGrid
 import sysmo_main
+import sysmapi
 import nchecks
-#from sysmo_widgets import NGrid
-#import supercast.main as supercast
-#from sysmo_widgets import NTemporaryFile
-#import xml.etree.ElementTree as ET
+
+import sys
 
 class NewProbe(QWizard):
     def __init__(self, target, parent=None):
@@ -15,92 +17,118 @@ class NewProbe(QWizard):
         self.setModal(True)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
 
-        self._probesDict = nchecks.getProbesDef()
-        print("hellow + " + str(self._probesDict))
+        self.probesDict = nchecks.getProbesDef()
         self.setPage(1, ProbeSelectionPage(target, self))
+        self.setPage(2, ProbeConfigurationPage(target, self))
         self.setStartId(1)
+    
+    def setSelection(self, probe):
+        self._selection = probe
+    
+    def getSelection(self):
+        return self._selection
 
 class ProbeSelectionPage(QWizardPage):
     def __init__(self, target, parent):
         super(ProbeSelectionPage, self).__init__(parent)
         self.setTitle('New probe for target %s' % target)
         self.setSubTitle('Select a probe from the following list')
+        self.setFinalPage(False)
+        pr = parent.probesDict
+        grid = NGrid(self)
+        searchLine  = QLineEdit(self)
+        searchLine.setPlaceholderText('Filter')
+        clearButton = QPushButton(self)
+        clearButton.setFixedWidth(30)
+        clearButton.setContentsMargins(0,0,0,0)
+        clearButton.clicked.connect(searchLine.clear)
+        clearButton.setIcon(QIcon(sysmapi.nGetPixmap('edit-clear')))
+
+        treeView = QTreeView(self)
+        treeView.setSelectionMode(QAbstractItemView.SingleSelection)
+        treeView.clicked.connect(self.completeChanged)
+        treeView.doubleClicked.connect(self._test)
+        clearButton.clicked.connect(treeView.clearSelection)
+        clearButton.clicked.connect(self.completeChanged)
+
+        model = QStandardItemModel(self)
+        model.setColumnCount(2)
+        model.setHorizontalHeaderLabels(['Probe name', 'Description'])
+        proxyFilter = QSortFilterProxyModel(self)
+        proxyFilter.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        proxyFilter.setDynamicSortFilter(True)
+        proxyFilter.setFilterRole(Qt.DisplayRole)
+        proxyFilter.setSourceModel(model)
+        proxyFilter.setFilterKeyColumn(-1)
+        treeView.setModel(proxyFilter)
+        searchLine.textChanged[str].connect(proxyFilter.setFilterFixedString)
+        searchLine.textChanged.connect(self.completeChanged)
+
+        for pkey in pr.keys():
+            pitem = QStandardItem()
+            pitem.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+            pitem.setData(pkey, Qt.DisplayRole)
+            ditem = QStandardItem()
+            ditem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+            ditem.setData(pr[pkey]['descr'], Qt.DisplayRole)
+            model.appendRow([pitem, ditem])
+
+        grid.addWidget(clearButton, 0,0)
+        grid.addWidget(searchLine,  0,1)
+        grid.addWidget(treeView, 1,0,1,3)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+        grid.setColumnStretch(2,1)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,1)
+
+        self._treeView = treeView
+        self._model = model
+        self._searchLine = searchLine
+        self._wizard = parent
+
+    def initializePage(self):
+        self._treeView.clearSelection()
+        self._searchLine.clear()
+
+    def cleanupPage(self):
+        self._treeView.clearSelection()
+        self._searchLine.clear()
+
+    def nextId(self): return 2
+
+    def _test(self, val):
+        row = val.row()
+        col = val.column()
+        if col == 0:
+            probe = val.data(Qt.DisplayRole)
+        else:
+            val2 = self._model.index(row, 0)
+            probe = val2.data(Qt.DisplayRole)
+        
+        self._wizard.setSelection(probe)
+        self._wizard.next()
+
+    def isComplete(self):
+        sel = self._treeView.selectedIndexes()
+        if len(sel) == 0:
+            return False
+        else:
+            self._wizard.setSelection(sel[0].data(Qt.DisplayRole))
+            return True
         
 
-# class NewProbe2(QDialog):
-#     def __init__(self, target, parent = None):
-#         super(NewProbe2, self).__init__(parent)
-#         self._initLayout()
-#         self._progress = QProgressDialog(self)
-#         self._fetchInfos()
-#         self._target = target
-# 
-#     def _initLayout(self):
-#         area = QAbstractScrollArea(self)
-#         mgrid   = NGrid(self)
-#         mgrid.addWidget(area)
-#         self._cgrid = NGrid(area)
-# 
-#         
-#     def _finalizeLayout(self):
-#         self._buttons = list()
-#         for key in self._checks.keys():
-#             x = self._checks[key]['def']
-#             y = x.find('descr')
-#             b = QCommandLinkButton(key, y.text, self) 
-#             b.setFixedHeight(50)
-#             self._cgrid.addWidget(b)
-#         
-#         
-#     def _fetchInfos(self):
-#         self._progress.setMinimum(0)
-#         self._progress.setMaximum(0)
-#         self._progress.setLabelText('Fetching checks list...')
-#         self._progress.setModal(True)
-#         self._progress.setValue(1)
-#         self._progress.show()
-# 
-#         xmlFile = NTemporaryFile(self)
-#         self._defFileName = xmlFile.fileName()
-#         request = dict()
-#         request['url'] = 'nchecks/all.xml'
-#         request['callback'] = self._handleAllCheckReply
-#         request['outfile'] = self._defFileName
-#         supercast.requestUrl(request)
-# 
-#     def _handleAllCheckReply(self, reply):
-#         outfile= reply['outfile']
-#         tree    = ET.parse(outfile)
-#         root    = tree.getroot()
-#         checks  = root.find('checks')
-#         self._checks = dict()
-#         self._progress.setLabelText('Updating check definitions...')
-#         for check in checks:
-#             name = check.attrib['name']
-#             self._checks[name] = dict()
-#             self._checks[name]['initialized'] = False
-#             request = dict()
-#             request['url']      = 'nchecks/%s.xml' % name
-#             request['outfile']  = NTemporaryFile(self).fileName()
-#             request['callback'] = self._handleCheckDefReply
-#             request['opaque']   = name
-#             supercast.requestUrl(request)
-#         self._progress.setMaximum(len(self._checks))
-# 
-#     def _handleCheckDefReply(self, reply):
-#         name    = reply['opaque']
-#         self._progress.setLabelText('Updating %s definition...' % name)
-#         print("handle check,", name)
-#         self._progress.setValue(self._progress.value() + 1)
-#         outfile = reply['outfile']
-#         tree    = ET.parse(outfile)
-#         self._checks[name]['initialized'] = True
-#         self._checks[name]['def'] = tree
-# 
-#         for i in self._checks.keys():
-#             if self._checks[i]['initialized'] != True: return
-# 
-#         self._progress.hide()
-#         self._progress.deleteLater()
-#         self._finalizeLayout()
-#         self.show()
+class ProbeConfigurationPage(QWizardPage):
+    def __init__(self, target, parent):
+        super(ProbeConfigurationPage, self).__init__(parent)
+        self.setTitle('New probe for target %s' % target)
+        self.setSubTitle('Probe configuration')
+        self.setFinalPage(True)
+        self._lab = QLabel(self)
+        self._wizard = parent
+
+    def initializePage(self):
+        self._lab.setText(self._wizard.getSelection())
+        
+    def cleanupPage(self):
+        self._lab.setText('')
