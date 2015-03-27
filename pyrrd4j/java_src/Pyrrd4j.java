@@ -168,13 +168,27 @@ class RrdRunnable implements Runnable
             ConsolFun csVal = ConsolFun.valueOf(csFun);
             graphDef.datasource(dsName, rrdFile, dsName, csVal);
 
-            Color col = Color.decode(gColor);
-            if (gType.equals("area")) {
-                graphDef.area(dsName, col, gLegend);
-            } else if (gType.equals("line")) {
-                graphDef.line(dsName, col, gLegend, 2);
-            } else {
-                graphDef.stack(dsName, col, gLegend);
+            Color col = Pyrrd4j.decodeRGBA(gColor);
+            if (gLegend.equals("undefined")) 
+            {
+                if (gType.equals("area")) {
+                    graphDef.area(dsName, col);
+                } else if (gType.equals("line")) {
+                    graphDef.line(dsName, col, 2);
+                } else {
+                    graphDef.stack(dsName, col);
+                }
+
+            }
+            else
+            {
+                if (gType.equals("area")) {
+                    graphDef.area(dsName, col, gLegend);
+                } else if (gType.equals("line")) {
+                    graphDef.line(dsName, col, gLegend, 2);
+                } else {
+                    graphDef.stack(dsName, col, gLegend);
+                }
             }
 
         }
@@ -235,27 +249,18 @@ class CustomRrdGraphDef extends RrdGraphDef
 
     public static void setDefaultColors(String[] colorCfg)
     {        
-        BACK_C      = decodeRGBA(colorCfg[0]);
-        CANVAS_C    = decodeRGBA(colorCfg[1]);
-        SHADEA_C    = decodeRGBA(colorCfg[2]);
-        SHADEB_C    = decodeRGBA(colorCfg[3]);
-        GRID_C      = decodeRGBA(colorCfg[4]);
-        MGRID_C     = decodeRGBA(colorCfg[5]);
-        FONT_C      = decodeRGBA(colorCfg[6]);
-        FRAME_C     = decodeRGBA(colorCfg[7]);
-        ARROW_C     = decodeRGBA(colorCfg[8]);
-        XAXIS_C     = decodeRGBA(colorCfg[9]);
+        BACK_C      = Pyrrd4j.decodeRGBA(colorCfg[0]);
+        CANVAS_C    = Pyrrd4j.decodeRGBA(colorCfg[1]);
+        SHADEA_C    = Pyrrd4j.decodeRGBA(colorCfg[2]);
+        SHADEB_C    = Pyrrd4j.decodeRGBA(colorCfg[3]);
+        GRID_C      = Pyrrd4j.decodeRGBA(colorCfg[4]);
+        MGRID_C     = Pyrrd4j.decodeRGBA(colorCfg[5]);
+        FONT_C      = Pyrrd4j.decodeRGBA(colorCfg[6]);
+        FRAME_C     = Pyrrd4j.decodeRGBA(colorCfg[7]);
+        ARROW_C     = Pyrrd4j.decodeRGBA(colorCfg[8]);
+        XAXIS_C     = Pyrrd4j.decodeRGBA(colorCfg[9]);
     }
 
-    private static Color decodeRGBA(String hexString)
-    {
-        return new Color(
-            Integer.valueOf(hexString.substring(1,3), 16),
-            Integer.valueOf(hexString.substring(3,5), 16),
-            Integer.valueOf(hexString.substring(5,7), 16),
-            Integer.valueOf(hexString.substring(7,9), 16)
-        );
-    }
 
 }
 
@@ -313,6 +318,17 @@ public class Pyrrd4j
     {
         System.out.println(reply);
     }
+
+    public static Color decodeRGBA(String hexString)
+    {
+        return new Color(
+            Integer.valueOf(hexString.substring(1,3), 16),
+            Integer.valueOf(hexString.substring(3,5), 16),
+            Integer.valueOf(hexString.substring(5,7), 16),
+            Integer.valueOf(hexString.substring(7,9), 16)
+        );
+    }
+
 }
 
 class RrdReject implements RejectedExecutionHandler

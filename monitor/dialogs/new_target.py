@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 
 from sysmo_widgets import NGrid, NFrame, NGridContainer, NFrameContainer
+import sysmo_main
 import sysmapi
 import supercast.main as supercast
 
@@ -52,6 +53,8 @@ TYPE_OTHER       = 6
 
 class NewTargetDialog(QWizard):
     def __init__(self, parent=None):
+        # parent is mainWindow to open at the center of it
+        parent = sysmo_main.NMainWindow.singleton
         super(NewTargetDialog, self).__init__(parent)
         self.setWizardStyle(QWizard.ModernStyle)
         self.setModal(True)

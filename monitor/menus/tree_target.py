@@ -132,7 +132,8 @@ class TargetMenu(QMenu):
         print(("reply, ", msg))
 
     def _newProbe(self):
-        cpWiz = NewProbe(self._currentTarget, self)
+        cpWiz = NewProbe(self._currentTarget)
+        cpWiz.show()
 
     def _openProperties(self):
         openPropertiesFor(self._currentTarget)

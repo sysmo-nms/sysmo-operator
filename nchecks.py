@@ -52,6 +52,10 @@ def getFlagSpecFor(check):
 def getDescrFor(check):
     return NChecksDefinition.singleton.getDescrFor(check)
 
+
+def getProbesDef():
+    return NChecksDefinition.singleton.getProbesDef()
+
 class NChecksDefinition(QObject):
     def __init__(self, parent=None):
         super(NChecksDefinition, self).__init__(parent)
@@ -114,3 +118,33 @@ class NChecksDefinition(QObject):
         for child in root:
             if child.tag == 'flags_def':
                 return child
+
+    def getProbesDef(self):
+        replyDict = dict()
+        #for key in self._checks.keys():
+        for key in ['CheckICMP']:
+            root = self._checks[key]['def'].getroot()
+            checkDict = dict()
+            for child in root:
+                if child.tag == 'descr':
+                    checkDict['descr'] = child.text
+                elif child.tag == 'probe_class':
+                    checkDict['probe_class'] = child.text 
+                elif child.tag == 'flags_def':
+                    for flag in child.findall('flag_info'):
+                        print(str(flag.find('name').text))
+                        for i in flag.iter():
+                            print(i)
+                        name = flag.find('name').text
+                        #flagDict[name]['name']  = flag.find('name').text
+                        #flagDict[name]['usage'] = flag.find('usage').text
+                        #flagDict[name]['default'] = flag.find('default').text
+                        #flagDict[name]['role'] = flag.find('role').text
+                        #flagDict[name]['type'] = flag.find('type').text
+                        #flagDict[name]['hint'] = flag.find('hint').text
+                
+            replyDict[key] = checkDict
+        return replyDict
+            
+
+
