@@ -248,6 +248,7 @@ class NChecksRrdGraph(NFrameContainer):
         pyrrd4j.graph(self._graphDef, self.drawRrdReply)
 
     def drawRrdReply(self, msg):
+        print("draw reply: " + str(msg))
         self._pix.load(self._tf)
         self._lab.setPixmap(self._pix)
         

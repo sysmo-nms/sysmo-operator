@@ -49,6 +49,9 @@ def getGraphTemplateFor(check):
 def getFlagSpecFor(check):
     return NChecksDefinition.singleton.getFlagSpecFor(check)
 
+def getClassNameFor(check):
+    return NChecksDefinition.singleton.getClassNameFor(check)
+
 def getDescrFor(check):
     return NChecksDefinition.singleton.getDescrFor(check)
 
@@ -144,3 +147,9 @@ class NChecksDefinition(QObject):
                 
             replyDict[key] = checkDict
         return replyDict
+
+    def getClassNameFor(self, name):
+        root = self._checks[name]['def'].getroot()
+        for child in root:
+            if child.tag == 'probe_class':
+                return child.text
