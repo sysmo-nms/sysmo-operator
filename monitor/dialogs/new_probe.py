@@ -6,6 +6,8 @@ import sysmo_main
 import sysmapi
 import nchecks
 import ast
+import monitor.api as monapi
+import supercast.main as supercast
 
 import sys
 
@@ -127,7 +129,7 @@ class ProbeConfigurationPage(QWizardPage):
         self.setTitle('New probe for target %s' % target)
         self.setSubTitle('Probe configuration')
         self.setFinalPage(True)
-        self._wizard = parent
+        self.setCommitPage(True)
         
 
         self._lab = QLabel(self)
@@ -155,11 +157,16 @@ class ProbeConfigurationPage(QWizardPage):
         grid.setRowStretch(0,0)
         grid.setRowStretch(1,1)
 
-        self._userEntries = dict()
+        self._widgetDict = dict()
         self._configFrame = confFrame
+        self._wizard = parent
+        self._target = target
+        self._end = False
+
 
     def initializePage(self):
         probe = self._wizard.getSelection()
+        self._probe = probe
         self.setSubTitle('%s configuration form' % probe)
         self._lab.setText(probe)
 
@@ -168,12 +175,8 @@ class ProbeConfigurationPage(QWizardPage):
 
         # initialize textEdit content and old layout
         text = ""
-        # remove old layout
-        QWidget().setLayout(self._config)
-        self._config = QFormLayout(self._configFrame)
-        # delete old user entries
-        del self._userEntries
-        self._userEntries = dict()
+        # cleanup
+        self.cleanupPage()
 
         # create h1
         text += "<h1>%s</h1>" % probe
@@ -196,21 +199,90 @@ class ProbeConfigurationPage(QWizardPage):
 
             # build form
             if ftype == 'int':
-                widget = QSpinBox(self)
+                widget = NSpinBox(self)
                 widget.setMinimum(0)
                 widget.setMaximum(65535)
                 if default != None:
                     widget.setValue(ast.literal_eval(default))
             elif ftype == 'bool':
-                widget = QCheckBox(self)
+                widget = NCheckBox(self)
+                if default == "false":
+                    widget.setChecked(False)
+                if default == "true":
+                    widget.setChecked(True)
+                else:
+                    widget.setChecked(False)
             else:
-                widget = QLineEdit(self)
+                widget = NLineEdit(self)
+                if default != None:
+                    widget.setText(default)
+            
+            widget.setToolTip(hint)
+            self._widgetDict[flag] = widget
             
             self._config.addRow(flag, widget)
             
-
+        # set host flag to target host property
+        t = monapi.getTarget(self._target)
+        host = t['properties']['host']
+        self._widgetDict['host'].setText(host)
         self._manual.setText(text)
 
-        
     def cleanupPage(self):
         self._lab.setText('')
+        QWidget().setLayout(self._config)
+        self._config = QFormLayout(self._configFrame)
+        del self._widgetDict
+        self._widgetDict = dict()
+
+    
+    def nextId(self): return -1
+    
+    def validatePage(self):
+        # send command via supercast
+        if self._end == True: return True
+        propDict = dict()
+        for flag in self._widgetDict.keys():
+            propDict[flag] = self._widgetDict[flag].nGet()
+
+        pdu = {
+            'from': 'monitor',
+            'type': 'createNchecksQuery',
+            'value': {
+                'target': self._target,
+                'name':   self._probe,
+                'properties': propDict
+            }
+        }
+        print(str(pdu))
+        supercast.send(pdu, self._createNcheckReply)
+        return False
+
+    def _createNcheckReply(self, msg):
+        self._end = True
+        self._wizard.accept()
+        print("have returned?")
+
+class NLineEdit(QLineEdit):
+    def __init__(self, parent):
+        QLineEdit.__init__(self, parent)
+        
+    def nGet(self):
+        return self.text()
+
+class NCheckBox(QCheckBox):
+    def __init__(self, parent):
+        QCheckBox.__init__(self, parent)
+        
+    def nGet(self):
+        if self.checkState() == True:
+            return "true"
+        else:
+            return "false"
+
+class NSpinBox(QSpinBox):
+    def __init__(self, parent):
+        QSpinBox.__init__(self, parent)
+
+    def nGet(self):
+        return self.value()
