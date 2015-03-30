@@ -130,15 +130,17 @@ class NChecksDefinition(QObject):
                 elif child.tag == 'probe_class':
                     checkDict['probe_class'] = child.text 
                 elif child.tag == 'flags_def':
-                    checkDict['flag_info'] = dict()
+                    checkDict['flag_info'] = list()
                     for flag in child.findall('flag_info'):
                         name = flag.find('name').text
-                        checkDict['flag_info'][name] = dict()
-                        checkDict['flag_info'][name]['usage'] = flag.find('usage').text
-                        checkDict['flag_info'][name]['default'] = flag.find('default').text
-                        checkDict['flag_info'][name]['role'] = flag.find('role').text
-                        checkDict['flag_info'][name]['type'] = flag.find('type').text
-                        checkDict['flag_info'][name]['hint'] = flag.find('hint').text
+                        d = dict()
+                        d['name'] = flag.find('name').text
+                        d['usage'] = flag.find('usage').text
+                        d['default'] = flag.find('default').text
+                        d['role'] = flag.find('role').text
+                        d['type'] = flag.find('type').text
+                        d['hint'] = flag.find('hint').text
+                        checkDict['flag_info'].append(d)
                 
             replyDict[key] = checkDict
         return replyDict

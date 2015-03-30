@@ -15,6 +15,7 @@ $(EXECUTABLE): clean
 	$(PYTHON_EXE) setup.py py2exe --include sip,ctypes,PyQt5.QtWebKit,PyQt5.QtPrintSupport
 	cp -r html $(DIST_DIR)
 	cp -r graphics $(DIST_DIR)
+	cp -r pyrrd4j $(DIST_DIR)
 	cp -r $(QT_PLUGINS_DIR) $(DIST_DIR)
 	cp qt.conf $(DIST_DIR)
 	rm -rf $(BUILD_DIR)

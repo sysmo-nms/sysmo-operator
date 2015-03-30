@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel
-from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox
+from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSortFilterProxyModel
-from sysmo_widgets import NFrame, NGrid
+from sysmo_widgets import NFrame, NGrid, NGridContainer
 import sysmo_main
 import sysmapi
 import nchecks
+import ast
 
 import sys
 
@@ -17,6 +18,8 @@ class NewProbe(QWizard):
         self.setModal(True)
         self.setOption(QWizard.NoBackButtonOnStartPage, True)
 
+        self.setMinimumWidth(800)
+        self.setMinimumHeight(600)
         self.probesDict = nchecks.getProbesDef()
         self.setPage(1, ProbeSelectionPage(target, self))
         self.setPage(2, ProbeConfigurationPage(target, self))
@@ -124,11 +127,90 @@ class ProbeConfigurationPage(QWizardPage):
         self.setTitle('New probe for target %s' % target)
         self.setSubTitle('Probe configuration')
         self.setFinalPage(True)
-        self._lab = QLabel(self)
         self._wizard = parent
+        
+
+        self._lab = QLabel(self)
+        self._config     = QFormLayout(self)
+        self._manual     = QTextEdit(self)
+
+        manFrame = NFrame(self)
+        manFrame.setFrameShape(QFrame.Box)
+        manLayout = NGridContainer(manFrame)
+        manLayout.addWidget(self._manual)
+
+
+        confFrame = QAbstractScrollArea(self)
+        confFrame.setMinimumWidth(300)
+        confFrame.setFrameShape(QFrame.Box)
+        confFrame.setLayout(self._config)
+        
+        
+        grid = NGrid(self)
+        grid.addWidget(self._lab,   0,0,1,2)
+        grid.addWidget(confFrame,   1,0)
+        grid.addWidget(manFrame,    1,1)
+        grid.setColumnStretch(0,0)
+        grid.setColumnStretch(1,1)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,1)
+
+        self._userEntries = dict()
+        self._configFrame = confFrame
 
     def initializePage(self):
-        self._lab.setText(self._wizard.getSelection())
+        probe = self._wizard.getSelection()
+        self.setSubTitle('%s configuration form' % probe)
+        self._lab.setText(probe)
+
+        # get the probe def
+        pdef = self._wizard.probesDict[probe]
+
+        # initialize textEdit content and old layout
+        text = ""
+        # remove old layout
+        QWidget().setLayout(self._config)
+        self._config = QFormLayout(self._configFrame)
+        # delete old user entries
+        del self._userEntries
+        self._userEntries = dict()
+
+        # create h1
+        text += "<h1>%s</h1>" % probe
+        # create p descr
+        text += "<p>%s</p>" % pdef['descr']
+        
+        # iterate flag_infos
+        finfo = pdef['flag_info']
+        for fdef in finfo:
+            flag    = fdef['name']
+            usage   = fdef['usage']
+            hint    = fdef['hint']
+            role    = fdef['role']
+            default = fdef['default']
+            ftype   = fdef['type']
+
+            # generate doc
+            text += "<h4>--%s=%s  (default:%s)</h4>" % (flag, ftype, default)
+            text += "<p>%s</p>" % usage
+
+            # build form
+            if ftype == 'int':
+                widget = QSpinBox(self)
+                widget.setMinimum(0)
+                widget.setMaximum(65535)
+                if default != None:
+                    widget.setValue(ast.literal_eval(default))
+            elif ftype == 'bool':
+                widget = QCheckBox(self)
+            else:
+                widget = QLineEdit(self)
+            
+            self._config.addRow(flag, widget)
+            
+
+        self._manual.setText(text)
+
         
     def cleanupPage(self):
         self._lab.setText('')
