@@ -27,7 +27,8 @@ from    PyQt5.QtWidgets    import (
     QTabWidget,
     QFrame,
     QLayout,
-    QScrollArea
+    QScrollArea,
+    QMdiSubWindow
 )
 
 from    sysmo_widgets    import (
@@ -49,6 +50,17 @@ import  re
 import  os
 import  sys
 
+def openPerformancesMDIFor(probe):
+    return LoggerMDI(probe) 
+
+class LoggerMDI(QMdiSubWindow):
+    def __init__(self, probe, displayName="undefined", parent=None):
+        super(LoggerMDI, self).__init__(parent)
+        self.setWidget(LoggerContainer(probe,displayName,self))
+
+
+
+
 def openPerformancesFor(probe, displayName):
     if probe in list(LoggerView.Elements.keys()):
         LoggerView.Elements[probe].show()
@@ -60,6 +72,13 @@ class LoggerView(QDialog):
     Elements = dict()
     def __init__(self, probe, displayName, parent=None):
         super(LoggerView, self).__init__(parent)
+        lay = NGridContainer(self)
+        lay.addWidget(LoggerContainer(probe, displayName, self))
+        self.show()
+
+class LoggerContainer(NFrameContainer):
+    def __init__(self, probe, displayName, parent=None):
+        super(LoggerContainer, self).__init__(parent)
 
         self._statusBar = LogStatusBar(self)
         self._menus     = ProbeMenus(self)
@@ -82,7 +101,7 @@ class LoggerView(QDialog):
             self._layout.addWidget(self._logArea,   0,1)
             print("mod is: " + str(cl))
             
-        self.show()
+        #self.show()
  
 class NChecksLogArea(AbstractChannelWidget):
     ncheckEvents = pyqtSignal(dict)
@@ -221,6 +240,7 @@ class NChecksRrdGraph(NFrameContainer):
         self.drawRrd()
         
     def handleProbeEvent(self, msg):
+        print("handle probe event? " + str(msg))
         if msg['type'] == 'nchecksDumpMessage':
             self._graphDef['filenameRrd'] = msg['file']
             self.drawRrd()

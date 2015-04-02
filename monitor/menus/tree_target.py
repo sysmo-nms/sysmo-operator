@@ -6,6 +6,7 @@ from monitor.dialogs.new_probe import NewProbe
 from monitor.dialogs.properties.target import openPropertiesFor
 from sysmo_widgets import NAction
 from functools import partial
+import monitor.windows.dashboard as dash
 import monitor.api as monapi
 import supercast.main as supercast
 import sysmapi
@@ -46,7 +47,7 @@ class TargetMenu(QMenu):
         self.addSeparator()
 
         action = NAction(self.tr('Performances Dashboard...'), self)
-        action.triggered.connect(self._openDocEngine)
+        action.triggered.connect(self._openDashboard)
         action.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
         self.addAction(action)
 
@@ -102,6 +103,9 @@ class TargetMenu(QMenu):
 
     def _createProbeOperation(self, msg):
         print(("create prboe ", msg))
+
+    def _openDashboard(self):
+        dash.openDashboardFor(self._currentTarget)
 
     def _userOperation(self, element, action):
         monapi.execUOperation(action, element)

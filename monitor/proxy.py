@@ -167,6 +167,7 @@ class Channel(QObject):
         super(Channel, self).__init__(parent)
         self._rrd4jReady = False
         self._rrd4jWait  = list()
+        self._rrd4jFileName  = None
         self.probeDict = ChanHandler.singleton.probes[probeName]
         self.name = probeName
         
@@ -190,11 +191,20 @@ class Channel(QObject):
         request['outfile']  = self._rrd4jFileName
         supercast.requestUrl(request)
         
+    def synchronizeView(self, viewObj):
+        print("should synchrnoize????????????????????????" + str(self._rrd4jFileName))
+        dumpMsg = dict()
+        dumpMsg['type'] = 'nchecksDumpMessage'
+        dumpMsg['file'] = self._rrd4jFileName
+        print("dump is: " + str(dumpMsg))
+        viewObj.handleProbeEvent(dumpMsg)
+
     def _handleNchecksDump2nd(self, msg):
         if msg['success'] == True: 
             dumpMsg = dict()
             dumpMsg['type']     = 'nchecksDumpMessage'
             dumpMsg['file']     = msg['outfile']
+            print("dump is: " + str(dumpMsg))
             self.signal.emit(dumpMsg)
         if len(self._rrd4jWait) == 0:
             self._rrd4jReady = True
