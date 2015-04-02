@@ -1,6 +1,5 @@
 import monitor.proxy
 import monitor.gui.tree
-import monitor.norrd
 import monitor.user_operations
 
 def connectToEvent(eventType, pyCallable):
@@ -11,9 +10,6 @@ def getProbeSelection():
     "Return a list of probes actualy selected in the left tree view"
     singleton = monitor.gui.tree.ProbesTreeview.singleton
     return singleton.getSelectedElements()
-
-def rrdCmd(cmd, pyCallable=None):
-    monitor.norrd.cmd(cmd, pyCallable)
 
 def getTargetsDict():
     return monitor.proxy.ChanHandler.singleton.targets

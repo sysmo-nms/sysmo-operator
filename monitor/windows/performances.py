@@ -39,9 +39,7 @@ from    sysmo_widgets    import (
 )
 
 from    monitor.proxy import AbstractChannelWidget, ChanHandler, NTempFile
-from    monitor.windows.rrdarea  import RrdArea
 import  monitor.api    as monapi
-import  monitor.norrd  as norrd
 
 import  sysmapi
 import  pyrrd4j
@@ -293,44 +291,6 @@ class NChecksRrdControls(NFrameContainer):
         self._layout.setColumnStretch(2,0)
         self._layout.setColumnStretch(3,0)
         self._layout.setColumnStretch(4,1)
-
-
-
-
-
-# old code
-class LogArea(NFrameContainer):
-    def __init__(self, parent, rrd, text, event, probe):
-        super(LogArea, self).__init__(parent)
-        self._layout = NGridContainer(self)
-
-        self._tabs   = QTabWidget(self)
-        self._layout.addWidget(self._tabs, 0,0)
-
-        if event == True:
-            self._events = QLabel('events', self)
-            self._layout.addWidget(self._events, 1,0)
-            self._layout.setRowStretch(1,0)
-        else:
-            self._events = None
-
-        if rrd == True:
-            self._rrds = RrdArea(self, probe)
-            self._tabs.insertTab(0, self._rrds, QIcon(sysmapi.nGetPixmap('rrdtool-logo')), 'RRD')
-        else:
-            self._rrds = QLabel('rrds', self)
-            self._tabs.insertTab(0, self._rrds, QIcon(sysmapi.nGetPixmap('rrdtool-logo')), 'RRD')
-            self._tabs.setTabEnabled(0, False)
-
-        if text == True:
-            self._rrds = QLabel('text', self)
-            self._tabs.insertTab(1, self._rrds, QIcon(sysmapi.nGetPixmap('accessories-text-editor')), 'Text')
-            if self._tabs.isTabEnabled(0) == False:
-                self._tabs.setCurrentIndex(1)
-        else:
-            self._rrds = QLabel('text', self)
-            self._tabs.insertTab(1, self._rrds, QIcon(sysmapi.nGetPixmap('accessories-text-editor')), 'Text')
-            self._tabs.setTabEnabled(1, False)
 
 
 class LogStatusBar(QStatusBar):

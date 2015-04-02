@@ -1,6 +1,5 @@
 from    PyQt5.QtGui import QIcon
 from    PyQt5.QtWidgets import QMenu, QAction
-from    monitor import norrd
 from    monitor.user_operations import UserOperations
 from    monitor.dialogs.doc_engine import DocConfigurator
 from    monitor.gui.main import TreeContainer
@@ -20,7 +19,6 @@ class Central(NFrameContainer):
         menu.addAction(wikiConf)
         sysmapi.nAddMainMenu(menu)
 
-        self._initRrdtool()
         self._initChanProxy()
         self._initUserOperations()
 
@@ -30,10 +28,6 @@ class Central(NFrameContainer):
 
     def _initUserOperations(self):
         self._userOperations = UserOperations(self)
-
-    def _initRrdtool(self):
-        norrd.start(self)
-        sysmapi.nConnectWillClose(norrd.stop)
 
     def _configureDoc(self):
         ret = DocConfigurator(self)

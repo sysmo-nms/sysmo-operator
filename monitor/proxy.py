@@ -1,7 +1,6 @@
 from    PyQt5.QtCore import QObject, pyqtSignal, QTemporaryFile, QDir
 from    sysmo_widgets import NFrameContainer
 import  supercast.main as supercast
-import  monitor.norrd as norrd
 import  sysmapi
 import  pyrrd4j
 import  os
@@ -36,68 +35,51 @@ class ChanHandler(QObject):
         self.probes             = dict()
 
     def _initpyqtSignals(self):
-        # signals
-        self.masterpyqtSignalsDict = dict()
-        self.masterpyqtSignalsDict['infoProbe']     = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['infoTarget']    = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['probeReturn']   = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['deleteTarget']  = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['deleteProbe']   = SimplepyqtSignal(self)
+        signals = dict()
+        signals['infoProbe'] = SimplepyqtSignal(self)
+        signals['infoProbe'].signal.connect(self._handleProbeInfo)
 
-        self.masterpyqtSignalsDict['loggerRrdDump']  = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['loggerRrdEvent']    = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['nchecksDumpMessage'] = SimplepyqtSignal(self)
-        self.masterpyqtSignalsDict['nchecksUpdateMessage'] = SimplepyqtSignal(self)
+        signals['infoTarget'] = SimplepyqtSignal(self)
+        signals['infoTarget'].signal.connect(self._handleTargetInfo)
 
-        # connect myself
-        self.masterpyqtSignalsDict['infoTarget'].signal.connect(self._handleTargetInfo)
-        self.masterpyqtSignalsDict['infoProbe'].signal.connect(self._handleProbeInfo)
-        self.masterpyqtSignalsDict['deleteTarget'].signal.connect(self._handleDeleteTarget)
-        self.masterpyqtSignalsDict['deleteProbe'].signal.connect(self._handleDeleteProbe)
-        self.masterpyqtSignalsDict['probeReturn'].signal.connect(self._handleProbeReturn)
+        signals['probeReturn'] = SimplepyqtSignal(self)
+        signals['probeReturn'].signal.connect(self._handleProbeReturn)
 
-        self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.connect(self._handleNchecksDump)
-        self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.connect(self._handleNchecksUpdate)
-        self.masterpyqtSignalsDict['loggerRrdDump'].signal.connect(self._handleProbeDump)
-        self.masterpyqtSignalsDict['loggerRrdEvent'].signal.connect(self._handleLoggerRrdEventMsg)
-        # END
+        signals['deleteTarget'] = SimplepyqtSignal(self)
+        signals['deleteTarget'].signal.connect(self._handleDeleteTarget)
+
+        signals['deleteProbe'] = SimplepyqtSignal(self)
+        signals['deleteProbe'].signal.connect(self._handleDeleteProbe)
+
+        signals['nchecksDumpMessage'] = SimplepyqtSignal(self)
+        signals['nchecksDumpMessage'].signal.connect(self._handleNchecksDump)
+
+        signals['nchecksUpdateMessage'] = SimplepyqtSignal(self)
+        signals['nchecksUpdateMessage'].signal.connect(self._handleNchecksUpdate)
+
+        self.masterpyqtSignalsDict = signals
 
     def handleSupercastMsg(self, msg):
         if      msg['type'] == 'probeReturn':
             self.masterpyqtSignalsDict['probeReturn'].signal.emit(msg)
-
-        elif    msg['type'] == 'loggerRrdDump':
-            self.masterpyqtSignalsDict['loggerRrdDump'].signal.emit(msg)
-
-        elif    msg['type'] == 'loggerRrdEvent':
-            self.masterpyqtSignalsDict['loggerRrdEvent'].signal.emit(msg)
-
         elif    msg['type'] == 'infoProbe':
             self.masterpyqtSignalsDict['infoProbe'].signal.emit(msg)
-
         elif    msg['type'] == 'infoTarget':
             self.masterpyqtSignalsDict['infoTarget'].signal.emit(msg)
-
         elif    msg['type'] == 'deleteTarget':
             self.masterpyqtSignalsDict['deleteTarget'].signal.emit(msg)
-
         elif    msg['type'] == 'deleteProbe':
             self.masterpyqtSignalsDict['deleteProbe'].signal.emit(msg)
-
         elif    msg['type'] == 'nchecksDumpMessage':
             self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.emit(msg)
-
         elif    msg['type'] == 'nchecksUpdateMessage':
             self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.emit(msg)
-
         elif    msg['type'] == 'staticChanInfo':
             chan    = msg['value']
             if chan == self._masterChan:
                 self._autoSubscribe()
-
         elif    msg['type'] == 'subscribeOk':
             self._handleSubscribeOk(msg)
-
         elif    msg['type'] == 'unSubscribeOk':
             self._handleUnsubscribeOk(msg)
         else: 
@@ -131,7 +113,6 @@ class ChanHandler(QObject):
         self._pendingSubscribe.remove(channel)
         self._subscribedChans.append(channel)
 
-
     def _handleUnsubscribeOk(self, msg):
         channel = msg['value']
         if channel == self._masterChan: return
@@ -146,22 +127,10 @@ class ChanHandler(QObject):
         channel = msg['value']['name']
         self._chanProxy[channel].handleNchecksUpdate(msg)
         
-    def _handleProbeDump(self, msg):
-        channel = msg['value']['name']
-        self._chanProxy[channel].handleDump(msg)
-
     def _handleProbeReturn(self, msg):
         channel = msg['value']['name']
         if channel in list(self._chanProxy.keys()):
             self._chanProxy[channel].handleReturn(msg)
-
-    def _handleLoggerRrdEventMsg(self, msg):
-        channel = msg['value']['name']
-        self._chanProxy[channel].handleLoggerRrdEvent(msg)
-
-    def _handleEventMsg(self, msg):
-        channel = msg['value']['name']
-        self._chanProxy[channel].handleEvent(msg)
 
     def _handleProbeInfo(self, msg):
         infoProbe   = msg['value']
@@ -182,7 +151,6 @@ class ChanHandler(QObject):
         probe = msg['value']['name']
         del self.probes[probe]
 
-
     # startup subscribe
     def _autoSubscribe(self):
         sysmapi.nSubscribe(self._handleAutoSubscribe, self._masterChan)
@@ -201,111 +169,12 @@ class Channel(QObject):
         self._rrd4jWait  = list()
         self.probeDict = ChanHandler.singleton.probes[probeName]
         self.name = probeName
-        self.loggerTextState    = None
-        self.loggerEventState   = None
-        self.rrdFiles           = dict()
-        self.rrdEnabled         = False
-
-        self._tmpXmlFiles       = dict()
-        self._rrdFiles          = dict()
-        self._rrdFilesReady     = dict()
-        self._rrdUpdatesPending = dict()
-        # END rrd2 synchro
-
-    def delayedRrdRestore(self, reply):
-        if (reply['reply']['status'] == 'ok'):
-            index = reply['data']
-            del self._tmpXmlFiles[index]
-            self._rrdFilesReady[index] = True
-            self._restorePendingUpdates(index)
-        else:
-            print(("rrdtool restore failed: ", reply))
-
-    def _restorePendingUpdates(self, index):
-        if index in self._rrdUpdatesPending:
-            update = self._rrdUpdatesPending[index].popleft()
-            updateString = "update %s %s %s" % (
-                self._rrdFiles[index].fileName(),
-                self._rrdUpdateString,
-                update)
-            norrd.cmd(
-                updateString,
-                callback=self._restorePendingUpdatesContinue,
-                data=index)
-            return
-        dumpMsg = dict()
-        dumpMsg['type']  = 'probeDump'
-        dumpMsg['logger']   = 'rrd_snmp_table_logger'
-        dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
-        self.signal.emit(dumpMsg)
-
-    def _restorePendingUpdatesContinue(self, msg):
-        index = msg['data']
-        if len(self._rrdUpdatesPending[index]) == 0:
-            dumpMsg = dict()
-            dumpMsg['type']  = 'probeDump'
-            dumpMsg['logger']   = 'rrd_snmp_table_logger'
-            dumpMsg['data']     = (index, self._rrdFiles[index].fileName())
-            self.signal.emit(dumpMsg)
-            print("succcccccccesss! restorependingupdatescontinue")
-            return
-
-        update = self._rrdUpdatesPending[index].popleft()
-        updateString = "update %s %s %s" % (
-            self._rrdFiles[index].fileName(),
-            self._rrdUpdateString,
-            update)
-        norrd.cmd(
-            updateString,
-            callback=self._restorePendingUpdatesContinue,
-            data=index)
-
-
-    def delayedSyncEvent(self, reply):
-        if (reply['success'] == True):
-            xmlFile = reply['outfile']
-            for key in list(self._tmpXmlFiles.keys()):
-                if (self._tmpXmlFiles[key].fileName() == xmlFile):
-                    index = key
-            print(("index is ", index))
-            rrdFile = NTempFile(self)
-            rrdFile.open()
-            rrdFile.close()
-            rrdFileName = rrdFile.fileName()
-            self._rrdFiles[index] = rrdFile
-            norrd.cmd(
-                "restore %s %s --force-overwrite" % (xmlFile, rrdFileName),
-                callback = self.delayedRrdRestore,
-                data = index
-            )
-        else:
-            print(("supercast requestUrl failed: ", reply))
-
-    def synchronizeView(self, view):
-        if self.loggerTextState != None:
-            dumpMsg = dict()
-            dumpMsg['type']  = 'probeDump'
-            dumpMsg['logger']   = 'bmonitor_logger_text'
-            dumpMsg['data']     = self.loggerTextState
-            view.handleProbeEvent(dumpMsg)
-
-        if self.rrdEnabled == True:
-            for i in list(self._rrdFilesReady.keys()):
-                if self._rrdFilesReady[i] == True:
-                    dumpMsg = dict()
-                    dumpMsg['type']  = 'probeDump'
-                    dumpMsg['logger']   = 'rrd_snmp_table_logger'
-                    dumpMsg['data']     = (i, self._rrdFiles[i].fileName())
-                    self.signal.emit(dumpMsg)
-
-        if self.loggerEventState != None:
-            dumpMsg = dict()
-            dumpMsg['type']  = 'probeDump'
-            dumpMsg['logger']   = 'monitor_events'
-            dumpMsg['data']     = self.loggerEventState
-            view.handleProbeEvent(dumpMsg)
         
-    # new code begin
+    def handleReturn(self, msg):
+        if self.loggerTextState != None:
+            self._updateLoggerText(msg)
+        self.signal.emit(msg)
+
     def handleNchecksDump(self,msg):
         httpDir = msg['value']['httpDumpDir']
         rrdFile = msg['value']['rrdFile']
@@ -319,11 +188,11 @@ class Channel(QObject):
 
         request = dict()
         request['url']      = "%s/%s" % (httpDir, rrdFile)
-        request['callback'] = self.handleNchecksDump2nd
+        request['callback'] = self._handleNchecksDump2nd
         request['outfile']  = self._rrd4jFileName
         supercast.requestUrl(request)
         
-    def handleNchecksDump2nd(self, msg):
+    def _handleNchecksDump2nd(self, msg):
         if msg['success'] == True: 
             dumpMsg = dict()
             dumpMsg['type']     = 'nchecksDumpMessage'
@@ -361,111 +230,6 @@ class Channel(QObject):
         else:
             msg = self._rrd4jWait.pop()
             self._doUpdateRrd(msg)
-    # new code end
-    
-
-    def handleDump(self, msg):
-        dumpType = msg['value']['logger']
-        data     = msg['value']['data']
-        if   dumpType == 'bmonitor_logger_text':
-            self.loggerTextState = deque(data.split('\n'))
-            dumpMsg = dict()
-            dumpMsg['type']  = 'probeDump'
-            dumpMsg['logger']   = dumpType
-            dumpMsg['data']     = self.loggerTextState
-            self.signal.emit(dumpMsg)
-        elif dumpType == 'bmonitor_logger_events':
-            self.loggerEventState = msg['value']['data']
-            dumpMsg = dict()
-            dumpMsg['type']  = 'probeDump'
-            dumpMsg['logger']   = dumpType
-            dumpMsg['data']     = self.loggerEventState
-            self.signal.emit(dumpMsg)
-        elif dumpType == 'rrd_snmp_table_logger':
-            self.rrdEnabled = True
-            self._initRrdUpdate()
-            path = msg['value']['path']
-            urls = msg['value']['indexes']
-            for index in list(urls.keys()):
-                xmlFile = NTempFile(self)
-                xmlFile.open()
-                xmlFile.close()
-                fileName = xmlFile.fileName()
-                self._tmpXmlFiles[index] = xmlFile
-                self._rrdFiles[index] = None
-                self._rrdFilesReady[index] = False
-                request = dict()
-                request['url']      = "%s/%s" % (path, urls[index])
-                request['callback'] = self.delayedSyncEvent
-                request['outfile']  = fileName
-                supercast.requestUrl(request)
-        else:
-            print(("unknown dump type ", dumpType))
-
-    def handleLoggerRrdEvent(self, msg):
-        print("WWWWWWtFFFFFFFFFFFFFFF", msg)
-        updates = msg['value']['updates']
-        for index in list(updates.keys()):
-            if updates[index] != '':
-                self._maybeUpdateRrd(index, updates[index])
-            else:
-                updateMsg = dict()
-                updateMsg['type'] = 'loggerRrdEvent'
-                updateMsg['logger']  = 'rrd_snmp_table_logger'
-                updateMsg['data']    = index
-                self.signal.emit(updateMsg)
- 
-                
-
-    def _initRrdUpdate(self):
-        self._rrdUpdateString = self.probeDict['loggers']['rrd_snmp_table_logger']['rrdUpdate']
-
-    def _maybeUpdateRrd(self, key, updateString):
-
-        # TODO correctly handle updates when missing dump msg
-        # Rewrite proxy module
-        if key not in self._rrdFilesReady: return
-        # TODO END
-
-        if (self._rrdFilesReady[key] == False):
-            if key in self._rrdUpdatesPending:
-                self._rrdUpdatesPending[key].append(updateString)
-                return
-            else:
-                self._rrdUpdatesPending[key] = deque()
-                self._rrdUpdatesPending[key].append(updateString)
-                return
-        updateString = "update %s %s %s" % (
-            self._rrdFiles[key].fileName(),
-            self._rrdUpdateString,
-            updateString)
-        norrd.cmd(updateString, callback = self.getRrdStatus, data=key)
-
-    def getRrdStatus(self, reply):
-        status  = reply['reply']['status']
-        index   = reply['data']
-        if status == 'ok':
-            updateMsg = dict()
-            updateMsg['type'] = 'loggerRrdEvent'
-            updateMsg['logger']  = 'rrd_snmp_table_logger'
-            updateMsg['data']    = index
-            self.signal.emit(updateMsg)
-        else:
-            print(("rrdtool update error: ", reply))
-
-    def handleReturn(self, msg):
-        if self.loggerTextState != None:
-            self._updateLoggerText(msg)
-        self.signal.emit(msg)
-
-    def handleEvent(self, msg):
-        self.loggerEventState.append(msg['value']['data'])
-        self.signal.emit(msg)
-
-    def _updateLoggerText(self, msg):
-        self.loggerTextState.append(msg['value']['replyString'])
-        if len(self.loggerTextState) > 50:
-            self.loggerTextState.popleft()
 
 
 class AbstractChannelWidget(NFrameContainer):
