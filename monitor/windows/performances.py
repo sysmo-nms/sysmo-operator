@@ -67,11 +67,7 @@ class LoggerView(QDialog):
         self._menus     = ProbeMenus(self)
 
         probeee = ChanHandler.singleton.probes[probe]
-        loggers = list(ChanHandler.singleton.probes[probe]['loggers'].keys())
-        rrdlogger   = False
-        textlogger  = False
-        eventlogger = False
-        
+
         self._layout    = NGrid(self)
         self._layout.addWidget(self._menus,     0,0)
         self._layout.addWidget(self._statusBar, 1,0,1,2)
@@ -82,23 +78,12 @@ class LoggerView(QDialog):
         self._layout.setColumnStretch(0,0)
         self._layout.setColumnStretch(1,1)
 
-        print("open logger for: " + str(probeee))
         if probeee['probeMod'] == 'probe_nchecks':
             cl = probeee['probeClass']
             self._logArea   = NChecksLogArea(self, probe, cl)
             self._layout.addWidget(self._logArea,   0,1)
             print("mod is: " + str(cl))
             
-        # old code begin
-        else:
-            if 'rrd_snmp_table_logger'  in loggers: rrdlogger   = True
-            if 'bmonitor_logger_text'   in loggers: textlogger  = True
-            if 'bmonitor_logger_event'  in loggers: eventlogger = True
-
-            self._logArea   = LogArea(self, rrdlogger, textlogger, eventlogger, probe)
-            self._layout.addWidget(self._logArea,   0,1)
-        # old code end
-       
         self.show()
  
 class NChecksLogArea(AbstractChannelWidget):
