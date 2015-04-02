@@ -171,8 +171,6 @@ class Channel(QObject):
         self.name = probeName
         
     def handleReturn(self, msg):
-        if self.loggerTextState != None:
-            self._updateLoggerText(msg)
         self.signal.emit(msg)
 
     def handleNchecksDump(self,msg):
