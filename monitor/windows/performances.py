@@ -15,6 +15,7 @@ from    PyQt5.QtGui    import (
 )
 
 from    PyQt5.QtWidgets    import (
+    QLabel,
     QWidget,
     QDialog,
     QAbstractScrollArea,
@@ -35,8 +36,7 @@ from    sysmo_widgets    import (
     NFrameContainer,
     NGridContainer,
     NFrame,
-    NGrid,
-    QLabel
+    NGrid
 )
 
 from    monitor.proxy import AbstractChannelWidget, ChanHandler, NTempFile
@@ -51,20 +51,21 @@ import  os
 import  sys
 
 def openPerformancesMDIFor(probe):
-    return LoggerMDI(probe) 
+    if probe in list(LoggerMDI.Elements.keys()):
+        LoggerMDI.Elements[probe].show()
+    else:
+        LoggerMDI.Elements[probe] = LoggerMDI(probe) 
 
 class LoggerMDI(QMdiSubWindow):
+    Elements = dict()
     def __init__(self, probe, displayName="undefined", parent=None):
         super(LoggerMDI, self).__init__(parent)
         self.setWidget(LoggerContainer(probe,displayName,self))
 
 
-
-
 def openPerformancesFor(probe, displayName):
     if probe in list(LoggerView.Elements.keys()):
         LoggerView.Elements[probe].show()
-        return
     else:
         LoggerView.Elements[probe] = LoggerView(probe, displayName)
 
@@ -109,7 +110,6 @@ class NChecksLogArea(AbstractChannelWidget):
 
     def __init__(self, parent, channel, cl):
         super(NChecksLogArea, self).__init__(parent, channel)
-        self.connectProbe()
         self._widthTimer = QTimer(self)
         self._widthTimer.setSingleShot(True)
         self._widthTimer.setInterval(500)
@@ -152,7 +152,9 @@ class NChecksLogArea(AbstractChannelWidget):
             graphGrid.setRowStretch(row, 0)
             row += 1
         graphGrid.setRowStretch(row, 1)
+        self.connectProbe()
             
+
     def handleProbeEvent(self, msg):
         self.ncheckEvents.emit(msg)
 
@@ -240,14 +242,14 @@ class NChecksRrdGraph(NFrameContainer):
         self.drawRrd()
         
     def handleProbeEvent(self, msg):
-        print("handle probe event? " + str(msg))
         if msg['type'] == 'nchecksDumpMessage':
             self._graphDef['filenameRrd'] = msg['file']
             self.drawRrd()
-        elif msg['type'] == 'nchecksUpdateMessage':
+        elif msg['type'] == 'nchecksUpdateMessage' and self._graphDef['filenameRrd'] != None:
             self.drawRrd()
 
     def drawRrd(self):
+        if self._graphDef['filenameRrd'] == None: return
         pyrrd4j.graph(self._graphDef, self.drawRrdReply)
 
     def drawRrdReply(self, msg):

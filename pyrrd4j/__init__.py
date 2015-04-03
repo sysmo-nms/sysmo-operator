@@ -45,7 +45,6 @@ def graph(graph, callback):
     command = dict()
     command['string'] = 'GRAPH|' + cmd
     command['callback'] = callback
-    print("command is" + cmd)
     pipe.Rrd4jAsync.singleton.execute(command)
 
 def update(update, callback):
