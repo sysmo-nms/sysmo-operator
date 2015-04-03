@@ -50,6 +50,7 @@ import  re
 import  os
 import  sys
 
+# TODO delete at close
 def openPerformancesMDIFor(probe):
     if probe in list(LoggerMDI.Elements.keys()):
         LoggerMDI.Elements[probe].show()
