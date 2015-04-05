@@ -419,7 +419,6 @@ class NSelector(NFrameContainer):
         grid.setVerticalSpacing(4)
         buttonMonit = MonitorButton(self)
         buttonDash  = DashboardButton(self)
-        buttonDash.hide()
         self.buttonGroup = QButtonGroup(self)
         self.buttonGroup.setExclusive(True)
         self.buttonGroup.addButton(buttonMonit, MONITOR)
