@@ -17,6 +17,15 @@ def getTargetsDict():
 def getTarget(target):
     return monitor.proxy.ChanHandler.singleton.targets[target]
 
+def getHostnameFor(target):
+    t = monitor.proxy.ChanHandler.singleton.targets[target]
+    p = t['properties']
+    if p['sysName'] != "undefined":
+        return p['sysName']
+    if p['name'] != "":
+        return p['name']
+    return p['host']
+
 def getProbesFor(target):
     probes = monitor.proxy.ChanHandler.singleton.probes
     probeList = list()

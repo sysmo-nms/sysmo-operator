@@ -46,10 +46,11 @@ class TargetMenu(QMenu):
 
         self.addSeparator()
 
-        action = NAction(self.tr('Performances Dashboard...'), self)
-        action.triggered.connect(self._openDashboard)
-        action.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
-        self.addAction(action)
+        dash = NAction(self.tr('Dashboard...'), self)
+        dash.triggered.connect(self._openDashboard)
+        dash.setIcon(QIcon(sysmapi.nGetPixmap('utilities-system-monitor')))
+        self.addAction(dash)
+        self._dash = dash
 
         action = NAction(self.tr('Documentation...'), self)
         action.triggered.connect(self._openDocEngine)
@@ -71,6 +72,8 @@ class TargetMenu(QMenu):
     def showMenuFor(self, target, point):
         uactions = monapi.getUOperationsFor(target)
         self._currentTarget = target
+        host = monapi.getHostnameFor(target)
+        self._dash.setText(host.capitalize() + " dashboard...")
         if self._tuOperationWiz != None:
             self.configureAction.triggered.disconnect(self._tuOperationWiz)
         self._tuOperationWiz = partial(self._launchUserOperationsWiz, target)
