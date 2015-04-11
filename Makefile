@@ -12,7 +12,7 @@ pyrrd4j/java_lib/Pyrrd4j.jar:
 	make -C pyrrd4j compile
 
 $(EXECUTABLE): clean
-	$(PYTHON_EXE) setup.py py2exe --include sip,ctypes,PyQt5.QtWebKit,PyQt5.QtPrintSupport
+	$(PYTHON_EXE) setup.py py2exe --include sip,ctypes,PyQt5.QtWebKit,PyQt5.QtPrintSupport,readline
 	cp -r html $(DIST_DIR)
 	cp -r graphics $(DIST_DIR)
 	cp -r pyrrd4j $(DIST_DIR)
