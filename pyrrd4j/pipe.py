@@ -15,8 +15,8 @@ class Rrd4jAsync(QObject):
         super(Rrd4jAsync, self).__init__(parent)
         Rrd4jAsync.singleton = self
         self._queries = dict()
-        curdir = os.path.dirname(__file__)
-        classpath  = os.path.join(curdir, 'java_lib', '*') + ';'
+        curdir = os.getcwd()
+        classpath  = os.path.join(curdir, 'pyrrd4j', 'java_lib', '*') + ';'
 
         if platform.system() == 'Windows':
             command = ["javaw", '-classpath', classpath, 'io.sysmo.pyrrd4j.Pyrrd4j', '--die-on-broken-pipe']
