@@ -187,6 +187,8 @@ class Supercast(QObject):
             self._queryNotify(msg)
         elif (msgType == 'unsubscribeErr'):
             self._queryNotify(msg)
+        elif (msgType == 'authErr'):
+            self._loginWin.authError(msg)
         else:
             print(("handle other?", msgType))
 

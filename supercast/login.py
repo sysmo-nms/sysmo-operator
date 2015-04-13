@@ -7,7 +7,8 @@ from    PyQt5.QtWidgets        import (
     QPushButton,
     QFrame,
     QFormLayout,
-    QGridLayout
+    QGridLayout,
+    QMessageBox
 )
 from    PyQt5.QtSvg        import QSvgWidget
 import  sysmapi
@@ -106,6 +107,14 @@ class Query(QDialog):
         tryDict['server']   = self.serverLineEdit.text()
         tryDict['port']     = self.serverPortEdit.value()
         self.callback(tryDict)
+
+    def authError(self, msg):
+        msgbox = QMessageBox(self)
+        msgbox.setText("Login failure!")
+        msgbox.setInformativeText("Your user name and password does not match any known user on the server side. Maybe you have mispeled your password?")
+        msgbox.setStandardButtons(QMessageBox.Ok)
+        msgbox.setModal(True)
+        msgbox.exec_()       
 
     def tcpConnected(self, state): pass
 
