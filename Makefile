@@ -2,9 +2,9 @@ PYTHON_EXE   = /cygdrive/c/Python34/python.exe
 DIST_DIR     = dist
 BUILD_DIR    = build
 RELEASE_NAME = sysmo-operator-win32
-RELEASE_VERSION = 0.2.1
+REL_VER	     ?= 1
 QT_PLUGINS_DIR  = /cygdrive/c/Python34/lib/site-packages/PyQt5/plugins
-EXECUTABLE = $(RELEASE_NAME)-$(RELEASE_VERSION)/sysmo.exe
+EXECUTABLE = $(RELEASE_NAME)-$(REL_VER)/sysmo.exe
 
 compile: $(EXECUTABLE) pyrrd4j/java_lib/Pyrrd4j.jar
 
@@ -20,12 +20,12 @@ $(EXECUTABLE): clean
 	cp -r $(QT_PLUGINS_DIR) $(DIST_DIR)
 	cp qt.conf $(DIST_DIR)
 	rm -rf $(BUILD_DIR)
-	mv $(DIST_DIR) $(RELEASE_NAME)-$(RELEASE_VERSION)
+	mv $(DIST_DIR) $(RELEASE_NAME)-$(REL_VER)
 
 clean:
 	rm -rf dist
 	rm -rf build
-	rm -rf $(RELEASE_NAME)-$(RELEASE_VERSION)
+	rm -rf $(RELEASE_NAME)-$(REL_VER)
 	find . -name "*.pyc" -print | xargs rm -f
 	find . -name "__pycache__" -print | xargs rm -rf
 
@@ -43,4 +43,4 @@ translate-clean:
 	rm -f *.ts
 
 exe:
-	cd $(RELEASE_NAME)-$(RELEASE_VERSION); ./sysmo.exe
+	cd $(RELEASE_NAME)-$(REL_VER); ./sysmo.exe
