@@ -10,6 +10,7 @@ from    supercast.http_manager  import SupercastAccessManager
 from    supercast.socket        import SupercastSocket
 import  supercast.login
 import sys
+import sysmo_images
 
 def send(message, callback):
     Supercast.singleton.send(message, callback)
@@ -132,35 +133,29 @@ class Supercast(QObject):
 
     def _handleSocketError(self, event):
         if   event == QAbstractSocket.ConnectionRefusedError:
-            self._showErrorBox(event)
+            a = "The connection was refused by the peer."
+            b = "You may trying to connect to the wrong host, or the wrong port."
+            self._showErrorBox(a, b)
         elif event == QAbstractSocket.RemoteHostClosedError:
-            self._showErrorBox(event)
+            a = "The remote host closed the connexion."
+            b = "This can append if the host come down, or if the service is restarting."
+            self._showErrorBox(a, b)
         elif event == QAbstractSocket.HostNotFoundError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketAccessError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketResourceError:
-            self._showErrorBox(event)
+            a = "Host not found"
+            b = "This host is not know by your DNS"
+            self._showErrorBox(a, b)
         elif event == QAbstractSocket.SocketTimeoutError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.DatagramTooLargeError:
-            self._showErrorBox(event)
+            a = "Socket timed out"
+            b = "Is your network connexion down?"
+            self._showErrorBox(a, b)
         elif event == QAbstractSocket.NetworkError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.AddressInUseError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SocketAddressNotAvailableError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.UnsupportedSocketOperationError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.SslHandshakeFailedError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.UnfinishedSocketOperationError:
-            self._showErrorBox(event)
-        elif event == QAbstractSocket.UnknownSocketError:
-            self._showErrorBox(event)
+            a = "Network error"
+            b = "Does your network cable pluged in?"
+            self._showErrorBox(a, b)
         else:
-            self._showErrorBox(event)
+            a = "Socket Error"
+            b = "Error code: %i" % event
+            self._showErrorBox(a, b)
 
 
     def _handleSupercastPDU(self, msg):
@@ -251,10 +246,13 @@ class Supercast(QObject):
         self.eventpyqtSignals.emit(('success', None))
         self._loginWin.close()
 
-    def _showErrorBox(self, event):
+    def _showErrorBox(self, a, b):
         msgBox = QMessageBox(self._mainwindow)
-        msgBox.setText("Socket ERROR %s" % event)
+        msgBox.setText(a)
+        msgBox.setInformativeText(b)
+        msgBox.setIcon(QMessageBox.Critical)
         msgBox.setStandardButtons(QMessageBox.Close)
+        msgBox.setModal(True)
         msgBox.exec_()
         self.eventpyqtSignals.emit(('abort', None))
 

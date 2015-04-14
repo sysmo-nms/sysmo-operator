@@ -113,6 +113,7 @@ class Query(QDialog):
         msgbox.setText("Login failure!")
         msgbox.setInformativeText("Your user name and password does not match any known user on the server side. Maybe you have mispeled your password?")
         msgbox.setStandardButtons(QMessageBox.Ok)
+        msgbox.setIcon(QMessageBox.Warning)
         msgbox.setModal(True)
         msgbox.exec_()       
 

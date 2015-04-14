@@ -9,6 +9,8 @@
 - timeline
 - osm
 - obfuscate
+- remove all SVGs
+- correctly handle login failure (reconnect ... and retry)
 
 ### HIGH
 - Dashboards
