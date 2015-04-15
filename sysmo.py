@@ -1,8 +1,16 @@
-import os
-if '__file__' in locals(): pass
-else:
-    platformPluginsDir = os.getcwd() + '\plugins\platforms'
-    os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = platformPluginsDir
+if '__file__' not in locals():
+    import platform
+    import os
+    import winreg
+    if platform.system() == 'Windows':
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Sysmo\\Sysmo Core", 0, winreg.KEY_READ)
+        installLoc ,_  = winreg.QueryValueEx(key, "installLocation")
+        winreg.CloseKey(key)
+        operatorPath = os.path.join(installLoc, 'sysmo-operator')
+        os.chdir(operatorPath)
+        platformPluginsDir = os.path.join(operatorPath, 'plugins', 'platforms')
+        os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = platformPluginsDir
+    if platform.system() == 'Linux': pass
 
 from    PyQt5.QtWidgets import QApplication, QWidget
 from    PyQt5.QtCore    import QSettings, QTranslator

@@ -23,8 +23,8 @@ class Query(QDialog):
 
 
         # dev shortcuts
-        autoName    = 'admuser'
-        autoPass    = 'passwd'
+        autoName    = 'admin'
+        autoPass    = 'password'
         autoPort    = 8888
         autoHost    = 'localhost'
 
