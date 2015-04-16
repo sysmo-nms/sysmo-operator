@@ -223,7 +223,7 @@ class Supercast(QObject):
         self._loginWin = supercast.login.Query(parent, uncle)
 
     def loginAbort(self):
-        self.eventpyqtSignals.emit(('abort', None))
+        self.eventpyqtSignals.emit(('full_abort', None))
 
     def tryConnect(self, cred):
         self.userName   = cred['name']

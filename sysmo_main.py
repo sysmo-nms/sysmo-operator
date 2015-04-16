@@ -95,6 +95,8 @@ class NMainWindow(QMainWindow):
         elif key == 'blocked':
             self.lockedTcpSocket.emit()
             self.setEnabled(False)
+        elif key == 'full_abort':
+            self.close()
         elif key == 'abort':
             if self._supercastLogged == True: self.close()
     def _finalizeInit(self):

@@ -17,7 +17,7 @@ import  sysmapi
 class Query(QDialog):
     def __init__(self, parent, uncle):
         super(Query, self).__init__(parent)
-        self.setMinimumWidth(500)
+        self.setFixedWidth(400)
 
         self._uncle     = uncle
         self.callback   = uncle.tryConnect
@@ -53,6 +53,7 @@ class Query(QDialog):
 
         formFrame   = QFrame(self)
         formLayout  = QFormLayout(formFrame)
+        formLayout.setContentsMargins(0,0,0,0)
         formLayout.addRow(self.tr("&Server:"),      self.serverLineEdit)
         formLayout.addRow(self.tr("&Port:"),        self.serverPortEdit)
         formLayout.addRow(QFrame(self))
@@ -63,14 +64,12 @@ class Query(QDialog):
 
         # button area
         ok = QPushButton(
-            #QIcon(sysmapi.nGetPixmap('applications-development')),
             self.tr("&Log In"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self.tryValidate)
 
         ko = QPushButton(
-            #QIcon(sysmapi.nGetPixmap('process-stop')),
             self.tr("&Close"),
             self)
         ko.clicked.connect(self._loginAbort)
@@ -80,20 +79,17 @@ class Query(QDialog):
         buttons.addButton(ko,   QDialogButtonBox.ApplyRole)
 
 
-        # graphic area
-        svgImage = QSvgWidget(sysmapi.nGetImage('weather-showers'), self)
-        svgImage.setFixedSize(150, 150)
-
-
         # LAYOUT
         grid = QGridLayout(self)
-        grid.addWidget(formFrame,   0,1)
-        grid.addWidget(svgImage,    0,0)
-        grid.addWidget(buttons,     1,0,1,2)
+        grid.setVerticalSpacing(22)
+        grid.addWidget(formFrame,   0,0)
+        grid.addWidget(buttons,     1,0)
         self.setLayout(grid)
         self.show()
 
     def _loginAbort(self):
+        self.hide()
+        self.deleteLater()
         self._uncle.loginAbort()
         
     def tryValidate(self):
