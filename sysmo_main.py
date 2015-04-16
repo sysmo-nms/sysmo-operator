@@ -285,62 +285,42 @@ class NMainWindow(QMainWindow):
         menuStyle.addAction(fullScreenAction)
 
         "color sub menu"
-        self.menuColor = menuStyle.addMenu(QIcon(getPixmap('preferences-desktop-theme')),self.tr('Colors'))
+        self.menuColor = menuStyle.addMenu(
+            QIcon(getPixmap('preferences-desktop-theme')),self.tr('Color Theme'))
         nativeThemeAction = QAction(self.tr('Native colors'), self)
         nativeThemeAction.setCheckable(True)
         nativeThemeAction.triggered.connect(partial(self._setTheme, 'native'))
 
-        deepWaterAction = QAction(self.tr('Sysmo (default)'), self)
-        deepWaterAction.setCheckable(True)
-        deepWaterAction.triggered.connect(partial(self._setTheme, 'dark'))
+        midnightAction = QAction(self.tr('Midnight'), self)
+        midnightAction.setCheckable(True)
+        midnightAction.triggered.connect(partial(self._setTheme, 'dark'))
     
         islandAction = QAction(self.tr('Inland'), self)
         islandAction.setCheckable(True)
         islandAction.triggered.connect(partial(self._setTheme, 'terra'))
 
-        lagoonAction = QAction(self.tr('Lagoon'), self)
-        lagoonAction.setCheckable(True)
-        lagoonAction.triggered.connect(partial(self._setTheme, 'lagoon'))
-
         kritaAction = QAction(self.tr('Greys'), self)
         kritaAction.setCheckable(True)
         kritaAction.triggered.connect(partial(self._setTheme, 'krita'))
 
-        desertAction = QAction(self.tr('Desert'), self)
-        desertAction.setCheckable(True)
-        desertAction.triggered.connect(partial(self._setTheme, 'desert'))
-
-        honeyAction = QAction(self.tr('Honey'), self)
-        honeyAction.setCheckable(True)
-        honeyAction.triggered.connect(partial(self._setTheme, 'honey'))
-
-        snowAction = QAction(self.tr('Snow'), self)
+        snowAction = QAction(self.tr('Snowy'), self)
         snowAction.setCheckable(True)
         snowAction.triggered.connect(partial(self._setTheme, 'snow'))
 
         groupColor = QActionGroup(self)
         groupColor.addAction(nativeThemeAction)
-        groupColor.addAction(deepWaterAction)
-        groupColor.addAction(lagoonAction)
         groupColor.addAction(islandAction)
-        groupColor.addAction(kritaAction)
-        groupColor.addAction(desertAction)
-        groupColor.addAction(honeyAction)
         groupColor.addAction(snowAction)
+        groupColor.addAction(kritaAction)
+        groupColor.addAction(midnightAction)
         groupColor.setExclusive(True)
 
-        if self._sysmoTheme == 'lagoon':
-            lagoonAction.setChecked(True)
-        elif self._sysmoTheme == 'dark':
-            deepWaterAction.setChecked(True)
+        if self._sysmoTheme == 'dark':
+            midnightAction.setChecked(True)
         elif self._sysmoTheme == 'terra':
             islandAction.setChecked(True)
         elif self._sysmoTheme == 'krita':
             kritaAction.setChecked(True)
-        elif self._sysmoTheme == 'desert':
-            desertAction.setChecked(True)
-        elif self._sysmoTheme == 'honey':
-            honeyAction.setChecked(True)
         elif self._sysmoTheme == 'snow':
             snowAction.setChecked(True)
         else:
@@ -348,13 +328,10 @@ class NMainWindow(QMainWindow):
 
         self.menuColor.addAction(nativeThemeAction)
         self.menuColor.addSeparator()
-        self.menuColor.addAction(deepWaterAction)
         self.menuColor.addAction(islandAction)
-        self.menuColor.addAction(lagoonAction)
         self.menuColor.addAction(kritaAction)
-        self.menuColor.addAction(desertAction)
-        self.menuColor.addAction(honeyAction)
         self.menuColor.addAction(snowAction)
+        self.menuColor.addAction(midnightAction)
 
         " application menu defined by the differents extentions"
         menu.addSeparator()
