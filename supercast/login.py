@@ -1,5 +1,6 @@
 from    PyQt5.QtGui            import QIcon
 from    PyQt5.QtWidgets        import (
+    QLabel,
     QDialog,
     QLineEdit,
     QSpinBox,
@@ -17,7 +18,12 @@ import  sysmapi
 class Query(QDialog):
     def __init__(self, parent, uncle):
         super(Query, self).__init__(parent)
-        self.setFixedWidth(400)
+        self.setFixedWidth(500)
+
+        image = QLabel('logo, version maj, version min', self)
+        image.setFixedWidth(200)
+        image.setFrameShadow(QFrame.Plain)
+        image.setFrameStyle(QFrame.StyledPanel)
 
         self._uncle     = uncle
         self.callback   = uncle.tryConnect
@@ -51,16 +57,27 @@ class Query(QDialog):
         self.serverPortEdit.setValue(autoPort)
 
 
+        serverFrame = QFrame(self)
+        serverLay = QGridLayout(serverFrame)
+        serverLay.setContentsMargins(0,0,0,0)
+        serverLay.addWidget(self.serverLineEdit,            0,0)
+        serverLay.addWidget(QLabel('Port:', serverFrame),  0,1)
+        serverLay.addWidget(self.serverPortEdit,            0,2)
+        serverLay.setColumnStretch(0,1)
+        serverLay.setColumnStretch(1,0)
+        serverLay.setColumnStretch(2,0)
+
+        sep = QFrame(self)
+        sep.setFixedHeight(15)
+
         formFrame   = QFrame(self)
         formLayout  = QFormLayout(formFrame)
         formLayout.setContentsMargins(0,0,0,0)
-        formLayout.addRow(self.tr("&Server:"),      self.serverLineEdit)
-        formLayout.addRow(self.tr("&Port:"),        self.serverPortEdit)
-        formLayout.addRow(QFrame(self))
-        formLayout.addRow(self.tr("&User Name:"),        self.nameLineEdit)
+        formLayout.addRow(self.tr("&User Name:"),   self.nameLineEdit)
         formLayout.addRow(self.tr("&Password:"),    self.passLineEdit)
+        formLayout.addRow(sep)
+        formLayout.addRow(self.tr("&Server:"), serverFrame)
         formFrame.setLayout(formLayout)
-
 
         # button area
         ok = QPushButton(
@@ -81,9 +98,13 @@ class Query(QDialog):
 
         # LAYOUT
         grid = QGridLayout(self)
+        grid.setHorizontalSpacing(15)
         grid.setVerticalSpacing(22)
-        grid.addWidget(formFrame,   0,0)
-        grid.addWidget(buttons,     1,0)
+        grid.addWidget(image, 0,0,2,1)
+        grid.addWidget(formFrame,   0,1)
+        grid.addWidget(buttons,     1,1)
+        grid.setRowStretch(0,1)
+        grid.setRowStretch(1,0)
         self.setLayout(grid)
         self.show()
 
