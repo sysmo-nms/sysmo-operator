@@ -1,8 +1,8 @@
 if '__file__' not in locals():
     import platform
     import os
-    import winreg
     if platform.system() == 'Windows':
+        import winreg
         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Sysmo\\Sysmo Core", 0, winreg.KEY_READ)
         installLoc ,_  = winreg.QueryValueEx(key, "installLocation")
         winreg.CloseKey(key)
