@@ -11,9 +11,6 @@ class ProbeMenu(QMenu):
         self._showPerfs     = None
         self.setIcon(QIcon(sysmapi.nGetPixmap('folder-saved-search')))
 
-        self._infoBox = QErrorMessage(self)
-        self._infoBox.setModal(True)
-
         action = QAction(self.tr('Force check'), self)
         action.triggered.connect(self._forceCheck)
         action.setIcon(QIcon(sysmapi.nGetPixmap('software-update-available')))
@@ -71,7 +68,8 @@ class ProbeMenu(QMenu):
         msgBox = QMessageBox()
         msgBox.setText('You are about to delete a probe.')
         msgBox.setInformativeText('Do you want to continue?')
-        msgBox.setStandardButtons(QMessageBox.Apply | QMessageBox.Cancel)
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgBox.setDefaultButton(QMessageBox.Yes)
         msgBox.setIcon(QMessageBox.Warning)
         r = msgBox.exec_()
         if r == QMessageBox.Apply:

@@ -33,7 +33,8 @@ class NMainWindow(QMainWindow):
     willClose       = pyqtSignal()
     # emit when the application will close
 
-    supercastEnabled = pyqtSignal()
+    supercastEnabled    = pyqtSignal()
+    lockedTcpSocket     = pyqtSignal()
     # emit when supercast is enabled
 
     def __init__(self, style, parent=None):
@@ -79,7 +80,7 @@ class NMainWindow(QMainWindow):
 
     # Supercast
     def _initSupercast(self):
-        self.supercastLogged = False
+        self._supercastLogged = False
         self.supercast = Supercast(self, mainwindow=self)
         self.supercast.eventpyqtSignals.connect(self._handleSupercastEvents)
         self.supercast.tryLogin()
@@ -91,9 +92,11 @@ class NMainWindow(QMainWindow):
             self.supercastEnabled.emit()
             self._finalizeInit()
             self.show()
-        elif  key == 'abort':
-            self.close()
-
+        elif key == 'blocked':
+            self.lockedTcpSocket.emit()
+            self.setEnabled(False)
+        elif key == 'abort':
+            if self._supercastLogged == True: self.close()
     def _finalizeInit(self):
         nchecks.start(self)
 
@@ -461,6 +464,3 @@ class NStatusBar(QStatusBar):
     def __init__(self, parent):
         super(NStatusBar, self).__init__(parent)
         self.setAutoFillBackground(True)
-        #debugButton = QToolButton(self)
-        #debugButton.setIcon(QIcon(getPixmap('applications-development')))
-        #self.addPermanentWidget(debugButton)

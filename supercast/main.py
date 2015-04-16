@@ -58,6 +58,8 @@ class Supercast(QObject):
         self._socketThread.moveToThread(self._thread)
         self._thread.start()
 
+        self._socketPlusUserOk = False
+
         self.userName   = ''
         self.userPass   = ''
         self.groups     = []
@@ -230,6 +232,9 @@ class Supercast(QObject):
         self.port       = cred['port']
         self.lQueue.emit(('tryconnect', (self.server, self.port)))
 
+    def resetConn(self):
+        self.lQueue.emit(('reset', None))
+
     def _setTcpConn(self, state):
         if state == True:
             self._loginWin.tcpConnected(True)
@@ -243,10 +248,13 @@ class Supercast(QObject):
             self._loginWin.supConnected(False)
 
     def _setUserConn(self, state):
+        self._socketPlusUserOk = True
         self.eventpyqtSignals.emit(('success', None))
-        self._loginWin.close()
+        self._loginWin.end()
 
     def _showErrorBox(self, a, b):
+        self._loginWin.hideAll()
+        self.eventpyqtSignals.emit(('blocked', None))
         msgBox = QMessageBox(self._mainwindow)
         msgBox.setText(a)
         msgBox.setInformativeText(b)
@@ -254,12 +262,15 @@ class Supercast(QObject):
         msgBox.setStandardButtons(QMessageBox.Close)
         msgBox.setModal(True)
         msgBox.exec_()
+        if self._socketPlusUserOk != True:
+            self._loginWin.retry()
         self.eventpyqtSignals.emit(('abort', None))
 
     #########
     # CLOSE #
     #########
     def supercastClose(self):
+        print("supercast close???")
         self._thread.quit()
         if (self._thread.wait(5000) != True):
             self._thread.terminate();

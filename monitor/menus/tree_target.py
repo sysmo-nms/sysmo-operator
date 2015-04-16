@@ -122,7 +122,8 @@ class TargetMenu(QMenu):
         msgBox = QMessageBox()
         msgBox.setText('You are about to delete a target.')
         msgBox.setInformativeText('Do you want to continue?')
-        msgBox.setStandardButtons(QMessageBox.Apply | QMessageBox.Cancel)
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgBox.setDefaultButton(QMessageBox.Yes)
         msgBox.setIcon(QMessageBox.Warning)
         r = msgBox.exec_()
         if r == QMessageBox.Apply:

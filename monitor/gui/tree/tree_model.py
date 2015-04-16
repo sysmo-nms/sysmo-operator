@@ -15,6 +15,8 @@ class ProbeModel(QStandardItemModel):
         self.ticsignal.setSingleShot(False)
         self.ticsignal.start()
 
+        sysmapi.nConnectTcpLocked(self._stopTic)
+
         self.setHorizontalHeaderLabels([
                 "Targets/Probes",
                 "Progress",
@@ -30,6 +32,9 @@ class ProbeModel(QStandardItemModel):
         monapi.connectToEvent('deleteProbe', self._handleProbeDelete)
 
         monapi.connectToEvent('probeReturn', self._handleProbeReturn)
+
+    def _stopTic(self):
+        self.ticsignal.stop()
 
     def _handleProbeReturn(self, msg):
         target = msg['value']['target']

@@ -14,6 +14,9 @@ def nGetProxySettings():
     '''
     return sysmo_main.NMainWindow.singleton.activeProxySettings
 
+def nConnectTcpLocked(callback):
+    sysmo_main.NMainWindow.singleton.lockedTcpSocket.connect(callback)
+
 def nGetViewMode():
     ''' return:
     {

@@ -8,7 +8,8 @@ from    PyQt5.QtWidgets        import (
     QFrame,
     QFormLayout,
     QGridLayout,
-    QMessageBox
+    QMessageBox,
+    QProgressDialog
 )
 from    PyQt5.QtSvg        import QSvgWidget
 import  sysmapi
@@ -21,6 +22,11 @@ class Query(QDialog):
         self._uncle     = uncle
         self.callback   = uncle.tryConnect
 
+        self._prog = QProgressDialog(self)
+        self._prog.setMinimum(0)
+        self._prog.setMaximum(0)
+        self._prog.hide()
+        self._prog.canceled.connect(self._uncle.resetConn)
 
         # dev shortcuts
         autoName    = 'admin'
@@ -44,43 +50,34 @@ class Query(QDialog):
         self.serverPortEdit.setRange(1, 65535)
         self.serverPortEdit.setValue(autoPort)
 
-        separator = QFrame(self)
-        separator.setFrameShape(QFrame.HLine)
 
         formFrame   = QFrame(self)
         formLayout  = QFormLayout(formFrame)
         formLayout.addRow(self.tr("&Server:"),      self.serverLineEdit)
         formLayout.addRow(self.tr("&Port:"),        self.serverPortEdit)
-        formLayout.addRow(separator)
-        formLayout.addRow(self.tr("&Name:"),        self.nameLineEdit)
+        formLayout.addRow(QFrame(self))
+        formLayout.addRow(self.tr("&User Name:"),        self.nameLineEdit)
         formLayout.addRow(self.tr("&Password:"),    self.passLineEdit)
         formFrame.setLayout(formLayout)
 
 
         # button area
         ok = QPushButton(
-            QIcon(sysmapi.nGetPixmap('applications-development')),
-            self.tr("&Engage"),
+            #QIcon(sysmapi.nGetPixmap('applications-development')),
+            self.tr("&Log In"),
             self)
         ok.setDefault(True)
         ok.clicked.connect(self.tryValidate)
 
         ko = QPushButton(
-            QIcon(sysmapi.nGetPixmap('process-stop')),
-            self.tr("&Abort"),
+            #QIcon(sysmapi.nGetPixmap('process-stop')),
+            self.tr("&Close"),
             self)
         ko.clicked.connect(self._loginAbort)
-
-        helpB = QPushButton(
-            QIcon(sysmapi.nGetPixmap('dialog-information')),
-            self.tr("&Help"),
-            self)
-        helpB.setEnabled(False)
 
         buttons = QDialogButtonBox(self)
         buttons.addButton(ok,   QDialogButtonBox.RejectRole)
         buttons.addButton(ko,   QDialogButtonBox.ApplyRole)
-        buttons.addButton(helpB,QDialogButtonBox.HelpRole)
 
 
         # graphic area
@@ -96,7 +93,6 @@ class Query(QDialog):
         self.setLayout(grid)
         self.show()
 
-
     def _loginAbort(self):
         self._uncle.loginAbort()
         
@@ -107,8 +103,13 @@ class Query(QDialog):
         tryDict['server']   = self.serverLineEdit.text()
         tryDict['port']     = self.serverPortEdit.value()
         self.callback(tryDict)
+        self._prog.setLabelText("Trying to log in on server %s:%i" % (tryDict['server'], tryDict['port']))
+        self.hide()
+        self._prog.show()
 
     def authError(self, msg):
+        self._prog.hide()
+        self._prog.deleteLater()
         msgbox = QMessageBox(self)
         msgbox.setText("Login failure!")
         msgbox.setInformativeText("Your user name and password does not match any known user on the server side. Maybe you have mispeled your password?")
@@ -116,7 +117,21 @@ class Query(QDialog):
         msgbox.setIcon(QMessageBox.Warning)
         msgbox.setModal(True)
         msgbox.exec_()       
+        self.show()
+        self._uncle.resetConn()
+
+    def hideAll(self):
+        self._prog.hide()
+        self.hide()
+
+    def retry(self):
+        self._prog.hide()
+        self.show()
 
     def tcpConnected(self, state): pass
 
     def supConnected(self, state): pass
+
+    def end(self):
+        self._prog.hide()
+        self.hide()

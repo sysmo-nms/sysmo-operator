@@ -53,6 +53,8 @@ class SupercastSocket(QObject):
         if key == 'tryconnect':
             (server, port) = payload
             self._socket.connectToHost(server, port)
+        elif key == 'reset':
+            self._socket.close()
         elif key == 'authResp':
             (name, password) = payload
             pdu = {
