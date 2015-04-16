@@ -61,7 +61,9 @@ class LoggerMDI(QMdiSubWindow):
     Elements = dict()
     def __init__(self, probe, displayName="undefined", parent=None):
         super(LoggerMDI, self).__init__(parent)
+        sysmapi.nConnectWillClose(self.close)
         self.setWidget(LoggerContainer(probe,displayName,self))
+    
 
 
 def openPerformancesFor(probe, displayName):
@@ -74,6 +76,7 @@ class LoggerView(QDialog):
     Elements = dict()
     def __init__(self, probe, displayName, parent=None):
         super(LoggerView, self).__init__(parent)
+        sysmapi.nConnectWillClose(self.close)
         lay = NGridContainer(self)
         lay.addWidget(LoggerContainer(probe, displayName, self))
         self.show()

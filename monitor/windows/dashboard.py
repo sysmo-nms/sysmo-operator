@@ -9,6 +9,7 @@ from    sysmo_widgets    import (
 )
 
 import monitor.api as monapi
+import sysmapi
 
 def openDashboardFor(target):
     if target in list(DashboardView.elements.keys()):
@@ -21,6 +22,7 @@ class DashboardView(QDialog):
     elements = dict()
     def __init__(self, target, parent=None):
         QDialog.__init__(self, parent)
+        sysmapi.nConnectWillClose(self.close)
         mdi  = QMdiArea(self)
         ctrl = QLabel('controls', self)
         grid = NGrid(self)
