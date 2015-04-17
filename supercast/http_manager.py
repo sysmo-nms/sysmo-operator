@@ -39,8 +39,7 @@ class SupercastAccessManagerThread(QObject):
     uppyqtSignal   = pyqtSignal(dict)
     def __init__(self, server, proto, port):
         super(SupercastAccessManagerThread, self).__init__(None)
-    
-        sys.stdout.flush()
+        
         self._urlHead = "%s://%s:%i" % (proto, server, port)
         self._manager = QNetworkAccessManager(self)
         self._manager.finished[QNetworkReply].connect(self._handleReply)

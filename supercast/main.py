@@ -77,6 +77,7 @@ class Supercast(QObject):
         self._mpd.update({fromKey: pyCallable})
 
     def subscribe(self,   callback, channel):
+        print("subscribe? " + str(channel))
         queryId = self._getQueryId(callback)
         self.lQueue.emit(('subscribe', (queryId, channel)))
 
@@ -221,6 +222,10 @@ class Supercast(QObject):
         parent = self._mainwindow
         uncle  = self
         self._loginWin = supercast.login.Query(parent, uncle)
+        print("before")
+        r = self._loginWin.exec()
+        #self._loginWin.show()
+        print("after")
 
     def loginAbort(self):
         self.eventpyqtSignals.emit(('full_abort', None))

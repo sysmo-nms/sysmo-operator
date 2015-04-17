@@ -18,12 +18,12 @@ import  sysmapi
 class Query(QDialog):
     def __init__(self, parent, uncle):
         super(Query, self).__init__(parent)
-        self.setFixedWidth(500)
+        self.setFixedWidth(300)
 
-        image = QLabel('logo, version maj, version min', self)
-        image.setFixedWidth(200)
-        image.setFrameShadow(QFrame.Plain)
-        image.setFrameStyle(QFrame.StyledPanel)
+        #image = QLabel('logo, version maj, version min', self)
+        #image.setFixedWidth(200)
+        #image.setFrameShadow(QFrame.Plain)
+        #image.setFrameStyle(QFrame.StyledPanel)
 
         self._uncle     = uncle
         self.callback   = uncle.tryConnect
@@ -98,15 +98,14 @@ class Query(QDialog):
 
         # LAYOUT
         grid = QGridLayout(self)
-        grid.setHorizontalSpacing(15)
+        grid.setHorizontalSpacing(14)
         grid.setVerticalSpacing(22)
-        grid.addWidget(image, 0,0,2,1)
+        #grid.addWidget(image, 0,0,2,1)
         grid.addWidget(formFrame,   0,1)
         grid.addWidget(buttons,     1,1)
         grid.setRowStretch(0,1)
         grid.setRowStretch(1,0)
         self.setLayout(grid)
-        self.show()
 
     def _loginAbort(self):
         self.hide()

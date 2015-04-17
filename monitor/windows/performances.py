@@ -50,7 +50,7 @@ import  re
 import  os
 import  sys
 
-# TODO delete at close
+
 def openPerformancesMDIFor(probe):
     if probe in list(LoggerMDI.Elements.keys()):
         LoggerMDI.Elements[probe].show()
@@ -100,7 +100,7 @@ class LoggerContainer(NFrameContainer):
         self._layout.setColumnStretch(0,0)
         self._layout.setColumnStretch(1,1)
 
-        if probeee['probeMod'] == 'probe_nchecks':
+        if probeee['probeMod'] == 'probe_simple_nchecks':
             cl = probeee['probeClass']
             self._logArea   = NChecksLogArea(self, probe, cl)
             self._layout.addWidget(self._logArea,   0,1)

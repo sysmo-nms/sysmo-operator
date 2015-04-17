@@ -47,8 +47,9 @@ class NMainWindow(QMainWindow):
         self.setWindowIcon(QIcon(getPixmap('applications-development')))
         self.setWindowTitle('Sysmo')
 
-        self._initPyrrd4j()
+        #
         self._initSupercast()
+        self._initPyrrd4j()
 
         self._initProxySettings()
         self._initViewModes()
@@ -84,6 +85,15 @@ class NMainWindow(QMainWindow):
         self.supercast = Supercast(self, mainwindow=self)
         self.supercast.eventpyqtSignals.connect(self._handleSupercastEvents)
         self.supercast.tryLogin()
+        
+        # API should look like:
+        # while True;
+            # ret = SupercastLogInDialog(self) (create socket with self as parent)
+            # (Qdialog.done(QDialog.Accepted (1) | QDialog.Rejected (0) | quit (2))
+            # rejected cleanup supercast, accept return Accepted and continue
+            # on disconnect, cleanup all widgets here, and do this again.
+            # if ret == QDialog.Accepted: break
+        # else: retry
 
     def _handleSupercastEvents(self, event):
         (key, payload) = event
@@ -99,6 +109,7 @@ class NMainWindow(QMainWindow):
             self.close()
         elif key == 'abort':
             if self._supercastLogged == True: self.close()
+
     def _finalizeInit(self):
         nchecks.start(self)
 
