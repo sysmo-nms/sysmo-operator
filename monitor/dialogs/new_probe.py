@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox
+from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QGridLayout, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSortFilterProxyModel
 from sysmo_widgets import NFrame, NGrid, NGridContainer
@@ -22,7 +22,7 @@ class NewProbe(QWizard):
 
         self.setMinimumWidth(800)
         self.setMinimumHeight(600)
-        self.probesDict = nchecks.getProbesDef()
+        self._xmlChecks = nchecks.getChecks()
         self.setPage(1, ProbeSelectionPage(target, self))
         self.setPage(2, ProbeConfigurationPage(target, self))
         self.setStartId(1)
@@ -39,7 +39,7 @@ class ProbeSelectionPage(QWizardPage):
         self.setTitle('New probe for target %s' % target)
         self.setSubTitle('Select a probe from the following list')
         self.setFinalPage(False)
-        pr = parent.probesDict
+        xml_checks = parent._xmlChecks
         grid = NGrid(self)
         searchLine  = QLineEdit(self)
         searchLine.setPlaceholderText('Filter')
@@ -69,13 +69,13 @@ class ProbeSelectionPage(QWizardPage):
         searchLine.textChanged[str].connect(proxyFilter.setFilterFixedString)
         searchLine.textChanged.connect(self.completeChanged)
 
-        for pkey in pr.keys():
+        for ckey in xml_checks.keys():
             pitem = QStandardItem()
             pitem.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
-            pitem.setData(pkey, Qt.DisplayRole)
+            pitem.setData(ckey, Qt.DisplayRole)
             ditem = QStandardItem()
             ditem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
-            ditem.setData(pr[pkey]['descr'], Qt.DisplayRole)
+            ditem.setData(xml_checks[ckey].attrib['Descr'], Qt.DisplayRole)
             model.appendRow([pitem, ditem])
 
         grid.addWidget(clearButton, 0,0)
@@ -171,63 +171,81 @@ class ProbeConfigurationPage(QWizardPage):
         self._lab.setText(probe)
 
         # get the probe def
-        pdef = self._wizard.probesDict[probe]
+        xml_Check = self._wizard._xmlChecks[probe]
 
         # initialize textEdit content and old layout
-        text = ""
+        doc = ""
         # cleanup
         self.cleanupPage()
 
         # create h1
-        text += "<h1>%s</h1>" % probe
+        doc += "<h1>%s</h1>" % probe
         # create p descr
-        text += "<p>%s</p>" % pdef['descr']
+        doc += "<p>%s</p>" % xml_Check.attrib['Descr']
         
-        # iterate flag_infos
-        finfo = pdef['flag_info']
-        for fdef in finfo:
-            flag    = fdef['name']
-            usage   = fdef['usage']
-            hint    = fdef['hint']
-            role    = fdef['role']
-            default = fdef['default']
-            ftype   = fdef['type']
+        xml_FlagTable   = xml_Check.find('nchecks:FlagTable', nchecks.NS)
+        xml_HelperTable = xml_Check.find('nchecks:HelperTable', nchecks.NS)
 
+        # interage FlagTable
+        for xml_Flag in xml_FlagTable.findall('nchecks:Flag', nchecks.NS):
+            #if 'AutoFill' in xml_Flag.attrib:
             # generate doc
-            text += "<h4>--%s=%s  (default:%s)</h4>" % (flag, ftype, default)
-            text += "<p>%s</p>" % usage
+            doc += "<h4>--%s=%s  (default:%s)</h4><p>%s</p>" % (
+                xml_Flag.attrib['Id'],
+                xml_Flag.attrib['Type'],
+                xml_Flag.attrib['Default'],
+                xml_Flag.attrib['Usage'])
 
-            # build form
-            if ftype == 'int':
-                widget = NSpinBox(self)
-                widget.setMinimum(0)
-                widget.setMaximum(65535)
-                if default != None:
-                    widget.setValue(ast.literal_eval(default))
-            elif ftype == 'bool':
-                widget = NCheckBox(self)
-                if default == "false":
-                    widget.setChecked(False)
-                if default == "true":
-                    widget.setChecked(True)
+            if   xml_Flag.attrib['Type'] == 'integer':
+                w = NSpinBox(self)
+                w.setMinimum(ast.literal_eval(xml_Flag.attrib['Min']))
+                w.setMaximum(ast.literal_eval(xml_Flag.attrib['Max']))
+                w.setValue(ast.literal_eval(xml_Flag.attrib['Default']))
+                if 'AutoFill' in xml_Flag.attrib:
+                    prop = xml_Flag.attrib['AutoFill']
+                    val = self.getProperty(prop)
+                    if val != False: w.setValue(ast.literal_eval(val))
+            elif xml_Flag.attrib['Type'] == 'string':
+                w = NLineEdit(self)
+                w.setText(xml_Flag.attrib['Default'])
+                if 'AutoFill' in xml_Flag.attrib:
+                    prop = xml_Flag.attrib['AutoFill']
+                    val = self.getProperty(prop)
+                    if val != False: w.setText(val)
+
+            elif xml_Flag.attrib['Type'] == 'boolean':
+                w = NCheckBox(self)
+                if xml_Flag.attrib['Default'] == "true":
+                    w.setChecked(True)
                 else:
-                    widget.setChecked(False)
-            else:
-                widget = NLineEdit(self)
-                if default != None:
-                    widget.setText(default)
-            
-            widget.setToolTip(hint)
-            self._widgetDict[flag] = widget
-            
-            self._config.addRow(flag, widget)
-            
-        # set host flag to target host property
-        t = monapi.getTarget(self._target)
-        host = t['properties']['host']
-        self._widgetDict['host'].setText(host)
-        self._manual.setText(text)
+                    w.setChecked(False)
 
+            w.setToolTip(xml_Flag.attrib['Hint'])
+            if 'Helper' in xml_Flag.attrib:
+                f = QFrame(self)
+                g = QGridLayout(f)
+                b = QPushButton('Helper', f)
+                g.addWidget(QLabel(xml_Flag.attrib['Id'], self), 0,0)
+                g.addWidget(w, 0,1)
+                g.addWidget(b, 0,2)
+                g.setColumnStretch(0,0)
+                g.setColumnStretch(1,1)
+                g.setColumnStretch(2,0)
+                self._widgetDict[xml_Flag.attrib['Id']] = w
+                self._config.addRow(f)
+            else:
+                self._widgetDict[xml_Flag.attrib['Id']] = w
+                self._config.addRow(xml_Flag.attrib['Id'], w)
+
+        self._manual.setText(doc)
+
+    def getProperty(self, prop):
+        t = monapi.getTarget(self._target)
+        if prop in t['properties']:
+            return t['properties'][prop]
+        else:
+            return False
+        
     def cleanupPage(self):
         self._lab.setText('')
         QWidget().setLayout(self._config)

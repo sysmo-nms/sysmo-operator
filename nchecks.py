@@ -4,8 +4,10 @@ import supercast.main as supercast
 import xml.etree.ElementTree as ET
 import sys
 
+NS = {'nchecks': 'http://schemas.sysmo.io/2015/NChecks'}
+
 def pr(val):
-    print(val)
+    print("nchecks debug!!!!!!!!!!!!!!" + str(val))
     sys.stdout.flush()
 
 def start(parent):
@@ -46,6 +48,9 @@ def getGraphTemplateFor(check):
     return graphTemplates
     
 
+def getChecks():
+    return NChecksDefinition.singleton.getChecks()
+
 def getFlagSpecFor(check):
     return NChecksDefinition.singleton.getFlagSpecFor(check)
 
@@ -63,44 +68,32 @@ class NChecksDefinition(QObject):
     def __init__(self, parent=None):
         super(NChecksDefinition, self).__init__(parent)
         NChecksDefinition.singleton = self
-        self._fetchInfos()
-
-    def _fetchInfos(self):
+        self._nchecks = dict()
+        # get the CheckAccessTable from NChecks.xml
         xmlFile = NTemporaryFile(self)
         self._defFileName = xmlFile.fileName()
         request = dict()
-        request['url'] = 'nchecks/all.xml'
-        request['callback'] = self._handleAllCheckReply
-        request['outfile'] = self._defFileName
+        request['url'] = 'nchecks2/NChecks.xml'
+        request['callback'] = self._allCheckCallback
+        request['outfile']  = self._defFileName
         supercast.requestUrl(request)
 
-    def _handleAllCheckReply(self, reply):
-        outfile = reply['outfile']
-        tree    = ET.parse(outfile)
-        root    = tree.getroot()
-        checks  = root.find('checks')
-        self._checks = dict()
-        for check in checks:
-            name = check.attrib['name']
-            self._checks[name] = dict()
-            self._checks[name]['initialized'] = False
+    def _allCheckCallback(self, reply):
+        xml_NChecks = ET.parse(reply['outfile']).getroot()
+        xml_CheckAccessTable = xml_NChecks.find('nchecks:CheckAccessTable', NS)
+        for xml_CheckUrl in xml_CheckAccessTable.findall('nchecks:CheckUrl', NS):
+            name  = xml_CheckUrl.attrib['Id']
+            xfile = xml_CheckUrl.attrib['Value']
             request = dict()
-            request['url']      = 'nchecks/%s.xml' % name
+            request['url']      = 'nchecks2/%s' % xfile
             request['outfile']  = NTemporaryFile(self).fileName()
-            request['callback'] = self._handleCheckDefReply
-            request['opaque']   = name
+            request['callback'] = self._checkDefCallback
             supercast.requestUrl(request)
 
-    def _handleCheckDefReply(self, reply):
-        name    = reply['opaque']
-        outfile = reply['outfile']
-        tree    = ET.parse(outfile)
-        self._checks[name]['initialized'] = True
-        self._checks[name]['def'] = tree
-        pr("tree is: " + str(tree))
-
-        for i in self._checks.keys():
-            if self._checks[i]['initialized'] != True: return
+    def _checkDefCallback(self, reply):
+        xml_NChecks = ET.parse(reply['outfile']).getroot()
+        xml_Check = xml_NChecks.find('nchecks:Check', NS)
+        self._nchecks[xml_Check.attrib['Id']] = xml_Check
 
     def getGraphSpecFor(self, name):
         root = self._checks[name]['def'].getroot()
@@ -121,6 +114,9 @@ class NChecksDefinition(QObject):
         for child in root:
             if child.tag == 'flags_def':
                 return child
+
+    def getChecks(self):
+        return self._nchecks
 
     def getProbesDef(self):
         replyDict = dict()
