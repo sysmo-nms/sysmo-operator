@@ -14,6 +14,45 @@ def start(parent):
     return NChecksDefinition(parent)
 
 def getGraphTemplateFor(check):
+    glist = list()
+    xml_Check = NChecksDefinition.singleton.getCheck(check)
+    xml_Performances = xml_Check.find('nchecks:Performances', NS)
+    xml_GraphTable = xml_Performances.find('nchecks:GraphTable', NS)
+    for xml_Graph in xml_GraphTable.findall('nchecks:Graph', NS):
+        g = dict()
+        g['title'] = xml_Graph.attrib['Title']
+        g['name'] = xml_Graph.attrib['Id']
+        g['vlabel'] = xml_Graph.attrib['VerticalLabel']
+        g['maxValue'] = xml_Graph.attrib['Max']
+        g['minValue'] = xml_Graph.attrib['Min']
+        g['rigid'] = xml_Graph.attrib['Rigid']
+        g['base'] = xml_Graph.attrib['Base']
+        g['unit'] = xml_Graph.attrib['Unit']
+        g['unitExponent'] = xml_Graph.attrib['UnitExponent']
+        g['spanBegin'] = -1200
+        g['spanEnd'] = -1
+        g['width'] = 600
+        g['height'] = 200
+        g['filenameRrd'] = None
+        g['filenamePng'] = None
+        ds = list()
+        for xml_Draw in xml_Graph.findall('nchecks:Draw', NS):
+            ds.append(
+                "%s,%s,%s,%s,%s" % (
+                    xml_Draw.attrib['DataSource'],
+                    xml_Draw.attrib['Type'],
+                    xml_Draw.attrib['Legend'],
+                    xml_Draw.attrib['Color'],
+                    xml_Draw.attrib['Consolidation']
+                )
+            )
+        g['DS'] = ds
+        glist.append(g)
+    return (xml_Performances.attrib['Type'], glist)
+
+    #pr("xml is: " + str(xml_Performances))
+
+def getGraphTemplateFor2(check):
     gdefs = NChecksDefinition.singleton.getGraphSpecFor(check)
     graphTemplates = list()
     for gdef in gdefs:
@@ -73,7 +112,7 @@ class NChecksDefinition(QObject):
         xmlFile = NTemporaryFile(self)
         self._defFileName = xmlFile.fileName()
         request = dict()
-        request['url'] = 'nchecks2/NChecks.xml'
+        request['url'] = 'nchecks/NChecks.xml'
         request['callback'] = self._allCheckCallback
         request['outfile']  = self._defFileName
         supercast.requestUrl(request)
@@ -85,9 +124,10 @@ class NChecksDefinition(QObject):
             name  = xml_CheckUrl.attrib['Id']
             xfile = xml_CheckUrl.attrib['Value']
             request = dict()
-            request['url']      = 'nchecks2/%s' % xfile
+            request['url']      = 'nchecks/%s' % xfile
             request['outfile']  = NTemporaryFile(self).fileName()
             request['callback'] = self._checkDefCallback
+            pr(request)
             supercast.requestUrl(request)
 
     def _checkDefCallback(self, reply):
@@ -117,6 +157,9 @@ class NChecksDefinition(QObject):
 
     def getChecks(self):
         return self._nchecks
+
+    def getCheck(self, check):
+        return self._nchecks[check]
 
     def getProbesDef(self):
         replyDict = dict()

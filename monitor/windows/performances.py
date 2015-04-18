@@ -125,7 +125,9 @@ class NChecksLogArea(AbstractChannelWidget):
 
         layout      = NGrid(self)
         layout.setContentsMargins(7,5,5,5)
-        rrdGraphDef = nchecks.getGraphTemplateFor(cl)
+        (gtype, rrdGraphDef) = nchecks.getGraphTemplateFor(cl)
+        # here gtype = "simple"
+        # TODO handle type = "table"
 
         graphFrame = NFrame(self)
         graphFrame.setAutoFillBackground(True)
