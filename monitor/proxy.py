@@ -51,11 +51,11 @@ class ChanHandler(QObject):
         signals['deleteProbe'] = SimplepyqtSignal(self)
         signals['deleteProbe'].signal.connect(self._handleDeleteProbe)
 
-        signals['nchecksDumpMessage'] = SimplepyqtSignal(self)
-        signals['nchecksDumpMessage'].signal.connect(self._handleNchecksDump)
+        signals['nchecksSimpleDumpMessage'] = SimplepyqtSignal(self)
+        signals['nchecksSimpleDumpMessage'].signal.connect(self._handleNchecksDump)
 
-        signals['nchecksUpdateMessage'] = SimplepyqtSignal(self)
-        signals['nchecksUpdateMessage'].signal.connect(self._handleNchecksUpdate)
+        signals['nchecksSimpleUpdateMessage'] = SimplepyqtSignal(self)
+        signals['nchecksSimpleUpdateMessage'].signal.connect(self._handleNchecksUpdate)
 
         self.masterpyqtSignalsDict = signals
 
@@ -70,10 +70,12 @@ class ChanHandler(QObject):
             self.masterpyqtSignalsDict['deleteTarget'].signal.emit(msg)
         elif    msg['type'] == 'deleteProbe':
             self.masterpyqtSignalsDict['deleteProbe'].signal.emit(msg)
-        elif    msg['type'] == 'nchecksDumpMessage':
-            self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.emit(msg)
-        elif    msg['type'] == 'nchecksUpdateMessage':
-            self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.emit(msg)
+        elif    msg['type'] == 'nchecksSimpleDumpMessage':
+            print("dumpmsg" + str(msg))
+            self.masterpyqtSignalsDict['nchecksSimpleDumpMessage'].signal.emit(msg)
+        elif    msg['type'] == 'nchecksSimpleUpdateMessage':
+            print("updatemsg" + str(msg))
+            self.masterpyqtSignalsDict['nchecksSimpleUpdateMessage'].signal.emit(msg)
         elif    msg['type'] == 'staticChanInfo':
             chan    = msg['value']
             if chan == self._masterChan:
@@ -194,7 +196,7 @@ class Channel(QObject):
     def synchronizeView(self, viewObj):
         print("should synchrnoize????????????????????????" + str(self._rrd4jFileName))
         dumpMsg = dict()
-        dumpMsg['type'] = 'nchecksDumpMessage'
+        dumpMsg['type'] = 'nchecksSimpleDumpMessage'
         dumpMsg['file'] = self._rrd4jFileName
         print("dump is: " + str(dumpMsg))
         viewObj.handleProbeEvent(dumpMsg)
@@ -202,7 +204,7 @@ class Channel(QObject):
     def _handleNchecksDump2nd(self, msg):
         if msg['success'] == True: 
             dumpMsg = dict()
-            dumpMsg['type']     = 'nchecksDumpMessage'
+            dumpMsg['type']     = 'nchecksSimpleDumpMessage'
             dumpMsg['file']     = msg['outfile']
             print("dump is: " + str(dumpMsg))
             self.signal.emit(dumpMsg)
@@ -232,7 +234,7 @@ class Channel(QObject):
 
     def _doUpdateRrdReply(self, reply):
         print("doupdatereply: " + reply)
-        self.signal.emit({'type': 'nchecksUpdateMessage'})
+        self.signal.emit({'type': 'nchecksSimpleUpdateMessage'})
         if len(self._rrd4jWait) == 0:
             self._rrd4jReady = True
         else:

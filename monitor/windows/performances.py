@@ -248,10 +248,10 @@ class NChecksRrdGraph(NFrameContainer):
         self.drawRrd()
         
     def handleProbeEvent(self, msg):
-        if msg['type'] == 'nchecksDumpMessage':
+        if msg['type'] == 'nchecksSimpleDumpMessage':
             self._graphDef['filenameRrd'] = msg['file']
             self.drawRrd()
-        elif msg['type'] == 'nchecksUpdateMessage' and self._graphDef['filenameRrd'] != None:
+        elif msg['type'] == 'nchecksSimpleUpdateMessage' and self._graphDef['filenameRrd'] != None:
             self.drawRrd()
 
     def drawRrd(self):
