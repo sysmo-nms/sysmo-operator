@@ -88,7 +88,7 @@ class LoggerContainer(NFrameContainer):
         self._statusBar = LogStatusBar(self)
         self._menus     = ProbeMenus(self)
 
-        probeee = ChanHandler.singleton.probes[probe]
+        probeDict = ChanHandler.singleton.probes[probe]
 
         self._layout    = NGrid(self)
         self._layout.addWidget(self._menus,     0,0)
@@ -100,14 +100,10 @@ class LoggerContainer(NFrameContainer):
         self._layout.setColumnStretch(0,0)
         self._layout.setColumnStretch(1,1)
 
-        if probeee['probeMod'] == 'probe_simple_nchecks':
-            cl = probeee['probeClass']
-            self._logArea   = NChecksLogArea(self, probe, cl)
-            self._layout.addWidget(self._logArea,   0,1)
-            print("mod is: " + str(cl))
-            
-        #self.show()
- 
+        nchecksClass = probeDict['probeClass']
+        self._logArea = NChecksLogArea(self, probe, nchecksClass)
+        self._layout.addWidget(self._logArea,   0,1)
+
 class NChecksLogArea(AbstractChannelWidget):
     ncheckEvents = pyqtSignal(dict)
     widthEvents  = pyqtSignal(int)
@@ -125,9 +121,6 @@ class NChecksLogArea(AbstractChannelWidget):
 
         layout      = NGrid(self)
         layout.setContentsMargins(7,5,5,5)
-        (gtype, rrdGraphDef) = nchecks.getGraphTemplateFor(cl)
-        # here gtype = "simple"
-        # TODO handle type = "table"
 
         graphFrame = NFrame(self)
         graphFrame.setAutoFillBackground(True)
@@ -147,19 +140,29 @@ class NChecksLogArea(AbstractChannelWidget):
         layout.setRowStretch(0,0)
         layout.setRowStretch(1,1)
 
-        row = 0
-        for g in rrdGraphDef:
-            w = NChecksRrdGraph(g,self)
+
+        (gtype, rrdGraphDef) = nchecks.getGraphTemplateFor(cl)
+        if gtype == "simple":
+            row = 0
+            for g in rrdGraphDef:
+                w = NChecksRrdGraph(g,self)
+                self.ncheckEvents.connect(w.handleProbeEvent)
+                self.widthEvents.connect(w.widthChanged)
+                self._controls.heightCtrl.currentIndexChanged[int].connect(w.heightChanged)
+                self._controls.timeLineCtrl.currentIndexChanged[int].connect(w.timeChanged)
+                graphGrid.addWidget(w, row, 0)
+                graphGrid.setRowStretch(row, 0)
+                row += 1
+            graphGrid.setRowStretch(row, 1)
+        elif gtype == "table":
+            propertyInfo = nchecks.getTableIndexInfoFor(cl)
+            w = NChecksRrdGraphTable(rrdGraphDef, propertyInfo, channel, self)
             self.ncheckEvents.connect(w.handleProbeEvent)
             self.widthEvents.connect(w.widthChanged)
             self._controls.heightCtrl.currentIndexChanged[int].connect(w.heightChanged)
             self._controls.timeLineCtrl.currentIndexChanged[int].connect(w.timeChanged)
-            graphGrid.addWidget(w, row, 0)
-            graphGrid.setRowStretch(row, 0)
-            row += 1
-        graphGrid.setRowStretch(row, 1)
+            graphGrid.addWidget(w)
         self.connectProbe()
-            
 
     def handleProbeEvent(self, msg):
         self.ncheckEvents.emit(msg)
@@ -177,20 +180,96 @@ def pr(val):
     print(val)
     sys.stdout.flush()
 
+
+class NChecksRrdGraphTable(NFrameContainer):
+    
+    nchecksEvents   = pyqtSignal(dict)
+    widthEvents     = pyqtSignal(int)
+    timeEvents      = pyqtSignal(int)
+    heightEvents    = pyqtSignal(int)
+
+    def __init__(self, graphDefs, propertyInfo, channel, parent=None):
+        super(NChecksRrdGraphTable, self).__init__(parent)
+        self._graphDefinitions = graphDefs
+        targetName = monapi.getProbesDict()[channel]['target']
+        target = monapi.getTarget(targetName)
+        self._properties = target['properties']
+        self._propertyInfo = propertyInfo
+        
+
+ 
+    def handleProbeEvent(self, msg):
+        if msg['type'] == 'nchecksTableDumpMessage':
+            elementToFile = msg['elementToFile']
+            grid = NGridContainer(self)
+            rowid = 0
+            for idx in elementToFile.keys():
+                row = NChecksRrdGraphRow(
+                    self._graphDefinitions, idx, self._propertyInfo, self._properties, self)
+                self.widthEvents[int].connect(row.widthChanged)
+                grid.addWidget(row, rowid, 0)
+                grid.setRowStretch(rowid, 0)
+                rowid += 1
+            grid.setRowStretch(rowid, 1)
+
+        self.nchecksEvents.emit(msg)
+            
+    def widthChanged(self, size): self.widthEvents.emit(size)
+
+    def heightChanged(self, size): self.heightEvents.emit(size)
+
+    def timeChanged(self, seconds): self.timeEvents.emit(seconds)
+
+
+class NChecksRrdGraphRow(NFrameContainer):
+
+    widthEvents  = pyqtSignal(int)
+
+    def __init__(self, graphDefs, idx, propInfo, properties, parent=None):
+        super(NChecksRrdGraphRow, self).__init__(parent)
+        self._idx = idx
+        self._rowNumber = len(graphDefs)
+        grid = NGridContainer(self)
+        
+        (prefix, suffix) = propInfo
+        targetProperty = prefix + idx + suffix
+        if targetProperty in properties.keys():
+            text = "<h3>%s</h3>" % properties[targetProperty]
+        else:
+            text = "<h3>(%s)</h3>" % targetProperty
+        lab = QLabel(text, self)
+        lab.setFixedWidth(50)
+        grid.addWidget(lab, 0, 0)
+
+        colid = 1
+        for gdef in graphDefs:
+            graph = NChecksRrdGraph(gdef, self)
+            graph.setIdx(idx)
+            parent.heightEvents[int].connect(graph.heightChanged)
+            parent.timeEvents[int].connect(graph.timeChanged)
+            parent.nchecksEvents[dict].connect(graph.handleProbeEvent)
+            self.widthEvents[int].connect(graph.widthChanged)
+ 
+            grid.addWidget(graph, 0, colid)
+            colid += 1
+
+    def widthChanged(self, size):
+        self.widthEvents.emit(size / self._rowNumber)
+
 class NChecksRrdGraph(NFrameContainer):
-    def __init__(self, graphDef, parent=None):
+    def __init__(self, gdef, parent=None):
         super(NChecksRrdGraph, self).__init__(parent)
-        self._graphDef = graphDef
+        self._gdef = gdef.copy()
         self._setGraphHeight(NChecksRrdControls.SIZE_NORMAL)
         self._setGraphTime(NChecksRrdControls.TIME_SEVEN_DAYS)
         self._lab = QLabel(self)
         self._pix = QPixmap()
         self._lab.setText("Generating graphic...")
-        tf = NTempFile(self)
-        tf.open()
-        tf.close()
-        self._tf = tf.fileName()
-        self._graphDef['filenamePng'] = self._tf
+        tfile = NTempFile(self)
+        tfile.open()
+        tfile.close()
+        self._filename = tfile.fileName()
+        self._gdef['filenamePng'] = self._filename
         lay = NGridContainer(self)
         lay.addWidget(self._lab, 0,0)
         lay.setColumnStretch(0,0)
@@ -198,70 +277,79 @@ class NChecksRrdGraph(NFrameContainer):
         lay.setRowStretch(0,0)
         lay.setRowStretch(1,1)
 
-    def _setGraphHeight(self, size):
-        if size == NChecksRrdControls.SIZE_THUMBNAIL:
-            self._graphDef['height'] = 30
-        elif size == NChecksRrdControls.SIZE_SMALL:
-            self._graphDef['height'] = 50
-        elif size == NChecksRrdControls.SIZE_NORMAL:
-            self._graphDef['height'] = 100 
-        elif size == NChecksRrdControls.SIZE_LARGE:
-            self._graphDef['height'] = 180
-        elif size == NChecksRrdControls.SIZE_HUGE:
-            self._graphDef['height'] = 300
+    # for table type only
+    def setIdx(self, idx): self._idx = idx
 
     def widthChanged(self, size):
         self._setGraphWidth(size - 150)
-        self.drawRrd()
-
-    def _setGraphWidth(self, size):
-        self._graphDef['width'] = size
+        self._drawRrd()
         
     def heightChanged(self, size):
         self._setGraphHeight(size)
-        self.drawRrd()
-    
-    def _setGraphTime(self, time):
-        if time == NChecksRrdControls.TIME_TWO_HOURS:
-            self._graphDef['spanBegin'] = -7200
-        elif time == NChecksRrdControls.TIME_TWELVE_HOURS:
-            self._graphDef['spanBegin'] = -43200
-        elif time == NChecksRrdControls.TIME_TWO_DAYS:
-            self._graphDef['spanBegin'] = -172800
-        elif time == NChecksRrdControls.TIME_SEVEN_DAYS:
-            self._graphDef['spanBegin'] = -604800
-        elif time == NChecksRrdControls.TIME_TWO_WEEKS:
-            self._graphDef['spanBegin'] = -1209600
-        elif time == NChecksRrdControls.TIME_ONE_MONTH:
-            self._graphDef['spanBegin'] = -2592000
-        elif time == NChecksRrdControls.TIME_SIX_MONTHS:
-            self._graphDef['spanBegin'] = -15552000
-        elif time == NChecksRrdControls.TIME_ONE_YEAR:
-            self._graphDef['spanBegin'] = -31536000
-        elif time == NChecksRrdControls.TIME_THREE_YEARS:
-            self._graphDef['spanBegin'] = -94608000
-        elif time == NChecksRrdControls.TIME_TEN_YEARS:
-            self._graphDef['spanBegin'] = -315360000
+        self._drawRrd()
 
     def timeChanged(self, time):
         self._setGraphTime(time)
-        self.drawRrd()
-        
+        self._drawRrd()
+
     def handleProbeEvent(self, msg):
         if msg['type'] == 'nchecksSimpleDumpMessage':
-            self._graphDef['filenameRrd'] = msg['file']
-            self.drawRrd()
-        elif msg['type'] == 'nchecksSimpleUpdateMessage' and self._graphDef['filenameRrd'] != None:
-            self.drawRrd()
+            self._gdef['filenameRrd'] = msg['file']
+            self._drawRrd()
+        elif msg['type'] == 'nchecksSimpleUpdateMessage' and self._gdef['filenameRrd'] != None:
+            self._drawRrd()
+        elif msg['type'] == 'nchecksTableDumpMessage':
+            self._gdef['filenameRrd'] = msg['elementToFile'][self._idx]
+            self._drawRrd()
+        elif msg['type'] == 'nchecksTableUpdateMessage' and self._gdef['filenameRrd'] != None:
+            self._drawRrd()
 
-    def drawRrd(self):
-        if self._graphDef['filenameRrd'] == None: return
-        pyrrd4j.graph(self._graphDef, self.drawRrdReply)
+    def _drawRrd(self):
+        if self._gdef['filenameRrd'] == None: return
+        pyrrd4j.graph(self._gdef, self._drawRrdReply)
 
-    def drawRrdReply(self, msg):
-        print("draw reply: " + str(msg))
-        self._pix.load(self._tf)
+    def _drawRrdReply(self, msg):
+        self._pix.load(self._filename)
         self._lab.setPixmap(self._pix)
+        if msg == "OK": return
+        print("draw error: " + msg)
+
+    def _setGraphWidth(self, size):
+        self._gdef['width'] = size
+
+    def _setGraphHeight(self, size):
+        if size == NChecksRrdControls.SIZE_THUMBNAIL:
+            self._gdef['height'] = 30
+        elif size == NChecksRrdControls.SIZE_SMALL:
+            self._gdef['height'] = 50
+        elif size == NChecksRrdControls.SIZE_NORMAL:
+            self._gdef['height'] = 100 
+        elif size == NChecksRrdControls.SIZE_LARGE:
+            self._gdef['height'] = 180
+        elif size == NChecksRrdControls.SIZE_HUGE:
+            self._gdef['height'] = 300
+    
+    def _setGraphTime(self, time):
+        if time == NChecksRrdControls.TIME_TWO_HOURS:
+            self._gdef['spanBegin'] = -7200
+        elif time == NChecksRrdControls.TIME_TWELVE_HOURS:
+            self._gdef['spanBegin'] = -43200
+        elif time == NChecksRrdControls.TIME_TWO_DAYS:
+            self._gdef['spanBegin'] = -172800
+        elif time == NChecksRrdControls.TIME_SEVEN_DAYS:
+            self._gdef['spanBegin'] = -604800
+        elif time == NChecksRrdControls.TIME_TWO_WEEKS:
+            self._gdef['spanBegin'] = -1209600
+        elif time == NChecksRrdControls.TIME_ONE_MONTH:
+            self._gdef['spanBegin'] = -2592000
+        elif time == NChecksRrdControls.TIME_SIX_MONTHS:
+            self._gdef['spanBegin'] = -15552000
+        elif time == NChecksRrdControls.TIME_ONE_YEAR:
+            self._gdef['spanBegin'] = -31536000
+        elif time == NChecksRrdControls.TIME_THREE_YEARS:
+            self._gdef['spanBegin'] = -94608000
+        elif time == NChecksRrdControls.TIME_TEN_YEARS:
+            self._gdef['spanBegin'] = -315360000
         
 
 class NChecksRrdControls(NFrameContainer):

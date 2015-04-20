@@ -5,6 +5,11 @@ import  sysmapi
 import  pyrrd4j
 import  os
 
+import sys
+
+def pr(val):
+    print(str(val))
+    sys.stdout.flush()
 
 class ChanHandler(QObject):
     
@@ -51,11 +56,11 @@ class ChanHandler(QObject):
         signals['deleteProbe'] = SimplepyqtSignal(self)
         signals['deleteProbe'].signal.connect(self._handleDeleteProbe)
 
-        signals['nchecksSimpleDumpMessage'] = SimplepyqtSignal(self)
-        signals['nchecksSimpleDumpMessage'].signal.connect(self._handleNchecksDump)
+        signals['nchecksDumpMessage'] = SimplepyqtSignal(self)
+        signals['nchecksDumpMessage'].signal.connect(self._handleNchecksDump)
 
-        signals['nchecksSimpleUpdateMessage'] = SimplepyqtSignal(self)
-        signals['nchecksSimpleUpdateMessage'].signal.connect(self._handleNchecksUpdate)
+        signals['nchecksUpdateMessage'] = SimplepyqtSignal(self)
+        signals['nchecksUpdateMessage'].signal.connect(self._handleNchecksUpdate)
 
         self.masterpyqtSignalsDict = signals
 
@@ -70,12 +75,20 @@ class ChanHandler(QObject):
             self.masterpyqtSignalsDict['deleteTarget'].signal.emit(msg)
         elif    msg['type'] == 'deleteProbe':
             self.masterpyqtSignalsDict['deleteProbe'].signal.emit(msg)
+
         elif    msg['type'] == 'nchecksSimpleDumpMessage':
-            print("dumpmsg" + str(msg))
-            self.masterpyqtSignalsDict['nchecksSimpleDumpMessage'].signal.emit(msg)
+            pr("simple dump?")
+            self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.emit(msg)
+
         elif    msg['type'] == 'nchecksSimpleUpdateMessage':
-            print("updatemsg" + str(msg))
-            self.masterpyqtSignalsDict['nchecksSimpleUpdateMessage'].signal.emit(msg)
+            self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.emit(msg)
+
+        elif    msg['type'] == 'nchecksTableDumpMessage':
+            self.masterpyqtSignalsDict['nchecksDumpMessage'].signal.emit(msg)
+
+        elif    msg['type'] == 'nchecksTableUpdateMessage':
+            self.masterpyqtSignalsDict['nchecksUpdateMessage'].signal.emit(msg)
+
         elif    msg['type'] == 'staticChanInfo':
             chan    = msg['value']
             if chan == self._masterChan:
@@ -167,16 +180,127 @@ class Channel(QObject):
     signal = pyqtSignal(dict)
     def __init__(self, parent, probeName):
         super(Channel, self).__init__(parent)
-        self._rrd4jReady = False
-        self._rrd4jWait  = list()
-        self._rrd4jFileName  = None
-        self.probeDict = ChanHandler.singleton.probes[probeName]
         self.name = probeName
         
     def handleReturn(self, msg):
         self.signal.emit(msg)
 
     def handleNchecksDump(self,msg):
+        if msg['type'] == "nchecksSimpleDumpMessage":
+            self._handler = SimpleHandler(self, msg)
+        elif msg['type'] == "nchecksTableDumpMessage":
+            self._handler = TableHandler(self, msg)
+        
+    def synchronizeView(self, viewObj):
+        self._handler.synchronizeView(viewObj)
+
+    def handleNchecksUpdate(self, msg):
+        self._handler.handleUpdate(msg)
+
+
+
+
+
+
+class TableHandler(QObject):
+    def __init__(self, parent, msg):
+        super(TableHandler, self).__init__(parent)
+        self._channel = parent
+
+        self._rrd4jReady = dict()
+        self._rrd4jWait = list()
+        self._rrd4jFileNames = dict()
+        
+        httpDir  = msg['value']['httpDumpDir']
+        rrdFiles = msg['value']['elementToFile']
+
+        for idx in rrdFiles.keys():
+            fileName = rrdFiles[idx]
+            rrd4jFile = NTempFile(self)
+            rrd4jFile.open()
+            rrd4jFile.close()
+            self._rrd4jFileNames[idx] = rrd4jFile.fileName()
+            self._rrd4jReady[idx] = False
+
+            request = dict()
+            request['url'] = "%s/%s" % (httpDir, fileName)
+            request['callback'] = self._handleDump
+            request['outfile'] = self._rrd4jFileNames[idx]
+            request['opaque'] = idx
+            supercast.requestUrl(request)
+            
+        pr("tablehandler init" + str(msg))
+
+    def _handleDump(self, msg):
+        if msg['success'] == True:
+            idx = msg['opaque']
+            self._rrd4jReady[idx] = True
+            
+        if False in self._rrd4jReady.values(): return
+        
+        dumpMsg = dict()
+        dumpMsg['type'] = 'nchecksTableDumpMessage'
+        dumpMsg['elementToFile'] = self._rrd4jFileNames
+        self._channel.signal.emit(dumpMsg)
+
+        if len(self._rrd4jWait) == 0:
+            self._rrd4jReady = True
+        else:
+            up = self.rrd4jWait.pop()
+            self._doUpdateRrd(self, up)
+        
+    def handleUpdate(self, msg):
+        if self._rrd4jReady == False:
+            self._rrd4jWait.append(msg)
+        else:
+            self._doUpdateRrd(msg)
+
+    def _doUpdateRrd(self, msg):
+        upKV    = msg['value']['rrdupdates']
+        if len(upKV.keys()) == 0: return
+        else:
+            for idx in upKV.keys():
+                rrdFile = self._rrd4jFileNames[idx]
+                timestamp = msg['value']['timestamp']
+                update = dict()
+                update['updates'] = upKV[idx]
+                update['file'] = rrdFile
+                update['timestamp'] = timestamp
+                pyrrd4j.update(update, self._doUpdateRrdReply)
+
+    def _doUpdateRrdReply(self, reply):
+        self._channel.signal.emit({'type': 'nchecksTableUpdateMessage'})
+        if len(self._rrd4jWait) == 0:
+            self._rrd4jReady = True
+        else:
+            msg = self._rrd4jWait.pop()
+            self._doUpdateRrd(msg)
+
+    def synchronizeView(self, viewObj):
+        if False not in self._rrd4jFileNames:
+            dumpMsg = dict()
+            dumpMsg['type'] = 'nchecksTableDumpMessage'
+            dumpMsg['elementToFile'] = self._rrd4jFileNames
+            self._channel.signal.emit(dumpMsg)
+        pr("tablehandler SynchronizeView")
+
+
+
+
+
+
+
+
+
+class SimpleHandler(QObject):
+    def __init__(self, parent, msg):
+        super(SimpleHandler, self).__init__(parent)
+        self._channel = parent
+
+        self._rrd4jReady = False
+        self._rrd4jWait  = list()
+        self._rrd4jFileName  = None
+
         httpDir = msg['value']['httpDumpDir']
         rrdFile = msg['value']['rrdFile']
         rrd4jFile = NTempFile(self)
@@ -184,85 +308,80 @@ class Channel(QObject):
         rrd4jFile.close()
         self._rrd4jFileName = rrd4jFile.fileName()
 
-        # prevent garbage collection?
-        self._ncheckRrdFile = rrd4jFile
-
         request = dict()
         request['url']      = "%s/%s" % (httpDir, rrdFile)
-        request['callback'] = self._handleNchecksDump2nd
+        request['callback'] = self._handleDump2nd
         request['outfile']  = self._rrd4jFileName
         supercast.requestUrl(request)
-        
-    def synchronizeView(self, viewObj):
-        print("should synchrnoize????????????????????????" + str(self._rrd4jFileName))
-        dumpMsg = dict()
-        dumpMsg['type'] = 'nchecksSimpleDumpMessage'
-        dumpMsg['file'] = self._rrd4jFileName
-        print("dump is: " + str(dumpMsg))
-        viewObj.handleProbeEvent(dumpMsg)
 
-    def _handleNchecksDump2nd(self, msg):
+    def _handleDump2nd(self, msg):
         if msg['success'] == True: 
             dumpMsg = dict()
             dumpMsg['type']     = 'nchecksSimpleDumpMessage'
             dumpMsg['file']     = msg['outfile']
-            print("dump is: " + str(dumpMsg))
-            self.signal.emit(dumpMsg)
+            self._channel.signal.emit(dumpMsg)
         if len(self._rrd4jWait) == 0:
             self._rrd4jReady = True
         else:
             up = self.rrd4jWait.pop()
             self._doUpdateRrd(self, up)
 
-    def handleNchecksUpdate(self, msg):
+    def handleUpdate(self, msg):
         if self._rrd4jReady == False:
             self._rrd4jWait.append(msg)
         else:
             self._doUpdateRrd(msg)
         
     def _doUpdateRrd(self, msg):
-        print("do update!!!!!!")
         upKV    = msg['value']['rrdupdates']
-        rrdFile = self._rrd4jFileName
-        ts      = msg['value']['timestamp']
-        update  = dict()
-        update['updates']   = upKV
-        update['file']      = rrdFile
-        update['timestamp'] = ts
-        pyrrd4j.update(update, self._doUpdateRrdReply)
+        if len(upKV.keys()) == 0: return
+        else:
+            rrdFile = self._rrd4jFileName
+            ts      = msg['value']['timestamp']
+            update  = dict()
+            update['updates']   = upKV
+            update['file']      = rrdFile
+            update['timestamp'] = ts
+            pyrrd4j.update(update, self._doUpdateRrdReply)
         
 
     def _doUpdateRrdReply(self, reply):
-        print("doupdatereply: " + reply)
-        self.signal.emit({'type': 'nchecksSimpleUpdateMessage'})
+        self._channel.signal.emit({'type': 'nchecksSimpleUpdateMessage'})
         if len(self._rrd4jWait) == 0:
             self._rrd4jReady = True
         else:
             msg = self._rrd4jWait.pop()
             self._doUpdateRrd(msg)
 
+    def synchronizeView(self, viewObj):
+        if self._rrd4jReady == True:
+            dumpMsg = dict()
+            dumpMsg['type'] = 'nchecksSimpleDumpMessage'
+            dumpMsg['file'] = self._rrd4jFileName
+            viewObj.handleProbeEvent(dumpMsg)
+
 
 class AbstractChannelWidget(NFrameContainer):
     def __init__(self, parent, channel):
         super(AbstractChannelWidget, self).__init__(parent)
-        print("ABS: init....")
+        pr("ABS: init....")
         self.__channel = channel
         self.__connected = False
 
     def connectProbe(self):
-        print("ABS: connect to probe")
+        pr("ABS: connect to probe")
         ChanHandler.singleton.subscribe(self, self.__channel)
         self.__connected = True
 
     def handleProbeEvent(self, msg): 
-        print((self, ":you should handle this message: ", msg['type']))
+        pr((self, ":you should handle this message: ", msg['type']))
 
     def __disconnectProbe(self):
-        print("ABS: disconnect probe")
+        pr("ABS: disconnect probe")
         ChanHandler.singleton.unsubscribe(self, self.__channel)
 
     def destroy(self):
-        print("ABS: destroy")
+        pr("ABS: destroy")
         if self.__connected == True: self.__disconnectProbe()
         self.deleteLater()
 

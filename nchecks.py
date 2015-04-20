@@ -13,6 +13,16 @@ def pr(val):
 def start(parent):
     return NChecksDefinition(parent)
 
+def getChecks():
+    return NChecksDefinition.singleton.getChecks()
+
+def getTableIndexInfoFor(check):
+    xml_Check = NChecksDefinition.singleton.getCheck(check)
+    xml_Performances = xml_Check.find('nchecks:Performances', NS)
+    propertySuffix = xml_Performances.attrib['PropertySuffix']
+    propertyPrefix = xml_Performances.attrib['PropertyPrefix']
+    return (propertyPrefix, propertySuffix)
+    
 def getGraphTemplateFor(check):
     glist = list()
     xml_Check = NChecksDefinition.singleton.getCheck(check)
@@ -23,8 +33,8 @@ def getGraphTemplateFor(check):
         g['title'] = xml_Graph.attrib['Title']
         g['name'] = xml_Graph.attrib['Id']
         g['vlabel'] = xml_Graph.attrib['VerticalLabel']
-        g['maxValue'] = xml_Graph.attrib['Max']
-        g['minValue'] = xml_Graph.attrib['Min']
+        g['maxValue'] = xml_Graph.attrib['Maximum']
+        g['minValue'] = xml_Graph.attrib['Minimum']
         g['rigid'] = xml_Graph.attrib['Rigid']
         g['base'] = xml_Graph.attrib['Base']
         g['unit'] = xml_Graph.attrib['Unit']
@@ -51,58 +61,7 @@ def getGraphTemplateFor(check):
     return (xml_Performances.attrib['Type'], glist)
 
     #pr("xml is: " + str(xml_Performances))
-
-def getGraphTemplateFor2(check):
-    gdefs = NChecksDefinition.singleton.getGraphSpecFor(check)
-    graphTemplates = list()
-    for gdef in gdefs:
-        graph = dict()
-        graph['title']  = gdef.find('graphTitle').text
-        graph['name']   = gdef.find('graphName').text
-        graph['vlabel'] = gdef.find('verticalLabel').text
-        graph['maxValue'] = gdef.find('max').text
-        graph['minValue'] = gdef.find('min').text
-        graph['rigid']  = gdef.find('rigid').text
-        graph['base']   = gdef.find('base').text
-        graph['unit']   = gdef.find('unit').text
-        graph['unitExponent']   = gdef.find('unitExponent').text
-        graph['spanBegin']  = -1200
-        graph['spanEnd']    = -1
-        graph['width']      = 600
-        graph['height']     = 200
-        graph['filenameRrd'] = None
-        graph['filenamePng'] = None
-        graph['DS']         = list()
-        for ds in gdef.findall('add'):
-            graph['DS'].append(
-                "%s,%s,%s,%s,%s" % (
-                    ds.find('name').text,
-                    ds.find('graphType').text,
-                    ds.find('legend').text,
-                    ds.find('color').text,
-                    ds.find('consolFun').text
-                )
-            )
-        graphTemplates.append(graph)
-    return graphTemplates
     
-
-def getChecks():
-    return NChecksDefinition.singleton.getChecks()
-
-def getFlagSpecFor(check):
-    return NChecksDefinition.singleton.getFlagSpecFor(check)
-
-def getClassNameFor(check):
-    return NChecksDefinition.singleton.getClassNameFor(check)
-
-def getDescrFor(check):
-    return NChecksDefinition.singleton.getDescrFor(check)
-
-
-def getProbesDef():
-    return NChecksDefinition.singleton.getProbesDef()
-
 class NChecksDefinition(QObject):
     def __init__(self, parent=None):
         super(NChecksDefinition, self).__init__(parent)
@@ -135,60 +94,8 @@ class NChecksDefinition(QObject):
         xml_Check = xml_NChecks.find('nchecks:Check', NS)
         self._nchecks[xml_Check.attrib['Id']] = xml_Check
 
-    def getGraphSpecFor(self, name):
-        root = self._checks[name]['def'].getroot()
-        for child in root:
-            if child.tag == 'performances':
-                for pchild in child:
-                    if pchild.tag == 'graphs':
-                        return pchild
-
-    def getDescrFor(self, name):
-        root = self._checks[name]['def'].getroot()
-        for child in root:
-            if child.tag == 'descr':
-                return child.text
-
-    def getFlagSpecFor(self, name):
-        root = self._checks[name]['def'].getroot()
-        for child in root:
-            if child.tag == 'flags_def':
-                return child
-
     def getChecks(self):
         return self._nchecks
 
     def getCheck(self, check):
         return self._nchecks[check]
-
-    def getProbesDef(self):
-        replyDict = dict()
-        for key in self._checks.keys():
-            root = self._checks[key]['def'].getroot()
-            checkDict = dict()
-            for child in root:
-                if child.tag == 'descr':
-                    checkDict['descr'] = child.text
-                elif child.tag == 'probe_class':
-                    checkDict['probe_class'] = child.text 
-                elif child.tag == 'flags_def':
-                    checkDict['flag_info'] = list()
-                    for flag in child.findall('flag_info'):
-                        name = flag.find('name').text
-                        d = dict()
-                        d['name'] = flag.find('name').text
-                        d['usage'] = flag.find('usage').text
-                        d['default'] = flag.find('default').text
-                        d['role'] = flag.find('role').text
-                        d['type'] = flag.find('type').text
-                        d['hint'] = flag.find('hint').text
-                        checkDict['flag_info'].append(d)
-                
-            replyDict[key] = checkDict
-        return replyDict
-
-    def getClassNameFor(self, name):
-        root = self._checks[name]['def'].getroot()
-        for child in root:
-            if child.tag == 'probe_class':
-                return child.text

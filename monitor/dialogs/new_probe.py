@@ -198,8 +198,8 @@ class ProbeConfigurationPage(QWizardPage):
 
             if   xml_Flag.attrib['Type'] == 'integer':
                 w = NSpinBox(self)
-                w.setMinimum(ast.literal_eval(xml_Flag.attrib['Min']))
-                w.setMaximum(ast.literal_eval(xml_Flag.attrib['Max']))
+                w.setMinimum(ast.literal_eval(xml_Flag.attrib['Minimum']))
+                w.setMaximum(ast.literal_eval(xml_Flag.attrib['Maximum']))
                 w.setValue(ast.literal_eval(xml_Flag.attrib['Default']))
                 if 'AutoFill' in xml_Flag.attrib:
                     prop = xml_Flag.attrib['AutoFill']
