@@ -126,7 +126,7 @@ class TargetMenu(QMenu):
         msgBox.setDefaultButton(QMessageBox.Yes)
         msgBox.setIcon(QMessageBox.Warning)
         r = msgBox.exec_()
-        if r == QMessageBox.Apply:
+        if r == QMessageBox.Yes:
             pdu = {
                 'from': 'monitor',
                 'type': 'deleteTargetQuery',
