@@ -17,7 +17,6 @@ from    PyQt5.QtGui    import (
 from    PyQt5.QtWidgets    import (
     QLabel,
     QWidget,
-    QDialog,
     QAbstractScrollArea,
     QStatusBar,
     QProgressBar,
@@ -72,7 +71,7 @@ def openPerformancesFor(probe, displayName):
     else:
         LoggerView.Elements[probe] = LoggerView(probe, displayName)
 
-class LoggerView(QDialog):
+class LoggerView(QWidget):
     Elements = dict()
     def __init__(self, probe, displayName, parent=None):
         super(LoggerView, self).__init__(parent)
