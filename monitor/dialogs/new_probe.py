@@ -194,7 +194,7 @@ class ProbeConfigurationPage(QWizardPage):
                 xml_Flag.attrib['Id'],
                 xml_Flag.attrib['Type'],
                 xml_Flag.attrib['Default'],
-                xml_Flag.attrib['Usage'])
+                xml_Flag.text)
 
             if   xml_Flag.attrib['Type'] == 'integer':
                 w = NSpinBox(self)

@@ -231,6 +231,7 @@ class NChecksRrdGraphRow(NFrameContainer):
         self._rowNumber = len(graphDefs)
         grid = NGridContainer(self)
         
+        self.setFrameShape(QFrame.StyledPanel)
         (prefix, suffix) = propInfo
         targetProperty = prefix + idx + suffix
         if targetProperty in properties.keys():
@@ -238,6 +239,8 @@ class NChecksRrdGraphRow(NFrameContainer):
         else:
             text = "<h3>(%s)</h3>" % targetProperty
         lab = QLabel(text, self)
+        lab.setAutoFillBackground(True)
+        lab.setBackgroundRole(QPalette.Base)
         lab.setFixedWidth(50)
         grid.addWidget(lab, 0, 0)
 

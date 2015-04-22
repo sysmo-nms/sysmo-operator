@@ -2,6 +2,7 @@
 # MODULE MONITOR #
 ##################
 # NOW
+- CPU 100% for javaw.exe (rrd4j) after huge sollicitation
 - theming QMenu QMenuBar
 - double click sur probe (choisir entre force, perfs...)
 - double click sur target (choisir entre ajout probe, centrer map, operation)
