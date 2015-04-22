@@ -70,12 +70,13 @@ class ProbeSelectionPage(QWizardPage):
         searchLine.textChanged.connect(self.completeChanged)
 
         for ckey in xml_checks.keys():
+            xml_Description = xml_checks[ckey].find('nchecks:Description', nchecks.NS)
             pitem = QStandardItem()
             pitem.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
             pitem.setData(ckey, Qt.DisplayRole)
             ditem = QStandardItem()
             ditem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
-            ditem.setData(xml_checks[ckey].attrib['Descr'], Qt.DisplayRole)
+            ditem.setData(xml_Description.text, Qt.DisplayRole)
             model.appendRow([pitem, ditem])
 
         grid.addWidget(clearButton, 0,0)
@@ -181,7 +182,8 @@ class ProbeConfigurationPage(QWizardPage):
         # create h1
         doc += "<h1>%s</h1>" % probe
         # create p descr
-        doc += "<p>%s</p>" % xml_Check.attrib['Descr']
+        xml_Description = xml_Check.find('nchecks:Description', nchecks.NS)
+        doc += "<p>%s</p>" % xml_Description.text
         
         xml_FlagTable   = xml_Check.find('nchecks:FlagTable', nchecks.NS)
         xml_HelperTable = xml_Check.find('nchecks:HelperTable', nchecks.NS)
@@ -190,24 +192,28 @@ class ProbeConfigurationPage(QWizardPage):
         for xml_Flag in xml_FlagTable.findall('nchecks:Flag', nchecks.NS):
             #if 'AutoFill' in xml_Flag.attrib:
             # generate doc
+            xml_Default = xml_Flag.find('nchecks:Default', nchecks.NS)
+            xml_Usage = xml_Flag.find('nchecks:Usage', nchecks.NS)
+            xml_Hint = xml_Flag.find('nchecks:Hint', nchecks.NS)
+
             doc += "<h4>--%s=%s  (default:%s)</h4><p>%s</p>" % (
                 xml_Flag.attrib['Id'],
                 xml_Flag.attrib['Type'],
-                xml_Flag.attrib['Default'],
-                xml_Flag.text)
+                xml_Default.text,
+                xml_Usage.text)
 
             if   xml_Flag.attrib['Type'] == 'integer':
                 w = NSpinBox(self)
                 w.setMinimum(ast.literal_eval(xml_Flag.attrib['Minimum']))
                 w.setMaximum(ast.literal_eval(xml_Flag.attrib['Maximum']))
-                w.setValue(ast.literal_eval(xml_Flag.attrib['Default']))
+                w.setValue(ast.literal_eval(xml_Default.text))
                 if 'AutoFill' in xml_Flag.attrib:
                     prop = xml_Flag.attrib['AutoFill']
                     val = self.getProperty(prop)
                     if val != False: w.setValue(ast.literal_eval(val))
             elif xml_Flag.attrib['Type'] == 'string':
                 w = NLineEdit(self)
-                w.setText(xml_Flag.attrib['Default'])
+                w.setText(xml_Default.text)
                 if 'AutoFill' in xml_Flag.attrib:
                     prop = xml_Flag.attrib['AutoFill']
                     val = self.getProperty(prop)
@@ -215,12 +221,12 @@ class ProbeConfigurationPage(QWizardPage):
 
             elif xml_Flag.attrib['Type'] == 'boolean':
                 w = NCheckBox(self)
-                if xml_Flag.attrib['Default'] == "true":
+                if xml_Default.text == "true":
                     w.setChecked(True)
                 else:
                     w.setChecked(False)
 
-            w.setToolTip(xml_Flag.attrib['Hint'])
+            w.setToolTip(xml_Hint.text)
             if 'Helper' in xml_Flag.attrib:
                 f = QFrame(self)
                 g = QGridLayout(f)

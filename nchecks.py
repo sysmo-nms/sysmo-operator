@@ -19,9 +19,9 @@ def getChecks():
 def getTableIndexInfoFor(check):
     xml_Check = NChecksDefinition.singleton.getCheck(check)
     xml_Performances = xml_Check.find('nchecks:Performances', NS)
-    propertySuffix = xml_Performances.attrib['PropertySuffix']
-    propertyPrefix = xml_Performances.attrib['PropertyPrefix']
-    return (propertyPrefix, propertySuffix)
+    xml_PropertySuffix = xml_Performances.find('nchecks:PropertySuffix', NS)
+    xml_PropertyPrefix = xml_Performances.find('nchecks:PropertyPrefix', NS)
+    return (xml_PropertyPrefix.text, xml_PropertySuffix.text)
     
 def getGraphTemplateFor(check):
     glist = list()
@@ -30,9 +30,11 @@ def getGraphTemplateFor(check):
     xml_GraphTable = xml_Performances.find('nchecks:GraphTable', NS)
     for xml_Graph in xml_GraphTable.findall('nchecks:Graph', NS):
         g = dict()
-        g['title'] = xml_Graph.attrib['Title']
+        xml_Title = xml_Graph.find('nchecks:Title', NS)
+        xml_VerticalLabel = xml_Graph.find('nchecks:VerticalLabel', NS)
+        g['title'] = xml_Title.text.strip()
         g['name'] = xml_Graph.attrib['Id']
-        g['vlabel'] = xml_Graph.attrib['VerticalLabel']
+        g['vlabel'] = xml_VerticalLabel.text.strip()
         g['maxValue'] = xml_Graph.attrib['Maximum']
         g['minValue'] = xml_Graph.attrib['Minimum']
         g['rigid'] = xml_Graph.attrib['Rigid']
@@ -47,11 +49,12 @@ def getGraphTemplateFor(check):
         g['filenamePng'] = None
         ds = list()
         for xml_Draw in xml_Graph.findall('nchecks:Draw', NS):
+            legend = xml_Draw.text.strip()
             ds.append(
                 "%s,%s,%s,%s,%s" % (
                     xml_Draw.attrib['DataSource'],
                     xml_Draw.attrib['Type'],
-                    xml_Draw.attrib['Legend'],
+                    legend,
                     xml_Draw.attrib['Color'],
                     xml_Draw.attrib['Consolidation']
                 )
