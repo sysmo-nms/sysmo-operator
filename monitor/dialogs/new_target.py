@@ -210,11 +210,11 @@ class TargetConfFrame(QWizardPage):
 
         form.addRow(NFrame(self))
         self._includeICMP    = QCheckBox('Include probe: ICMP Echo presence')
-        self._includeIfPerfs = QCheckBox('Include probe: SNMP Interfaces performances')
+        #self._includeIfPerfs = QCheckBox('Include probe: SNMP Interfaces performances')
         self._includeICMP.setChecked(True)
-        self._includeIfPerfs.setChecked(True)
+        #self._includeIfPerfs.setChecked(True)
         form.addRow(self._includeICMP)
-        form.addRow(self._includeIfPerfs)
+        #form.addRow(self._includeIfPerfs)
 
         grid.addWidget(formFrame, 1,0)
 
@@ -269,7 +269,7 @@ class TargetConfFrame(QWizardPage):
             self._authFrameLab,
             self._privFrame,
             self._privFrameLab,
-            self._includeIfPerfs
+            #self._includeIfPerfs
         ]
 
         self._stateSnmp2 = [
@@ -281,7 +281,7 @@ class TargetConfFrame(QWizardPage):
             self._timeoutLab,
             self._community,
             self._communityLab,
-            self._includeIfPerfs
+            #self._includeIfPerfs
         ]
 
         self._stateSnmp3AuthPriv = [
@@ -299,7 +299,7 @@ class TargetConfFrame(QWizardPage):
             self._authFrameLab,
             self._privFrame,
             self._privFrameLab,
-            self._includeIfPerfs
+            #self._includeIfPerfs
         ]
 
         self._stateSnmp3AuthNoPriv = [
@@ -315,7 +315,7 @@ class TargetConfFrame(QWizardPage):
             self._snmp3UserLab,
             self._authFrame,
             self._authFrameLab,
-            self._includeIfPerfs
+            #self._includeIfPerfs
         ]
 
         self._stateSnmp3NoAuthNoPriv = [
@@ -329,7 +329,7 @@ class TargetConfFrame(QWizardPage):
             self._secLevelLab,
             self._snmp3User,
             self._snmp3UserLab,
-            self._includeIfPerfs
+            #self._includeIfPerfs
         ]
 
     def _updateEnable(self):
@@ -434,9 +434,10 @@ class TargetConfFrame(QWizardPage):
         props
         withsnmp = self._snmpEnable.isChecked()
         picmp = self._includeICMP.isChecked()
-        psnmp = self._includeIfPerfs.isChecked()
+        #psnmp = self._includeIfPerfs.isChecked()
 
-        win = CreateTargetDialog(withsnmp, picmp, psnmp, props, sprops, self)
+        #win = CreateTargetDialog(withsnmp, picmp, psnmp, props, sprops, self)
+        win = CreateTargetDialog(withsnmp, picmp, props, sprops, self)
         return False
 
 
@@ -445,7 +446,8 @@ class TargetConfFrame(QWizardPage):
 
 
 class CreateTargetDialog(QProgressDialog):
-    def __init__(self, withsnmp, probeicmp, probeifperf, props, sprops, parent=None):
+    #def __init__(self, withsnmp, probeicmp, probeifperf, props, sprops, parent=None):
+    def __init__(self, withsnmp, probeicmp, props, sprops, parent=None):
         super(CreateTargetDialog, self).__init__(parent)
         self.setMinimum(0)
         self.setMaximum(0)
@@ -453,39 +455,39 @@ class CreateTargetDialog(QProgressDialog):
         self._props = props
         self._sprops = sprops
         self._picmp = probeicmp
-        self._psnmp = probeifperf
+        #self._psnmp = probeifperf
         self._ifSelection = None
 
-        if withsnmp == False:
-            self._createTargetQuery()
-        else:
-           self._elementInterfaceQuery()
+        #if withsnmp == False:
+            #self._createTargetQuery()
+        #else:
+           #self._elementInterfaceQuery()
+        self._createTargetQuery()
         self.show()
 
-    def _elementInterfaceQuery(self):
-        self.setLabel(QLabel('Getting SNMP interfaces informations...',self))
-        pdu = {
-            'from': 'monitor',
-            'type': 'snmpElementInterfaceQuery',
-            'value': {
-                'sysProperties': self._sprops,
-                'properties':    self._props
-            }
-        }
-        supercast.send(pdu, self._elementInterfaceReply)
-
-    def _elementInterfaceReply(self, reply):
-        if reply['value']['status'] == False:
-            err = QMessageBox(self)
-            err.setModal(True)
-            err.setIconPixmap(sysmapi.nGetPixmap('dialog-information'))
-            err.setText("Snmp manager failed to get information for element:")
-            err.setInformativeText("ERROR: " + reply['value']['reply'])
-            err.finished[int].connect(self._closeMe)
-            err.open()
-            return
-
-        SelectInterfaceDialog(reply['value']['ifInfo'], self)
+#     def _elementInterfaceQuery(self):
+#         self.setLabel(QLabel('Getting SNMP interfaces informations...',self))
+#         pdu = {
+#             'from': 'monitor',
+#             'type': 'snmpElementInterfaceQuery',
+#             'value': {
+#                 'sysProperties': self._sprops,
+#                 'properties':    self._props
+#             }
+#         }
+#         supercast.send(pdu, self._elementInterfaceReply)
+# 
+#     def _elementInterfaceReply(self, reply):
+#         if reply['value']['status'] == False:
+#             err = QMessageBox(self)
+#             err.setModal(True)
+#             err.setIconPixmap(sysmapi.nGetPixmap('dialog-information'))
+#             err.setText("Snmp manager failed to get information for element:")
+#             err.setInformativeText("ERROR: " + reply['value']['reply'])
+#             err.finished[int].connect(self._closeMe)
+#             err.open()
+#             return
+#        SelectInterfaceDialog(reply['value']['ifInfo'], self)
 
     def _closeMe(self):
         self.deleteLater()
@@ -517,8 +519,8 @@ class CreateTargetDialog(QProgressDialog):
 
         if self._picmp == True:
             self._createIcmpQuery()
-        elif self._ifSelection != None:
-            self._createIfPerfQuery()
+        #elif self._ifSelection != None:
+        #    self._createIfPerfQuery()
         else:
             self.deleteLater()
 
@@ -541,93 +543,93 @@ class CreateTargetDialog(QProgressDialog):
         else:
             self.deleteLater()
 
-    def _createIfPerfQuery(self):
-        pdu = {
-            'from': 'monitor',
-            'type': 'createIfPerfQuery',
-            'value': {
-                'target':       self._targetName,
-                'ifSelection':  self._ifSelection
-            }
-        }
-        supercast.send(pdu, self._createIfPerfReply)
-
-    def _createIfPerfReply(self, msg):
-        self.deleteLater()
-
-
-    def setIfSelection(self, selection):
-        self._ifSelection = selection
-        self._createTargetQuery()
-
-class SelectInterfaceDialog(QDialog):
-    def __init__(self, ifInfos, parent):
-        super(SelectInterfaceDialog, self).__init__(parent)
-        self._ifInfos = ifInfos
-        self.setModal(True)
-        self.show()
-        self._grid = NGrid(self)
-        self.setLayout(self._grid)
-
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
-        okbutton = buttonBox.button(QDialogButtonBox.Ok)
-        okbutton.clicked.connect(self._validate)
-        infoFrame = NFrame(self)
-        infoLayout = NGridContainer(infoFrame)
-        infoLayout.addWidget(QLabel("Tips blablab al", infoFrame), 0,0)
-
-        ifFrame = NFrame(self)
-        ifLayout = NGridContainer(ifFrame)
-        ifFrame.setLayout(ifLayout)
-        self._treeWidget = QTreeWidget(ifFrame)
-        self._treeWidget.setColumnCount(5)
-        self._treeWidget.setHeaderLabels([
-            'Descr', 'Admin status', 'Oper status', 
-            'Physical address', 'Type'])
-        self._treeWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        ifLayout.addWidget(self._treeWidget)
-        ifLayout.addWidget(buttonBox)
-
-        self._grid.addWidget(infoFrame,  0,0)
-        self._grid.addWidget(ifFrame,    1,0)
-
-        self._initializePage()
-
-    def _validate(self):
-        count = self._treeWidget.topLevelItemCount()
-        selectedIfs = list()
-        for index in range(count):
-            item = self._treeWidget.topLevelItem(index)
-            if (item.checkState(0) == Qt.Checked):
-                selectedIfs.append(int(item.text(5)))
-
-        self.parent().setIfSelection(selectedIfs)
-        self.deleteLater()
-
-    def _initializePage(self):
-        self._treeWidget.clear()
-        ifInfos = self._ifInfos
-        for ifDef in ifInfos:
-            ifSpeed = ifDef['ifSpeed']
-            ifType  = ifDef['ifType']
-            ifLastChange = ifDef['ifLastChange']
-            ifPhysaddress = ifDef['ifPhysAddress']
-            ifAdminStatus = ifDef['ifAdminStatus']
-            ifDescr = ifDef['ifDescr']
-            ifIndex = ifDef['ifIndex']
-            ifMTU   = ifDef['ifMTU']
-            ifOperStatus = ifDef['ifOperStatus']
-            item = QTreeWidgetItem()
-            item.setText(0, ifDescr)
-            item.setText(1, str(ifAdminStatus))
-            item.setText(2, str(ifOperStatus))
-            item.setText(3, ifPhysaddress)
-            item.setText(4, str(ifType))
-            item.setText(5, str(ifIndex))
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(0, Qt.Checked)
-            self._treeWidget.addTopLevelItem(item)
+#     def _createIfPerfQuery(self):
+#         pdu = {
+#             'from': 'monitor',
+#             'type': 'createIfPerfQuery',
+#             'value': {
+#                 'target':       self._targetName,
+#                 'ifSelection':  self._ifSelection
+#             }
+#         }
+#         supercast.send(pdu, self._createIfPerfReply)
+# 
+#     def _createIfPerfReply(self, msg):
+#         self.deleteLater()
 
 
+#    def setIfSelection(self, selection):
+#        self._ifSelection = selection
+#        self._createTargetQuery()
 
-
+# class SelectInterfaceDialog(QDialog):
+#     def __init__(self, ifInfos, parent):
+#         super(SelectInterfaceDialog, self).__init__(parent)
+#         self._ifInfos = ifInfos
+#         self.setModal(True)
+#         self.show()
+#         self._grid = NGrid(self)
+#         self.setLayout(self._grid)
+# 
+#         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
+#         okbutton = buttonBox.button(QDialogButtonBox.Ok)
+#         okbutton.clicked.connect(self._validate)
+#         infoFrame = NFrame(self)
+#         infoLayout = NGridContainer(infoFrame)
+#         infoLayout.addWidget(QLabel("Tips blablab al", infoFrame), 0,0)
+# 
+#         ifFrame = NFrame(self)
+#         ifLayout = NGridContainer(ifFrame)
+#         ifFrame.setLayout(ifLayout)
+#         self._treeWidget = QTreeWidget(ifFrame)
+#         self._treeWidget.setColumnCount(5)
+#         self._treeWidget.setHeaderLabels([
+#             'Descr', 'Admin status', 'Oper status', 
+#             'Physical address', 'Type'])
+#         self._treeWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+#         ifLayout.addWidget(self._treeWidget)
+#         ifLayout.addWidget(buttonBox)
+# 
+#         self._grid.addWidget(infoFrame,  0,0)
+#         self._grid.addWidget(ifFrame,    1,0)
+# 
+#         self._initializePage()
+# 
+#     def _validate(self):
+#         count = self._treeWidget.topLevelItemCount()
+#         selectedIfs = list()
+#         for index in range(count):
+#             item = self._treeWidget.topLevelItem(index)
+#             if (item.checkState(0) == Qt.Checked):
+#                 selectedIfs.append(int(item.text(5)))
+# 
+#         self.parent().setIfSelection(selectedIfs)
+#         self.deleteLater()
+# 
+#     def _initializePage(self):
+#         self._treeWidget.clear()
+#         ifInfos = self._ifInfos
+#         for ifDef in ifInfos:
+#             ifSpeed = ifDef['ifSpeed']
+#             ifType  = ifDef['ifType']
+#             ifLastChange = ifDef['ifLastChange']
+#             ifPhysaddress = ifDef['ifPhysAddress']
+#             ifAdminStatus = ifDef['ifAdminStatus']
+#             ifDescr = ifDef['ifDescr']
+#             ifIndex = ifDef['ifIndex']
+#             ifMTU   = ifDef['ifMTU']
+#             ifOperStatus = ifDef['ifOperStatus']
+#             item = QTreeWidgetItem()
+#             item.setText(0, ifDescr)
+#             item.setText(1, str(ifAdminStatus))
+#             item.setText(2, str(ifOperStatus))
+#             item.setText(3, ifPhysaddress)
+#             item.setText(4, str(ifType))
+#             item.setText(5, str(ifIndex))
+#             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+#             item.setCheckState(0, Qt.Checked)
+#             self._treeWidget.addTopLevelItem(item)
+# 
+# 
+# 
+# 
