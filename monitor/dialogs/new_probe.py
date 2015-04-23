@@ -52,7 +52,7 @@ class ProbeSelectionPage(QWizardPage):
         treeView = QTreeView(self)
         treeView.setSelectionMode(QAbstractItemView.SingleSelection)
         treeView.clicked.connect(self.completeChanged)
-        treeView.doubleClicked.connect(self._test)
+        treeView.doubleClicked.connect(self._doubleClick)
         clearButton.clicked.connect(treeView.clearSelection)
         clearButton.clicked.connect(self.completeChanged)
 
@@ -75,12 +75,15 @@ class ProbeSelectionPage(QWizardPage):
             pitem = QStandardItem()
             pitem.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
             pitem.setData(ckey, Qt.DisplayRole)
+            pitem.setData(ckey, Qt.UserRole)
             ditem = QStandardItem()
             ditem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
             ditem.setData(xml_Description.text, Qt.DisplayRole)
+            ditem.setData(ckey, Qt.UserRole)
             titem = QStandardItem()
             titem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
             titem.setData(ptype, Qt.DisplayRole)
+            titem.setData(ckey, Qt.UserRole)
             model.appendRow([pitem, titem, ditem])
 
         treeView.header().setSortIndicatorShown(True)
@@ -111,16 +114,8 @@ class ProbeSelectionPage(QWizardPage):
 
     def nextId(self): return 2
 
-    def _test(self, val):
-        row = val.row()
-        col = val.column()
-        if col == 0:
-            probe = val.data(Qt.DisplayRole)
-        else:
-            val2 = self._model.index(row, 0)
-            probe = val2.data(Qt.DisplayRole)
-        
-        self._wizard.setSelection(probe)
+    def _doubleClick(self, val):
+        self._wizard.setSelection(val.data(Qt.UserRole))
         self._wizard.next()
 
     def isComplete(self):
@@ -128,7 +123,8 @@ class ProbeSelectionPage(QWizardPage):
         if len(sel) == 0:
             return False
         else:
-            self._wizard.setSelection(sel[0].data(Qt.DisplayRole))
+            u = sel[0]
+            self._wizard.setSelection(u.data(Qt.UserRole))
             return True
         
 
