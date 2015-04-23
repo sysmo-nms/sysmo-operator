@@ -74,7 +74,7 @@ class NChecksDefinition(QObject):
         xmlFile = NTemporaryFile(self)
         self._defFileName = xmlFile.fileName()
         request = dict()
-        request['url'] = 'nchecks/NChecks.xml'
+        request['url'] = 'nchecks/Checks.xml'
         request['callback'] = self._allCheckCallback
         request['outfile']  = self._defFileName
         supercast.requestUrl(request)
@@ -83,7 +83,6 @@ class NChecksDefinition(QObject):
         xml_NChecks = ET.parse(reply['outfile']).getroot()
         xml_CheckAccessTable = xml_NChecks.find('nchecks:CheckAccessTable', NS)
         for xml_CheckUrl in xml_CheckAccessTable.findall('nchecks:CheckUrl', NS):
-            name  = xml_CheckUrl.attrib['Id']
             xfile = xml_CheckUrl.attrib['Value']
             request = dict()
             request['url']      = 'nchecks/%s' % xfile
@@ -95,7 +94,7 @@ class NChecksDefinition(QObject):
     def _checkDefCallback(self, reply):
         xml_NChecks = ET.parse(reply['outfile']).getroot()
         xml_Check = xml_NChecks.find('nchecks:Check', NS)
-        self._nchecks[xml_Check.attrib['Id']] = xml_Check
+        self._nchecks[xml_Check.attrib['Class']] = xml_Check
 
     def getChecks(self):
         return self._nchecks

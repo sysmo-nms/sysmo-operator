@@ -58,7 +58,7 @@ class ProbeSelectionPage(QWizardPage):
 
         model = QStandardItemModel(self)
         model.setColumnCount(2)
-        model.setHorizontalHeaderLabels(['Probe name', 'Description'])
+        model.setHorizontalHeaderLabels(['Class', 'Type', 'Description'])
         proxyFilter = QSortFilterProxyModel(self)
         proxyFilter.setFilterCaseSensitivity(Qt.CaseInsensitive)
         proxyFilter.setDynamicSortFilter(True)
@@ -71,13 +71,21 @@ class ProbeSelectionPage(QWizardPage):
 
         for ckey in xml_checks.keys():
             xml_Description = xml_checks[ckey].find('nchecks:Description', nchecks.NS)
+            ptype = xml_checks[ckey].attrib['Type']
             pitem = QStandardItem()
             pitem.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
             pitem.setData(ckey, Qt.DisplayRole)
             ditem = QStandardItem()
             ditem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
             ditem.setData(xml_Description.text, Qt.DisplayRole)
-            model.appendRow([pitem, ditem])
+            titem = QStandardItem()
+            titem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+            titem.setData(ptype, Qt.DisplayRole)
+            model.appendRow([pitem, titem, ditem])
+
+        treeView.header().setSortIndicatorShown(True)
+        treeView.setSortingEnabled(True)
+        treeView.header().resizeSections(QHeaderView.ResizeToContents)
 
         grid.addWidget(clearButton, 0,0)
         grid.addWidget(searchLine,  0,1)
@@ -252,6 +260,9 @@ class ProbeConfigurationPage(QWizardPage):
                 self._config.addRow(xml_Flag.attrib['Id'], w)
 
         # is there any helper we need to start now?
+        self._manual.setText(doc)
+
+        if xml_HelperTable == None: return
         start_list = list()
         for xml_Helper in xml_HelperTable.findall('nchecks:Helper', nchecks.NS):
             if xml_Helper.attrib['AutoStart'] == "true":
@@ -263,7 +274,6 @@ class ProbeConfigurationPage(QWizardPage):
             helperClass = xml_Helper.attrib['Class']
             self._launchHelper(helperClass)
             
-        self._manual.setText(doc)
 
     def _launchHelper(self, helper):
         pdu = {
