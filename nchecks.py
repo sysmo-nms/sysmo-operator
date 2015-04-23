@@ -42,7 +42,7 @@ def getGraphTemplateFor(check):
         g['unit'] = xml_Graph.attrib['Unit']
         g['unitExponent'] = xml_Graph.attrib['UnitExponent']
         g['spanBegin'] = -1200
-        g['spanEnd'] = -1
+        g['spanEnd'] = -300
         g['width'] = 600
         g['height'] = 200
         g['filenameRrd'] = None

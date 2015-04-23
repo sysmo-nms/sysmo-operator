@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QGridLayout, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QPalette
-from PyQt5.QtCore import Qt, QSortFilterProxyModel
+from PyQt5.QtCore import Qt, QSortFilterProxyModel, pyqtSignal
 from sysmo_widgets import NFrame, NGrid, NGridContainer
 import sysmo_main
 import sysmapi
@@ -173,6 +173,7 @@ class ProbeConfigurationPage(QWizardPage):
 
         # get the probe def
         xml_Check = self._wizard._xmlChecks[probe]
+        self._xml_Check = xml_Check
 
         # initialize textEdit content and old layout
         doc = ""
@@ -227,10 +228,17 @@ class ProbeConfigurationPage(QWizardPage):
                     w.setChecked(False)
 
             w.setToolTip(xml_Hint.text)
-            if 'Helper' in xml_Flag.attrib:
+            if 'HelperButton' in xml_Flag.attrib:
+                xml_HelperList = xml_HelperTable.findall('nchecks:Helper', nchecks.NS)
+                xml_Helper = None
+                for xml_Helper in xml_HelperList:
+                    if xml_Helper.attrib['Id'] == xml_Flag.attrib['HelperButton']:
+                        break
+                        
                 f = QFrame(self)
                 g = QGridLayout(f)
-                b = QPushButton('Helper', f)
+                b = HelperButton(xml_Helper.attrib['Class'], f)
+                b.triggered[str].connect(self._launchHelper)
                 g.addWidget(QLabel(xml_Flag.attrib['Id'], self), 0,0)
                 g.addWidget(w, 0,1)
                 g.addWidget(b, 0,2)
@@ -243,7 +251,34 @@ class ProbeConfigurationPage(QWizardPage):
                 self._widgetDict[xml_Flag.attrib['Id']] = w
                 self._config.addRow(xml_Flag.attrib['Id'], w)
 
+        # is there any helper we need to start now?
+        start_list = list()
+        for xml_Helper in xml_HelperTable.findall('nchecks:Helper', nchecks.NS):
+            if xml_Helper.attrib['AutoStart'] == "true":
+                start_list.append(xml_Helper)
+
+        
+        # then start them now
+        for xml_Helper in start_list:
+            helperClass = xml_Helper.attrib['Class']
+            self._launchHelper(helperClass)
+            
         self._manual.setText(doc)
+
+    def _launchHelper(self, helper):
+        pdu = {
+            'from': 'monitor',
+            'type': 'ncheckHelperQuery',
+            'value': {
+                'target': self._target,
+                'class': helper
+            }
+        }
+        print(str(pdu))
+        supercast.send(pdu, self._helperReply)
+
+    def _helperReply(self, msg):
+        print("helper reply: " + str(msg))
 
     def getProperty(self, prop):
         t = monapi.getTarget(self._target)
@@ -286,6 +321,18 @@ class ProbeConfigurationPage(QWizardPage):
         self._end = True
         self._wizard.accept()
         print("have returned?")
+
+
+class HelperButton(QPushButton):
+    triggered = pyqtSignal(str)
+    def __init__(self, helperClass, parent=None):
+        QPushButton.__init__(self, parent)
+        self.setText('Helper')
+        self._helperClass = helperClass
+        self.clicked.connect(self._trigger)
+
+    def _trigger(self):
+        self.triggered.emit(self._helperClass)
 
 class NLineEdit(QLineEdit):
     def __init__(self, parent):
