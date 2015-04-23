@@ -255,11 +255,13 @@ class ProbeConfigurationPage(QWizardPage):
                 self._widgetDict[xml_Flag.attrib['Id']] = w
                 self._config.addRow(xml_Flag.attrib['Id'], w)
 
-        # is there any helper we need to start now?
         self._manual.setText(doc)
 
-        if xml_HelperTable == None: return
+        # check for helpers
         start_list = list()
+
+        # is there any helper we need to start now?
+        if xml_HelperTable == None: return
         for xml_Helper in xml_HelperTable.findall('nchecks:Helper', nchecks.NS):
             if xml_Helper.attrib['AutoStart'] == "true":
                 start_list.append(xml_Helper)
@@ -285,6 +287,7 @@ class ProbeConfigurationPage(QWizardPage):
 
     def _helperReply(self, msg):
         print("helper reply: " + str(msg))
+        sys.stdout.flush()
 
     def getProperty(self, prop):
         t = monapi.getTarget(self._target)
