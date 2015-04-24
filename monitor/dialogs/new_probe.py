@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QGridLayout, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox
+from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QGridLayout, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox, QDialog, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, pyqtSignal
 from sysmo_widgets import NFrame, NGrid, NGridContainer
@@ -178,6 +178,7 @@ class ProbeConfigurationPage(QWizardPage):
         # get the probe def
         xml_Check = self._wizard._xmlChecks[probe]
         self._xml_Check = xml_Check
+        self._ptype = xml_Check.attrib['Type']
 
         # initialize textEdit content and old layout
         doc = ""
@@ -258,10 +259,12 @@ class ProbeConfigurationPage(QWizardPage):
         self._manual.setText(doc)
 
         # check for helpers
+        self._HelperTable = xml_HelperTable
         start_list = list()
 
         # is there any helper we need to start now?
         if xml_HelperTable == None: return
+
         for xml_Helper in xml_HelperTable.findall('nchecks:Helper', nchecks.NS):
             if xml_Helper.attrib['AutoStart'] == "true":
                 start_list.append(xml_Helper)
@@ -279,14 +282,20 @@ class ProbeConfigurationPage(QWizardPage):
             'type': 'ncheckHelperQuery',
             'value': {
                 'target': self._target,
-                'class': helper
+                'class':  helper,
+                'type':   self._ptype
             }
         }
-        print(str(pdu))
         supercast.send(pdu, self._helperReply)
 
     def _helperReply(self, msg):
-        print("helper reply: " + str(msg))
+        print("helper reply: " + str(msg['value']['reply']))
+        if msg['value']['reply']['status'] == "failure":
+            print("say failure for helper %s [Close]" % msg['value']['reply']['id'])
+        else:
+            print("continue for helper %s [Close]" % msg['value']['reply']['id'])
+            dial = HelperDialog(msg['value']['reply'], self._HelperTable, self)
+            dial.exec()
         sys.stdout.flush()
 
     def getProperty(self, prop):
@@ -331,6 +340,207 @@ class ProbeConfigurationPage(QWizardPage):
         self._wizard.accept()
         print("have returned?")
 
+    def setFlagVal(self, flag, value):
+        self._widgetDict[flag].setText(value)
+
+class HelperDialog(QDialog):
+    def __init__(self, msg, helperTable, parent=None):
+        QDialog.__init__(self, parent)
+        helperId = msg['id']
+        self._helperMsg = msg
+        self._xml_Helper = None
+        for helper in helperTable.findall('nchecks:Helper', nchecks.NS):
+            if helper.attrib['Id'] == helperId:
+                self._xml_Helper = helper
+                
+
+        self.setModal(True)
+        self.setSizeGripEnabled(True)
+        self.setWindowTitle("%s Helper" % msg['id'])
+        if self._xml_Helper.attrib['Return'] == "table":
+            self._initTableLayout()
+
+    def _initTableLayout(self):
+        grid = QGridLayout(self)
+        xml_HelperTableReturn = self._xml_Helper.find(
+                                        'nchecks:HelperTableReturn', nchecks.NS)
+        # init usage label
+        xml_Usage = xml_HelperTableReturn.find('nchecks:Usage', nchecks.NS)
+        usage = QLabel(xml_Usage.text, self)
+
+        # init treeview
+        tview = QTreeWidget(self)
+
+        # init headers
+        xml_Column_list = xml_HelperTableReturn.findall('nchecks:Column', nchecks.NS)
+        colLen = len(xml_Column_list)
+        tviewHeaders = [None] * colLen
+        for xml_Column in xml_Column_list:
+            cid = xml_Column.attrib['Id']
+            cpos = int(xml_Column.attrib['Position'])
+            tviewHeaders[cpos] = cid
+            ctype = xml_Column.attrib['Type']
+        tview.setHeaderLabels(tviewHeaders)
+        tview.header().setSortIndicatorShown(True)
+        tview.setSortingEnabled(True)
+
+        # if TreeRoot is defined create root items and fill the rest
+        treeRoot = xml_HelperTableReturn.attrib['TreeRoot']
+        selectType = xml_HelperTableReturn.attrib['SelectionType']
+        print("kkkkkkkkkkkkkkkkkkk" + str(treeRoot))
+
+        # what is the element we want to get
+        # what is the flag we want to fill
+        self._fillFlag = xml_HelperTableReturn.attrib['FillFlag']
+        xml_ListSeparator = xml_HelperTableReturn.find(
+                                        'nchecks:ListSeparator', nchecks.NS)
+        self._fillFlagSeparator = xml_ListSeparator.text
+
+        if treeRoot != None and selectType == "multiple":
+        # here we want a tree view with root and childs elements (depy 1), that
+        # are checkables.
+            tview.setSelectionMode(QAbstractItemView.NoSelection)
+
+            # get all treeRoot types
+            self._rootItems = dict()
+            trtypes = list()
+            for t in self._helperMsg['rows']:
+                tval = t[treeRoot]
+                if tval not in trtypes:
+                    trtypes.append(tval)
+            # then create initial root items
+            for t in trtypes:
+                txt = "%s(%s)" % (treeRoot, t)
+                item = QTreeWidgetItem(tview, [txt], QTreeWidgetItem.Type)
+                item.setCheckState(0, Qt.Unchecked)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                tview.addTopLevelItem(item)
+                self._rootItems[t] = item
+
+            # then add child items
+            for ch in self._helperMsg['rows']:
+                selectKey = xml_HelperTableReturn.attrib['Select']
+                roottype = ch[treeRoot]
+                chtext = list()
+                # use the tviewHeaders wich contain an ordered list of property
+                itemData = None
+                for col in tviewHeaders:
+                    if col == selectKey:
+                        itemData = ch[col]
+                    chtext.append(ch[col])
+                item = CustomItem(chtext, QTreeWidgetItem.Type, itemData)
+                item.setCheckState(0, Qt.Unchecked)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                self._rootItems[roottype].addChild(item)
+            tview.itemChanged[QTreeWidgetItem, int].connect(
+                    self._refreshRootTableCheckStates)
+
+        elif treeRoot != None and selectType == "single":
+        # TODO here we want a tree view with root and childs elements (deph 1)
+        # only one can be highlighted
+            treeView.setSelectionMode(QAbstractItemView.SingleSelection)
+        elif selectType == "multiple":
+        # TODO here we want a table view that where multiple elements can be checked
+            treeView.setSelectionMode(QAbstractItemView.NoSelection)
+        elif selectType == "single":
+            treeView.setSelectionMode(QAbstractItemView.SingleSelection)
+        # TODO here we want a table view with a single element to selected
+
+        tview.header().resizeSections(QHeaderView.ResizeToContents)
+        tview.expandAll()
+
+        buttons = QDialogButtonBox(self)
+        buttons.addButton(QDialogButtonBox.Save)
+        buttons.addButton(QDialogButtonBox.Cancel)
+        self._saveButton = buttons.button(QDialogButtonBox.Save)
+        self._saveButton.setEnabled(False)
+        buttons.rejected.connect(self.deleteLater)
+        buttons.accepted.connect(self._accepted)
+
+        # final grid
+        grid.addWidget(usage, 0,0)
+        grid.addWidget(tview, 1,0)
+        grid.addWidget(buttons, 2,0)
+        grid.setRowStretch(0,0)
+        grid.setRowStretch(1,1)
+        grid.setRowStretch(2,0)
+        
+
+    def _accepted(self):
+        rep = list()
+        for key in self._rootItems.keys():
+            root = self._rootItems[key]
+            cc = root.childCount()
+            for i in range(cc):
+                if root.child(i).checkState(0) == Qt.Checked:
+                    rep.append(root.child(i).getData())
+
+        rep = sorted(rep)
+        repstr = ""
+        first = True
+        for v in rep:
+            if first == True:
+                repstr = repstr + v
+                first = False
+            else: repstr = repstr + self._fillFlagSeparator + v
+
+        self.parent().setFlagVal(self._fillFlag, repstr)
+        self.close()
+
+    def _refreshRootTableCheckStates(self, item, column):
+        childCount = item.childCount()
+        if childCount > 0:
+        # it is a root item
+            if item.checkState(0) == Qt.PartiallyChecked: return
+            rootstate = item.checkState(0)
+            for i in range(childCount):
+                ch = item.child(i)
+                if ch.checkState(0) != rootstate:
+                    ch.setCheckState(0,rootstate)
+        
+        # it is a child item
+        else:
+            # get the root item
+            root = item.parent()
+            # get the number of childs
+            rcount = root.childCount()
+            cstates = list()
+            for i in range(rcount):
+                citem = root.child(i)
+                cstates.append(citem.checkState(0))
+
+            # we now have childs state in cstates
+            if Qt.Unchecked in cstates and Qt.Checked in cstates:
+                # if states are mixed root is tristate
+                if root.checkState(0) != Qt.PartiallyChecked:
+                    root.setCheckState(0,Qt.PartiallyChecked)
+            elif Qt.Checked in cstates:
+            # if all state is checked root is checked
+                if root.checkState(0) != Qt.Checked:
+                    root.setCheckState(0,Qt.Checked)
+            elif Qt.Unchecked in cstates:
+            # if all state is unchecked root is unchecked
+                if root.checkState(0) != Qt.Unchecked:
+                    root.setCheckState(0,Qt.Unchecked)
+        self._maybeEnableSave()
+
+    def _maybeEnableSave(self):
+        for key in self._rootItems.keys():
+            root = self._rootItems[key]
+            cc = root.childCount()
+            for i in range(cc):
+                if root.child(i).checkState(0) == Qt.Checked:
+                    self._saveButton.setEnabled(True)
+                    return
+        self._saveButton.setEnabled(False)
+
+
+class CustomItem(QTreeWidgetItem):
+    def __init__(self, text, itemType, itemData):
+        QTreeWidgetItem.__init__(self, text, itemType)
+        self._data = itemData
+
+    def getData(self): return self._data
 
 class HelperButton(QPushButton):
     triggered = pyqtSignal(str)
