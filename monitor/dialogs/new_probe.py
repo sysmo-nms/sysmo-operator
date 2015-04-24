@@ -289,11 +289,14 @@ class ProbeConfigurationPage(QWizardPage):
         supercast.send(pdu, self._helperReply)
 
     def _helperReply(self, msg):
-        print("helper reply: " + str(msg['value']['reply']))
         if msg['value']['reply']['status'] == "failure":
             print("say failure for helper %s [Close]" % msg['value']['reply']['id'])
+            err = QErrorMessage(self)
+            err.showMessage("The helper %s has failed with reason: %s"
+                (msg['value']['reply']['id'],
+                msg['value']['reply']['reason']))
+            err.exec()
         else:
-            print("continue for helper %s [Close]" % msg['value']['reply']['id'])
             dial = HelperDialog(msg['value']['reply'], self._HelperTable, self)
             dial.exec()
         sys.stdout.flush()
