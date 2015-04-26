@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QGridLayout, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox, QDialog, QTreeWidget, QTreeWidgetItem, QDialogButtonBox
+from PyQt5.QtWidgets import QWizard, QWizardPage, QAbstractItemView, QTreeView, QHeaderView, QLineEdit, QPushButton, QLabel, QFormLayout, QTextEdit, QFrame, QGridLayout, QAbstractScrollArea, QWidget, QSpinBox, QLineEdit, QCheckBox, QDialog, QTreeWidget, QTreeWidgetItem, QDialogButtonBox, QErrorMessage
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QPalette
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, pyqtSignal
 from sysmo_widgets import NFrame, NGrid, NGridContainer
@@ -292,10 +292,13 @@ class ProbeConfigurationPage(QWizardPage):
         if msg['value']['reply']['status'] == "failure":
             print("say failure for helper %s [Close]" % msg['value']['reply']['id'])
             err = QErrorMessage(self)
-            err.showMessage("The helper %s has failed with reason: %s"
-                (msg['value']['reply']['id'],
-                msg['value']['reply']['reason']))
+            print("error? " + str(msg))
+            mid = msg['value']['reply']['id']
+            mreason = msg['value']['reply']['message']
+            errmsg = "The helper %s has failed with reason: %s" % (mid,mreason)
+            err.showMessage(errmsg)
             err.exec()
+
         else:
             dial = HelperDialog(msg['value']['reply'], self._HelperTable, self)
             dial.exec()
