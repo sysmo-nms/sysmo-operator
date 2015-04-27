@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, pyqtSignal, QSettings, QSize
+from PyQt5.QtCore import Qt, pyqtSignal, QSettings, QSize, QObject
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy, QStackedLayout, QLabel, QStatusBar
 from PyQt5.QtGui import QIcon
 from PyQt5.QtSvg import QSvgWidget
@@ -17,7 +17,6 @@ import pyrrd4j
 
 MONITOR   = 0
 DASHBOARD = 1
-
 
 class NMainWindow(QMainWindow):
 

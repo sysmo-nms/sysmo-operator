@@ -530,7 +530,7 @@ class CreateTargetDialog(QProgressDialog):
             'type': 'createNchecksQuery',
             'value': {
                 'target': self._targetName,
-                'name': 'io.sysmo.nchecks.checks.CheckICMP',
+                'name': 'io.sysmo.nchecks.modules.CheckICMP',
                 'properties': {}
             }
         }

@@ -12,11 +12,11 @@ if '__file__' not in locals():
         os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = platformPluginsDir
     if platform.system() == 'Linux': pass
 
-from    PyQt5.QtWidgets import QApplication, QWidget
-from    PyQt5.QtCore    import QSettings, QTranslator
-import  sys
-import  sysmo_main
-import  sysmo_colors
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtCore    import QSettings, QTranslator, QObject
+import sys
+import sysmo_main
+import sysmo_colors
 
 DEFAULT_PALETTE = 'dark'
 
@@ -48,6 +48,7 @@ sysmoApp.setOrganizationDomain("sysmo.com")
 sysmoApp.setApplicationName("sysmo-operator")
 
 currentStyle = sysmoApp.style().objectName()
-sysmo        = sysmo_main.NMainWindow(currentStyle)
+
+sysmo = sysmo_main.NMainWindow(currentStyle)
 
 sys.exit(sysmoApp.exec_())
