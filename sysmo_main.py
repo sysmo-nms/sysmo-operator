@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, pyqtSignal, QSettings, QSize, QObject
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy, QStackedLayout, QLabel, QStatusBar
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy, QStackedLayout, QLabel, QStatusBar, QDialog, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtSvg import QSvgWidget
 from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap, getImage, getRgba
@@ -10,10 +10,16 @@ from monitor.gui.timeline.main import Timeline
 from supercast.main import Supercast
 from functools import partial
 import nchecks
+import sysmo_login
 
 import monitor.main
 import dashboard.main
 import pyrrd4j
+import sys
+
+def pr(val):
+    print(str(val))
+    sys.stdout.flush()
 
 MONITOR   = 0
 DASHBOARD = 1
@@ -39,25 +45,28 @@ class NMainWindow(QMainWindow):
     def __init__(self, style, parent=None):
         super(NMainWindow, self).__init__(parent)
         NMainWindow.singleton   = self
-        self._sysmoStyle     = style
+        self._sysmoStyle        = style
+        self._init2Called       = False
         sysmoGraphicsInit()
 
         self.setObjectName('MainWindow')
         self.setWindowIcon(QIcon(getPixmap('applications-development')))
         self.setWindowTitle('Sysmo')
 
-        #
         self._initSupercast()
-        self._initPyrrd4j()
 
+    def _init2(self):
+        self._init2Called = True
+        self._initPyrrd4j()
         self._initProxySettings()
         self._initViewModes()
         self._initTray()
-
         self._initStatusBar()
         self._restoreSettings()
         self._initMenus()
         self._initLayout()
+        nchecks.start(self)
+        self.show()
         
 
     #########
@@ -78,28 +87,34 @@ class NMainWindow(QMainWindow):
         rrdColorTheme['XAXIS']  = getRgba('Dark')
         pyrrd4j.init(rrdColorTheme, self)
 
+
+
+
     # Supercast
     def _initSupercast(self):
-        self._supercastLogged = False
-        self.supercast = Supercast(self, mainwindow=self)
-        self.supercast.eventpyqtSignals.connect(self._handleSupercastEvents)
-        self.supercast.tryLogin()
-        
-        # API should look like:
-        # while True;
-            # ret = SupercastLogInDialog(self) (create socket with self as parent)
-            # (Qdialog.done(QDialog.Accepted (1) | QDialog.Rejected (0) | quit (2))
-            # rejected cleanup supercast, accept return Accepted and continue
-            # on disconnect, cleanup all widgets here, and do this again.
-            # if ret == QDialog.Accepted: break
-        # else: retry
+        self._loginDialogReply = None
+        self.supercast = Supercast(self)
+        self.supercast.events.connect(self._handleSupercastEvents)
+        self._askLogin()
+
+    def _askLogin(self):
+        self._loginReturn = None
+        self._loginDialog = sysmo_login.LogInDialog(self._loginReturn, self)
+        self._loginDialog.rejected.connect(self.close)
+        self._loginDialog.loginPressed[dict].connect(self._tryLogIn)
+        self._loginDialog.open()
+
+    def _tryLogIn(self, ret):
+        self.supercast.tryConnect(ret)
+        prog = QDialog(self)
+        prog.open()
 
     def _handleSupercastEvents(self, event):
         (key, payload) = event
         if    key == 'success':
+            self._init2()
             self._supercastLogged = True
             self.supercastEnabled.emit()
-            self._finalizeInit()
             self.show()
         elif key == 'blocked':
             self.lockedTcpSocket.emit()
@@ -108,9 +123,38 @@ class NMainWindow(QMainWindow):
             self.close()
         elif key == 'abort':
             if self._supercastLogged == True: self.close()
+        elif key == 'socketError':
+            self._handleSocketError(payload)
+        elif key == 'authErr':
+            self._handleLoginError(payload)
 
-    def _finalizeInit(self):
-        nchecks.start(self)
+    def _handleLoginError(self, event):
+        msgbox = QMessageBox(self)
+        msgbox.setText("Login failure!")
+        msgbox.setInformativeText("Your user name and password does not match any known user on the server side. Maybe you have mispeled your password?")
+        msgbox.setStandardButtons(QMessageBox.Ok)
+        msgbox.setIcon(QMessageBox.Warning)
+        msgbox.setModal(True)
+        msgbox.exec()
+        self.close()
+
+    def _handleSocketError(self, event):
+        (msg, info) = event
+        self.lockedTcpSocket.emit()
+        self.setEnabled(False)
+        msgBox = QMessageBox(self)
+        msgBox.setText(msg)
+        msgBox.setInformativeText(info)
+        msgBox.setIcon(QMessageBox.Critical)
+        msgBox.setStandardButtons(QMessageBox.Close)
+        msgBox.setModal(True)
+        msgBox.exec()
+        self.close()
+    # Supercast end
+
+
+
+
 
     # Layout
     def _initLayout(self):
@@ -183,16 +227,20 @@ class NMainWindow(QMainWindow):
     # OVERLOADS #
     #############
     def closeEvent(self, event):
-        self.willClose.emit()
-        settings    = QSettings()
-        #settings.setValue("NMainWindow/geometry",       self.saveGeometry())
-        settings.setValue("NMainWindow/windowState",    self.saveState())
-        settings.setValue("NMainWindow/windowGeo",      self.saveGeometry())
-        settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
-        settings.setValue("NMainWindow/style",          self._sysmoStyle)
-        settings.setValue("NMainWindow/theme",          self._sysmoTheme)
-        self.supercast.supercastClose()
-        QMainWindow.closeEvent(self, event)
+        if self._init2Called:
+            self.hide()
+            self.willClose.emit()
+            settings    = QSettings()
+            settings.setValue("NMainWindow/windowState",    self.saveState())
+            settings.setValue("NMainWindow/windowGeo",      self.saveGeometry())
+            settings.setValue("NMainWindow/proxySettings",  self.activeProxySettings)
+            settings.setValue("NMainWindow/style",          self._sysmoStyle)
+            settings.setValue("NMainWindow/theme",          self._sysmoTheme)
+            self.supercast.supercastClose()
+            QMainWindow.closeEvent(self, event)
+        else:
+            QMainWindow.closeEvent(self, event)
+        
 
     ############
     # SETTINGS #

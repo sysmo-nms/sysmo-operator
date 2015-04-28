@@ -1,5 +1,6 @@
-from    PyQt5.QtNetwork    import QTcpSocket
+from    PyQt5.QtNetwork    import QTcpSocket, QAbstractSocket
 from    PyQt5.QtCore       import (
+        Qt,
         QThread, 
         QObject,
         QDataStream,
@@ -36,7 +37,7 @@ class SupercastSocket(QObject):
         self._socket = QTcpSocket()
         self._socket.connected.connect(self._socketConnected)
         self._socket.readyRead.connect(self._socketReadyRead)
-        self._socket.error.connect(self._socketErrorEvent)
+        self._socket.error.connect(self._socketErrorEvent, Qt.DirectConnection)
 
     def _handleServerMessage(self, payload):
         message = decode(payload)
@@ -46,7 +47,7 @@ class SupercastSocket(QObject):
         self.mQueue.emit(('socketConnected', None))
 
     def _socketErrorEvent(self, event):
-        self.mQueue.emit(('socketError', event))
+        self.mQueue.emit(('socketError', int(event)))
 
     def _handleClientMessage(self, msg):
         (key, payload) = msg

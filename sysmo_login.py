@@ -13,26 +13,15 @@ from    PyQt5.QtWidgets        import (
     QProgressDialog
 )
 from    PyQt5.QtSvg        import QSvgWidget
+from    PyQt5.QtCore       import pyqtSignal
 import  sysmapi
 
-class Query(QDialog):
-    def __init__(self, parent, uncle):
-        super(Query, self).__init__(parent)
+class LogInDialog(QDialog):
+    loginPressed = pyqtSignal(dict)
+    def __init__(self, ref, parent=None):
+        QDialog.__init__(self, parent)
         self.setFixedWidth(300)
-
-        #image = QLabel('logo, version maj, version min', self)
-        #image.setFixedWidth(200)
-        #image.setFrameShadow(QFrame.Plain)
-        #image.setFrameStyle(QFrame.StyledPanel)
-
-        self._uncle     = uncle
-        self.callback   = uncle.tryConnect
-
-        self._prog = QProgressDialog(self)
-        self._prog.setMinimum(0)
-        self._prog.setMaximum(0)
-        self._prog.hide()
-        self._prog.canceled.connect(self._uncle.resetConn)
+        self._ref = ref
 
         # dev shortcuts
         autoName    = 'admin'
@@ -84,12 +73,12 @@ class Query(QDialog):
             self.tr("&Log In"),
             self)
         ok.setDefault(True)
-        ok.clicked.connect(self.tryValidate)
+        ok.clicked.connect(self._tryValidate)
 
         ko = QPushButton(
             self.tr("&Close"),
             self)
-        ko.clicked.connect(self._loginAbort)
+        ko.clicked.connect(self.reject)
 
         buttons = QDialogButtonBox(self)
         buttons.addButton(ok,   QDialogButtonBox.RejectRole)
@@ -107,47 +96,11 @@ class Query(QDialog):
         grid.setRowStretch(1,0)
         self.setLayout(grid)
 
-    def _loginAbort(self):
-        self.hide()
-        self.deleteLater()
-        self._uncle.loginAbort()
-        
-    def tryValidate(self):
+    def _tryValidate(self):
         tryDict = dict()
         tryDict['name']     = self.nameLineEdit.text()
         tryDict['pass']     = self.passLineEdit.text()
         tryDict['server']   = self.serverLineEdit.text()
         tryDict['port']     = self.serverPortEdit.value()
-        self.callback(tryDict)
-        self._prog.setLabelText("Trying to log in on server %s:%i" % (tryDict['server'], tryDict['port']))
-        self.hide()
-        self._prog.show()
-
-    def authError(self, msg):
-        self._prog.hide()
-        self._prog.deleteLater()
-        msgbox = QMessageBox(self)
-        msgbox.setText("Login failure!")
-        msgbox.setInformativeText("Your user name and password does not match any known user on the server side. Maybe you have mispeled your password?")
-        msgbox.setStandardButtons(QMessageBox.Ok)
-        msgbox.setIcon(QMessageBox.Warning)
-        msgbox.setModal(True)
-        msgbox.exec_()       
-        self.show()
-        self._uncle.resetConn()
-
-    def hideAll(self):
-        self._prog.hide()
-        self.hide()
-
-    def retry(self):
-        self._prog.hide()
-        self.show()
-
-    def tcpConnected(self, state): pass
-
-    def supConnected(self, state): pass
-
-    def end(self):
-        self._prog.hide()
-        self.hide()
+        self.accept()
+        self.loginPressed.emit(tryDict)
