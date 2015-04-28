@@ -1,4 +1,4 @@
-from    PyQt5.QtGui            import QIcon
+from    PyQt5.QtGui            import QIcon, QPixmap
 from    PyQt5.QtWidgets        import (
     QLabel,
     QDialog,
@@ -15,12 +15,14 @@ from    PyQt5.QtWidgets        import (
 from    PyQt5.QtSvg        import QSvgWidget
 from    PyQt5.QtCore       import pyqtSignal
 import  sysmapi
+from sysmo_widgets import NFrameContainer, NGridContainer
+from sysmo_images import getPixmap
 
 class LogInDialog(QDialog):
     loginPressed = pyqtSignal(dict)
     def __init__(self, ref, parent=None):
         QDialog.__init__(self, parent)
-        self.setFixedWidth(300)
+        #self.setFixedWidth(350)
         self._ref = ref
 
         # dev shortcuts
@@ -85,16 +87,26 @@ class LogInDialog(QDialog):
         buttons.addButton(ko,   QDialogButtonBox.ApplyRole)
 
 
+        banner = QLabel(self)
+        pix = getPixmap("operator-banner")
+        ret = banner.setPixmap(pix)
+        print("ret: " + str(ret) + "  " + str(pix) + " " + str(banner.pixmap()))
         # LAYOUT
-        grid = QGridLayout(self)
+
+        fr = NFrameContainer(self)
+        grid = QGridLayout(fr)
         grid.setHorizontalSpacing(14)
         grid.setVerticalSpacing(22)
-        #grid.addWidget(image, 0,0,2,1)
-        grid.addWidget(formFrame,   0,1)
-        grid.addWidget(buttons,     1,1)
+
+        grid.addWidget(banner,      0,0)
+        grid.addWidget(formFrame,   1,0)
+        grid.addWidget(buttons,     2,0)
         grid.setRowStretch(0,1)
-        grid.setRowStretch(1,0)
-        self.setLayout(grid)
+        grid.setRowStretch(1,1)
+        grid.setRowStretch(2,0)
+        gr = NGridContainer(self)
+        gr.addWidget(banner)
+        gr.addWidget(fr)
 
     def _tryValidate(self):
         tryDict = dict()

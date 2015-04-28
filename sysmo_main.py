@@ -50,7 +50,7 @@ class NMainWindow(QMainWindow):
         sysmoGraphicsInit()
 
         self.setObjectName('MainWindow')
-        self.setWindowIcon(QIcon(getPixmap('applications-development')))
+        self.setWindowIcon(QIcon(getPixmap("sysmo")))
         self.setWindowTitle('Sysmo')
 
         self._initSupercast()
@@ -133,7 +133,7 @@ class NMainWindow(QMainWindow):
         msgbox.setText("Login failure!")
         msgbox.setInformativeText("Your user name and password does not match any known user on the server side. Maybe you have mispeled your password?")
         msgbox.setStandardButtons(QMessageBox.Ok)
-        msgbox.setIcon(QMessageBox.Warning)
+        msgbox.setIconPixmap(getPixmap('dialog-error'))
         msgbox.setModal(True)
         msgbox.exec()
         self.close()
@@ -142,13 +142,13 @@ class NMainWindow(QMainWindow):
         (msg, info) = event
         self.lockedTcpSocket.emit()
         self.setEnabled(False)
-        msgBox = QMessageBox(self)
-        msgBox.setText(msg)
-        msgBox.setInformativeText(info)
-        msgBox.setIcon(QMessageBox.Critical)
-        msgBox.setStandardButtons(QMessageBox.Close)
-        msgBox.setModal(True)
-        msgBox.exec()
+        msgbox = QMessageBox(self)
+        msgbox.setText(msg)
+        msgbox.setInformativeText(info)
+        msgbox.setIconPixmap(getPixmap('dialog-error'))
+        msgbox.setStandardButtons(QMessageBox.Close)
+        msgbox.setModal(True)
+        msgbox.exec()
         self.close()
     # Supercast end
 
@@ -178,7 +178,7 @@ class NMainWindow(QMainWindow):
     # Tray
     def _initTray(self):
         self._trayIcon = QSystemTrayIcon(self)
-        self._trayIcon.setIcon(QIcon(getPixmap('applications-development')))
+        self._trayIcon.setIcon(QIcon(getPixmap('sysmo')))
         self._trayIcon.setVisible(True)
         self._trayIcon.activated.connect(self._trayClic)
 
