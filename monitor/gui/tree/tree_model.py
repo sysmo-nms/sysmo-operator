@@ -24,7 +24,7 @@ class ProbeModel(QStandardItemModel):
                 "Step/Timeout",
                 "State",
                 "Host",
-                "Last 72 hours timeline"
+                "Last return"
         ])
         monapi.connectToEvent('infoTarget', self._handleTargetInfo)
         monapi.connectToEvent('infoProbe',  self._handleProbeInfo)
@@ -64,8 +64,8 @@ class ProbeModel(QStandardItemModel):
             t = TargetItem(msg)
             self.appendRow([
                 t, t.row2, t.row3_status,
-                t.row4, t.row5, t.row6_host, t.row7_timeline])
-                #t.row4, t.row5, t.row6_host, t.row7_timeline])
+                t.row4, t.row5, t.row6_host, t.row7_lastReturn])
+                #t.row4, t.row5, t.row6_host, t.row7_lastReturn])
         else:
             self._updateRow(target, msg)
         self._probeView.expandAll()
@@ -131,11 +131,11 @@ class TargetItem(QStandardItem):
 
         self.row3_status    = QStandardItem()
         self.row6_host      = QStandardItem()
-        self.row7_timeline  = QStandardItem()
+        self.row7_lastReturn  = QStandardItem()
 
         #self.row3_status.setData('status', role=Qt.DisplayRole)
         self.row6_host.setData(self.targetDict['value']['properties']['host'], role=Qt.DisplayRole)
-        self.row7_timeline.setData('', role=Qt.DisplayRole)
+        self.row7_lastReturn.setData('', role=Qt.DisplayRole)
 
     def data(self, role):
         name = self.targetDict['value']['properties']['name']
@@ -174,7 +174,7 @@ class TargetItem(QStandardItem):
             p = ProbeItem(msg, self)
             self.appendRow([
                 p, p.row2_progress, p.row3_status, 
-                p.row4_trigger, p.row5_state, p.row6_host, p.row7_timeline])
+                p.row4_trigger, p.row5_state, p.row6_host, p.row7_lastReturn])
                 #p.row4_trigger, p.row5_state, p.row6_host, p.row7_time])
         else:
             child.updateState(msg)
@@ -302,6 +302,7 @@ class ProbeItem(QStandardItem):
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
         self._initColumnItems()
+        self._lastReturn = ''
 
     def _initColumnItems(self):
         #loggers = list(self.probeDict['value']['loggers'].keys())
@@ -330,12 +331,15 @@ class ProbeItem(QStandardItem):
         self.row6_host  = QStandardItem()
         #self.row6_host.setData('host', role=Qt.DisplayRole)
 
-        self.row7_timeline  = QStandardItem()
-        self.row7_timeline.setData('timeline', role=Qt.DisplayRole)
+        self.row7_lastReturn  = QStandardItem()
+        self.row7_lastReturn.setData('last return', role=Qt.DisplayRole)
 
 
     def handleReturn(self, msg):
         self.setToolTip(msg['value']['replyString'])
+        self._lastReturn = msg['value']['replyString']
+        self.row7_lastReturn.setData(self._lastReturn, role=Qt.DisplayRole)
+        self.row7_lastReturn.emitDataChanged()
         val = msg['value']['nextReturn']
         self.row2_progress.setRemaining(val)
 
@@ -362,11 +366,8 @@ class ProbeItem(QStandardItem):
             return self.probeDict['value']['timeout']
         elif role == (Qt.UserRole + 7):
             return self.probeDict['value']['active']
-        elif role == (Qt.UserRole + 8):
-            #if self._type == 'bmonitor_probe_ncheck':
-                #return self.probeDict['value']['probeconf']
-            #else:
-            return ''
+        elif role == (Qt.UserRole + 8): return
+            #return self._lastReturn
         else:
             return QStandardItem.data(self, role)
 

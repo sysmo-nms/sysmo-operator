@@ -37,13 +37,14 @@ class MainSplitter(QSplitter):
         self.setCollapsible(1,False)
 
         self._loadSettings()
+        self._maps.hide()
 
     def _toggle(self, msg):
         if msg['id'] != 'monitor': return
-        if self._maps.isVisible() == True:
-            self._maps.hide()
-        else:
-            self._maps.show()
+        #if self._maps.isVisible() == True:
+        #    self._maps.hide()
+        #else:
+        #    self._maps.show()
 
     def _loadSettings(self):
         settings = QSettings()
