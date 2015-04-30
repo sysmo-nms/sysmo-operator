@@ -22,7 +22,7 @@ class LogInDialog(QDialog):
     loginPressed = pyqtSignal(dict)
     def __init__(self, ref, parent=None):
         QDialog.__init__(self, parent)
-        #self.setFixedWidth(350)
+        self.setFixedWidth(400)
         self._ref = ref
 
         # dev shortcuts
@@ -87,10 +87,9 @@ class LogInDialog(QDialog):
         buttons.addButton(ko,   QDialogButtonBox.ApplyRole)
 
 
-        banner = QLabel(self)
-        pix = getPixmap("operator-banner")
-        ret = banner.setPixmap(pix)
-        print("ret: " + str(ret) + "  " + str(pix) + " " + str(banner.pixmap()))
+        #banner = QLabel(self)
+        #pix = getPixmap("operator-banner")
+        #ret = banner.setPixmap(pix)
         # LAYOUT
 
         fr = NFrameContainer(self)
@@ -98,14 +97,14 @@ class LogInDialog(QDialog):
         grid.setHorizontalSpacing(14)
         grid.setVerticalSpacing(22)
 
-        grid.addWidget(banner,      0,0)
+        #grid.addWidget(banner,      0,0)
         grid.addWidget(formFrame,   1,0)
         grid.addWidget(buttons,     2,0)
         grid.setRowStretch(0,1)
         grid.setRowStretch(1,1)
         grid.setRowStretch(2,0)
         gr = NGridContainer(self)
-        gr.addWidget(banner)
+        #gr.addWidget(banner)
         gr.addWidget(fr)
 
     def _tryValidate(self):
@@ -114,5 +113,5 @@ class LogInDialog(QDialog):
         tryDict['pass']     = self.passLineEdit.text()
         tryDict['server']   = self.serverLineEdit.text()
         tryDict['port']     = self.serverPortEdit.value()
-        self.accept()
+        self.setDisabled(True)
         self.loginPressed.emit(tryDict)

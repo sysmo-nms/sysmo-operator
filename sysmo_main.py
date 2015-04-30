@@ -106,12 +106,11 @@ class NMainWindow(QMainWindow):
 
     def _tryLogIn(self, ret):
         self.supercast.tryConnect(ret)
-        prog = QDialog(self)
-        prog.open()
 
     def _handleSupercastEvents(self, event):
         (key, payload) = event
         if    key == 'success':
+            self._loginDialog.close()
             self._init2()
             self._supercastLogged = True
             self.supercastEnabled.emit()
@@ -124,8 +123,10 @@ class NMainWindow(QMainWindow):
         elif key == 'abort':
             if self._supercastLogged == True: self.close()
         elif key == 'socketError':
+            self._loginDialog.close()
             self._handleSocketError(payload)
         elif key == 'authErr':
+            self._loginDialog.close()
             self._handleLoginError(payload)
 
     def _handleLoginError(self, event):
