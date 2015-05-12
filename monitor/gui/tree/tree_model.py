@@ -272,24 +272,12 @@ class ProgressItem(QStandardItem):
         self._progress = 0
         self._updateData()
 
-class LoggerItem(QStandardItem):
-    LoggersRole = Qt.UserRole + 1
-    def __init__(self, loggers):
-        super(LoggerItem, self).__init__()
-        self.setData(loggers, LoggerItem.LoggersRole)
-        display = ''
-        for i in range(len(loggers)):
-            display = display + " " + loggers[i] 
-        self.setData(display, Qt.DisplayRole)
-
 class ProbeItem(QStandardItem):
     def __init__(self, data, parentItem):
         super(ProbeItem, self).__init__()
         self._ticvalue = 0
-        #ProbeModel.singleton.ticsignal.timeout.connect(self._tictimeout)
 
-
-        self._decoIcon = QIcon(sysmapi.nGetPixmap('satellite'))
+        #self._decoIcon = QIcon(sysmapi.nGetPixmap('satellite'))
         self._parentItem = parentItem
         self._lastReturn = ""
         self._type      = data['value']['probeMod']
@@ -299,15 +287,13 @@ class ProbeItem(QStandardItem):
         self.target     = data['value']['target']
         self.status     = data['value']['status']
         self.probeDict = data
+        self._setIconStatus()
         self.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
         self.setColumnCount(8)
         self._initColumnItems()
         self._lastReturn = ''
 
     def _initColumnItems(self):
-        #loggers = list(self.probeDict['value']['loggers'].keys())
-        #self.row1_log   = LoggerItem(loggers)
-
         timeout = self.probeDict['value']['timeout']
         step    = self.probeDict['value']['step']
         self.row2_progress = ProgressItem((step, timeout))
@@ -342,6 +328,7 @@ class ProbeItem(QStandardItem):
         self.row7_lastReturn.emitDataChanged()
         val = msg['value']['nextReturn']
         self.row2_progress.setRemaining(val)
+        self._setIconStatus()
 
     def data(self, role):
         if   role == Qt.DecorationRole:
@@ -379,12 +366,14 @@ class ProbeItem(QStandardItem):
 
     def __lt__(self, other): pass
 
-    def _getIconStatus(self):
+    def _setIconStatus(self):
         if self.status == 'DOWN':
-            return QIcon(sysmapi.nGetPixmap('weather-clear-night'))
-        if self.status == 'WARNING':
-            return QIcon(sysmapi.nGetPixmap('weather-showers'))
-        if self.status == 'CRITICAL':
-            return QIcon(sysmapi.nGetPixmap('weather-severe-alert'))
-        if self.status == 'OK':
-            return QIcon(sysmapi.nGetPixmap('weather-clear'))
+            self._decoIcon = QIcon(sysmapi.nGetPixmap('weather-clear-night'))
+        elif self.status == 'WARNING':
+            self._decoIcon = QIcon(sysmapi.nGetPixmap('weather-showers'))
+        elif self.status == 'CRITICAL':
+            self._decoIcon = QIcon(sysmapi.nGetPixmap('weather-severe-alert'))
+        elif self.status == 'OK':
+            self._decoIcon = QIcon(sysmapi.nGetPixmap('weather-clear'))
+        elif self.status == 'ERROR':
+            self._decoIcon = QIcon(sysmapi.nGetPixmap('weather-clear-night'))

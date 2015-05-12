@@ -39,27 +39,6 @@ class StatusItemDelegate(QStyledItemDelegate):
     def sizeHint(self, option, index):
         return self._imageSize
 
-
-class LoggerItemDelegate(QStyledItemDelegate):
-    def __init__(self, parent):
-        super(LoggerItemDelegate, self).__init__(parent)
-        self._rrdToolLogo   = QImage(sysmapi.nGetImage('rrdtool-logo'))
-        self._rrdToolSize   = QSize(80,25)
-
-    def paint(self, painter, option, index):
-        loggers = index.data(treemod.LoggerItem.LoggersRole)
-        if loggers == None:
-            QStyledItemDelegate.paint(self, painter, option, index)
-        elif 'rrd_snmp_table_logger' in loggers:
-            cartouche = QRect(option.rect)
-            cartouche.setSize(self._rrdToolSize)
-            if option.state & QStyle.State_Selected:
-                painter.fillRect(option.rect, option.palette.highlight())
-            painter.drawImage(cartouche, self._rrdToolLogo)
-        else:
-            QStyledItemDelegate.paint(self, painter, option, index)
-
-
 class ProgressItemDelegate2(QStyledItemDelegate):
     def __init__(self, parent):
         super(ProgressItemDelegate2, self).__init__(parent)
@@ -71,6 +50,9 @@ class ProgressItemDelegate(QStyledItemDelegate):
         super(ProgressItemDelegate, self).__init__(parent)
 
     def paint(self, painter, option, index):
+        QStyledItemDelegate.paint(self,painter,option,index)
+        painter.save()
+
         step    = index.data(treemod.ProgressItem.StepRole)
         if step == None:
             QStyledItemDelegate.paint(self, painter, option, index)
@@ -96,11 +78,12 @@ class ProgressItemDelegate(QStyledItemDelegate):
                 opts.text    = 'Step: %s' % (step - prog)
     
             opts.rect = option.rect
-            opts.textVisible = False
+            opts.textVisible = True
             opts.minimum = 0
             opts.maximum  = maxi
             opts.progress = prog
             QApplication.style().drawControl(QStyle.CE_ProgressBar, opts, painter) 
+        painter.restore()
 
 
 class TriggerItemDelegate(QStyledItemDelegate):

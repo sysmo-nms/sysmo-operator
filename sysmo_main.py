@@ -85,7 +85,7 @@ class NMainWindow(QMainWindow):
         rrdColorTheme['FRAME']  = getRgba('Window')
         rrdColorTheme['ARROW']  = getRgba('Shadow')
         rrdColorTheme['XAXIS']  = getRgba('Dark')
-        pyrrd4j.init(rrdColorTheme, self)
+        #pyrrd4j.init(rrdColorTheme, self)
 
 
 

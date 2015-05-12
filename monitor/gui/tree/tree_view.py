@@ -26,7 +26,7 @@ class ProbesTreeview(QTreeView):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._showMenu)
         self.setObjectName('backTree')
-        self.setIconSize(QSize(20, 20)) 
+        self.setIconSize(QSize(24, 24)) 
         self.setAnimated(False)
         self.setAlternatingRowColors(True)
         self.setStyleSheet('''QFrame#backTree { 
