@@ -42,7 +42,7 @@ class SupercastAccessManagerThread(QObject):
         
         self._urlHead = "%s://%s:%i" % (proto, server, port)
         self._manager = QNetworkAccessManager(self)
-        #self._manager.finished[QNetworkReply].connect(self._handleReply)
+        self._manager.finished[QNetworkReply].connect(self._handleReply)
         self._replyDict = dict()
 
     def _handleReply(self, reply):
