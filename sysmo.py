@@ -1,6 +1,12 @@
+# first of all, initialize logger. Logs are available in the LocalAppData
+# directory.
+import sysmo_log
+sysmo_log.init_logger()
+
+# then platform specifics checks
+import platform
+import os
 if '__file__' not in locals():
-    import platform
-    import os
     if platform.system() == 'Windows':
         import winreg
         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Sysmo\\Sysmo Core", 0, winreg.KEY_READ)
@@ -13,20 +19,21 @@ if '__file__' not in locals():
     if platform.system() == 'Linux': pass
 
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtCore    import QSettings, QTranslator, QObject
+from PyQt5.QtCore    import QSettings, QTranslator, QObject, QStandardPaths
+
+
 import sys
 import sysmo_main
 import sysmo_colors
 
+# theming check and set
 DEFAULT_PALETTE = 'dark'
-
 QApplication.setStyle('fusion')
 defaultPalette = QApplication.palette()
 sysmoSettings   = QSettings("Sysmo Monitor", "sysmo-operator")
 sysmoTheme      = sysmoSettings.value("NMainWindow/theme")
 sysmoMenuTheme  = sysmoSettings.value("NMainWindow/menuTheme")
 sysmoMenuBarTheme = sysmoSettings.value("NMainWindow/menuBarTheme")
-
 
 if (sysmoTheme != None and sysmoTheme != 'native'):
     colorPalette = sysmo_colors.getPalette(sysmoTheme)
@@ -38,9 +45,11 @@ if (sysmoMenuBarTheme != None and sysmoMenuBarTheme != 'native'):
 if (sysmoMenuTheme != None and sysmoMenuTheme != 'native'):
     QApplication.setPalette(sysmo_colors.getPalette(sysmoMenuTheme), "QMenu")
 
+# translator if available 
 translator   = QTranslator()
 translator.load('fr_FR')
 
+# then start
 sysmoApp  = QApplication(sys.argv)
 sysmoApp.installTranslator(translator)
 sysmoApp.setOrganizationName("Sysmo Monitor")
