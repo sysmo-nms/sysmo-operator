@@ -9,6 +9,16 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(new CentralWidget(this));
 }
 
+void MainWindow::initMenus()
+{
+
+}
+
+void MainWindow::initStatusBar()
+{
+
+}
+
 MainWindow::~MainWindow()
 {
 
