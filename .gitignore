@@ -1,2 +1,9 @@
-*.pro.user
-*~
+# emacs
+/*~
+
+# build
+/*.o
+/moc_*
+/qrc_*
+/Makefile
+/sysmo-operator
