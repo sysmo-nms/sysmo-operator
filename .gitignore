@@ -7,4 +7,4 @@
 /qrc_*
 /Makefile
 /sysmo-operator
-sysmo-operator.pro.user
+/sysmo-operator.pro.user*
