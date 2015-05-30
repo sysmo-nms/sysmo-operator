@@ -1,14 +1,18 @@
 #ifndef MONITOR_H
 #define MONITOR_H
 
-#include "nframecontainer.h"
+#include "nframe.h"
 #include "ngrid.h"
+#include "monitor_tree/treeview.h"
 
 #include <QObject>
 #include <QWidget>
 #include <QLabel>
+#include <QFrame>
+#include <QPushButton>
+#include <QLineEdit>
 
-class Monitor : public NFrameContainer
+class Monitor : public NFrame
 {
 public:
     Monitor(QWidget *parent = 0);

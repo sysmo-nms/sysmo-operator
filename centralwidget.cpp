@@ -1,7 +1,7 @@
 #include "centralwidget.h"
 
 CentralWidget::CentralWidget(QWidget *parent)
-   : NFrame(parent)
+   : NFrameContainer(parent)
 {
     // Left selector
     NFrameContainer *selector = new NFrameContainer(this);
@@ -44,8 +44,8 @@ CentralWidget::CentralWidget(QWidget *parent)
     // Final grid
     NGrid *grid = new NGrid();
     this->setLayout(grid);
-    grid->setHorizontalSpacing(6);
-    grid->setVerticalSpacing(6);
+    grid->setHorizontalSpacing(5);
+    grid->setVerticalSpacing(5);
     grid->setColumnStretch(0,0);
     grid->setColumnStretch(1,1);
     grid->addWidget(selector, 0,0);

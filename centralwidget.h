@@ -16,7 +16,7 @@
 #include <QButtonGroup>
 #include <QStackedLayout>
 
-class CentralWidget : public NFrame
+class CentralWidget : public NFrameContainer
 {
 public:
     CentralWidget(QWidget *parent = 0);

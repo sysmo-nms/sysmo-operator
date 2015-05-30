@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     nframecontainer.cpp \
     sidebutton.cpp \
     monitor.cpp \
-    dashboard.cpp
+    dashboard.cpp \
+    monitor_tree/treeview.cpp \
+    monitor_tree/treemodel.cpp \
+    monitor_tree/treedelegateprogress.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -31,7 +34,10 @@ HEADERS  += mainwindow.h \
     nframecontainer.h \
     sidebutton.h \
     monitor.h \
-    dashboard.h
+    dashboard.h \
+    monitor_tree/treeview.h \
+    monitor_tree/treemodel.h \
+    monitor_tree/treedelegateprogress.h
 
 RESOURCES += \
     ressources.qrc
