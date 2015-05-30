@@ -8,6 +8,11 @@
 #include <QString>
 #include <QLabel>
 #include <QWidget>
+#include <QAction>
+#include <QActionGroup>
+#include <QMenuBar>
+#include <QMenu>
+#include <QStatusBar>
 
 class MainWindow : public QMainWindow
 {

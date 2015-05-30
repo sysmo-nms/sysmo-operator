@@ -18,8 +18,8 @@ Monitor::Monitor(QWidget *parent)
     TreeView *tree = new TreeView(this);
 
     grid->addWidget(create, 0,0);
-    grid->addWidget(search, 0,1);
-    grid->addWidget(clear,  0,2);
+    grid->addWidget(clear,  0,1);
+    grid->addWidget(search, 0,2);
     grid->addWidget(tree,   1,0,1,4);
     grid->setColumnStretch(0,0);
     grid->setColumnStretch(1,0);

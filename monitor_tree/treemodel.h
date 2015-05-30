@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QStandardItemModel>
+#include <QStringList>
 
 class TreeModel : public QStandardItemModel
 {
