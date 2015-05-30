@@ -13,19 +13,25 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
     centralwidget.cpp \
     ngrid.cpp \
     ngridcontainer.cpp \
     nframe.cpp \
-    nframecontainer.cpp
+    nframecontainer.cpp \
+    sidebutton.cpp \
+    monitor.cpp \
+    dashboard.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
     ngrid.h \
     ngridcontainer.h \
     nframe.h \
-    nframecontainer.h
+    nframecontainer.h \
+    sidebutton.h \
+    monitor.h \
+    dashboard.h
 
 RESOURCES += \
     ressources.qrc
