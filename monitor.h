@@ -22,7 +22,7 @@ class Monitor : public NFrame
 
 public:
     Monitor(QWidget *parent = 0);
-    NewTarget * new_target;
+    NewTarget *new_target_dialog;
 public slots:
     void newTarget();
 };

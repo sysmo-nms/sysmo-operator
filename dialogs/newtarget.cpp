@@ -5,4 +5,3 @@ NewTarget::NewTarget(QWidget *parent)
 {
     this->hide();
 }
-
