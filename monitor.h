@@ -17,8 +17,12 @@
 
 class Monitor : public NFrame
 {
+    Q_OBJECT
+
 public:
     Monitor(QWidget *parent = 0);
+public slots:
+    void newTarget();
 };
 
 #endif // MONITOR_H

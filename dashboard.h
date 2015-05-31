@@ -11,6 +11,8 @@
 
 class Dashboard : public NFrame
 {
+    Q_OBJECT
+
 public:
     Dashboard(QWidget *parent = 0);
 };

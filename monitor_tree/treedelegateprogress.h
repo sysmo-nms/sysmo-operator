@@ -7,6 +7,8 @@
 
 class TreeDelegateProgress : public QStyledItemDelegate
 {
+    Q_OBJECT
+
 public:
     TreeDelegateProgress(QWidget *parent);
     void paint(

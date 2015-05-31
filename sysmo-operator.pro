@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     dashboard.cpp \
     monitor_tree/treeview.cpp \
     monitor_tree/treemodel.cpp \
-    monitor_tree/treedelegateprogress.cpp
+    monitor_tree/treedelegateprogress.cpp \
+    dialogs/newtarget.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     dashboard.h \
     monitor_tree/treeview.h \
     monitor_tree/treemodel.h \
-    monitor_tree/treedelegateprogress.h
+    monitor_tree/treedelegateprogress.h \
+    dialogs/newtarget.h
 
 RESOURCES += \
     ressources.qrc

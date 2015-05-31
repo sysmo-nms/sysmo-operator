@@ -3,7 +3,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    this->setWindowIcon(QIcon(":/ressources/logo32.png"));
+    this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
     this->setWindowTitle(QString("Sysmo Operator"));
     this->setObjectName("MainWindow");
     this->setCentralWidget(new CentralWidget(this));
@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QMenuBar *menu_bar  = this->menuBar();
     QMenu    *main_menu = menu_bar->addMenu(QString("Sysmo"));
-    QAction  *action_exit        = new QAction(QString("&Exit"), this);
-    action_exit->setIcon(QIcon(":/ressources/system-log-out32.png"));
+    QAction  *action_exit = new QAction(QString("&Exit"), this);
+    action_exit->setIcon(QIcon(":/ressources/images/32/system-log-out.png"));
     action_exit->setShortcut(QKeySequence(QString("Ctrl+Q")));
     QObject::connect(
                 action_exit, SIGNAL(triggered(bool)),
@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     QAction  *action_doc_engine  = new QAction(QString("&Configure doc engine..."),this);
     QAction  *action_updates     = new QAction(QString("&Check for updates..."), this);
     QAction  *action_full_screen = new QAction(QString("&Full screen"), this);
-    action_full_screen->setIcon(QIcon(":/ressources/view-fullscreen32.png"));
+    action_full_screen->setIcon(QIcon(":/ressources/images/32/view-fullscreen.png"));
     action_full_screen->setShortcut(QKeySequence(QString("Ctrl+F")));
     QObject::connect(
                 action_full_screen, SIGNAL(triggered(bool)),

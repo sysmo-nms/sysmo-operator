@@ -6,6 +6,7 @@
 
 class NFrameContainer : public QFrame
 {
+    Q_OBJECT
 public:
     NFrameContainer(QWidget *parent = 0);
 };

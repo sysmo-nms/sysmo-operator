@@ -10,9 +10,14 @@ Monitor::Monitor(QWidget *parent)
 
     // top controls
     QPushButton *create = new QPushButton(this);
+    create->setIcon(QIcon(":/ressources/images/32/list-add.png"));
+    /*
+    QObject::connect(
+                create, SIGNAL(clicked(bool)),
+                this,   SLOT(newTarget()));
+                */
     QPushButton *clear  = new QPushButton(this);
-    create->setIcon(QIcon(":/ressources/list-add32.png"));
-    clear->setIcon(QIcon(":/ressources/edit-clear32.png"));
+    clear->setIcon(QIcon(":/ressources/images/32/edit-clear.png"));
     QLineEdit   *search = new QLineEdit(this);
     search->setFixedWidth(250);
 
@@ -46,3 +51,9 @@ Monitor::Monitor(QWidget *parent)
     grid->setRowStretch(1,1);
 }
 
+
+void Monitor::newTarget()
+{
+    this->setEnabled(false);
+
+}

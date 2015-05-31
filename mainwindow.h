@@ -15,6 +15,7 @@
 #include <QStatusBar>
 #include <QIcon>
 #include <QKeySequence>
+#include <QObject>
 
 class MainWindow : public QMainWindow
 {

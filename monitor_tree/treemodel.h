@@ -8,6 +8,8 @@
 
 class TreeModel : public QStandardItemModel
 {
+    Q_OBJECT
+
 public:
     TreeModel(QWidget *parent = 0);
 };

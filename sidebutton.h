@@ -10,6 +10,8 @@
 
 class SideButton : public QPushButton
 {
+    Q_OBJECT
+
 public:
     SideButton(QWidget *parent = 0);
 };
