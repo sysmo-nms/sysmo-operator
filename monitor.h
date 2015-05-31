@@ -2,7 +2,9 @@
 #define MONITOR_H
 
 #include "nframe.h"
+#include "nframecontainer.h"
 #include "ngrid.h"
+#include "ngridcontainer.h"
 #include "monitor_tree/treeview.h"
 
 #include <QObject>
@@ -11,6 +13,7 @@
 #include <QFrame>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QIcon>
 
 class Monitor : public NFrame
 {

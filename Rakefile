@@ -1,4 +1,4 @@
-#
+# -*- mode: ruby -*-
 
 task :default => :build
 
@@ -13,4 +13,9 @@ end
 
 task :linked do
   sh "ldd ./sysmo-operator"
+end
+
+task :side_icons do
+  sh "inkscape -z --export-png=images/custom/dashboard-black.png -w 30 images/dashboard-black.svg"
+  sh "inkscape -z --export-png=images/custom/monitor-black.png -w 30 images/monitor-black.svg"
 end

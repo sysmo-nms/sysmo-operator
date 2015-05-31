@@ -1,5 +1,13 @@
 <RCC>
     <qresource prefix="/ressources">
-        <file>images/32/logo.png</file>
+        <file alias="logo32.png">images/32/logo.png</file>
+        <file alias="list-add32.png">images/32/list-add.png</file>
+        <file alias="edit-clear32.png">images/32/edit-clear.png</file>
+        <file alias="system-log-out32.png">images/32/system-log-out.png</file>
+        <file alias="view-fullscreen32.png">images/32/view-fullscreen.png</file>
+        <file>images/32/preferences-desktop-theme.png</file>
+        <file>images/32/dialog-information.png</file>
+        <file>images/custom/monitor-black.png</file>
+        <file>images/custom/dashboard-black.png</file>
     </qresource>
 </RCC>

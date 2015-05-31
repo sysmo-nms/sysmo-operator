@@ -15,6 +15,8 @@
 #include <QLabel>
 #include <QButtonGroup>
 #include <QStackedLayout>
+#include <QSize>
+#include <QIcon>
 
 class CentralWidget : public NFrameContainer
 {

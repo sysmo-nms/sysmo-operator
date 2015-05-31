@@ -5,6 +5,5 @@ SideButton::SideButton(QWidget *parent)
 {
     QSizePolicy size_pol = QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     this->setSizePolicy(size_pol);
-
 }
 

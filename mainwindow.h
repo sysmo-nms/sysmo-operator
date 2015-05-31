@@ -13,6 +13,8 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QStatusBar>
+#include <QIcon>
+#include <QKeySequence>
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +23,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void toggleFullScreen();
 private:
 
 };

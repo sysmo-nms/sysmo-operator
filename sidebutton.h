@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QSizePolicy>
+#include <QSize>
+#include <QIcon>
 
 class SideButton : public QPushButton
 {

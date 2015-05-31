@@ -9,7 +9,11 @@ CentralWidget::CentralWidget(QWidget *parent)
     selector->setContentsMargins(0,2,0,2);
 
     SideButton *monitor_button   = new SideButton(this);
+    monitor_button->setIconSize(QSize(32,110));
+    monitor_button->setIcon(QIcon(":/ressources/images/custom/monitor-black.png"));
     SideButton *dashboard_button = new SideButton(this);
+    dashboard_button->setIconSize(QSize(32,110));
+    dashboard_button->setIcon(QIcon(":/ressources/images/custom/dashboard-black.png"));
 
     QButtonGroup *selector_group = new QButtonGroup(this);
     selector_group->addButton(monitor_button,   MONITOR);
