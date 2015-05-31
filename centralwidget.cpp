@@ -8,7 +8,7 @@ CentralWidget::CentralWidget(QWidget *parent)
     selector->setFixedWidth(30);
     selector->setContentsMargins(0,2,0,2);
 
-    SideButton *monitor_button   = new SideButton(this);
+    SideButton* monitor_button   = new SideButton(this);
     monitor_button->setIconSize(QSize(32,115));
     monitor_button->setIcon(QIcon(":/ressources/images/custom/monitor-black.png"));
     SideButton *dashboard_button = new SideButton(this);

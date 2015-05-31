@@ -5,6 +5,7 @@
 #include "nframecontainer.h"
 #include "ngrid.h"
 #include "ngridcontainer.h"
+#include "dialogs/newtarget.h"
 #include "monitor_tree/treeview.h"
 
 #include <QObject>
@@ -21,6 +22,7 @@ class Monitor : public NFrame
 
 public:
     Monitor(QWidget *parent = 0);
+    NewTarget * new_target;
 public slots:
     void newTarget();
 };

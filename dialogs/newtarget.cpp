@@ -3,6 +3,6 @@
 NewTarget::NewTarget(QWidget *parent)
         : QWizard(parent)
 {
-
+    this->hide();
 }
 
