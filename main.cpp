@@ -4,21 +4,30 @@
 #include <QString>
 #include <QPalette>
 
+QPalette native_palette;
+QPalette undef_palette;
+
+/*
+ * Fake sart used to fetch the native palette from
+ * an initialized QApplication.
+ */
+void fake_start(int argc, char *argv[])
+{
+
+    undef_palette = QPalette();
+    QApplication a(argc, argv);
+    native_palette = QPalette(a.palette());
+}
+
 int main(int argc, char *argv[])
 {
 
-    // the reverse do not keep the original palette
-    /*
+    QPalette dark_palette;
+    fake_start(argc, argv);
     QApplication::setStyle(QString("fusion"));
-    QApplication::setPalete(customPalete);
-    QApplication a(argc, argv);
-    */
+    QApplication::setPalette(native_palette);
 
-    /* this keep the original palette and set fusion
-     * but is not sure */
     QApplication a(argc, argv);
-    QApplication::setStyle(QString("fusion"));
-
     MainWindow w;
     w.show();
 
