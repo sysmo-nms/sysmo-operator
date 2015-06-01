@@ -9,5 +9,6 @@
         <file>images/32/dialog-information.png</file>
         <file>images/custom/monitor-black.png</file>
         <file>images/custom/dashboard-black.png</file>
+        <file>images/custom/login-banner.png</file>
     </qresource>
 </RCC>

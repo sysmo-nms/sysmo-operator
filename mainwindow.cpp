@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
 
+    log_in_dialog = new LogIn(this);
+    supercast     = new Supercast(this);
+    // TODO init QMessageLogger
 
     QMenuBar *menu_bar  = this->menuBar();
     QMenu    *main_menu = menu_bar->addMenu(QString("Sysmo"));
@@ -62,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
     color_menu->addAction(theme_sno);
     color_menu->setIcon(QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
+    this->show();
+    //log_in_dialog->show();
 }
 
 void MainWindow::toggleFullScreen()

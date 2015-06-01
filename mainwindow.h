@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include "centralwidget.h"
+#include "dialogs/login.h"
+#include "network/supercast.h"
 
 #include <QMainWindow>
 #include <QIcon>
@@ -22,11 +24,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 public slots:
     void toggleFullScreen();
 private:
+    LogIn *log_in_dialog;
+    Supercast *supercast;
 
 };
 

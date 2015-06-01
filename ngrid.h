@@ -7,7 +7,7 @@
 class NGrid : public QGridLayout
 {
 public:
-    NGrid(QWidget *parent = 0);
+    explicit NGrid(QWidget *parent = 0);
 };
 
 #endif // NGRID_H

@@ -14,7 +14,7 @@ class Dashboard : public NFrame
     Q_OBJECT
 
 public:
-    Dashboard(QWidget *parent = 0);
+    explicit Dashboard(QWidget *parent = 0);
 };
 
 #endif // DASHBOARD_H

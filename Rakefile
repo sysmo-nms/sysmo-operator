@@ -7,7 +7,8 @@ task :clean do
 end
 
 task :build do
-  sh "qmake -config release; make"
+  sh "qmake -config release"
+  sh "make"
   # TODO find and deplace dependencies, write startup script
 end
 

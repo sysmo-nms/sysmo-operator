@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,7 +25,11 @@ SOURCES += main.cpp\
     monitor_tree/treeview.cpp \
     monitor_tree/treemodel.cpp \
     monitor_tree/treedelegateprogress.cpp \
-    dialogs/newtarget.cpp
+    dialogs/newtarget.cpp \
+    dialogs/login.cpp \
+    network/supercast.cpp \
+    network/supercastsocket.cpp \
+    network/supercasthttp.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -39,7 +43,11 @@ HEADERS  += mainwindow.h \
     monitor_tree/treeview.h \
     monitor_tree/treemodel.h \
     monitor_tree/treedelegateprogress.h \
-    dialogs/newtarget.h
+    dialogs/newtarget.h \
+    dialogs/login.h \
+    network/supercast.h \
+    network/supercastsocket.h \
+    network/supercasthttp.h
 
 RESOURCES += \
     ressources.qrc

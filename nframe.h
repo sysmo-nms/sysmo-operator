@@ -10,7 +10,7 @@ class NFrame: public QFrame
     Q_OBJECT
 
 public:
-    NFrame(QWidget *parent = 0);
+    explicit NFrame(QWidget *parent = 0);
 };
 
 #endif // NFRAME_H

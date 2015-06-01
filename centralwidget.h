@@ -23,7 +23,7 @@ class CentralWidget : public NFrameContainer
     Q_OBJECT
 
 public:
-    CentralWidget(QWidget *parent = 0);
+    explicit CentralWidget(QWidget *parent = 0);
     static const int MONITOR   = 0;
     static const int DASHBOARD = 1;
 };

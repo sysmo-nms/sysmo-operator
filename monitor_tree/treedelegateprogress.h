@@ -10,7 +10,7 @@ class TreeDelegateProgress : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    TreeDelegateProgress(QWidget *parent);
+    explicit TreeDelegateProgress(QWidget *parent);
     void paint(
             QPainter *painter,
             const QStyleOptionViewItem &option,
