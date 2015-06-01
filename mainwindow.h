@@ -26,12 +26,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 public slots:
     void toggleFullScreen();
+
 private:
     LogIn *log_in_dialog;
     Supercast *supercast;
-
 };
 
 #endif // MAINWINDOW_H

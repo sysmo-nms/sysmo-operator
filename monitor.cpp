@@ -1,7 +1,7 @@
 #include "monitor.h"
 
-Monitor::Monitor(QWidget *parent)
-        : NFrame(parent)
+
+Monitor::Monitor(QWidget *parent) : NFrame(parent)
 {
     this->setFrameShape(QFrame::StyledPanel);
     NGrid* grid = new NGrid();
@@ -49,11 +49,11 @@ Monitor::Monitor(QWidget *parent)
     grid->setRowStretch(1,1);
 
     // get a NewTarget instance
-    new_target_dialog = new NewTarget(this);
+    this->new_target_dialog = new NewTarget(this);
 }
 
 
 void Monitor::newTarget()
 {
-    new_target_dialog->show();
+    this->new_target_dialog->show();
 }

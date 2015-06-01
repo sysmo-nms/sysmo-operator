@@ -1,5 +1,6 @@
 #include "treemodel.h"
 
+
 TreeModel::TreeModel(QWidget *parent)
         : QStandardItemModel(parent)
 {
@@ -12,6 +13,5 @@ TreeModel::TreeModel(QWidget *parent)
           << "Host"
           << "Last return");
     this->setHorizontalHeaderLabels(headers);
-
 }
 

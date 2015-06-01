@@ -1,10 +1,12 @@
 #include "treedelegateprogress.h"
 
+
 TreeDelegateProgress::TreeDelegateProgress(QWidget *parent)
         : QStyledItemDelegate(parent)
 {
 
 }
+
 
 void TreeDelegateProgress::paint(
         QPainter *painter,

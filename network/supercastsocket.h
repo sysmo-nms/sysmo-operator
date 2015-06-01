@@ -15,14 +15,13 @@
 class SupercastSocket : public QObject
 {
     Q_OBJECT
+
 public:
-    explicit SupercastSocket(QObject *parent = 0);
+    explicit SupercastSocket();
     ~SupercastSocket();
 
 public slots:
-
-signals:
-    void serverMessage(QJsonObject msg);
+    void handleClientMessage(QJsonObject msg);
 
 private:
     QTcpSocket *socket;
@@ -33,6 +32,9 @@ private slots:
     void socketReadyRead();
     void socketConnected();
     void socketError(QAbstractSocket::SocketError err);
+
+signals:
+    void serverMessage(QJsonObject msg);
 };
 
 #endif // SUPERCASTSOCKET_H

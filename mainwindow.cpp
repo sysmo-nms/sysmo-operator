@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+        : QMainWindow(parent)
 {
     this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
     this->setWindowTitle(QString("Sysmo Operator"));
@@ -9,8 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
 
-    log_in_dialog = new LogIn(this);
-    supercast     = new Supercast(this);
+    this->log_in_dialog = new LogIn(this);
+    this->supercast     = new Supercast(this);
     // TODO init QMessageLogger
 
     QMenuBar *menu_bar  = this->menuBar();
@@ -66,8 +67,9 @@ MainWindow::MainWindow(QWidget *parent)
     color_menu->setIcon(QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
     this->show();
-    //log_in_dialog->show();
+    this->log_in_dialog->show();
 }
+
 
 void MainWindow::toggleFullScreen()
 {
@@ -77,6 +79,7 @@ void MainWindow::toggleFullScreen()
         this->showFullScreen();
     }
 }
+
 
 MainWindow::~MainWindow()
 {

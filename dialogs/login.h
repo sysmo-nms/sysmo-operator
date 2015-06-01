@@ -22,6 +22,7 @@ class LogIn : public QDialog
 
 public:
     explicit LogIn(QWidget *parent);
+
 private:
     QLineEdit *user_name;
     QLineEdit *user_pass;

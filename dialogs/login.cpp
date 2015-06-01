@@ -1,7 +1,7 @@
 #include "login.h"
 
-LogIn::LogIn(QWidget *parent)
-        : QDialog(parent)
+
+LogIn::LogIn(QWidget *parent) : QDialog(parent)
 {
     this->setModal(true);
     this->setFixedWidth(470);
