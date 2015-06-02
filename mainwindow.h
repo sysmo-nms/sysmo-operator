@@ -18,6 +18,7 @@
 #include <QIcon>
 #include <QKeySequence>
 #include <QObject>
+#include <QHostAddress>
 
 class MainWindow : public QMainWindow
 {
@@ -31,7 +32,7 @@ public slots:
     void toggleFullScreen();
 
 private:
-    LogIn *log_in_dialog;
+    LogIn     *log_in_dialog;
     Supercast *supercast;
 };
 

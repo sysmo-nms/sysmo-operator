@@ -18,21 +18,19 @@ class SupercastSocket : public QObject
     Q_OBJECT
 
 public:
-    explicit SupercastSocket();
+    explicit SupercastSocket(QHostAddress host, qint16 port);
     ~SupercastSocket();
+    QTcpSocket *socket;
 
 public slots:
     void handleClientMessage(QJsonObject msg);
 
 private:
-    QTcpSocket *socket;
-    qint64     block_size;
+    qint64 block_size;
     static const qint64 HEADER_LEN = 4;
 
 private slots:
     void socketReadyRead();
-    void socketConnected();
-    void socketError(QAbstractSocket::SocketError err);
 
 signals:
     void serverMessage(QJsonObject msg);

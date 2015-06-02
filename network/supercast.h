@@ -7,6 +7,9 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QThread>
+#include <QAbstractSocket>
+#include <QJsonObject>
+#include <QJsonValue>
 
 class Supercast : public QObject
 {
@@ -15,11 +18,20 @@ class Supercast : public QObject
     QThread socket_thread;
 
 public:
-    explicit Supercast(QObject *parent = 0);
+    explicit Supercast(
+            QHostAddress host,
+            qint16       port,
+            QString      user_name,
+            QString      user_pass,
+            QObject     *parent = 0);
     ~Supercast();
+    QString user_name;
+    QString user_pass;
 
 public slots:
     void handleServerMessage(QJsonObject msg);
+    void socketConnected();
+    void socketError(QAbstractSocket::SocketError error);
 
 private:
     SupercastSocket *supercast_socket;

@@ -11,7 +11,13 @@ MainWindow::MainWindow(QWidget *parent)
     this->statusBar()->show();
 
     this->log_in_dialog = new LogIn(this);
-    this->supercast     = new Supercast(this);
+
+    QString      user_name("admin");
+    QString      user_pass("password");
+    QHostAddress host(QString("192.168.0.11"));
+    qint16       port(8888);
+    this->supercast = new Supercast(host, port, user_name, user_pass, this);
+
     // TODO init QMessageLogger
 
     QMenuBar *menu_bar  = this->menuBar();
@@ -67,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     color_menu->setIcon(QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
     this->show();
-    this->log_in_dialog->show();
+    //this->log_in_dialog->show();
 }
 
 
