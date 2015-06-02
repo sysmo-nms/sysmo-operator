@@ -8,8 +8,10 @@ LogIn::LogIn(QWidget *parent) : QDialog(parent)
 
     this->user_name   = new QLineEdit(this);
     this->user_pass   = new QLineEdit(this);
+    this->user_pass->setEchoMode(QLineEdit::Password);
     this->server_name = new QLineEdit(this);
     this->server_port = new QSpinBox(this);
+    this->server_port->setRange(1, 65535);
 
     QFrame *srv_frame = new QFrame(this);
     QGridLayout *srv_lay = new QGridLayout();
@@ -35,13 +37,19 @@ LogIn::LogIn(QWidget *parent) : QDialog(parent)
     form_lay->addRow(QString("&Server"), srv_frame);
 
     // buttons
-    QPushButton *ok_but = new QPushButton(QString("&Log In"), this);
-    ok_but->setDefault(true);
-    QPushButton *close_but = new QPushButton(QString("&Close"), this);
+    QPushButton      *ok_but     = new QPushButton(QString("&Log In"), this);
+    QPushButton      *cancel_but = new QPushButton(QString("&Cancel"), this);
+    QObject::connect(
+                ok_but, SIGNAL(clicked(bool)),
+                this,	SIGNAL(tryValidate()));
+    QObject::connect(
+                cancel_but, SIGNAL(clicked(bool)),
+                this, 		SLOT(reject()));
 
     QDialogButtonBox *but_box = new QDialogButtonBox(this);
-    but_box->addButton(ok_but, QDialogButtonBox::ApplyRole);
-    but_box->addButton(close_but, QDialogButtonBox::RejectRole);
+    but_box->addButton(ok_but, 	   QDialogButtonBox::ApplyRole);
+    but_box->addButton(cancel_but, QDialogButtonBox::RejectRole);
+    ok_but->setDefault(true);
 
     QLabel *banner = new QLabel(this);
     banner->setPixmap(QPixmap(":/ressources/images/custom/login-banner.png"));
@@ -59,3 +67,25 @@ LogIn::LogIn(QWidget *parent) : QDialog(parent)
     this->setLayout(main_grid);
 }
 
+QString LogIn::getUserName()
+{
+    return this->user_name->text();
+}
+
+
+QString LogIn::getPassword()
+{
+    return this->user_pass->text();
+}
+
+
+QString LogIn::getServerName()
+{
+    return this->server_name->text();
+}
+
+
+int LogIn::getServerPort()
+{
+    return this->server_port->value();
+}

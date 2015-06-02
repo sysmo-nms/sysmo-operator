@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "iostream"
 #include "centralwidget.h"
 #include "dialogs/login.h"
 #include "network/supercast.h"
@@ -19,6 +20,9 @@
 #include <QKeySequence>
 #include <QObject>
 #include <QHostAddress>
+#include <QDialog>
+#include <QMessageBox>
+#include <QAbstractSocket>
 
 class MainWindow : public QMainWindow
 {
@@ -29,7 +33,11 @@ public:
     ~MainWindow();
 
 public slots:
+    void connexionStatus(int status);
+
+private slots:
     void toggleFullScreen();
+    void tryValidate();
 
 private:
     LogIn     *log_in_dialog;

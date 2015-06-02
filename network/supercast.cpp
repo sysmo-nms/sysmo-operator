@@ -1,12 +1,16 @@
 #include "supercast.h"
 
 
-Supercast::Supercast(
+Supercast::Supercast(QObject *parent) : QObject(parent)
+{
+
+}
+
+void Supercast::tryConnect(
         QHostAddress host,
         qint16       port,
         QString      user_name,
-        QString      user_pass,
-        QObject     *parent) : QObject(parent)
+        QString      user_pass)
 {
     this->user_name = user_name;
     this->user_pass = user_pass;
@@ -26,8 +30,10 @@ Supercast::Supercast(
     // socket state
     qRegisterMetaType<QAbstractSocket::SocketError>();
     QObject::connect(
-                this->supercast_socket->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-                this,                           SLOT(socketError(QAbstractSocket::SocketError)),
+                this->supercast_socket->socket,
+                    SIGNAL(error(QAbstractSocket::SocketError)),
+                this,
+                    SLOT(socketError(QAbstractSocket::SocketError)),
                 Qt::QueuedConnection);
     QObject::connect(
                 this->supercast_socket->socket, SIGNAL(connected()),
@@ -65,6 +71,7 @@ void Supercast::socketConnected()
 void Supercast::socketError(QAbstractSocket::SocketError error)
 {
     std::cout << "socket error: " << error << std::endl;
+    emit this->connexionStatus(error);
 }
 
 
@@ -72,5 +79,6 @@ void Supercast::handleServerMessage(QJsonObject msg)
 {
     std::cout << "helolololo" << std::endl;
     std::cout << msg.value(QString("type")).toString(QString("")).toStdString() << std::endl;
+    emit this->connexionStatus(Supercast::ConnexionSuccess);
     //emit this->clientMessage(msg);
 }

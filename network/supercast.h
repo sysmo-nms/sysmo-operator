@@ -18,15 +18,17 @@ class Supercast : public QObject
     QThread socket_thread;
 
 public:
-    explicit Supercast(
+    explicit Supercast(QObject *parent = 0);
+    ~Supercast();
+    void tryConnect(
             QHostAddress host,
             qint16       port,
             QString      user_name,
-            QString      user_pass,
-            QObject     *parent = 0);
-    ~Supercast();
+            QString      user_pass);
     QString user_name;
     QString user_pass;
+    static const int ConnexionSuccess    = 100;
+    static const int AuthenticationError = 101;
 
 public slots:
     void handleServerMessage(QJsonObject msg);
@@ -38,6 +40,7 @@ private:
 
 signals:
     void clientMessage(QJsonObject msg);
+    void connexionStatus(int status);
 };
 
 #endif // SUPERCAST_H

@@ -22,6 +22,13 @@ class LogIn : public QDialog
 
 public:
     explicit LogIn(QWidget *parent);
+    QString getUserName();
+    QString getPassword();
+    QString getServerName();
+    int		getServerPort();
+
+signals:
+    void tryValidate();
 
 private:
     QLineEdit *user_name;

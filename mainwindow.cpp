@@ -10,14 +10,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
 
-    this->log_in_dialog = new LogIn(this);
-
-    QString      user_name("admin");
-    QString      user_pass("password");
-    QHostAddress host(QString("192.168.0.11"));
-    qint16       port(8888);
-    this->supercast = new Supercast(host, port, user_name, user_pass, this);
-
     // TODO init QMessageLogger
 
     QMenuBar *menu_bar  = this->menuBar();
@@ -72,11 +64,28 @@ MainWindow::MainWindow(QWidget *parent)
     color_menu->addAction(theme_sno);
     color_menu->setIcon(QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
-    this->show();
-    //this->log_in_dialog->show();
+    this->hide();
+
+    this->log_in_dialog = new LogIn(this);
+    QObject::connect(
+                this->log_in_dialog, SIGNAL(rejected()),
+                this,				 SLOT(close()));
+    QObject::connect(
+                this->log_in_dialog, SIGNAL(tryValidate()),
+                this,				 SLOT(tryValidate()));
+    this->log_in_dialog->open();
 }
 
 
+MainWindow::~MainWindow()
+{
+
+}
+
+
+/*
+ * SLOTS
+ */
 void MainWindow::toggleFullScreen()
 {
     if (this->isFullScreen()) {
@@ -87,7 +96,79 @@ void MainWindow::toggleFullScreen()
 }
 
 
-MainWindow::~MainWindow()
+/*
+ * Triggered by LogIn validate button.
+ */
+void MainWindow::tryValidate()
 {
+    std::cout << "try validate" << std::endl;
+    this->log_in_dialog->setEnabled(false);
+    this->supercast = new Supercast(this);
+    QObject::connect(
+                this->supercast, SIGNAL(connexionStatus(int)),
+                this, 			 SLOT(connexionStatus(int)));
+    this->supercast->tryConnect(
+        QHostAddress(QString("192.168.0.11")),
+        (qint16)8888,
+        QString("admin"),
+        QString("password"));
+    //this->log_in_dialog->setEnabled(false);
 
+}
+
+/*
+ * Triggered by Supercast. Finalize the connection, or
+ * close the application.
+ */
+void MainWindow::connexionStatus(int status)
+{
+    std::cout << "Connexion status" << status << std::endl;
+    if (status == Supercast::ConnexionSuccess) {
+        this->log_in_dialog->close();
+        this->show();
+        return;
+    }
+
+    QMessageBox err_box;
+    err_box.setModal(true);
+    err_box.setIcon(QMessageBox::Critical);
+    this->setEnabled(false);
+    switch(status) {
+        case Supercast::AuthenticationError: {
+            err_box.setText("Authentication failure.");
+            err_box.setInformativeText("The authentication procedure has failed. Check your password or username.");
+            break;
+        }
+        case QAbstractSocket::ConnectionRefusedError: {
+            err_box.setText("The connection was refused by the peer.");
+            err_box.setInformativeText("You may trying to connect to the wrong host, or the wrong port.");
+            break;
+        }
+        case QAbstractSocket::RemoteHostClosedError: {
+            err_box.setText("The remote host closed the connexion.");
+            err_box.setInformativeText("This can append if the host came down, or if the service is restarting.");
+            break;
+        }
+        case QAbstractSocket::HostNotFoundError: {
+            err_box.setText("Host not found.");
+            err_box.setInformativeText("Cannot resolve hostname.");
+            break;
+        }
+        case QAbstractSocket::SocketTimeoutError: {
+            err_box.setText("Socket timed out.");
+            err_box.setInformativeText("You may trying to connect to the wrong host, or the wrong port.");
+            break;
+        }
+        case QAbstractSocket::NetworkError: {
+            err_box.setText("Network error.");
+            err_box.setInformativeText("Can not reach the host.");
+            break;
+        }
+        default: {
+            err_box.setText("Unknown socket Error");
+        }
+    }
+
+    err_box.exec();
+    this->close();
 }
