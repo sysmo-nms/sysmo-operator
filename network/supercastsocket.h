@@ -11,6 +11,7 @@
 #include <QAbstractSocket>
 #include <QDataStream>
 #include <QHostAddress>
+#include <QIODevice>
 
 class SupercastSocket : public QObject
 {

@@ -7,10 +7,10 @@ Supercast::Supercast(QObject *parent) : QObject(parent)
     this->supercast_socket->moveToThread(&socket_thread);
     QObject::connect(
                 this->supercast_socket, SIGNAL(serverMessage(QJsonObject)),
-                this,             SLOT(handleServerMessage(QJsonObject)),
+                this,                   SLOT(handleServerMessage(QJsonObject)),
                 Qt::QueuedConnection);
     QObject::connect(
-                this,             SIGNAL(clientMessage(QJsonObject)),
+                this,                   SIGNAL(clientMessage(QJsonObject)),
                 this->supercast_socket, SLOT(handleClientMessage(QJsonObject)),
                 Qt::QueuedConnection);
     this->socket_thread.start();

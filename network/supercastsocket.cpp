@@ -25,9 +25,21 @@ SupercastSocket::SupercastSocket() : QObject()
 
 void SupercastSocket::handleClientMessage(QJsonObject msg)
 {
-    QByteArray json_arr = QJsonDocument(msg).toJson();
-    std::cout << "received client message" << std::endl;
-    std::cout << QString(json_arr).toStdString() << std::endl;
+    QByteArray  json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
+    qint32      json_size((qint32)json_array.size());
+
+    /*
+     * build the four bytes header with json_size
+     * TODO: maybe use QDataStream
+     */
+    char header_buffer[HEADER_LEN];
+    header_buffer[0] = (json_size >> 24) & 0xff;
+    header_buffer[1] = (json_size >> 16) & 0xff;
+    header_buffer[2] = (json_size >> 8)  & 0xff;
+    header_buffer[3] =  json_size        & 0xff;
+
+    this->socket->write(header_buffer, HEADER_LEN);
+    this->socket->write(json_array.data(), (qint64)json_size);
 }
 
 
@@ -39,7 +51,6 @@ void SupercastSocket::socketConnected()
 
 void SupercastSocket::socketReadyRead()
 {
-    std::cout << "ready read?" << std::endl;
     QDataStream stream(this->socket);
 
     if (this->block_size == 0) {
@@ -80,17 +91,12 @@ void SupercastSocket::socketReadyRead()
 
     emit this->serverMessage(json_obj);
     this->block_size = 0;
-
-    std::cout << "fromJson" << std::endl;
-    std::cout << json_arr.toStdString() << std::endl;
-    std::cout << json_obj.value(QString("type")).toString(QString("")).toStdString() << std::endl;
 }
 
 
 void SupercastSocket::socketError(QAbstractSocket::SocketError err)
 {
-    std::cout << "error is: ";
-    std::cout << err << std::endl;
+    std::cout << "error is: " << err << std::endl;
 }
 
 
