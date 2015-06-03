@@ -8,7 +8,6 @@
 
 #include <QMainWindow>
 #include <QIcon>
-#include <QString>
 #include <QLabel>
 #include <QWidget>
 #include <QAction>
@@ -41,7 +40,6 @@ private slots:
 
 private:
     LogIn     *log_in_dialog;
-    Supercast *supercast;
 };
 
 #endif // MAINWINDOW_H

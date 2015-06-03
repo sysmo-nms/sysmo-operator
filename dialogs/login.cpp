@@ -18,7 +18,7 @@ LogIn::LogIn(QWidget *parent) : QDialog(parent)
     srv_frame->setLayout(srv_lay);
     srv_lay->setContentsMargins(0,0,0,0);
     srv_lay->addWidget(this->server_name, 0,0);
-    srv_lay->addWidget(new QLabel(QString("Port"),this), 0,1);
+    srv_lay->addWidget(new QLabel("Port",this), 0,1);
     srv_lay->addWidget(this->server_port, 0,2);
     srv_lay->setColumnStretch(0,1);
     srv_lay->setColumnStretch(1,0);
@@ -31,14 +31,14 @@ LogIn::LogIn(QWidget *parent) : QDialog(parent)
     QFormLayout *form_lay = new QFormLayout();
     form_frame->setLayout(form_lay);
     form_lay->setContentsMargins(0,0,0,0);
-    form_lay->addRow(QString("&User Name:"), this->user_name);
-    form_lay->addRow(QString("&Password:"), this->user_pass);
+    form_lay->addRow("&User Name:", this->user_name);
+    form_lay->addRow("&Password:", this->user_pass);
     form_lay->addRow(separator);
-    form_lay->addRow(QString("&Server"), srv_frame);
+    form_lay->addRow("&Server", srv_frame);
 
     // buttons
-    QPushButton      *ok_but     = new QPushButton(QString("&Log In"), this);
-    QPushButton      *cancel_but = new QPushButton(QString("&Cancel"), this);
+    QPushButton      *ok_but     = new QPushButton("&Log In", this);
+    QPushButton      *cancel_but = new QPushButton("&Cancel", this);
     QObject::connect(
                 ok_but, SIGNAL(clicked(bool)),
                 this,	SIGNAL(tryValidate()));

@@ -1,9 +1,11 @@
 #include "supercast.h"
 
+Supercast* Supercast::singleton = NULL;
+Supercast* Supercast::getInstance() {return singleton;}
 
 Supercast::Supercast(QObject *parent) : QObject(parent)
 {
-
+    singleton = this;
 }
 
 void Supercast::tryConnect(
@@ -79,6 +81,12 @@ void Supercast::handleServerMessage(QJsonObject msg)
 {
     std::cout << "helolololo" << std::endl;
     std::cout << msg.value(QString("type")).toString(QString("")).toStdString() << std::endl;
-    emit this->connexionStatus(Supercast::ConnexionSuccess);
-    //emit this->clientMessage(msg);
+    QString from = msg.value("from").toString("");
+    QString type = msg.value("type").toString("");
+
+    if (QString::compare(from, "supercast") == 0) {
+        emit this->connexionStatus(Supercast::ConnexionSuccess);
+    } else if (QString::compare(from, "monitor") == 0) {
+
+    }
 }

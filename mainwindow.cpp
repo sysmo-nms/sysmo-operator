@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent)
 {
     this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
-    this->setWindowTitle(QString("Sysmo Operator"));
+    this->setWindowTitle("Sysmo Operator");
     this->setObjectName("MainWindow");
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
@@ -13,24 +13,24 @@ MainWindow::MainWindow(QWidget *parent)
     // TODO init QMessageLogger
 
     QMenuBar *menu_bar  = this->menuBar();
-    QMenu    *main_menu = menu_bar->addMenu(QString("Sysmo"));
-    QAction  *action_exit = new QAction(QString("&Exit"), this);
+    QMenu    *main_menu = menu_bar->addMenu("Sysmo");
+    QAction  *action_exit = new QAction("&Exit", this);
     action_exit->setIcon(QIcon(":/ressources/images/32/system-log-out.png"));
-    action_exit->setShortcut(QKeySequence(QString("Ctrl+Q")));
+    action_exit->setShortcut(QKeySequence("Ctrl+Q"));
     QObject::connect(
                 action_exit, SIGNAL(triggered(bool)),
                 this,        SLOT(close()));
-    QAction  *action_proxy_conf  = new QAction(QString("&Proxy configuration..."), this);
-    QAction  *action_doc_engine  = new QAction(QString("&Configure doc engine..."),this);
-    QAction  *action_updates     = new QAction(QString("&Check for updates..."), this);
-    QAction  *action_full_screen = new QAction(QString("&Full screen"), this);
+    QAction  *action_proxy_conf  = new QAction("&Proxy configuration...", this);
+    QAction  *action_doc_engine  = new QAction("&Configure doc engine...",this);
+    QAction  *action_updates     = new QAction("&Check for updates...", this);
+    QAction  *action_full_screen = new QAction("&Full screen", this);
     action_full_screen->setIcon(QIcon(":/ressources/images/32/view-fullscreen.png"));
-    action_full_screen->setShortcut(QKeySequence(QString("Ctrl+F")));
+    action_full_screen->setShortcut(QKeySequence("Ctrl+F"));
     QObject::connect(
                 action_full_screen, SIGNAL(triggered(bool)),
                 this,               SLOT(toggleFullScreen()));
     main_menu->addAction(action_full_screen);
-    QMenu *color_menu = main_menu->addMenu(QString("Color theme"));
+    QMenu *color_menu = main_menu->addMenu("Color theme");
     main_menu->addSeparator();
     main_menu->addAction(action_proxy_conf);
     main_menu->addAction(action_doc_engine);
@@ -39,11 +39,11 @@ MainWindow::MainWindow(QWidget *parent)
     main_menu->addAction(action_exit);
 
 
-    QAction *theme_nat = new QAction(QString("Native"), this);
-    QAction *theme_mid = new QAction(QString("Midnight"), this);
-    QAction *theme_inl = new QAction(QString("Inland"), this);
-    QAction *theme_gre = new QAction(QString("Greys"), this);
-    QAction *theme_sno = new QAction(QString("Snowy"), this);
+    QAction *theme_nat = new QAction("Native", this);
+    QAction *theme_mid = new QAction("Midnight", this);
+    QAction *theme_inl = new QAction("Inland", this);
+    QAction *theme_gre = new QAction("Greys", this);
+    QAction *theme_sno = new QAction("Snowy", this);
     theme_nat->setCheckable(true);
     theme_mid->setCheckable(true);
     theme_inl->setCheckable(true);
@@ -103,15 +103,13 @@ void MainWindow::tryValidate()
 {
     std::cout << "try validate" << std::endl;
     this->log_in_dialog->setEnabled(false);
-    this->supercast = new Supercast(this);
+    Supercast *supercast = new Supercast(this);
     QObject::connect(
-                this->supercast, SIGNAL(connexionStatus(int)),
-                this, 			 SLOT(connexionStatus(int)));
-    this->supercast->tryConnect(
-        QHostAddress(QString("192.168.0.11")),
-        (qint16)8888,
-        QString("admin"),
-        QString("password"));
+                supercast, SIGNAL(connexionStatus(int)),
+                this, 	   SLOT(connexionStatus(int)));
+    supercast->tryConnect(
+        QHostAddress("192.168.0.11"),
+        (qint16)8888, "admin", "password");
     //this->log_in_dialog->setEnabled(false);
 
 }
@@ -123,6 +121,7 @@ void MainWindow::tryValidate()
 void MainWindow::connexionStatus(int status)
 {
     std::cout << "Connexion status" << status << std::endl;
+    std::cout << Supercast::getInstance()->user_name.toStdString() << std::endl;
     if (status == Supercast::ConnexionSuccess) {
         this->log_in_dialog->close();
         this->show();

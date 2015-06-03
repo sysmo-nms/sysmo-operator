@@ -10,6 +10,7 @@
 #include <QAbstractSocket>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QStringList>
 
 class Supercast : public QObject
 {
@@ -25,8 +26,11 @@ public:
             qint16       port,
             QString      user_name,
             QString      user_pass);
+    static Supercast* singleton;
+    static Supercast* getInstance();
     QString user_name;
     QString user_pass;
+    QString testouille;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
 
@@ -41,6 +45,8 @@ private:
 signals:
     void clientMessage(QJsonObject msg);
     void connexionStatus(int status);
+    // messages for the monitor proxy
+    void monitorServerMessage(QJsonObject msg);
 };
 
 #endif // SUPERCAST_H
