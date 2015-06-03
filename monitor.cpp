@@ -71,6 +71,7 @@ void Monitor::connexionStatus(int status)
         // - connect to supercast
         // - fill treeModel
         std::cout << "initalize myself " << std::endl;
+        Supercast::subscribe("target-MasterChan");
     } else {
         // the application is in an error state.
         this->add_target_dialog->hide();

@@ -79,12 +79,11 @@ void Supercast::socketError(QAbstractSocket::SocketError error)
 
 void Supercast::handleServerMessage(QJsonObject msg)
 {
-    QString from = msg.value("from").toString("");
-    QString type = msg.value("type").toString("");
+    QString from = msg.value("from").toString("undefined");
+    QString type = msg.value("type").toString("undefined");
 
     std::cout << "type is: " << type.toStdString() << std::endl;
-    std::cout << "type compare 1: " << QString::compare(type, "authAck") << std::endl;
-    std::cout << "type compare 2: " << QString::compare(type, QString("authAck")) << std::endl;
+    std::cout << "from is: " << from.toStdString() << std::endl;
 
     if (QString::compare(from, "supercast") == 0) {
         if (QString::compare(type, "authAck") == 0) {
@@ -93,8 +92,19 @@ void Supercast::handleServerMessage(QJsonObject msg)
             emit this->connexionStatus(Supercast::AuthenticationError);
         }
     } else if (QString::compare(from, "monitor") == 0) {
-        emit this->monitorServerMessage(msg);
+        //emit this->monitorServerMessage(msg);
     } else {
         std::cout << "else is: " << type.toStdString() << std::endl;
     }
+}
+
+void Supercast::subscribe(QString channel)
+{
+    QJsonObject subscribeMsg {
+        {"from", "supercast"},
+        {"type", "subscribe"},
+        {"value", QJsonObject {
+                {"queryId", 0},
+                {"channel", channel}}}};
+    emit Supercast::singleton->clientMessage(subscribeMsg);
 }

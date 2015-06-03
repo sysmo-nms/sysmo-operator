@@ -29,6 +29,7 @@ public:
             QString      user_name,
             QString      user_pass);
     static Supercast* getInstance();
+    static void subscribe(QString channel);
     QString user_name;
     QString user_pass;
     QString testouille;

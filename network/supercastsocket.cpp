@@ -26,34 +26,25 @@ void SupercastSocket::socketReadyRead()
      * First cancel duplicate readyRead() signals.
      * (see end of function)
      */
-    if ((int)this->socket->bytesAvailable() == 0) return;
-
-    QDataStream stream(this->socket);
+    if (this->socket->bytesAvailable() == 0) return;
 
     if (this->block_size == 0) {
         /*
-         * read header to have the content len
+         * read header to set block_size
          */
-
         if (this->socket->bytesAvailable() < HEADER_LEN) return;
 
-        char head_buffer[(int)HEADER_LEN];
-        stream.readRawData(head_buffer, (int)HEADER_LEN);
-
-        /*
-         * XXX Big endian problem?
-         */
-        this->block_size =
-            (head_buffer[0] << 24) +
-            (head_buffer[1] << 16) +
-            (head_buffer[2] <<  8) +
-             head_buffer[3];
+        QByteArray header = this->socket->read(HEADER_LEN);
+        this->block_size = SupercastSocket::arrayToInt(header);
     }
+
 
     /*
      * only read when all data is ready
      */
-    if (this->socket->bytesAvailable() < this->block_size) return;
+    if (this->socket->bytesAvailable() < this->block_size) {
+        return;
+    }
 
 
     /* OK read data */
@@ -61,27 +52,17 @@ void SupercastSocket::socketReadyRead()
      * get payload_bytes. Carefull, no null terminator:
      * specify this->block_size when working on it.
      */
-    char payload_bytes[this->block_size];
-    stream.readRawData(payload_bytes, this->block_size);
-
-    /*
-     * load payload in a QJsonObject
-     */
-    QByteArray    json_arr(payload_bytes, this->block_size);
-    QJsonDocument json_doc = QJsonDocument::fromJson(json_arr);
+    QByteArray    payload  = this->socket->read(this->block_size);
+    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
     QJsonObject   json_obj = json_doc.object();
-
     std::cout << "json msg: " << json_doc.toJson().data() << std::endl;
+    // Deliver the message
+    emit this->serverMessage(json_obj);
 
     /*
-     * Reinitialize nex block size to 0
+     * Reinitialize block size to 0
      */
     this->block_size = 0;
-
-    /*
-     * Deliver the message
-     */
-    emit this->serverMessage(json_obj);
 
     /*
      * Is there some data buffered?
@@ -97,18 +78,22 @@ void SupercastSocket::handleClientMessage(QJsonObject msg)
 {
     QByteArray  json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
     qint32      json_size((qint32)json_array.size());
+    this->socket->write(SupercastSocket::intToArray(json_size));
+    this->socket->write(json_array.data(), json_size);
+}
 
-    /*
-     * build the four bytes header with json_size
-     * TODO: maybe use QDataStream
-     * XXX Big endian problem?
-     */
-    char header_buffer[HEADER_LEN];
-    header_buffer[0] = (json_size >> 24) & 0xff;
-    header_buffer[1] = (json_size >> 16) & 0xff;
-    header_buffer[2] = (json_size >> 8)  & 0xff;
-    header_buffer[3] =  json_size        & 0xff;
+qint32 SupercastSocket::arrayToInt(QByteArray source)
+{
+    qint32 temp;
+    QDataStream data(&source, QIODevice::ReadWrite);
+    data >> temp;
+    return temp;
+}
 
-    this->socket->write(header_buffer, HEADER_LEN);
-    this->socket->write(json_array.data(), (qint64)json_size);
+QByteArray SupercastSocket::intToArray(qint32 source)
+{
+    QByteArray temp;
+    QDataStream data(&temp, QIODevice::ReadWrite);
+    data << source;
+    return temp;
 }

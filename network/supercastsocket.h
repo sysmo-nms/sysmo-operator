@@ -2,6 +2,7 @@
 #define SUPERCASTSOCKET_H
 
 #include "iostream"
+#include "stdlib.h"
 
 #include <QObject>
 #include <QJsonDocument>
@@ -13,7 +14,6 @@
 #include <QHostAddress>
 #include <QIODevice>
 #include <Qt>
-
 
 class SupercastSocket : public QObject
 {
@@ -28,8 +28,10 @@ public slots:
     void handleClientMessage(QJsonObject msg);
 
 private:
-    qint64 block_size;
+    int block_size;
     static const qint64 HEADER_LEN = 4;
+    static qint32     arrayToInt(QByteArray source);
+    static QByteArray intToArray(qint32 source);
 
 private slots:
     void socketReadyRead();
