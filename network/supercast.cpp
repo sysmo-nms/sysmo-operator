@@ -3,7 +3,7 @@
 Supercast* Supercast::singleton = NULL;
 Supercast* Supercast::getInstance() {return singleton;}
 
-Supercast::Supercast(QObject *parent) : QObject(parent)
+Supercast::Supercast(QObject* parent) : QObject(parent)
 {
     singleton = this;
 }
@@ -79,14 +79,22 @@ void Supercast::socketError(QAbstractSocket::SocketError error)
 
 void Supercast::handleServerMessage(QJsonObject msg)
 {
-    std::cout << "helolololo" << std::endl;
-    std::cout << msg.value(QString("type")).toString(QString("")).toStdString() << std::endl;
     QString from = msg.value("from").toString("");
     QString type = msg.value("type").toString("");
 
-    if (QString::compare(from, "supercast") == 0) {
-        emit this->connexionStatus(Supercast::ConnexionSuccess);
-    } else if (QString::compare(from, "monitor") == 0) {
+    std::cout << "type is: " << type.toStdString() << std::endl;
+    std::cout << "type compare 1: " << QString::compare(type, "authAck") << std::endl;
+    std::cout << "type compare 2: " << QString::compare(type, QString("authAck")) << std::endl;
 
+    if (QString::compare(from, "supercast") == 0) {
+        if (QString::compare(type, "authAck") == 0) {
+            emit this->connexionStatus(Supercast::ConnexionSuccess);
+        } else if (QString::compare(type, "authErr") == 0) {
+            emit this->connexionStatus(Supercast::AuthenticationError);
+        }
+    } else if (QString::compare(from, "monitor") == 0) {
+        emit this->monitorServerMessage(msg);
+    } else {
+        std::cout << "else is: " << type.toStdString() << std::endl;
     }
 }

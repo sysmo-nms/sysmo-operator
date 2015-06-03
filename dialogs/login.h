@@ -15,26 +15,34 @@
 #include <QLabel>
 #include <QDialogButtonBox>
 #include <QPixmap>
+#include <QRect>
+#include <QApplication>
+#include <QDesktopWidget>
 
 class LogIn : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit LogIn(QWidget *parent);
+    explicit LogIn(QWidget* parent);
     QString getUserName();
     QString getPassword();
     QString getServerName();
     int		getServerPort();
 
+private:
+    QLineEdit*	 user_name;
+    QLineEdit*	 user_pass;
+    QLineEdit*	 server_name;
+    QSpinBox*    server_port;
+    QPushButton* ok_but;
+    void restoreForm();
+
+private slots:
+    void isValid();
+
 signals:
     void tryValidate();
-
-private:
-    QLineEdit *user_name;
-    QLineEdit *user_pass;
-    QLineEdit *server_name;
-    QSpinBox  *server_port;
 };
 
 #endif // LOGIN_H

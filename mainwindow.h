@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "iostream"
+
 #include "centralwidget.h"
 #include "dialogs/login.h"
 #include "network/supercast.h"
@@ -28,18 +29,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
 public slots:
     void connexionStatus(int status);
 
+private:
+    LogIn* log_in_dialog;
+
 private slots:
     void toggleFullScreen();
     void tryValidate();
-
-private:
-    LogIn     *log_in_dialog;
 };
 
 #endif // MAINWINDOW_H

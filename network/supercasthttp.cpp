@@ -1,7 +1,6 @@
 #include "supercasthttp.h"
 
-
-SupercastHTTP::SupercastHTTP() : QObject()
+SupercastHTTP::SupercastHTTP(QWidget* parent) : QObject(parent)
 {
 
 }

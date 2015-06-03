@@ -11,7 +11,7 @@ class TreeModel : public QStandardItemModel
     Q_OBJECT
 
 public:
-    explicit TreeModel(QWidget *parent = 0);
+    explicit TreeModel(QWidget* parent = 0);
 };
 
 #endif // TREEMODEL_H

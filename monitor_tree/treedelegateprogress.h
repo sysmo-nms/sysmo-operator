@@ -10,9 +10,9 @@ class TreeDelegateProgress : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    explicit TreeDelegateProgress(QWidget *parent);
+    explicit TreeDelegateProgress(QWidget* parent);
     void paint(
-            QPainter *painter,
+            QPainter* painter,
             const QStyleOptionViewItem &option,
             const QModelIndex &index) const Q_DECL_OVERRIDE;
 };

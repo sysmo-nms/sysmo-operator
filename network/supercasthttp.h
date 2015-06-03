@@ -2,18 +2,14 @@
 #define SUPERCASTHTTP_H
 
 #include <QObject>
+#include <QWidget>
 
 class SupercastHTTP : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SupercastHTTP();
-
-public slots:
-
-signals:
-
+    explicit SupercastHTTP(QWidget* parent = 0);
 };
 
 #endif // SUPERCASTHTTP_H

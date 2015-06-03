@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 
-
-MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent)
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
     this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
     this->setWindowTitle("Sysmo Operator");
@@ -12,25 +10,25 @@ MainWindow::MainWindow(QWidget *parent)
 
     // TODO init QMessageLogger
 
-    QMenuBar *menu_bar  = this->menuBar();
-    QMenu    *main_menu = menu_bar->addMenu("Sysmo");
-    QAction  *action_exit = new QAction("&Exit", this);
+    QMenuBar* menu_bar  = this->menuBar();
+    QMenu*    main_menu = menu_bar->addMenu("Sysmo");
+    QAction*  action_exit = new QAction("&Exit", this);
     action_exit->setIcon(QIcon(":/ressources/images/32/system-log-out.png"));
     action_exit->setShortcut(QKeySequence("Ctrl+Q"));
     QObject::connect(
                 action_exit, SIGNAL(triggered(bool)),
                 this,        SLOT(close()));
-    QAction  *action_proxy_conf  = new QAction("&Proxy configuration...", this);
-    QAction  *action_doc_engine  = new QAction("&Configure doc engine...",this);
-    QAction  *action_updates     = new QAction("&Check for updates...", this);
-    QAction  *action_full_screen = new QAction("&Full screen", this);
+    QAction* action_proxy_conf  = new QAction("&Proxy configuration...", this);
+    QAction* action_doc_engine  = new QAction("&Configure doc engine...",this);
+    QAction* action_updates     = new QAction("&Check for updates...", this);
+    QAction* action_full_screen = new QAction("&Full screen", this);
     action_full_screen->setIcon(QIcon(":/ressources/images/32/view-fullscreen.png"));
     action_full_screen->setShortcut(QKeySequence("Ctrl+F"));
     QObject::connect(
                 action_full_screen, SIGNAL(triggered(bool)),
                 this,               SLOT(toggleFullScreen()));
     main_menu->addAction(action_full_screen);
-    QMenu *color_menu = main_menu->addMenu("Color theme");
+    QMenu* color_menu = main_menu->addMenu("Color theme");
     main_menu->addSeparator();
     main_menu->addAction(action_proxy_conf);
     main_menu->addAction(action_doc_engine);
@@ -39,17 +37,17 @@ MainWindow::MainWindow(QWidget *parent)
     main_menu->addAction(action_exit);
 
 
-    QAction *theme_nat = new QAction("Native", this);
-    QAction *theme_mid = new QAction("Midnight", this);
-    QAction *theme_inl = new QAction("Inland", this);
-    QAction *theme_gre = new QAction("Greys", this);
-    QAction *theme_sno = new QAction("Snowy", this);
+    QAction* theme_nat = new QAction("Native", this);
+    QAction* theme_mid = new QAction("Midnight", this);
+    QAction* theme_inl = new QAction("Inland", this);
+    QAction* theme_gre = new QAction("Greys", this);
+    QAction* theme_sno = new QAction("Snowy", this);
     theme_nat->setCheckable(true);
     theme_mid->setCheckable(true);
     theme_inl->setCheckable(true);
     theme_gre->setCheckable(true);
     theme_sno->setCheckable(true);
-    QActionGroup *color_group = new QActionGroup(this);
+    QActionGroup* color_group = new QActionGroup(this);
     color_group->addAction(theme_nat);
     color_group->addAction(theme_mid);
     color_group->addAction(theme_inl);
@@ -79,6 +77,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    /*
+     * Save state
+     */
 
 }
 
@@ -103,16 +104,26 @@ void MainWindow::tryValidate()
 {
     std::cout << "try validate" << std::endl;
     this->log_in_dialog->setEnabled(false);
-    Supercast *supercast = new Supercast(this);
+
+    Supercast* supercast = new Supercast(this);
     QObject::connect(
                 supercast, SIGNAL(connexionStatus(int)),
                 this, 	   SLOT(connexionStatus(int)));
-    supercast->tryConnect(
-        QHostAddress("192.168.0.11"),
-        (qint16)8888, "admin", "password");
+    Monitor* monitor = Monitor::getInstance();
+    QObject::connect(
+                supercast, SIGNAL(connexionStatus(int)),
+                monitor,   SLOT(connexionStatus(int)));
+
+    QString user(this->log_in_dialog->getUserName());
+    QString pass(this->log_in_dialog->getPassword());
+    QString server(this->log_in_dialog->getServerName());
+    int     port(this->log_in_dialog->getServerPort());
+
+    supercast->tryConnect( QHostAddress(server), port, user, pass);
     //this->log_in_dialog->setEnabled(false);
 
 }
+
 
 /*
  * Triggered by Supercast. Finalize the connection, or

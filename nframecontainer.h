@@ -9,7 +9,7 @@ class NFrameContainer : public QFrame
     Q_OBJECT
 
 public:
-    explicit NFrameContainer(QWidget *parent = 0);
+    explicit NFrameContainer(QWidget* parent = 0);
 };
 
 #endif // NFRAMECONTAINER_H

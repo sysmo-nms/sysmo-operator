@@ -1,8 +1,6 @@
 #include "treeview.h"
 
-
-TreeView::TreeView(QWidget *parent)
-        : QTreeView(parent)
+TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
     this->setItemsExpandable(true);
     this->setRootIsDecorated(false);
@@ -21,3 +19,10 @@ TreeView::TreeView(QWidget *parent)
     this->setItemDelegateForColumn(1, new TreeDelegateProgress(this));
 }
 
+
+TreeView::~TreeView()
+{
+    /*
+     * save state
+     */
+}

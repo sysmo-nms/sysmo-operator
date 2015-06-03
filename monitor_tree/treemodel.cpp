@@ -1,8 +1,6 @@
 #include "treemodel.h"
 
-
-TreeModel::TreeModel(QWidget *parent)
-        : QStandardItemModel(parent)
+TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 {
     QStringList headers = (QStringList()
           << "Targets/Probes"

@@ -12,6 +12,8 @@
 #include <QDataStream>
 #include <QHostAddress>
 #include <QIODevice>
+#include <Qt>
+
 
 class SupercastSocket : public QObject
 {
@@ -20,7 +22,7 @@ class SupercastSocket : public QObject
 public:
     explicit SupercastSocket(QHostAddress host, qint16 port);
     ~SupercastSocket();
-    QTcpSocket *socket;
+    QTcpSocket* socket;
 
 public slots:
     void handleClientMessage(QJsonObject msg);

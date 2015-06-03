@@ -1,7 +1,6 @@
 #include "treedelegateprogress.h"
 
-
-TreeDelegateProgress::TreeDelegateProgress(QWidget *parent)
+TreeDelegateProgress::TreeDelegateProgress(QWidget* parent)
         : QStyledItemDelegate(parent)
 {
 
@@ -9,7 +8,7 @@ TreeDelegateProgress::TreeDelegateProgress(QWidget *parent)
 
 
 void TreeDelegateProgress::paint(
-        QPainter *painter,
+        QPainter* painter,
         const QStyleOptionViewItem &option,
         const QModelIndex &index) const
 {

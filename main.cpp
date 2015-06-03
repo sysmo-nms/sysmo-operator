@@ -12,7 +12,7 @@ QPalette undef_palette;
  * Fake start used to fetch the native palette from
  * an initialized QApplication.
  */
-void fake_start(int argc, char *argv[])
+void fake_start(int argc, char* argv[])
 {
 
     undef_palette  = QPalette();
@@ -21,7 +21,7 @@ void fake_start(int argc, char *argv[])
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 
     fake_start(argc, argv);

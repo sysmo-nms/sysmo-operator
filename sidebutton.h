@@ -13,7 +13,7 @@ class SideButton : public QPushButton
     Q_OBJECT
 
 public:
-    explicit SideButton(QWidget *parent = 0);
+    explicit SideButton(QWidget* parent = 0);
 };
 
 #endif // SIDEBUTTON_H

@@ -8,7 +8,7 @@ class NGridContainer : public QGridLayout
 {
 
 public:
-    explicit NGridContainer(QWidget *parent = 0);
+    explicit NGridContainer(QWidget* parent = 0);
 };
 
 #endif // NGRIDCONTAINER_H
