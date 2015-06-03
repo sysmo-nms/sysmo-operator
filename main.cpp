@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-#include <QString>
 #include <QPalette>
 
 QPalette native_palette;
@@ -14,7 +13,6 @@ QPalette undef_palette;
  */
 void fake_start(int argc, char* argv[])
 {
-
     undef_palette  = QPalette();
     QApplication a(argc, argv);
     native_palette = QPalette(a.palette());
@@ -23,9 +21,8 @@ void fake_start(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-
     fake_start(argc, argv);
-    QApplication::setStyle(QString("fusion"));
+    QApplication::setStyle("fusion");
     QApplication::setPalette(native_palette);
 
     QApplication a(argc, argv);
