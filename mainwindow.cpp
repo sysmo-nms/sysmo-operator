@@ -104,7 +104,6 @@ void MainWindow::toggleFullScreen()
  */
 void MainWindow::tryValidate()
 {
-    std::cout << "try validate" << std::endl;
     this->log_in_dialog->setEnabled(false);
 
     QObject::connect(
@@ -132,8 +131,6 @@ void MainWindow::tryValidate()
  */
 void MainWindow::connexionStatus(int status)
 {
-    std::cout << "Connexion status" << status << std::endl;
-    std::cout << Supercast::getInstance()->user_name.toStdString() << std::endl;
     if (status == Supercast::ConnexionSuccess) {
         this->log_in_dialog->close();
         this->show();

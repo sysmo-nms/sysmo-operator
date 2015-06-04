@@ -1,10 +1,21 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
+#include "iostream"
+
+#include "monitor.h"
+#include "targetitem.h"
+#include "probeitem.h"
+
 #include <QObject>
 #include <QWidget>
 #include <QStandardItemModel>
+#include <QStandardItem>
 #include <QStringList>
+#include <QJsonObject>
+#include <QHash>
+#include <QDebug>
+#include <QList>
 
 class TreeModel : public QStandardItemModel
 {
@@ -12,6 +23,19 @@ class TreeModel : public QStandardItemModel
 
 public:
     explicit TreeModel(QWidget* parent = 0);
+
+public slots:
+    void handleInfoProbe(QJsonObject message);
+    void handleInfoTarget(QJsonObject message);
+    void handleDeleteProbe(QJsonObject message);
+    void handleDeleteTarget(QJsonObject message);
+    void handleProbeReturn(QJsonObject message);
+
+private:
+    QStandardItem* itemExist(QString name);
+    QHash<QString, TargetItem*>* targets;
+    QHash<QString, ProbeItem*>* probes;
+
 };
 
 #endif // TREEMODEL_H

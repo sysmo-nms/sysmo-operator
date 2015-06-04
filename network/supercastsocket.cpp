@@ -3,7 +3,7 @@
 SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
 {
     this->block_size = 0;
-    this->socket = new QTcpSocket(this);
+    this->socket     = new QTcpSocket(this);
 
     QObject::connect(
                 this->socket, SIGNAL(readyRead()),
@@ -23,15 +23,10 @@ SupercastSocket::~SupercastSocket()
 void SupercastSocket::socketReadyRead()
 {
     /*
-     * First cancel duplicate readyRead() signals.
-     * (see end of function)
+     * read header to set block_size. Only read when the header is
+     * complete.
      */
-    if (this->socket->bytesAvailable() == 0) return;
-
     if (this->block_size == 0) {
-        /*
-         * read header to set block_size
-         */
         if (this->socket->bytesAvailable() < HEADER_LEN) return;
 
         QByteArray header = this->socket->read(HEADER_LEN);
@@ -40,34 +35,33 @@ void SupercastSocket::socketReadyRead()
 
 
     /*
-     * only read when all data is ready
+     * We have the block_size. Only read when the payload is complete.
      */
-    if (this->socket->bytesAvailable() < this->block_size) {
-        return;
-    }
+    if (this->socket->bytesAvailable() < this->block_size) return;
 
 
-    /* OK read data */
     /*
-     * get payload_bytes. Carefull, no null terminator:
-     * specify this->block_size when working on it.
+     * Read and decode the payload.
      */
     QByteArray    payload  = this->socket->read(this->block_size);
     QJsonDocument json_doc = QJsonDocument::fromJson(payload);
     QJsonObject   json_obj = json_doc.object();
-    std::cout << "json msg: " << json_doc.toJson().data() << std::endl;
-    // Deliver the message
+
+
+    /*
+     * Deliver the message
+     */
     emit this->serverMessage(json_obj);
+
 
     /*
      * Reinitialize block size to 0
      */
     this->block_size = 0;
 
+
     /*
-     * Is there some data buffered?
-     * Some PDUs might comme in one readyRead() signal. We must trigger it
-     * again.
+     * Some PDUs might comme in one readyRead() signal.
      */
     if (this->socket->bytesAvailable() != 0)
         emit this->socket->readyRead();

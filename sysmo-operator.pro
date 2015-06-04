@@ -32,7 +32,9 @@ SOURCES += main.cpp\
     network/supercastsocket.cpp \
     network/supercasthttp.cpp \
     network/supercastsignal.cpp \
-    network/supercastquery.cpp
+    network/supercastquery.cpp \
+    monitor_tree/targetitem.cpp \
+    monitor_tree/probeitem.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -52,7 +54,9 @@ HEADERS  += mainwindow.h \
     network/supercastsocket.h \
     network/supercasthttp.h \
     network/supercastsignal.h \
-    network/supercastquery.h
+    network/supercastquery.h \
+    monitor_tree/targetitem.h \
+    monitor_tree/probeitem.h
 
 RESOURCES += \
     ressources.qrc

@@ -79,7 +79,6 @@ void Supercast::socketConnected()
 
 void Supercast::socketError(QAbstractSocket::SocketError error)
 {
-    std::cout << "socket error: " << error << std::endl;
     emit this->connexionStatus(error);
 }
 
@@ -97,7 +96,6 @@ void Supercast::routeServerMessage(QJsonObject msg)
 void Supercast::handleSupercastMessage(QJsonObject message)
 {
     QString type = message.value("type").toString("undefined");
-    qDebug() << "handle supercast message?";
     if (QString::compare(type, "authAck") == 0) {
         emit this->connexionStatus(Supercast::ConnexionSuccess);
     } else if (QString::compare(type, "authErr") == 0) {

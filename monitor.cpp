@@ -1,12 +1,16 @@
 #include "monitor.h"
 
 Monitor* Monitor::singleton = NULL;
+QMap<QString,QJsonObject>* Monitor::target_map = NULL;
+QMap<QString,QJsonObject>* Monitor::probe_map  = NULL;
+
 Monitor* Monitor::getInstance() {return Monitor::singleton;}
 
 Monitor::Monitor(QWidget* parent) : NFrame(parent)
 {
-    this->target_map = new QMap<QString, QJsonObject>();
-    this->probe_map  = new QMap<QString, QJsonObject>();
+    Monitor::target_map = new QMap<QString, QJsonObject>();
+    Monitor::probe_map  = new QMap<QString, QJsonObject>();
+
     Monitor::singleton = this;
     this->setFrameShape(QFrame::StyledPanel);
     NGrid* grid = new NGrid();
@@ -75,8 +79,53 @@ Monitor::~Monitor()
 
 void Monitor::handleServerMessage(QJsonObject message)
 {
-    std::cout << "received message!!" << std::endl;
+    QString     type = message.value("type").toString("undefined");
+    QJsonValue  mvalues(message.value("value"));
+    QJsonObject mcontent = mvalues.toObject();
 
+    if (QString::compare(type, "infoTarget") == 0) {
+        QString	    tname(mcontent.value("name").toString(""));
+
+        Monitor::target_map->insert(tname,mcontent);
+        emit this->infoTarget(mcontent);
+
+
+    } else if (QString::compare(type, "infoProbe") == 0) {
+        QString	    pname(mcontent.value("name").toString(""));
+
+        Monitor::probe_map->insert(pname, mcontent);
+        emit this->infoProbe(mcontent);
+
+
+    } else if (QString::compare(type, "deleteTarget") == 0) {
+        QString	    tname(mcontent.value("name").toString(""));
+
+        Monitor::target_map->remove(tname);
+        emit this->deleteProbe(mcontent);
+
+
+    } else if (QString::compare(type, "deleteProbe") == 0) {
+        QString	    pname(mcontent.value("name").toString(""));
+
+        Monitor::target_map->remove(pname);
+        emit this->deleteProbe(mcontent);
+
+
+    } else if (QString::compare(type, "probeReturn") == 0) {
+        emit this->probeReturn(mcontent);
+
+
+    } else if (QString::compare(type, "nchecksSimpleDumpMessage") == 0) {
+    } else if (QString::compare(type, "nchecksSimpleUpdateMessage") == 0) {
+    } else if (QString::compare(type, "nchecksTableDumpMessage") == 0) {
+    } else if (QString::compare(type, "nchecksTableUpdateMessage") == 0) {
+    } else if (QString::compare(type, "subscribeOk") == 0) {
+    } else if (QString::compare(type, "unSubscribeOk") == 0) {
+    } else {
+        QJsonDocument doc(message);
+        std::cout << "received message!!" << type.toStdString() << std::endl;
+        std::cout << doc.toJson().toStdString() << std::endl;
+   }
 }
 
 

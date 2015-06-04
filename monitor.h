@@ -21,6 +21,7 @@
 #include <QIcon>
 #include <QMap>
 #include <QJsonObject>
+#include <QJsonDocument>
 
 class Monitor : public NFrame
 {
@@ -31,6 +32,8 @@ public:
     ~Monitor();
     NewTarget* add_target_dialog;
     static Monitor* getInstance();
+    static QMap<QString, QJsonObject>* target_map;
+    static QMap<QString, QJsonObject>* probe_map;
 
 public slots:
     void newTarget();
@@ -39,8 +42,13 @@ public slots:
 
 private:
     static Monitor* singleton;
-    QMap<QString, QJsonObject>* target_map;
-    QMap<QString, QJsonObject>* probe_map;
+
+signals:
+    void infoProbe(QJsonObject message);
+    void infoTarget(QJsonObject message);
+    void deleteTarget(QJsonObject message);
+    void deleteProbe(QJsonObject message);
+    void probeReturn(QJsonObject message);
 };
 
 #endif // MONITOR_H

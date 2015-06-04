@@ -1,9 +1,6 @@
 #ifndef SUPERCASTSOCKET_H
 #define SUPERCASTSOCKET_H
 
-#include "iostream"
-#include "stdlib.h"
-
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonObject>
