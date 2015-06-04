@@ -5,7 +5,9 @@ TargetItem::TargetItem(QJsonObject info_target) : QStandardItem()
     this->name = info_target.value("name").toString("undefined");
     this->setText(this->name);
     this->updateInfo(info_target);
+    //this->icon = QPixmap(":/ressources/images/32/dialog-information.png");
     this->icon = QIcon(":/ressources/images/32/dialog-information.png");
+    //qDebug() << this->icon.cacheKey();
 }
 
 

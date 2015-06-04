@@ -11,7 +11,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setObjectName("MonitorTreeView");
-    this->setIconSize(QSize(18,18));
+    this->setIconSize(QSize(22,22));
     this->setAnimated(false);
     this->setAlternatingRowColors(true);
     this->setSortingEnabled(true);

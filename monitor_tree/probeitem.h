@@ -8,6 +8,8 @@
 #include <QVariant>
 #include <QIcon>
 #include <Qt>
+#include <QDebug>
+#include <QPixmap>
 
 class ProbeItem : public QStandardItem
 {
@@ -25,6 +27,7 @@ public:
 
 private:
     void updateInfo(QJsonObject info_probe);
+    //QPixmap icon;
     QIcon icon;
 };
 

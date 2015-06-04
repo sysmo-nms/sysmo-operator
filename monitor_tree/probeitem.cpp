@@ -17,6 +17,7 @@ ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
 void ProbeItem::updateInfo(QJsonObject info_probe)
 {
     this->setText(this->name);
+    //this->icon = QPixmap(":/ressources/images/32/logo.png");
     this->icon = QIcon(":/ressources/images/32/logo.png");
 }
 

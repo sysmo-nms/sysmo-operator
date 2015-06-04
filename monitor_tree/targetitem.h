@@ -8,7 +8,9 @@
 #include <QVariant>
 #include <QDebug>
 #include <QPixmap>
+#include <QIcon>
 #include <Qt>
+#include <QDebug>
 
 class TargetItem : public QStandardItem
 {
@@ -23,6 +25,7 @@ public:
 private:
     void updateInfo(QJsonObject info_target);
     QJsonObject target_properties;
+    //QPixmap icon;
     QIcon icon;
 };
 
