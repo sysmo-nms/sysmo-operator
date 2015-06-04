@@ -5,7 +5,14 @@ Supercast* Supercast::getInstance() {return singleton;}
 
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
-    singleton = this;
+    Supercast::singleton = this;
+    SupercastSignal* sig = new SupercastSignal(this);
+    QObject::connect(
+                sig,  SIGNAL(sendMessage(QJsonObject)),
+                this, SLOT(handleSupercastMessage(QJsonObject)));
+
+    this->message_processors = new QHash<QString, SupercastSignal*>();
+    this->message_processors->insert("supercast", sig);
 }
 
 void Supercast::tryConnect(
@@ -21,7 +28,7 @@ void Supercast::tryConnect(
     // server -> client
     QObject::connect(
                 this->supercast_socket, SIGNAL(serverMessage(QJsonObject)),
-                this,                   SLOT(handleServerMessage(QJsonObject)),
+                this,                   SLOT(routeServerMessage(QJsonObject)),
                 Qt::QueuedConnection);
     // client -> server
     QObject::connect(
@@ -77,26 +84,27 @@ void Supercast::socketError(QAbstractSocket::SocketError error)
 }
 
 
-void Supercast::handleServerMessage(QJsonObject msg)
+void Supercast::routeServerMessage(QJsonObject msg)
 {
     QString from = msg.value("from").toString("undefined");
-    QString type = msg.value("type").toString("undefined");
-
-    std::cout << "type is: " << type.toStdString() << std::endl;
-    std::cout << "from is: " << from.toStdString() << std::endl;
-
-    if (QString::compare(from, "supercast") == 0) {
-        if (QString::compare(type, "authAck") == 0) {
-            emit this->connexionStatus(Supercast::ConnexionSuccess);
-        } else if (QString::compare(type, "authErr") == 0) {
-            emit this->connexionStatus(Supercast::AuthenticationError);
-        }
-    } else if (QString::compare(from, "monitor") == 0) {
-        //emit this->monitorServerMessage(msg);
-    } else {
-        std::cout << "else is: " << type.toStdString() << std::endl;
+    if (this->message_processors->contains(from)) {
+        SupercastSignal* sig = this->message_processors->value(from);
+        emit sig->sendMessage(msg);
     }
 }
+
+
+void Supercast::handleSupercastMessage(QJsonObject message)
+{
+    QString type = message.value("type").toString("undefined");
+    qDebug() << "handle supercast message?";
+    if (QString::compare(type, "authAck") == 0) {
+        emit this->connexionStatus(Supercast::ConnexionSuccess);
+    } else if (QString::compare(type, "authErr") == 0) {
+        emit this->connexionStatus(Supercast::AuthenticationError);
+    }
+}
+
 
 void Supercast::subscribe(QString channel)
 {
@@ -107,4 +115,10 @@ void Supercast::subscribe(QString channel)
                 {"queryId", 0},
                 {"channel", channel}}}};
     emit Supercast::singleton->clientMessage(subscribeMsg);
+}
+
+
+void Supercast::setMessageProcessor(QString key, SupercastSignal* dest)
+{
+    Supercast::singleton->message_processors->insert(key, dest);
 }

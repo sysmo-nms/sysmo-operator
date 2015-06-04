@@ -35,7 +35,7 @@ void SupercastSocket::socketReadyRead()
         if (this->socket->bytesAvailable() < HEADER_LEN) return;
 
         QByteArray header = this->socket->read(HEADER_LEN);
-        this->block_size = SupercastSocket::arrayToInt(header);
+        this->block_size = SupercastSocket::arrayToInt32(header);
     }
 
 
@@ -69,7 +69,7 @@ void SupercastSocket::socketReadyRead()
      * Some PDUs might comme in one readyRead() signal. We must trigger it
      * again.
      */
-    if ((int)this->socket->bytesAvailable() != 0)
+    if (this->socket->bytesAvailable() != 0)
         emit this->socket->readyRead();
 }
 
@@ -77,12 +77,12 @@ void SupercastSocket::socketReadyRead()
 void SupercastSocket::handleClientMessage(QJsonObject msg)
 {
     QByteArray  json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
-    qint32      json_size((qint32)json_array.size());
-    this->socket->write(SupercastSocket::intToArray(json_size));
+    qint32      json_size(json_array.size());
+    this->socket->write(SupercastSocket::int32ToArray(json_size));
     this->socket->write(json_array.data(), json_size);
 }
 
-qint32 SupercastSocket::arrayToInt(QByteArray source)
+qint32 SupercastSocket::arrayToInt32(QByteArray source)
 {
     qint32 temp;
     QDataStream data(&source, QIODevice::ReadWrite);
@@ -90,7 +90,7 @@ qint32 SupercastSocket::arrayToInt(QByteArray source)
     return temp;
 }
 
-QByteArray SupercastSocket::intToArray(qint32 source)
+QByteArray SupercastSocket::int32ToArray(qint32 source)
 {
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);

@@ -30,7 +30,9 @@ SOURCES += main.cpp\
     dialogs/login.cpp \
     network/supercast.cpp \
     network/supercastsocket.cpp \
-    network/supercasthttp.cpp
+    network/supercasthttp.cpp \
+    network/supercastsignal.cpp \
+    network/supercastquery.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -48,7 +50,9 @@ HEADERS  += mainwindow.h \
     dialogs/login.h \
     network/supercast.h \
     network/supercastsocket.h \
-    network/supercasthttp.h
+    network/supercasthttp.h \
+    network/supercastsignal.h \
+    network/supercastquery.h
 
 RESOURCES += \
     ressources.qrc

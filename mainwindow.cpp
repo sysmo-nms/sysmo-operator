@@ -2,6 +2,8 @@
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
+    this->supercast = new Supercast(this);
+
     this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
     this->setWindowTitle("Sysmo Operator");
     this->setObjectName("MainWindow");
@@ -105,21 +107,20 @@ void MainWindow::tryValidate()
     std::cout << "try validate" << std::endl;
     this->log_in_dialog->setEnabled(false);
 
-    Supercast* supercast = new Supercast(this);
     QObject::connect(
-                supercast, SIGNAL(connexionStatus(int)),
+                this->supercast, SIGNAL(connexionStatus(int)),
                 this, 	   SLOT(connexionStatus(int)));
     Monitor* monitor = Monitor::getInstance();
     QObject::connect(
-                supercast, SIGNAL(connexionStatus(int)),
+                this->supercast, SIGNAL(connexionStatus(int)),
                 monitor,   SLOT(connexionStatus(int)));
 
     QString user(this->log_in_dialog->getUserName());
     QString pass(this->log_in_dialog->getPassword());
     QString server(this->log_in_dialog->getServerName());
-    int     port(this->log_in_dialog->getServerPort());
+    qint16  port(this->log_in_dialog->getServerPort());
 
-    supercast->tryConnect( QHostAddress(server), port, user, pass);
+    this->supercast->tryConnect( QHostAddress(server), port, user, pass);
     //this->log_in_dialog->setEnabled(false);
 
 }

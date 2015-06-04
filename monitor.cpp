@@ -5,6 +5,8 @@ Monitor* Monitor::getInstance() {return Monitor::singleton;}
 
 Monitor::Monitor(QWidget* parent) : NFrame(parent)
 {
+    this->target_map = new QMap<QString, QJsonObject>();
+    this->probe_map  = new QMap<QString, QJsonObject>();
     Monitor::singleton = this;
     this->setFrameShape(QFrame::StyledPanel);
     NGrid* grid = new NGrid();
@@ -53,6 +55,13 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
 
     // get a NewTarget instance
     this->add_target_dialog = new NewTarget(this);
+
+    // supercast init
+    SupercastSignal* sig = new SupercastSignal(this);
+    QObject::connect(
+                sig,	SIGNAL(sendMessage(QJsonObject)),
+                this,	SLOT(handleServerMessage(QJsonObject)));
+    Supercast::setMessageProcessor(QString("monitor"), sig);
 }
 
 
@@ -64,13 +73,16 @@ Monitor::~Monitor()
 }
 
 
+void Monitor::handleServerMessage(QJsonObject message)
+{
+    std::cout << "received message!!" << std::endl;
+
+}
+
+
 void Monitor::connexionStatus(int status)
 {
     if (status == Supercast::ConnexionSuccess) {
-        // should init myself
-        // - connect to supercast
-        // - fill treeModel
-        std::cout << "initalize myself " << std::endl;
         Supercast::subscribe("target-MasterChan");
     } else {
         // the application is in an error state.

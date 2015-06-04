@@ -100,7 +100,7 @@ QString LogIn::getServerName()
 }
 
 
-int LogIn::getServerPort()
+qint16 LogIn::getServerPort()
 {
     return this->server_port->value();
 }

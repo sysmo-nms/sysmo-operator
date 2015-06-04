@@ -10,6 +10,7 @@
 #include "dialogs/newtarget.h"
 #include "monitor_tree/treeview.h"
 #include "network/supercast.h"
+#include "network/supercastsignal.h"
 
 #include <QObject>
 #include <QWidget>
@@ -18,6 +19,8 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QIcon>
+#include <QMap>
+#include <QJsonObject>
 
 class Monitor : public NFrame
 {
@@ -32,9 +35,12 @@ public:
 public slots:
     void newTarget();
     void connexionStatus(int status);
+    void handleServerMessage(QJsonObject message);
 
 private:
     static Monitor* singleton;
+    QMap<QString, QJsonObject>* target_map;
+    QMap<QString, QJsonObject>* probe_map;
 };
 
 #endif // MONITOR_H

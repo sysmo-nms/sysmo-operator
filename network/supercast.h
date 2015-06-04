@@ -4,6 +4,7 @@
 #include "iostream"
 
 #include "network/supercastsocket.h"
+#include "network/supercastsignal.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -12,6 +13,8 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QStringList>
+#include <QHash>
+#include <QDebug>
 
 
 class Supercast : public QObject
@@ -30,20 +33,25 @@ public:
             QString      user_pass);
     static Supercast* getInstance();
     static void subscribe(QString channel);
+    static void setMessageProcessor(QString key, SupercastSignal* dest);
     QString user_name;
     QString user_pass;
     QString testouille;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
+    QHash<QString, SupercastSignal*>* message_processors;
 
 public slots:
-    void handleServerMessage(QJsonObject msg);
+    void routeServerMessage(QJsonObject msg);
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
 
 private:
     SupercastSocket*  supercast_socket;
     static Supercast* singleton;
+
+private slots:
+    void handleSupercastMessage(QJsonObject message);
 
 signals:
     void clientMessage(QJsonObject msg);

@@ -28,7 +28,7 @@ public:
     QString getUserName();
     QString getPassword();
     QString getServerName();
-    int		getServerPort();
+    qint16  getServerPort();
 
 private:
     QLineEdit*	 user_name;
