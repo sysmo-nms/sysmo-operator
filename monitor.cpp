@@ -83,44 +83,44 @@ void Monitor::handleServerMessage(QJsonObject message)
     QJsonValue  mvalues(message.value("value"));
     QJsonObject mcontent = mvalues.toObject();
 
-    if (QString::compare(type, "infoTarget") == 0) {
+    if (type == "infoTarget") {
         QString	    tname(mcontent.value("name").toString(""));
 
         Monitor::target_map->insert(tname,mcontent);
         emit this->infoTarget(mcontent);
 
 
-    } else if (QString::compare(type, "infoProbe") == 0) {
+    } else if (type == "infoProbe") {
         QString	    pname(mcontent.value("name").toString(""));
 
         Monitor::probe_map->insert(pname, mcontent);
         emit this->infoProbe(mcontent);
 
 
-    } else if (QString::compare(type, "deleteTarget") == 0) {
+    } else if (type == "deleteTarget") {
         QString	    tname(mcontent.value("name").toString(""));
 
         Monitor::target_map->remove(tname);
         emit this->deleteProbe(mcontent);
 
 
-    } else if (QString::compare(type, "deleteProbe") == 0) {
+    } else if (type == "deleteProbe") {
         QString	    pname(mcontent.value("name").toString(""));
 
         Monitor::target_map->remove(pname);
         emit this->deleteProbe(mcontent);
 
 
-    } else if (QString::compare(type, "probeReturn") == 0) {
+    } else if (type == "probeReturn") {
         emit this->probeReturn(mcontent);
 
 
-    } else if (QString::compare(type, "nchecksSimpleDumpMessage") == 0) {
-    } else if (QString::compare(type, "nchecksSimpleUpdateMessage") == 0) {
-    } else if (QString::compare(type, "nchecksTableDumpMessage") == 0) {
-    } else if (QString::compare(type, "nchecksTableUpdateMessage") == 0) {
-    } else if (QString::compare(type, "subscribeOk") == 0) {
-    } else if (QString::compare(type, "unSubscribeOk") == 0) {
+    } else if (type == "nchecksSimpleDumpMessage") {
+    } else if (type == "nchecksSimpleUpdateMessage") {
+    } else if (type == "nchecksTableDumpMessage") {
+    } else if (type == "nchecksTableUpdateMessage") {
+    } else if (type == "subscribeOk") {
+    } else if (type == "unSubscribeOk") {
     } else {
         QJsonDocument doc(message);
         std::cout << "received message!!" << type.toStdString() << std::endl;

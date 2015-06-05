@@ -10,3 +10,8 @@ QVariant ProgressItem::data(int role) const
     if (role == Qt::UserRole + 1) {return 1;}
     return QStandardItem::data(role);
 }
+
+int ProgressItem::type() const
+{
+    return 1002;
+}

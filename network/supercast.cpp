@@ -96,9 +96,9 @@ void Supercast::routeServerMessage(QJsonObject msg)
 void Supercast::handleSupercastMessage(QJsonObject message)
 {
     QString type = message.value("type").toString("undefined");
-    if (QString::compare(type, "authAck") == 0) {
+    if (type == "authAck") {
         emit this->connexionStatus(Supercast::ConnexionSuccess);
-    } else if (QString::compare(type, "authErr") == 0) {
+    } else if (type == "authErr") {
         emit this->connexionStatus(Supercast::AuthenticationError);
     }
 }

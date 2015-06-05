@@ -11,6 +11,7 @@
 #include <QString>
 #include <QSize>
 #include <QTreeView>
+#include <QTimer>
 
 class TreeView : public QTreeView
 {

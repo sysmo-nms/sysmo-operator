@@ -14,6 +14,7 @@
 #include <QStyle>
 #include <QVariant>
 #include <QDebug>
+#include <QFont>
 
 class TreeDelegateProgress : public QStyledItemDelegate
 {
@@ -25,6 +26,13 @@ public:
             QPainter* painter,
             const QStyleOptionViewItem &option,
             const QModelIndex &index) const Q_DECL_OVERRIDE;
+public slots:
+    void ticTimeout();
+
+private:
+    int   ticval;
+    QFont font;
+
 };
 
 #endif // TREEDELEGATEPROGRESS_H

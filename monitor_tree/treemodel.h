@@ -16,6 +16,7 @@
 #include <QHash>
 #include <QDebug>
 #include <QList>
+#include <QTimer>
 
 class TreeModel : public QStandardItemModel
 {
@@ -34,8 +35,11 @@ public slots:
 private:
     QStandardItem* itemExist(QString name);
     QHash<QString, TargetItem*>* targets;
-    QHash<QString, ProbeItem*>* probes;
+    QHash<QString, ProbeItem*>*  probes;
+    QTimer* 					 timer;
 
+private slots:
+    void ticTimeout();
 };
 
 #endif // TREEMODEL_H

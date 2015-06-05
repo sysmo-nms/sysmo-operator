@@ -16,9 +16,26 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setAlternatingRowColors(true);
     this->setSortingEnabled(true);
     this->setModel(new TreeModel(this));
-    this->setItemDelegateForColumn(2, new TreeDelegateProgress(this));
-}
 
+    QTimer* timer = new QTimer(this);
+    timer->setInterval(1000);
+    timer->setSingleShot(false);
+    timer->start();
+    TreeDelegateProgress* progress = new TreeDelegateProgress(this);
+
+    /*
+     * connect delegate first
+     */
+    QObject::connect(
+                timer, SIGNAL(timeout()),
+                progress, SLOT(ticTimeout()));
+
+    QObject::connect(
+                timer, 				SIGNAL(timeout()),
+                this->viewport(),   SLOT(update()));
+
+    this->setItemDelegateForColumn(2, progress);
+}
 
 TreeView::~TreeView()
 {
