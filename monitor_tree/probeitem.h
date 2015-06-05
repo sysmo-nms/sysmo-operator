@@ -1,6 +1,8 @@
 #ifndef PROBEITEM_H
 #define PROBEITEM_H
 
+#include "progressitem.h"
+
 #include <QObject>
 #include <QJsonObject>
 #include <QStandardItem>

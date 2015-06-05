@@ -5,10 +5,10 @@ ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
     this->r1 = new QStandardItem();
-    this->r2 = new QStandardItem("hello");
-    this->r3 = new QStandardItem("hello");
-    this->r4 = new QStandardItem("hello");
-    this->r5 = new QStandardItem("hello");
+    this->r2 = new ProgressItem(0,0);
+    this->r3 = new QStandardItem();
+    this->r4 = new QStandardItem();
+    this->r5 = new QStandardItem();
 
     this->updateInfo(info_probe);
 }
@@ -16,17 +16,20 @@ ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
 
 void ProbeItem::updateInfo(QJsonObject info_probe)
 {
-    this->setText(this->name);
     //this->icon = QPixmap(":/ressources/images/32/logo.png");
-    this->icon = QIcon(":/ressources/images/32/logo.png");
+    this->setText(info_probe.value("descr").toString(""));
+    this->setIcon(QIcon(":/ressources/images/32/logo.png"));
+    this->r3->setText(info_probe.value("status").toString(""));
+    if (info_probe.value("active").toBool()) {
+        this->r4->setText("active");
+    } else {
+        this->r4->setText("paused");
+    }
 }
 
 
 QVariant ProbeItem::data(int role) const
 {
-    if (role == Qt::DecorationRole) {return this->icon;}
-    if (role == Qt::DisplayRole)  	{return this->name;}
-
     return QStandardItem::data(role);
 }
 

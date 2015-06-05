@@ -16,7 +16,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setAlternatingRowColors(true);
     this->setSortingEnabled(true);
     this->setModel(new TreeModel(this));
-    this->setItemDelegateForColumn(1, new TreeDelegateProgress(this));
+    this->setItemDelegateForColumn(2, new TreeDelegateProgress(this));
 }
 
 

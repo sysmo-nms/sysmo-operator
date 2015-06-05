@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     network/supercastsignal.cpp \
     network/supercastquery.cpp \
     monitor_tree/targetitem.cpp \
-    monitor_tree/probeitem.cpp
+    monitor_tree/probeitem.cpp \
+    monitor_tree/progressitem.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -56,7 +57,8 @@ HEADERS  += mainwindow.h \
     network/supercastsignal.h \
     network/supercastquery.h \
     monitor_tree/targetitem.h \
-    monitor_tree/probeitem.h
+    monitor_tree/probeitem.h \
+    monitor_tree/progressitem.h
 
 RESOURCES += \
     ressources.qrc

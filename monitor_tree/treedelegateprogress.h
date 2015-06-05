@@ -1,9 +1,19 @@
 #ifndef TREEDELEGATEPROGRESS_H
 #define TREEDELEGATEPROGRESS_H
 
+#include "treemodel.h"
+
 #include <QObject>
 #include <QWidget>
 #include <QStyledItemDelegate>
+#include <QPainter>
+#include <QModelIndex>
+#include <QStyleOptionViewItem>
+#include <QStyleOptionProgressBar>
+#include <QApplication>
+#include <QStyle>
+#include <QVariant>
+#include <QDebug>
 
 class TreeDelegateProgress : public QStyledItemDelegate
 {
