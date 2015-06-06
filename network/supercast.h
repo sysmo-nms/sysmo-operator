@@ -31,15 +31,15 @@ public:
             qint16       port,
             QString      user_name,
             QString      user_pass);
-    static Supercast* getInstance();
-    static void subscribe(QString channel);
-    static void setMessageProcessor(QString key, SupercastSignal* dest);
     QString user_name;
     QString user_pass;
     QString testouille;
+    QHash<QString, SupercastSignal*>* message_processors = NULL;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
-    QHash<QString, SupercastSignal*>* message_processors = NULL;
+    static Supercast* getInstance();
+    static void subscribe(QString channel);
+    static void setMessageProcessor(QString key, SupercastSignal* dest);
 
 public slots:
     void routeServerMessage(QJsonObject msg);

@@ -1,14 +1,14 @@
 #include "supercast.h"
 
 Supercast* Supercast::singleton = NULL;
-Supercast* Supercast::getInstance() {return singleton;}
+Supercast* Supercast::getInstance() {return Supercast::singleton;}
 
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
     Supercast::singleton   = this;
     SupercastSignal* sig   = new SupercastSignal(this);
     QObject::connect(
-                sig,  SIGNAL(sendMessage(QJsonObject)),
+                sig,   SIGNAL(sendMessage(QJsonObject)),
                 this,  SLOT(handleSupercastMessage(QJsonObject)));
 
     this->message_processors = new QHash<QString, SupercastSignal*>();
@@ -26,12 +26,12 @@ void Supercast::tryConnect(
     this->user_pass = user_pass;
     this->supercast_socket = new SupercastSocket(host,port);
 
-    // server -> client
+    // server -> message -> client
     QObject::connect(
                 this->supercast_socket, SIGNAL(serverMessage(QJsonObject)),
                 this,                   SLOT(routeServerMessage(QJsonObject)),
                 Qt::QueuedConnection);
-    // client -> server
+    // client -> message -> server
     QObject::connect(
                 this,                   SIGNAL(clientMessage(QJsonObject)),
                 this->supercast_socket, SLOT(handleClientMessage(QJsonObject)),

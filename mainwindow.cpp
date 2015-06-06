@@ -12,16 +12,17 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
     QMenuBar* menu_bar  = this->menuBar();
     QMenu*    main_menu = menu_bar->addMenu("Sysmo");
+
     QAction*  action_exit = new QAction("&Exit", this);
     action_exit->setIcon(QIcon(":/ressources/images/32/system-log-out.png"));
     action_exit->setShortcut(QKeySequence("Ctrl+Q"));
     QObject::connect(
                 action_exit, SIGNAL(triggered(bool)),
                 this,        SLOT(close()));
-    QAction* action_proxy_conf  = new QAction("&Proxy configuration...", this);
-    QAction* action_doc_engine  = new QAction("&Configure doc engine...",this);
-    QAction* action_updates     = new QAction("&Check for updates...", this);
-    QAction* action_full_screen = new QAction("&Full screen", this);
+    QAction* action_proxy_conf  = new QAction("&Proxy configuration...",  this);
+    QAction* action_doc_engine  = new QAction("&Configure doc engine...", this);
+    QAction* action_updates     = new QAction("&Check for updates...",    this);
+    QAction* action_full_screen = new QAction("&Full screen",             this);
     action_full_screen->setIcon(QIcon(":/ressources/images/32/view-fullscreen.png"));
     action_full_screen->setShortcut(QKeySequence("Ctrl+F"));
     QObject::connect(
@@ -36,12 +37,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     main_menu->addSeparator();
     main_menu->addAction(action_exit);
 
-
-    QAction* theme_nat = new QAction("Native", this);
+    QAction* theme_nat = new QAction("Native",   this);
     QAction* theme_mid = new QAction("Midnight", this);
-    QAction* theme_inl = new QAction("Inland", this);
-    QAction* theme_gre = new QAction("Greys", this);
-    QAction* theme_ice = new QAction("Iced", this);
+    QAction* theme_inl = new QAction("Inland",   this);
+    QAction* theme_gre = new QAction("Greys",    this);
+    QAction* theme_ice = new QAction("Iced",     this);
     theme_nat->setCheckable(true);
     theme_mid->setCheckable(true);
     theme_inl->setCheckable(true);
@@ -60,17 +60,18 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     color_menu->addAction(theme_inl);
     color_menu->addAction(theme_gre);
     color_menu->addAction(theme_ice);
-    color_menu->setIcon(QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
+    color_menu->setIcon(
+             QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
     this->hide();
 
     this->log_in_dialog = new LogIn(this);
     QObject::connect(
                 this->log_in_dialog, SIGNAL(rejected()),
-                this,				 SLOT(close()));
+                this,                SLOT(close()));
     QObject::connect(
                 this->log_in_dialog, SIGNAL(tryValidate()),
-                this,				 SLOT(tryValidate()));
+                this,                SLOT(tryValidate()));
     this->log_in_dialog->open();
 }
 
@@ -102,16 +103,17 @@ void MainWindow::tryValidate()
 
     QObject::connect(
                 this->supercast, SIGNAL(connexionStatus(int)),
-                this, 	         SLOT(connexionStatus(int)));
+                this,            SLOT(connexionStatus(int)));
+
     Monitor* monitor = Monitor::getInstance();
     QObject::connect(
                 this->supercast, SIGNAL(connexionStatus(int)),
                 monitor,         SLOT(connexionStatus(int)));
 
-    QString user(this->log_in_dialog->getUserName());
-    QString pass(this->log_in_dialog->getPassword());
-    QString server(this->log_in_dialog->getServerName());
-    qint16  port(this->log_in_dialog->getServerPort());
+    QString user(   this->log_in_dialog->getUserName()   );
+    QString pass(   this->log_in_dialog->getPassword()   );
+    QString server( this->log_in_dialog->getServerName() );
+    qint16  port(   this->log_in_dialog->getServerPort() );
 
     this->supercast->tryConnect(QHostAddress(server), port, user, pass);
 }
