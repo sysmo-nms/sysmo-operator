@@ -4,6 +4,16 @@ QPalette Themes::midnight = Themes::initMidnight();
 QPalette Themes::inland   = Themes::initInland();
 QPalette Themes::greys    = Themes::initGreys();
 QPalette Themes::snowy    = Themes::initSnowy();
+QPalette Themes::native   = Themes::initNative();
+
+QPalette Themes::initNative()
+{
+    int   fake_argc = 0;
+    char* fake_argv[0];
+    QApplication fake_app(fake_argc, fake_argv);
+
+    return fake_app.palette();
+}
 
 QPalette Themes::initMidnight()
 {

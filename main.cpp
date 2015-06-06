@@ -7,18 +7,6 @@
 #include <QIcon>
 #include <Qt>
 
-QPalette get_palette(int argc, char* argv[])
-{
-    // get native palette
-    QApplication fake(argc, argv);
-    QPalette native = QPalette(fake.palette());
-
-    // TODO check QSettings
-    return Themes::midnight;
-    //QApplication::setDesktopSettingsAware(true);
-    //return native;
-}
-
 
 int main(int argc, char* argv[])
 {
@@ -29,13 +17,10 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationDomain("sysmo.io");
     QApplication::setWindowIcon(QIcon(":/ressources/icons/32/logo.png"));
     QApplication::setQuitOnLastWindowClosed(true);
-
-    QApplication::setPalette(get_palette(argc, argv));
+    QApplication::setPalette(Themes::native);
     QApplication::setStyle("fusion");
 
     QApplication app(argc, argv);
-
-    MainWindow w;
-
+    MainWindow   main_window;
     return app.exec();
 }
