@@ -19,11 +19,11 @@ public:
     ProbeItem(QJsonObject info_probe);
     QString name;
     QString belong_to;
-    QStandardItem* r1;
-    QStandardItem* r2;
-    QStandardItem* r3;
-    QStandardItem* r4;
-    QStandardItem* r5;
+    QStandardItem* r1 = NULL;
+    QStandardItem* r2 = NULL;
+    QStandardItem* r3 = NULL;
+    QStandardItem* r4 = NULL;
+    QStandardItem* r5 = NULL;
     int type() const;
     QVariant data(int role) const;
 

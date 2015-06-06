@@ -15,7 +15,7 @@ public:
     void apply();
 
 private:
-    QJsonObject* json_query;
+    QJsonObject* json_query = NULL;
 
 
 signals:

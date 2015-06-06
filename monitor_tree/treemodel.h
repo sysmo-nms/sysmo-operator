@@ -35,12 +35,9 @@ public slots:
 
 private:
     QStandardItem* itemExist(QString name);
-    QHash<QString, TargetItem*>* targets;
-    QHash<QString, ProbeItem*>*  probes;
-    QTimer* 					 timer;
+    QHash<QString, TargetItem*>* targets = NULL;
+    QHash<QString, ProbeItem*>*  probes  = NULL;
 
-private slots:
-    void ticTimeout();
 };
 
 #endif // TREEMODEL_H

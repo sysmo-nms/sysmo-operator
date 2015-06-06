@@ -36,8 +36,8 @@ public slots:
     void connexionStatus(int status);
 
 private:
-    LogIn*     log_in_dialog;
-    Supercast* supercast;
+    LogIn*     log_in_dialog = NULL;
+    Supercast* supercast     = NULL;
 
 private slots:
     void toggleFullScreen();

@@ -27,12 +27,12 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
      * connect delegate first
      */
     QObject::connect(
-                timer, SIGNAL(timeout()),
+                timer,    SIGNAL(timeout()),
                 progress, SLOT(ticTimeout()));
 
     QObject::connect(
-                timer, 				SIGNAL(timeout()),
-                this->viewport(),   SLOT(update()));
+                timer,            SIGNAL(timeout()),
+                this->viewport(), SLOT(update()));
 
     this->setItemDelegateForColumn(2, progress);
 }

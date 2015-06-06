@@ -39,7 +39,7 @@ public:
     QString testouille;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
-    QHash<QString, SupercastSignal*>* message_processors;
+    QHash<QString, SupercastSignal*>* message_processors = NULL;
 
 public slots:
     void routeServerMessage(QJsonObject msg);
@@ -47,7 +47,7 @@ public slots:
     void socketError(QAbstractSocket::SocketError error);
 
 private:
-    SupercastSocket*  supercast_socket;
+    SupercastSocket*  supercast_socket = NULL;
     static Supercast* singleton;
 
 private slots:

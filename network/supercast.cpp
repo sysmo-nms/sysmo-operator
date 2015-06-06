@@ -5,8 +5,8 @@ Supercast* Supercast::getInstance() {return singleton;}
 
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
-    Supercast::singleton = this;
-    SupercastSignal* sig = new SupercastSignal(this);
+    Supercast::singleton   = this;
+    SupercastSignal* sig   = new SupercastSignal(this);
     QObject::connect(
                 sig,  SIGNAL(sendMessage(QJsonObject)),
                 this,  SLOT(handleSupercastMessage(QJsonObject)));

@@ -4,13 +4,6 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 {
     this->targets = new QHash<QString, TargetItem*>();
     this->probes  = new QHash<QString, ProbeItem*>();
-    this->timer   = new QTimer(this);
-    this->timer->setInterval(1000);
-    this->timer->setSingleShot(false);
-    this->timer->start();
-    QObject::connect(
-                this->timer, SIGNAL(timeout()),
-                this,		 SLOT(ticTimeout()));
 
     QStringList headers = (QStringList()
           << "Targets/Probes"
@@ -92,9 +85,4 @@ void TreeModel::handleProbeReturn(QJsonObject message)
 QStandardItem* TreeModel::itemExist(QString name)
 {
     return NULL;
-}
-
-void TreeModel::ticTimeout()
-{
-
 }

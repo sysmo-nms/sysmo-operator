@@ -19,7 +19,7 @@ class SupercastSocket : public QObject
 public:
     explicit SupercastSocket(QHostAddress host, qint16 port);
     ~SupercastSocket();
-    QTcpSocket* socket;
+    QTcpSocket* socket = NULL;
 
 public slots:
     void handleClientMessage(QJsonObject msg);

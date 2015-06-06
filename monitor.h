@@ -30,7 +30,7 @@ class Monitor : public NFrame
 public:
     explicit Monitor(QWidget* parent = 0);
     ~Monitor();
-    NewTarget* add_target_dialog;
+    NewTarget* add_target_dialog = NULL;
     static Monitor* getInstance();
     static QMap<QString, QJsonObject>* target_map;
     static QMap<QString, QJsonObject>* probe_map;

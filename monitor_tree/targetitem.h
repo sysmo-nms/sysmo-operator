@@ -18,7 +18,7 @@ class TargetItem : public QStandardItem
 public:
     TargetItem(QJsonObject info_target);
     QString name;
-    QStandardItem* r1;
+    QStandardItem* r1 = NULL;
     QVariant data(int role) const;
     int type() const;
 
