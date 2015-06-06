@@ -3,7 +3,7 @@
 QPalette Themes::midnight = Themes::initMidnight();
 QPalette Themes::inland   = Themes::initInland();
 QPalette Themes::greys    = Themes::initGreys();
-QPalette Themes::snowy    = Themes::initSnowy();
+QPalette Themes::iced     = Themes::initIced();
 QPalette Themes::native   = Themes::initNative();
 
 QPalette Themes::initNative()
@@ -204,7 +204,7 @@ QPalette Themes::initGreys()
     return p;
 }
 
-QPalette Themes::initSnowy()
+QPalette Themes::initIced()
 {
     QPalette p;
     p.setColor(QPalette::Normal,   QPalette::Foreground, QColor(0, 0, 0, 255));

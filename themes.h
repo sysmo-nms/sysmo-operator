@@ -11,14 +11,14 @@ public:
     static QPalette midnight;
     static QPalette inland;
     static QPalette greys;
-    static QPalette snowy;
+    static QPalette iced;
     static QPalette native;
 
 private:
     static QPalette initMidnight();
     static QPalette initInland();
     static QPalette initGreys();
-    static QPalette initSnowy();
+    static QPalette initIced();
     static QPalette initNative();
 };
 
