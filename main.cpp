@@ -1,32 +1,41 @@
 #include "mainwindow.h"
+#include "themes.h"
 
 #include <QApplication>
 #include <QPalette>
+#include <QSettings>
+#include <QIcon>
+#include <Qt>
 
-QPalette native_palette;
-QPalette undef_palette;
-
-
-/*
- * Fake start used to fetch the native palette from
- * an initialized QApplication.
- */
-void fake_start(int argc, char* argv[])
+QPalette get_palette(int argc, char* argv[])
 {
-    undef_palette  = QPalette();
-    QApplication a(argc, argv);
-    native_palette = QPalette(a.palette());
+    // get native palette
+    QApplication fake(argc, argv);
+    QPalette native = QPalette(fake.palette());
+
+    // TODO check QSettings
+    return Themes::midnight;
+    //QApplication::setDesktopSettingsAware(true);
+    //return native;
 }
 
 
 int main(int argc, char* argv[])
 {
-    fake_start(argc, argv);
-    QApplication::setStyle("fusion");
-    QApplication::setPalette(native_palette);
+    QApplication::setApplicationName("Operator");
+    QApplication::setApplicationVersion("1.0");
+    QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
+    QApplication::setOrganizationName("Sysmo IO");
+    QApplication::setOrganizationDomain("sysmo.io");
+    QApplication::setWindowIcon(QIcon(":/ressources/icons/32/logo.png"));
+    QApplication::setQuitOnLastWindowClosed(true);
 
-    QApplication a(argc, argv);
+    QApplication::setPalette(get_palette(argc, argv));
+    QApplication::setStyle("fusion");
+
+    QApplication app(argc, argv);
+
     MainWindow w;
 
-    return a.exec();
+    return app.exec();
 }

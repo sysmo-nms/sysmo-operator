@@ -5,8 +5,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     this->supercast = new Supercast(this);
 
     this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
-    this->setWindowTitle("Sysmo Operator");
-    this->setObjectName("MainWindow");
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
 
@@ -91,11 +89,8 @@ MainWindow::~MainWindow()
  */
 void MainWindow::toggleFullScreen()
 {
-    if (this->isFullScreen()) {
-        this->showNormal();
-    } else {
-        this->showFullScreen();
-    }
+    if (this->isFullScreen()) this->showNormal();
+    else                      this->showFullScreen();
 }
 
 
@@ -119,9 +114,7 @@ void MainWindow::tryValidate()
     QString server(this->log_in_dialog->getServerName());
     qint16  port(this->log_in_dialog->getServerPort());
 
-    this->supercast->tryConnect( QHostAddress(server), port, user, pass);
-    //this->log_in_dialog->setEnabled(false);
-
+    this->supercast->tryConnect(QHostAddress(server), port, user, pass);
 }
 
 

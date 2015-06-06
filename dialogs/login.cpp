@@ -4,6 +4,7 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
 {
     this->setModal(true);
     this->setFixedWidth(470);
+    this->setWindowTitle("Log in");
 
     this->user_name   = new QLineEdit(this);
     this->user_pass   = new QLineEdit(this);
