@@ -9,11 +9,12 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
                 sig,  SIGNAL(sendMessage(QJsonObject)),
-                this, SLOT(handleSupercastMessage(QJsonObject)));
+                this,  SLOT(handleSupercastMessage(QJsonObject)));
 
     this->message_processors = new QHash<QString, SupercastSignal*>();
     this->message_processors->insert("supercast", sig);
 }
+
 
 void Supercast::tryConnect(
         QHostAddress host,
@@ -58,6 +59,8 @@ Supercast::~Supercast()
 {
     this->socket_thread.quit();
     this->socket_thread.wait();
+    delete this->supercast_socket;
+    delete this->message_processors;
 }
 
 

@@ -36,7 +36,13 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
     QObject::connect(
                 monitor, SIGNAL(probeReturn(QJsonObject)),
                 this,	 SLOT(handleProbeReturn(QJsonObject)));
+}
 
+
+TreeModel::~TreeModel()
+{
+    delete this->targets;
+    delete this->probes;
 }
 
 

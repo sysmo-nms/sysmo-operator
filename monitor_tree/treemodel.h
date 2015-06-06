@@ -24,6 +24,7 @@ class TreeModel : public QStandardItemModel
 
 public:
     explicit TreeModel(QWidget* parent = 0);
+    ~TreeModel();
 
 public slots:
     void handleInfoProbe(QJsonObject message);

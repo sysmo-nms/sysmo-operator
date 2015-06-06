@@ -17,6 +17,7 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
 SupercastSocket::~SupercastSocket()
 {
     this->socket->close();
+    delete this->socket;
 }
 
 
