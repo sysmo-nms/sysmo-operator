@@ -5,6 +5,10 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
     this->block_size = 0;
     this->socket     = new QTcpSocket(this);
 
+    /*
+     * QueuedConnection because the SLOT may emit SIGNAL.
+     * Avoid recursion.
+     */
     QObject::connect(
                 this->socket, SIGNAL(readyRead()),
                 this,         SLOT(socketReadyRead()),
@@ -17,7 +21,6 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
 SupercastSocket::~SupercastSocket()
 {
     this->socket->close();
-    delete this->socket;
 }
 
 
