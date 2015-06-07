@@ -25,8 +25,8 @@ public:
 private:
     void updateInfo(QJsonObject info_target);
     QJsonObject target_properties;
-    //QPixmap icon;
-    QIcon icon;
+    QPixmap icon;
+    //QIcon icon;
 };
 
 #endif // TARGETITEM_H

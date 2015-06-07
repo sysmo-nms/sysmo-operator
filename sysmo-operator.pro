@@ -63,4 +63,6 @@ HEADERS  += mainwindow.h \
     themes.h
 
 RESOURCES += \
-    ressources.qrc
+    icons.qrc \
+    images.qrc \
+    pixmaps.qrc

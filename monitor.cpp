@@ -19,12 +19,12 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
 
     // top controls
     QPushButton* create = new QPushButton(this);
-    create->setIcon(QIcon(":/ressources/images/32/list-add.png"));
+    create->setIcon(QIcon(":/icons/list-add.png"));
     QObject::connect(
                 create, SIGNAL(clicked(bool)),
                 this,   SLOT(newTarget()));
     QPushButton* clear  = new QPushButton(this);
-    clear->setIcon(QIcon(":/ressources/images/32/edit-clear.png"));
+    clear->setIcon(QIcon(":/icons/edit-clear.png"));
     QLineEdit*   search = new QLineEdit(this);
     search->setFixedWidth(250);
 
@@ -40,7 +40,7 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
 
     // help button
     QPushButton* help = new QPushButton(this);
-    help->setIcon(QIcon(":/ressources/images/32/dialog-information.png"));
+    help->setIcon(QIcon(":/icons/dialog-information.png"));
     help->setFlat(true);
 
     // treeview

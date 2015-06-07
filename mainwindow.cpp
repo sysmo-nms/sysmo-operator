@@ -4,7 +4,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
     this->supercast = new Supercast(this);
 
-    this->setWindowIcon(QIcon(":/ressources/images/32/logo.png"));
+    this->setWindowIcon(QIcon(":/icons/logo.png"));
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
 
@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     QMenu*    main_menu = menu_bar->addMenu("Sysmo");
 
     QAction*  action_exit = new QAction("&Exit", this);
-    action_exit->setIcon(QIcon(":/ressources/images/32/system-log-out.png"));
+    action_exit->setIcon(QIcon(":/icons/system-log-out.png"));
     action_exit->setShortcut(QKeySequence("Ctrl+Q"));
     QObject::connect(
                 action_exit, SIGNAL(triggered(bool)),
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     QAction* action_doc_engine  = new QAction("&Configure doc engine...", this);
     QAction* action_updates     = new QAction("&Check for updates...",    this);
     QAction* action_full_screen = new QAction("&Full screen",             this);
-    action_full_screen->setIcon(QIcon(":/ressources/images/32/view-fullscreen.png"));
+    action_full_screen->setIcon(QIcon(":/icons/view-fullscreen.png"));
     action_full_screen->setShortcut(QKeySequence("Ctrl+F"));
     QObject::connect(
                 action_full_screen, SIGNAL(triggered(bool)),
@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     color_menu->addAction(theme_gre);
     color_menu->addAction(theme_ice);
     color_menu->setIcon(
-             QIcon(":/ressources/images/32/preferences-desktop-theme.png"));
+             QIcon(":/icons/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
     this->hide();
 

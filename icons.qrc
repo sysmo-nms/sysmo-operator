@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="logo.png">graphics/icons/logo.png</file>
+        <file alias="list-add.png">graphics/icons/list-add.png</file>
+        <file alias="edit-clear.png">graphics/icons/edit-clear.png</file>
+        <file alias="system-log-out.png">graphics/icons/system-log-out.png</file>
+        <file alias="view-fullscreen.png">graphics/icons/view-fullscreen.png</file>
+        <file alias="preferences-desktop-theme.png">graphics/icons/preferences-desktop-theme.png</file>
+        <file alias="dialog-information.png">graphics/icons/dialog-information.png</file>
+    </qresource>
+</RCC>

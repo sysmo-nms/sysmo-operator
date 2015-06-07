@@ -53,7 +53,7 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
 
     // connect to isValid
     QLabel* banner = new QLabel(this);
-    banner->setPixmap(QPixmap(":/ressources/images/custom/login-banner.png"));
+    banner->setPixmap(QPixmap(":/images/login-banner.png"));
     QObject::connect(
                 this->user_name, SIGNAL(textChanged(QString)),
                 this,			 SLOT(isValid()));

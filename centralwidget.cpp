@@ -9,10 +9,10 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent)
 
     SideButton* monitor_button   = new SideButton(this);
     monitor_button->setIconSize(QSize(32,115));
-    monitor_button->setIcon(QIcon(":/ressources/images/custom/monitor-black.png"));
+    monitor_button->setIcon(QIcon(":/images/monitor-black.png"));
     SideButton* dashboard_button = new SideButton(this);
     dashboard_button->setIconSize(QSize(32,115));
-    dashboard_button->setIcon(QIcon(":/ressources/images/custom/dashboard-black.png"));
+    dashboard_button->setIcon(QIcon(":/images/dashboard-black.png"));
 
     QButtonGroup* selector_group = new QButtonGroup(this);
     selector_group->addButton(monitor_button,   CentralWidget::MonitorApp);
