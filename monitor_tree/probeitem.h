@@ -29,8 +29,7 @@ public:
 
 private:
     void updateInfo(QJsonObject info_probe);
-    //QPixmap icon;
-    QIcon icon;
+    QPixmap icon;
 };
 
 #endif // PROBEITEM_H

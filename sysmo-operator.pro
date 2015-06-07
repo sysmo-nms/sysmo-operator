@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     monitor_tree/targetitem.cpp \
     monitor_tree/probeitem.cpp \
     monitor_tree/progressitem.cpp \
-    themes.cpp
+    themes.cpp \
+    monitor_tree/targettypeitem.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -60,7 +61,8 @@ HEADERS  += mainwindow.h \
     monitor_tree/targetitem.h \
     monitor_tree/probeitem.h \
     monitor_tree/progressitem.h \
-    themes.h
+    themes.h \
+    monitor_tree/targettypeitem.h
 
 RESOURCES += \
     icons.qrc \

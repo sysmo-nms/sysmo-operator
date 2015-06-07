@@ -6,8 +6,8 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
     this->probes  = new QHash<QString, ProbeItem*>();
 
     QStringList headers = (QStringList()
-          << "Targets/Probes"
-          << "Host"
+          << "Target/Probe"
+          << "Type/Host"
           << "Progress"
           << "Status"
           << "State"

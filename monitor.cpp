@@ -1,6 +1,6 @@
 #include "monitor.h"
 
-Monitor* Monitor::singleton = NULL;
+Monitor*                   Monitor::singleton  = NULL;
 QMap<QString,QJsonObject>* Monitor::target_map = NULL;
 QMap<QString,QJsonObject>* Monitor::probe_map  = NULL;
 

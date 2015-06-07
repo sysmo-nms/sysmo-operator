@@ -2,20 +2,35 @@
 
 TargetItem::TargetItem(QJsonObject info_target) : QStandardItem()
 {
-    this->name = info_target.value("name").toString("undefined");
-    this->setText(this->name);
+    this->r1 = new TargetTypeItem();
     this->updateInfo(info_target);
-    this->icon = QPixmap(":/pixmaps/hub.png");
-    //this->icon = QPixmap(":/icons/dialog-information.png");
-    //qDebug() << this->icon.cacheKey();
 }
 
 
 void TargetItem::updateInfo(QJsonObject info_target)
 {
+    this->name              = info_target.value("name").toString("undefined");
     this->target_properties = info_target.value("properties").toObject();
     QString hostname = this->target_properties.value("host").toString("undefined");
-    this->r1 = new QStandardItem(hostname);
+    QString type     = this->target_properties.value("type").toString("undefined");
+
+    /* set r1 "Type/Hostname" */
+    if (type == "router") {
+        this->r1->icon = QPixmap(":/pixmaps/router.png");
+    } else if (type == "switch") {
+        this->r1->icon = QPixmap(":/pixmaps/hub.png");
+    } else if (type == "wireless") {
+        this->r1->icon = QPixmap(":/pixmaps/wireless-router.png");
+    } else if (type == "server") {
+        this->r1->icon = QPixmap(":/pixmaps/server-generic.png");
+    } else if (type == "printer") {
+        this->r1->icon = QPixmap(":/pixmaps/printer.png");
+    } else {
+        this->r1->icon = QPixmap();
+    }
+    this->r1->text_variable = type.append(" ").append(hostname);
+
+    this->icon = QPixmap(":/pixmaps/weather-clear.png");
 }
 
 QVariant TargetItem::data(int role) const

@@ -18,7 +18,19 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
 {
     //this->icon = QPixmap(":/icons/logo.png");
     this->setText(info_probe.value("descr").toString(""));
-    this->setIcon(QIcon(":/icons/logo.png"));
+    QString status = info_probe.value("status").toString("undef");
+    if (status == "OK") {
+        this->icon = QPixmap(":/pixmaps/weather-clear.png");
+    } else if (status == "WARNING") {
+        this->icon = QPixmap(":/pixmaps/weather-showers.png");
+    } else if (status == "CRITICAL") {
+        this->icon = QPixmap(":/pixmaps/weather-severe-alert.png");
+    } else if (status == "ERROR") {
+        this->icon = QPixmap(":/pixmaps/weather-few-clouds-night.png");
+    } else {
+        this->icon = QPixmap(":/pixmaps/weather-clear-night.png");
+    }
+    this->icon = QPixmap(":/pixmaps/weather-clear.png");
     this->r3->setText(info_probe.value("status").toString(""));
     if (info_probe.value("active").toBool()) {
         this->r4->setText("active");
@@ -30,6 +42,8 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
 
 QVariant ProbeItem::data(int role) const
 {
+    if (role == Qt::DecorationRole) {return this->icon;}
+
     return QStandardItem::data(role);
 }
 

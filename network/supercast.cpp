@@ -8,8 +8,8 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     Supercast::singleton   = this;
     SupercastSignal* sig   = new SupercastSignal(this);
     QObject::connect(
-                sig,   SIGNAL(sendMessage(QJsonObject)),
-                this,  SLOT(handleSupercastMessage(QJsonObject)));
+                sig,  SIGNAL(sendMessage(QJsonObject)),
+                this, SLOT(handleSupercastMessage(QJsonObject)));
 
     this->message_processors = new QHash<QString, SupercastSignal*>();
     this->message_processors->insert("supercast", sig);
@@ -50,7 +50,7 @@ void Supercast::tryConnect(
                 this,                           SLOT(socketConnected()),
                 Qt::QueuedConnection);
 
-    this->supercast_socket->moveToThread(&socket_thread);
+    this->supercast_socket->moveToThread(&this->socket_thread);
     this->socket_thread.start();
 }
 

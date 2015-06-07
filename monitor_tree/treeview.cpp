@@ -3,7 +3,7 @@
 TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
     this->setItemsExpandable(true);
-    this->setRootIsDecorated(false);
+    this->setRootIsDecorated(true);
     this->setWordWrap(true);
     this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -12,9 +12,11 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setObjectName("MonitorTreeView");
     this->setIconSize(QSize(22,22));
-    this->setAnimated(false);
+    this->setAnimated(true);
     this->setAlternatingRowColors(true);
+    this->setAllColumnsShowFocus(false);
     this->setSortingEnabled(true);
+    this->setExpandsOnDoubleClick(false);
     this->setModel(new TreeModel(this));
 
     QTimer* timer = new QTimer(this);
@@ -35,6 +37,16 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
                 this->viewport(), SLOT(update()));
 
     this->setItemDelegateForColumn(2, progress);
+
+    /*
+    QString style;
+    style.append("QTreeView::item:hover {");
+    style.append("    font: bold 14px;");
+    style.append("    border: 0px;");
+    style.append("}");
+
+    this->setStyleSheet(style);
+    */
 }
 
 TreeView::~TreeView()
