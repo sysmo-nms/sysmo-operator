@@ -15,6 +15,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QFont>
+#include <QDateTime>
 
 class TreeDelegateProgress : public QStyledItemDelegate
 {
@@ -30,7 +31,7 @@ public slots:
     void ticTimeout();
 
 private:
-    int   ticval;
+    int   timestamp;
     QFont font;
 
 };

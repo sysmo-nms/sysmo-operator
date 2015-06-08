@@ -19,21 +19,21 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setExpandsOnDoubleClick(false);
     this->setModel(new TreeModel(this));
 
-    QTimer* timer = new QTimer(this);
-    timer->setInterval(1000);
-    timer->setSingleShot(false);
-    timer->start();
+    this->timer = new QTimer(this);
+    this->timer->setInterval(1000);
+    this->timer->setSingleShot(false);
+    this->timer->start();
     TreeDelegateProgress* progress = new TreeDelegateProgress(this);
 
     /*
      * connect delegate first
      */
     QObject::connect(
-                timer,    SIGNAL(timeout()),
-                progress, SLOT(ticTimeout()));
+                this->timer, SIGNAL(timeout()),
+                progress,    SLOT(ticTimeout()));
 
     QObject::connect(
-                timer,            SIGNAL(timeout()),
+                this->timer,      SIGNAL(timeout()),
                 this->viewport(), SLOT(update()));
 
     this->setItemDelegateForColumn(2, progress);
@@ -49,9 +49,13 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     */
 }
 
+
 TreeView::~TreeView()
 {
     /*
      * save state
      */
 }
+
+
+void TreeView::stopTimer() { this->timer->stop(); }

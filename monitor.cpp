@@ -134,9 +134,10 @@ void Monitor::connexionStatus(int status)
     if (status == Supercast::ConnexionSuccess) {
         Supercast::subscribe("target-MasterChan");
     } else {
+        TreeView* tree = this->findChild<TreeView *>("MonitorTreeView");
+        tree->stopTimer();
         // the application is in an error state.
         this->add_target_dialog->hide();
-        this->setDisabled(true);
     }
 }
 

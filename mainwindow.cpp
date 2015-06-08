@@ -101,14 +101,14 @@ void MainWindow::tryValidate()
 {
     this->log_in_dialog->setEnabled(false);
 
-    QObject::connect(
-                this->supercast, SIGNAL(connexionStatus(int)),
-                this,            SLOT(connexionStatus(int)));
-
     Monitor* monitor = Monitor::getInstance();
     QObject::connect(
                 this->supercast, SIGNAL(connexionStatus(int)),
                 monitor,         SLOT(connexionStatus(int)));
+
+    QObject::connect(
+                this->supercast, SIGNAL(connexionStatus(int)),
+                this,            SLOT(connexionStatus(int)));
 
     QString user(   this->log_in_dialog->getUserName()   );
     QString pass(   this->log_in_dialog->getPassword()   );

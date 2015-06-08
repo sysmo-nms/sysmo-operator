@@ -1,11 +1,17 @@
 #include "probeitem.h"
 
+int ProbeItem::type() const { return Sysmo::TYPE_PROBE; }
+
 ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
 {
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
+    int step = info_probe.value("step").toInt(0);
     this->r1 = new QStandardItem();
-    this->r2 = new ProgressItem(0,0);
+    this->r2 = new QStandardItem();
+    this->r2->setData(1,    Sysmo::ROLE_IS_PROGRESS_ITEM);
+    this->r2->setData(step, Sysmo::ROLE_PROGRESS_STEP);
+    this->r2->setData(0,    Sysmo::ROLE_PROGRESS_NEXT);
     this->r3 = new QStandardItem();
     this->r4 = new QStandardItem();
     this->r5 = new QStandardItem();
@@ -16,40 +22,52 @@ ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
 
 void ProbeItem::updateInfo(QJsonObject info_probe)
 {
-    //this->icon = QPixmap(":/icons/logo.png");
-    this->setText(info_probe.value("descr").toString(""));
+    this->setData(info_probe.value("descr").toString(""), Qt::DisplayRole);
     QString status = info_probe.value("status").toString("undef");
     if (status == "OK") {
-        this->icon = QPixmap(":/pixmaps/weather-clear.png");
+        this->setData(QPixmap(":/pixmaps/weather-clear.png"),
+                                                Qt::DecorationRole);
+        this->setData(Sysmo::STATUS_OK, Sysmo::ROLE_PROBE_STATUS);
+
     } else if (status == "WARNING") {
-        this->icon = QPixmap(":/pixmaps/weather-showers.png");
+        this->setData(QPixmap(":/pixmaps/weather-showers.png"),
+                                                Qt::DecorationRole);
+        this->setData(Sysmo::STATUS_WARNING, Sysmo::ROLE_PROBE_STATUS);
+
     } else if (status == "CRITICAL") {
-        this->icon = QPixmap(":/pixmaps/weather-severe-alert.png");
+        this->setData(QPixmap(":/pixmaps/weather-severe-alert.png"),
+                                                Qt::DecorationRole);
+        this->setData(Sysmo::STATUS_CRITICAL, Sysmo::ROLE_PROBE_STATUS);
+
     } else if (status == "ERROR") {
-        this->icon = QPixmap(":/pixmaps/weather-few-clouds-night.png");
+        this->setData(QPixmap(":/pixmaps/weather-few-clouds-night.png"),
+                                                Qt::DecorationRole);
+        this->setData(Sysmo::STATUS_ERROR, Sysmo::ROLE_PROBE_STATUS);
+
     } else {
-        this->icon = QPixmap(":/pixmaps/weather-clear-night.png");
+        this->setData(QPixmap(":/pixmaps/weather-clear-night.png"),
+                                                Qt::DecorationRole);
+        this->setData(Sysmo::STATUS_UNKNOWN, Sysmo::ROLE_PROBE_STATUS);
     }
-    this->icon = QPixmap(":/pixmaps/weather-clear.png");
-    this->r3->setText(info_probe.value("status").toString(""));
-    if (info_probe.value("active").toBool()) {
-        this->r4->setText("active");
-    } else {
-        this->r4->setText("paused");
-    }
+
+    this->r3->setData(status, Qt::DisplayRole);
+
+    if (info_probe.value("active").toBool())
+        this->r4->setData("active", Qt::DisplayRole);
+    else
+        this->r4->setData("paused", Qt::DisplayRole);
+}
+
+
+void ProbeItem::updateReturnInfo(QJsonObject info)
+{
+    QString reply = info.value("replyString").toString("undefined");
+    this->r5->setData(reply, Qt::DisplayRole);
+    int in_sec      = info.value("nextReturn").toInt(0) / 1000;
+    int current_sec = QDateTime::currentMSecsSinceEpoch() / 1000;
+    int next_in_sec = current_sec + in_sec;
+    this->r2->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);
     this->emitDataChanged();
 }
 
 
-QVariant ProbeItem::data(int role) const
-{
-    if (role == Qt::DecorationRole) {return this->icon;}
-
-    return QStandardItem::data(role);
-}
-
-
-int ProbeItem::type() const
-{
-    return Sysmo::TYPE_PROBE;
-}

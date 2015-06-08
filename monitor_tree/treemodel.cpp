@@ -52,10 +52,13 @@ void TreeModel::handleInfoProbe(QJsonObject message)
         target->appendRow(row);
         target->updateIconStatus();
     } else if (info_type == "update") {
-
         QString probe_name = message.value("name").toString("undefined");
-        ProbeItem* probe = this->probes->value(probe_name);
+
+        ProbeItem*  probe  = this->probes->value(probe_name);
+        TargetItem* target = this->targets->value(probe->belong_to);
+
         probe->updateInfo(message);
+        target->updateIconStatus();
     }
 
 }
@@ -85,6 +88,7 @@ void TreeModel::handleDeleteProbe(QJsonObject message)
     ProbeItem*  probe      = this->probes->take(probe_name);
     TargetItem* target     = this->targets->value(probe->belong_to);
     target->removeRow(probe->row());
+    target->updateIconStatus();
 }
 
 
@@ -98,6 +102,7 @@ void TreeModel::handleDeleteTarget(QJsonObject message)
 
 void TreeModel::handleProbeReturn(QJsonObject message)
 {
-    std::cout << "TreeModel handle probe return" << std::endl;
-
+    QString     probe_name = message.value("name").toString("undefined");
+    ProbeItem*  probe      = this->probes->value(probe_name);
+    probe->updateReturnInfo(message);
 }

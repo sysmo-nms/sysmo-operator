@@ -1,8 +1,7 @@
 #ifndef TREEVIEW_H
 #define TREEVIEW_H
 
-//#include "monitor_tree/treemodel.h"
-#include "monitor_tree/treedelegateprogress.h"
+#include "treedelegateprogress.h"
 #include "treemodel.h"
 
 #include <QObject>
@@ -21,6 +20,10 @@ class TreeView : public QTreeView
 public:
     explicit TreeView(QWidget* parent = 0);
     ~TreeView();
+    void stopTimer();
+
+private:
+    QTimer* timer;
 };
 
 #endif // TREEVIEW_H

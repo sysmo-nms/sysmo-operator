@@ -3,7 +3,6 @@
 TreeDelegateProgress::TreeDelegateProgress(QWidget* parent)
         : QStyledItemDelegate(parent)
 {
-    this->ticval = 0;
     this->font = QFont();
     this->font.setWeight(QFont::Bold);
 }
@@ -11,9 +10,7 @@ TreeDelegateProgress::TreeDelegateProgress(QWidget* parent)
 
 void TreeDelegateProgress::ticTimeout()
 {
-    qDebug() << "should update tic";
-    this->ticval = this->ticval + 1;
-
+    this->timestamp = QDateTime::currentMSecsSinceEpoch() / 1000;
 }
 
 
@@ -26,16 +23,29 @@ void TreeDelegateProgress::paint(
     if (item_type.toInt() == 0) {
         return QStyledItemDelegate::paint(painter, option, index);
     }
+
+    int step = index.data(Sysmo::ROLE_PROGRESS_STEP).toInt(NULL);
+    int next = index.data(Sysmo::ROLE_PROGRESS_NEXT).toInt(NULL);
+
+    int in_next = next - this->timestamp;
+
     QStyleOptionProgressBar opts;
-    opts.text = QString("Step %1/%2")
-            .arg(QString::number(this->ticval))
-            .arg(QString::number(100));
     opts.rect = option.rect;
     opts.minimum = 0;
-    opts.maximum = 100;
+    opts.maximum = step;
 
-    if (this->ticval < 101) {
-        opts.progress = this->ticval;
+    if (in_next < step) {
+        opts.progress = step - in_next;
+        opts.text = QString("Step %1/%2")
+            .arg(QString::number(step - in_next))
+            .arg(QString::number(step));
+
+    } else {
+        opts.progress = step;
+        opts.text = QString("Step %1/%2")
+            .arg(QString::number(step))
+            .arg(QString::number(step));
+
     }
 
     opts.textVisible = true;

@@ -8,9 +8,9 @@
 #include "ngrid.h"
 #include "ngridcontainer.h"
 #include "dialogs/newtarget.h"
-#include "monitor_tree/treeview.h"
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
+#include "monitor_tree/treeview.h"
 
 #include <QObject>
 #include <QWidget>
