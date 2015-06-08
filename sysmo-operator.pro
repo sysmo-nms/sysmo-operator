@@ -62,7 +62,8 @@ HEADERS  += mainwindow.h \
     monitor_tree/probeitem.h \
     monitor_tree/progressitem.h \
     themes.h \
-    monitor_tree/targettypeitem.h
+    monitor_tree/targettypeitem.h \
+    sysmo.h
 
 RESOURCES += \
     icons.qrc \

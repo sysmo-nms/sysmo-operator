@@ -1,7 +1,7 @@
 #ifndef PROGRESSITEM_H
 #define PROGRESSITEM_H
 
-//#include "progressitemtimer.h"
+#include "sysmo.h"
 
 #include <QObject>
 #include <QStandardItem>

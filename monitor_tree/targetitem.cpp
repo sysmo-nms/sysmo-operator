@@ -31,7 +31,15 @@ void TargetItem::updateInfo(QJsonObject info_target)
     this->r1->text_variable = type.append(" ").append(hostname);
 
     this->icon = QPixmap(":/pixmaps/weather-clear.png");
+    this->emitDataChanged();
 }
+
+
+void TargetItem::updateIconStatus()
+{
+
+}
+
 
 QVariant TargetItem::data(int role) const
 {
@@ -40,7 +48,8 @@ QVariant TargetItem::data(int role) const
     return QStandardItem::data(role);
 }
 
+
 int TargetItem::type() const
 {
-    return 1000;
+    return Sysmo::TYPE_TARGET;
 }

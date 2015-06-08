@@ -1,8 +1,9 @@
 #ifndef TREEVIEW_H
 #define TREEVIEW_H
 
-#include "monitor_tree/treemodel.h"
+//#include "monitor_tree/treemodel.h"
 #include "monitor_tree/treedelegateprogress.h"
+#include "treemodel.h"
 
 #include <QObject>
 #include <QWidget>

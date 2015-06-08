@@ -101,7 +101,7 @@ void Monitor::handleServerMessage(QJsonObject message)
         QString	    tname(mcontent.value("name").toString(""));
 
         Monitor::target_map->remove(tname);
-        emit this->deleteProbe(mcontent);
+        emit this->deleteTarget(mcontent);
 
 
     } else if (type == "deleteProbe") {

@@ -1,6 +1,8 @@
 #ifndef TARGETTYPEITEM_H
 #define TARGETTYPEITEM_H
 
+#include "sysmo.h"
+
 #include <QStandardItem>
 #include <Qt>
 #include <QPixmap>

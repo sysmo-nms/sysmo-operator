@@ -2,6 +2,7 @@
 #define PROBEITEM_H
 
 #include "progressitem.h"
+#include "sysmo.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -26,9 +27,9 @@ public:
     QStandardItem* r5 = NULL;
     int type() const;
     QVariant data(int role) const;
+    void updateInfo(QJsonObject info_probe);
 
 private:
-    void updateInfo(QJsonObject info_probe);
     QPixmap icon;
 };
 

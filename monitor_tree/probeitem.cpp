@@ -37,6 +37,7 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
     } else {
         this->r4->setText("paused");
     }
+    this->emitDataChanged();
 }
 
 
@@ -50,5 +51,5 @@ QVariant ProbeItem::data(int role) const
 
 int ProbeItem::type() const
 {
-    return 1001;
+    return Sysmo::TYPE_PROBE;
 }

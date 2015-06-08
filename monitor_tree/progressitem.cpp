@@ -7,11 +7,11 @@ ProgressItem::ProgressItem(int step, int timeout) : QStandardItem()
 
 QVariant ProgressItem::data(int role) const
 {
-    if (role == Qt::UserRole + 1) {return 1;}
+    if (role == Sysmo::ROLE_IS_PROGRESS_ITEM) {return 1;}
     return QStandardItem::data(role);
 }
 
 int ProgressItem::type() const
 {
-    return 1002;
+    return Sysmo::TYPE_PROBE_PROGRESS;
 }

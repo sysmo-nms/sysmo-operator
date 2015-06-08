@@ -27,14 +27,13 @@ public:
     ~TreeModel();
 
 public slots:
-    void handleInfoProbe(QJsonObject message);
-    void handleInfoTarget(QJsonObject message);
-    void handleDeleteProbe(QJsonObject message);
+    void handleInfoProbe(QJsonObject    message);
+    void handleInfoTarget(QJsonObject   message);
+    void handleDeleteProbe(QJsonObject  message);
     void handleDeleteTarget(QJsonObject message);
-    void handleProbeReturn(QJsonObject message);
+    void handleProbeReturn(QJsonObject  message);
 
 private:
-    QStandardItem* itemExist(QString name);
     QHash<QString, TargetItem*>* targets = NULL;
     QHash<QString, ProbeItem*>*  probes  = NULL;
 

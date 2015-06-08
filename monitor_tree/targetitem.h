@@ -4,6 +4,7 @@
 #include "iostream"
 
 #include "targettypeitem.h"
+#include "sysmo.h"
 
 #include <QStandardItem>
 #include <QJsonObject>
@@ -23,9 +24,10 @@ public:
     TargetTypeItem* r1 = NULL;
     QVariant data(int role) const;
     int type() const;
+    void updateInfo(QJsonObject info_target);
+    void updateIconStatus();
 
 private:
-    void updateInfo(QJsonObject info_target);
     QJsonObject target_properties;
     QPixmap icon;
 };
