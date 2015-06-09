@@ -56,6 +56,8 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
         this->r4->setData("active", Qt::DisplayRole);
     else
         this->r4->setData("paused", Qt::DisplayRole);
+
+    this->setData("hello", Sysmo::ROLE_FILTER_STRING);
 }
 
 

@@ -41,6 +41,8 @@ void TargetItem::updateInfo(QJsonObject info_target)
 
     this->r1->setData(type.append(" ").append(hostname), Qt::DisplayRole);
 
+    this->setData("world", Sysmo::ROLE_FILTER_STRING);
+
 }
 
 

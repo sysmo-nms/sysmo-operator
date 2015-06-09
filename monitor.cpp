@@ -27,6 +27,9 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
     clear->setIcon(QIcon(":/icons/edit-clear.png"));
     QLineEdit*   search = new QLineEdit(this);
     search->setFixedWidth(250);
+    QObject::connect(
+                clear, SIGNAL(pressed()),
+                search, SLOT(clear()));
 
     // clear/search layout
     NFrameContainer* search_clear      = new NFrameContainer(this);
@@ -45,6 +48,16 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
 
     // treeview
     TreeView* tree = new TreeView(this);
+
+    QObject::connect(
+                search,
+                        SIGNAL(textChanged(QString)),
+                tree->filter_model,
+                        SLOT(setFilterFixedString(QString)));
+    QObject::connect(
+                search,
+                        SIGNAL(textChanged(QString)),
+                tree,   SLOT(expandAll()));
 
     grid->addWidget(create, 0,0);
     grid->addWidget(search_clear,  0,1);

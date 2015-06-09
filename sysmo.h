@@ -14,6 +14,7 @@ namespace Sysmo {
     const int ROLE_IS_PROGRESS_ITEM = Qt::UserRole + 2;
     const int ROLE_PROGRESS_STEP    = Qt::UserRole + 3;
     const int ROLE_PROGRESS_NEXT    = Qt::UserRole + 4;
+    const int ROLE_FILTER_STRING    = Qt::UserRole + 5;
 
     // Probe return status
     const int STATUS_OK       = 0;

@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/images">
-        <file alias="monitor-black.png">graphics/images/monitor-black.png</file>
-        <file alias="dashboard-black.png">graphics/images/dashboard-black.png</file>
-        <file alias="login-banner.png">graphics/images/login-banner.png</file>
+        <file alias="monitor-black.png">ressources/images/monitor-black.png</file>
+        <file alias="dashboard-black.png">ressources/images/dashboard-black.png</file>
+        <file alias="login-banner.png">ressources/images/login-banner.png</file>
     </qresource>
 </RCC>

@@ -73,7 +73,7 @@ void TreeModel::handleInfoTarget(QJsonObject message)
         QList<QStandardItem*> row;
         row << target << target->r1;
         this->appendRow(row);
-
+        emit this->expandIndex(target->index());
     } else if (info_type == "update") {
         QString     target_name = message.value("name").toString("undefined");
         TargetItem* target      = this->targets->value(target_name);

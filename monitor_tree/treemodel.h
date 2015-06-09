@@ -17,6 +17,7 @@
 #include <QDebug>
 #include <QList>
 #include <QTimer>
+#include <QModelIndex>
 
 class TreeModel : public QStandardItemModel
 {
@@ -37,6 +38,8 @@ private:
     QHash<QString, TargetItem*>* targets = NULL;
     QHash<QString, ProbeItem*>*  probes  = NULL;
 
+signals:
+    void expandIndex(QModelIndex index);
 };
 
 #endif // TREEMODEL_H

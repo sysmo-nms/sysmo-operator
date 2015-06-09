@@ -64,4 +64,5 @@ HEADERS  += mainwindow.h \
 RESOURCES += \
     icons.qrc \
     images.qrc \
-    pixmaps.qrc
+    pixmaps.qrc \
+    tree.qrc

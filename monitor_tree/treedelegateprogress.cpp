@@ -49,6 +49,6 @@ void TreeDelegateProgress::paint(
     }
 
     opts.textVisible = true;
-    painter->setFont(this->font);
+    //painter->setFont(this->font);
     QApplication::style()->drawControl(QStyle::CE_ProgressBar, &opts, painter);
 }
