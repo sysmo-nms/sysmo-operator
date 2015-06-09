@@ -20,11 +20,10 @@ public:
     ProbeItem(QJsonObject info_probe);
     QString name;
     QString belong_to;
-    QStandardItem* r1 = NULL;
-    QStandardItem* r2 = NULL;
-    QStandardItem* r3 = NULL;
-    QStandardItem* r4 = NULL;
-    QStandardItem* r5 = NULL;
+    QStandardItem* item_status      = NULL;
+    QStandardItem* item_state       = NULL;
+    QStandardItem* item_progress    = NULL;
+    QStandardItem* item_last_return = NULL;
     int type() const;
     void updateInfo(QJsonObject  info_probe);
     void updateReturnInfo(QJsonObject probe_return);

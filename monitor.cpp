@@ -20,6 +20,8 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
     // top controls
     QPushButton* create = new QPushButton(this);
     create->setIcon(QIcon(":/icons/list-add.png"));
+    create->setWhatsThis("Click this button to add new targets host.");
+    create->setStatusTip("Create a new target.");
     QObject::connect(
                 create, SIGNAL(clicked(bool)),
                 this,   SLOT(newTarget()));

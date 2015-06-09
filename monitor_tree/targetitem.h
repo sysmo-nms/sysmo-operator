@@ -7,6 +7,7 @@
 
 #include <QStandardItem>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QVariant>
 #include <QDebug>
 #include <QPixmap>
@@ -21,7 +22,6 @@ class TargetItem : public QStandardItem
 public:
     TargetItem(QJsonObject info_target);
     QString name;
-    QStandardItem* r1 = NULL;
     int type() const;
     void updateInfo(QJsonObject info_target);
     void updateIconStatus();

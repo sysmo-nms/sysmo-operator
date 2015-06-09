@@ -7,10 +7,9 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 
     QStringList headers = (QStringList()
           << "Target/Probe"
-          << "Type/Host"
-          << "Progress"
           << "Status"
           << "State"
+          << "Progress"
           << "Last return");
     this->setHorizontalHeaderLabels(headers);
     Monitor* monitor = Monitor::getInstance();
@@ -48,7 +47,8 @@ void TreeModel::handleInfoProbe(QJsonObject message)
 
         TargetItem* target = this->targets->value(probe->belong_to);
         QList<QStandardItem*> row;
-        row << probe << probe->r1 << probe->r2 << probe->r3 << probe->r4 << probe->r5;
+        row << probe << probe->item_status << probe->item_state
+            << probe->item_progress << probe->item_last_return;
         target->appendRow(row);
         target->updateIconStatus();
     } else if (info_type == "update") {
@@ -70,9 +70,7 @@ void TreeModel::handleInfoTarget(QJsonObject message)
     if (info_type == "create") {
         TargetItem* target = new TargetItem(message);
         this->targets->insert(target->name, target);
-        QList<QStandardItem*> row;
-        row << target << target->r1;
-        this->appendRow(row);
+        this->appendRow(target);
         emit this->expandIndex(target->index());
     } else if (info_type == "update") {
         QString     target_name = message.value("name").toString("undefined");

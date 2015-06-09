@@ -6,15 +6,15 @@ ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
 {
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
-    int step = info_probe.value("step").toInt(0);
-    this->r1 = new QStandardItem();
-    this->r2 = new QStandardItem();
-    this->r2->setData(1,    Sysmo::ROLE_IS_PROGRESS_ITEM);
-    this->r2->setData(step, Sysmo::ROLE_PROGRESS_STEP);
-    this->r2->setData(0,    Sysmo::ROLE_PROGRESS_NEXT);
-    this->r3 = new QStandardItem();
-    this->r4 = new QStandardItem();
-    this->r5 = new QStandardItem();
+    int step        = info_probe.value("step").toInt(0);
+
+    this->item_progress    = new QStandardItem();
+    this->item_progress->setData(1,    Sysmo::ROLE_IS_PROGRESS_ITEM);
+    this->item_progress->setData(step, Sysmo::ROLE_PROGRESS_STEP);
+    this->item_progress->setData(0,    Sysmo::ROLE_PROGRESS_NEXT);
+    this->item_status      = new QStandardItem();
+    this->item_state       = new QStandardItem();
+    this->item_last_return = new QStandardItem();
 
     this->updateInfo(info_probe);
 }
@@ -50,12 +50,20 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
         this->setData(Sysmo::STATUS_UNKNOWN, Sysmo::ROLE_PROBE_STATUS);
     }
 
-    this->r3->setData(status, Qt::DisplayRole);
+    this->item_status->setData(status, Qt::DisplayRole);
 
-    if (info_probe.value("active").toBool())
-        this->r4->setData("active", Qt::DisplayRole);
-    else
-        this->r4->setData("paused", Qt::DisplayRole);
+    if (info_probe.value("active").toBool()) {
+        this->item_state->setData("Active", Qt::DisplayRole);
+        /*this->item_state->setData(QPixmap(":/pixmaps/media-playback-start"),
+                                  Qt::DecorationRole);
+                                  */
+    } else {
+        this->item_state->setData("Paused", Qt::DisplayRole);
+        /*
+        this->item_state->setData(QPixmap(":/pixmaps/media-playback-pause"),
+                                  Qt::DecorationRole);
+                                  */
+    }
 
     this->setData("hello", Sysmo::ROLE_FILTER_STRING);
 }
@@ -64,11 +72,11 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
 void ProbeItem::updateReturnInfo(QJsonObject info)
 {
     QString reply = info.value("replyString").toString("undefined");
-    this->r5->setData(reply, Qt::DisplayRole);
+    this->item_last_return->setData(reply, Qt::DisplayRole);
     int in_sec      = info.value("nextReturn").toInt(0) / 1000;
     int current_sec = QDateTime::currentMSecsSinceEpoch() / 1000;
     int next_in_sec = current_sec + in_sec;
-    this->r2->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);
+    this->item_progress->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);
     this->emitDataChanged();
 }
 

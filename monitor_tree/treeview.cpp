@@ -7,7 +7,6 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setWordWrap(true);
     this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
-    //this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setObjectName("MonitorTreeView");
@@ -18,11 +17,11 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setSortingEnabled(true);
     this->setExpandsOnDoubleClick(false);
 
-    TreeModel* model = new TreeModel(this);
+    TreeModel* model   = new TreeModel(this);
     this->filter_model = new QSortFilterProxyModel(this);
     this->filter_model->setSourceModel(model);
     this->filter_model->setDynamicSortFilter(true);
-    this->filter_model->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    this->filter_model->setFilterCaseSensitivity(Qt::CaseSensitive);
     this->filter_model->setFilterRole(Sysmo::ROLE_FILTER_STRING);
     this->setModel(this->filter_model);
 
@@ -46,7 +45,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
                 this->timer,      SIGNAL(timeout()),
                 this->viewport(), SLOT(update()));
 
-    this->setItemDelegateForColumn(2, progress);
+    this->setItemDelegateForColumn(3, progress);
 
     QFile file(":/tree/tree.qss");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
