@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     network/supercastquery.cpp \
     monitor_tree/targetitem.cpp \
     monitor_tree/probeitem.cpp \
-    themes.cpp
+    themes.cpp \
+    dialogs/newtargetpage1.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -59,7 +60,8 @@ HEADERS  += mainwindow.h \
     monitor_tree/targetitem.h \
     monitor_tree/probeitem.h \
     themes.h \
-    sysmo.h
+    sysmo.h \
+    dialogs/newtargetpage1.h
 
 RESOURCES += \
     icons.qrc \
