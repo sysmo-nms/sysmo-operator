@@ -48,6 +48,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
     this->snmp_community = new QLineEdit(this);
     this->snmp_community->setText("public");
+    this->snmp_community->setPlaceholderText("SNMP v1/v2c community name");
     form->addRow("Community:", this->snmp_community);
 
 
@@ -66,6 +67,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
 
     this->snmp_usm_user = new QLineEdit(this);
+    this->snmp_usm_user->setPlaceholderText("SNMP v3 user name");
     form->addRow("User:", this->snmp_usm_user);
 
 
@@ -78,7 +80,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_auth_proto->insertItem(Sysmo::SNMP_AUTH_MD5, "MD5");
     this->snmp_auth_proto->setCurrentIndex(Sysmo::SNMP_AUTH_MD5);
     this->snmp_auth_key = new QLineEdit(this);
-    this->snmp_auth_key->setEchoMode(QLineEdit::Password);
+    this->snmp_auth_key->setPlaceholderText("SNMP v3 authentication key");
     auth_grid->addWidget(this->snmp_auth_proto, 0,0);
     auth_grid->addWidget(this->snmp_auth_key,   0,1);
     form->addRow("Authentication:", auth_frame);
@@ -97,10 +99,15 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_priv_proto->insertItem(Sysmo::SNMP_PRIV_3DES,   "3DES");
     this->snmp_priv_proto->setCurrentIndex(Sysmo::SNMP_PRIV_AES128);
     this->snmp_priv_key = new QLineEdit(this);
-    this->snmp_priv_key->setEchoMode(QLineEdit::Password);
+    this->snmp_priv_key->setPlaceholderText("SNMP v3 privacy key");
     priv_grid->addWidget(this->snmp_priv_proto, 0,0);
     priv_grid->addWidget(this->snmp_priv_key,   0,1);
     form->addRow("Privacy:", priv_frame);
+
+
+    QFrame* separator2 = new QFrame(this);
+    separator1->setFixedHeight(10);
+    form->addRow(separator2);
 
 
     this->include_icmp = new QCheckBox("Create ICMP echo presence probe", this);
