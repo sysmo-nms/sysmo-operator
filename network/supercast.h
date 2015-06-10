@@ -47,7 +47,6 @@ public slots:
     void socketError(QAbstractSocket::SocketError error);
 
 private:
-    SupercastSocket*  supercast_socket = NULL;
     static Supercast* singleton;
 
 private slots:

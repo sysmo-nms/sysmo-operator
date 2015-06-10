@@ -24,33 +24,36 @@ void Supercast::tryConnect(
 {
     this->user_name = user_name;
     this->user_pass = user_pass;
-    this->supercast_socket = new SupercastSocket(host,port);
+    SupercastSocket* socket_sup = new SupercastSocket(host,port);
 
     // server -> message -> client
     QObject::connect(
-                this->supercast_socket, SIGNAL(serverMessage(QJsonObject)),
-                this,                   SLOT(routeServerMessage(QJsonObject)),
+                socket_sup, SIGNAL(serverMessage(QJsonObject)),
+                this,       SLOT(routeServerMessage(QJsonObject)),
                 Qt::QueuedConnection);
     // client -> message -> server
     QObject::connect(
-                this,                   SIGNAL(clientMessage(QJsonObject)),
-                this->supercast_socket, SLOT(handleClientMessage(QJsonObject)),
+                this,       SIGNAL(clientMessage(QJsonObject)),
+                socket_sup, SLOT(handleClientMessage(QJsonObject)),
                 Qt::QueuedConnection);
 
     // socket state
     qRegisterMetaType<QAbstractSocket::SocketError>();
     QObject::connect(
-                this->supercast_socket->socket,
+                socket_sup->socket,
                     SIGNAL(error(QAbstractSocket::SocketError)),
                 this,
                     SLOT(socketError(QAbstractSocket::SocketError)),
                 Qt::QueuedConnection);
     QObject::connect(
-                this->supercast_socket->socket, SIGNAL(connected()),
-                this,                           SLOT(socketConnected()),
+                socket_sup->socket, SIGNAL(connected()),
+                this,               SLOT(socketConnected()),
                 Qt::QueuedConnection);
 
-    this->supercast_socket->moveToThread(&this->socket_thread);
+    socket_sup->moveToThread(&this->socket_thread);
+    QObject::connect(
+                &this->socket_thread, SIGNAL(finished()),
+                socket_sup,           SLOT(deleteLater()));
     this->socket_thread.start();
 }
 
@@ -59,7 +62,6 @@ Supercast::~Supercast()
 {
     this->socket_thread.quit();
     this->socket_thread.wait();
-    delete this->supercast_socket;
     delete this->message_processors;
 }
 

@@ -13,4 +13,5 @@ NewTarget::NewTarget(QWidget* parent) : QWizard(parent)
     NewTargetPage1* page1 = new NewTargetPage1(this);
     this->setPage(1, page1);
     this->setStartId(1);
+    this->setFixedWidth(525);
 }
