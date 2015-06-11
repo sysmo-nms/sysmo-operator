@@ -25,18 +25,18 @@ SOURCES += main.cpp\
     dashboard.cpp \
     monitor_tree/treeview.cpp \
     monitor_tree/treemodel.cpp \
-    monitor_tree/treedelegateprogress.cpp \
-    dialogs/newtarget.cpp \
+    monitor_tree/itemtarget.cpp \
+    monitor_tree/delegateprobeprogress.cpp \
+    monitor_tree/itemprobe.cpp \
     dialogs/login.cpp \
+    dialogs/newtarget.cpp \
+    dialogs/newtargetpage1.cpp \
     network/supercast.cpp \
     network/supercastsocket.cpp \
     network/supercasthttp.cpp \
     network/supercastsignal.cpp \
     network/supercastquery.cpp \
-    monitor_tree/targetitem.cpp \
-    monitor_tree/probeitem.cpp \
-    themes.cpp \
-    dialogs/newtargetpage1.cpp
+    themes.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -49,19 +49,19 @@ HEADERS  += mainwindow.h \
     dashboard.h \
     monitor_tree/treeview.h \
     monitor_tree/treemodel.h \
-    monitor_tree/treedelegateprogress.h \
-    dialogs/newtarget.h \
+    monitor_tree/itemprobe.h \
+    monitor_tree/itemtarget.h \
+    monitor_tree/delegateprobeprogress.h \
     dialogs/login.h \
+    dialogs/newtarget.h \
+    dialogs/newtargetpage1.h \
     network/supercast.h \
     network/supercastsocket.h \
     network/supercasthttp.h \
     network/supercastsignal.h \
     network/supercastquery.h \
-    monitor_tree/targetitem.h \
-    monitor_tree/probeitem.h \
     themes.h \
-    sysmo.h \
-    dialogs/newtargetpage1.h
+    sysmo.h
 
 RESOURCES += \
     icons.qrc \

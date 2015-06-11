@@ -1,15 +1,15 @@
-#include "targetitem.h"
+#include "itemtarget.h"
 
-int TargetItem::type() const { return Sysmo::TYPE_TARGET; }
+int ItemTarget::type() const { return Sysmo::TYPE_TARGET; }
 
-TargetItem::TargetItem(QJsonObject info_target) : QStandardItem()
+ItemTarget::ItemTarget(QJsonObject info_target) : QStandardItem()
 {
     this->updateInfo(info_target);
     this->updateIconStatus();
 }
 
 
-void TargetItem::updateInfo(QJsonObject info_target)
+void ItemTarget::updateInfo(QJsonObject info_target)
 {
     this->name              = info_target.value("name").toString("undefined");
     this->target_properties = info_target.value("properties").toObject();
@@ -34,7 +34,7 @@ void TargetItem::updateInfo(QJsonObject info_target)
 }
 
 
-void TargetItem::updateIconStatus()
+void ItemTarget::updateIconStatus()
 {
 
     int status = 0;

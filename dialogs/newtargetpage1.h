@@ -29,7 +29,6 @@ public:
     NewTargetPage1(QWidget* parent = 0);
     ~NewTargetPage1();
     bool isComplete() const;
-    void disableUnusedWidgets() const;
 
 private:
     QLineEdit* target_host     = NULL;
@@ -56,6 +55,7 @@ private:
     QList<QWidget*>* snmp_v3_auth_widgets = NULL;
     QList<QWidget*>* snmp_v3_priv_widgets = NULL;
 
+    void disableUnusedWidgets() const;
 };
 
 #endif // NEWTARGETPAGE1_H

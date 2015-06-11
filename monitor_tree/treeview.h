@@ -1,7 +1,7 @@
 #ifndef TREEVIEW_H
 #define TREEVIEW_H
 
-#include "treedelegateprogress.h"
+#include "delegateprobeprogress.h"
 #include "treemodel.h"
 #include "sysmo.h"
 

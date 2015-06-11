@@ -2,8 +2,8 @@
 
 TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 {
-    this->targets = new QHash<QString, TargetItem*>();
-    this->probes  = new QHash<QString, ProbeItem*>();
+    this->targets = new QHash<QString, ItemTarget*>();
+    this->probes  = new QHash<QString, ItemProbe*>();
 
     QStringList headers = (QStringList()
           << "Target/Probe"
@@ -42,10 +42,10 @@ void TreeModel::handleInfoProbe(QJsonObject message)
 {
     QString info_type = message.value("infoType").toString("undefined");
     if (info_type == "create") {
-        ProbeItem*  probe  = new ProbeItem(message);
+        ItemProbe*  probe  = new ItemProbe(message);
         this->probes->insert(probe->name, probe);
 
-        TargetItem* target = this->targets->value(probe->belong_to);
+        ItemTarget* target = this->targets->value(probe->belong_to);
         QList<QStandardItem*> row;
         row << probe << probe->item_status << probe->item_state
             << probe->item_progress << probe->item_last_return;
@@ -54,8 +54,8 @@ void TreeModel::handleInfoProbe(QJsonObject message)
     } else if (info_type == "update") {
         QString probe_name = message.value("name").toString("undefined");
 
-        ProbeItem*  probe  = this->probes->value(probe_name);
-        TargetItem* target = this->targets->value(probe->belong_to);
+        ItemProbe*  probe  = this->probes->value(probe_name);
+        ItemTarget* target = this->targets->value(probe->belong_to);
 
         probe->updateInfo(message);
         target->updateIconStatus();
@@ -68,13 +68,13 @@ void TreeModel::handleInfoTarget(QJsonObject message)
 {
     QString info_type = message.value("infoType").toString("undefined");
     if (info_type == "create") {
-        TargetItem* target = new TargetItem(message);
+        ItemTarget* target = new ItemTarget(message);
         this->targets->insert(target->name, target);
         this->appendRow(target);
         emit this->expandIndex(target->index());
     } else if (info_type == "update") {
         QString     target_name = message.value("name").toString("undefined");
-        TargetItem* target      = this->targets->value(target_name);
+        ItemTarget* target      = this->targets->value(target_name);
         target->updateInfo(message);
     }
 }
@@ -83,8 +83,8 @@ void TreeModel::handleInfoTarget(QJsonObject message)
 void TreeModel::handleDeleteProbe(QJsonObject message)
 {
     QString     probe_name = message.value("name").toString("undefined");
-    ProbeItem*  probe      = this->probes->take(probe_name);
-    TargetItem* target     = this->targets->value(probe->belong_to);
+    ItemProbe*  probe      = this->probes->take(probe_name);
+    ItemTarget* target     = this->targets->value(probe->belong_to);
     target->removeRow(probe->row());
     target->updateIconStatus();
 }
@@ -93,7 +93,7 @@ void TreeModel::handleDeleteProbe(QJsonObject message)
 void TreeModel::handleDeleteTarget(QJsonObject message)
 {
     QString     target_name = message.value("name").toString("undefined");
-    TargetItem* target      = this->targets->take(target_name);
+    ItemTarget* target      = this->targets->take(target_name);
     this->removeRow(target->row());
 }
 
@@ -101,6 +101,6 @@ void TreeModel::handleDeleteTarget(QJsonObject message)
 void TreeModel::handleProbeReturn(QJsonObject message)
 {
     QString     probe_name = message.value("name").toString("undefined");
-    ProbeItem*  probe      = this->probes->value(probe_name);
+    ItemProbe*  probe      = this->probes->value(probe_name);
     probe->updateReturnInfo(message);
 }

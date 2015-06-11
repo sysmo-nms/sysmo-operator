@@ -1,8 +1,8 @@
-#include "probeitem.h"
+#include "itemprobe.h"
 
-int ProbeItem::type() const { return Sysmo::TYPE_PROBE; }
+int ItemProbe::type() const { return Sysmo::TYPE_PROBE; }
 
-ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
+ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
 {
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
@@ -20,7 +20,7 @@ ProbeItem::ProbeItem(QJsonObject info_probe) : QStandardItem()
 }
 
 
-void ProbeItem::updateInfo(QJsonObject info_probe)
+void ItemProbe::updateInfo(QJsonObject info_probe)
 {
     this->setData(info_probe.value("descr").toString(""), Qt::DisplayRole);
     QString status = info_probe.value("status").toString("undef");
@@ -69,7 +69,7 @@ void ProbeItem::updateInfo(QJsonObject info_probe)
 }
 
 
-void ProbeItem::updateReturnInfo(QJsonObject info)
+void ItemProbe::updateReturnInfo(QJsonObject info)
 {
     QString reply = info.value("replyString").toString("undefined");
     this->item_last_return->setData(reply, Qt::DisplayRole);

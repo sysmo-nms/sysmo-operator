@@ -1,6 +1,6 @@
-#include "treedelegateprogress.h"
+#include "delegateprobeprogress.h"
 
-TreeDelegateProgress::TreeDelegateProgress(QWidget* parent)
+DelegateProbeProgress::DelegateProbeProgress(QWidget* parent)
         : QStyledItemDelegate(parent)
 {
     this->font = QFont();
@@ -8,13 +8,13 @@ TreeDelegateProgress::TreeDelegateProgress(QWidget* parent)
 }
 
 
-void TreeDelegateProgress::ticTimeout()
+void DelegateProbeProgress::ticTimeout()
 {
     this->timestamp = QDateTime::currentMSecsSinceEpoch() / 1000;
 }
 
 
-void TreeDelegateProgress::paint(
+void DelegateProbeProgress::paint(
         QPainter* 					painter,
         const QStyleOptionViewItem  &option,
         const QModelIndex 			&index) const

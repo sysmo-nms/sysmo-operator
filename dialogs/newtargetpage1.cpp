@@ -4,6 +4,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 {
     this->setTitle("Add new targets");
     this->setSubTitle("Use this form to add new targets to the system.");
+    this->setCommitPage(true);
     QFormLayout* form = new QFormLayout();
     form->setContentsMargins(20,15,20,15);
     this->setLayout(form);
@@ -26,9 +27,9 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
                 this->target_host, SIGNAL(textChanged(QString)),
                 this,              SIGNAL(completeChanged()));
 
-    QLabel* name_lab = new QLabel("Name:", this);
+    QLabel* name_lab = new QLabel("Display name:", this);
     this->target_name = new QLineEdit(this);
-    this->target_name->setPlaceholderText("Optional");
+    this->target_name->setPlaceholderText("Is hidden by MIB2::sysName if SNMP is enabled.");
     form->addRow(name_lab, this->target_name);
     QObject::connect(
                 this->target_name, SIGNAL(textChanged(QString)),
@@ -39,23 +40,11 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     form->addRow(separator1);
 
 
-    this->snmp_enable = new QCheckBox("SNMP support", this);
+    this->snmp_enable = new QCheckBox("Is SNMP enabled", this);
     form->addRow(this->snmp_enable);
     QObject::connect(
                 this->snmp_enable, SIGNAL(stateChanged(int)),
                 this,              SIGNAL(completeChanged()));
-
-    QLabel* port_lab = new QLabel("Port:", this);
-    this->snmp_port = new QSpinBox(this);
-    this->snmp_port->setMinimum(1);
-    this->snmp_port->setMaximum(65535);
-    this->snmp_port->setValue(161);
-    form->addRow(port_lab, this->snmp_port);
-    QObject::connect(
-                this->snmp_port, SIGNAL(valueChanged(int)),
-                this,            SIGNAL(completeChanged()));
-    this->snmp_widgets->append(port_lab);
-    this->snmp_widgets->append(this->snmp_port);
 
     QLabel* version_lab = new QLabel("Version:", this);
     this->snmp_version = new QComboBox(this);
@@ -70,6 +59,24 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_widgets->append(version_lab);
     this->snmp_widgets->append(this->snmp_version);
 
+
+    QLabel* port_lab = new QLabel("Port:", this);
+    this->snmp_port = new QSpinBox(this);
+    this->snmp_port->setMinimum(1);
+    this->snmp_port->setMaximum(65535);
+    this->snmp_port->setValue(161);
+    form->addRow(port_lab, this->snmp_port);
+    QObject::connect(
+                this->snmp_port, SIGNAL(valueChanged(int)),
+                this,            SIGNAL(completeChanged()));
+    this->snmp_widgets->append(port_lab);
+    this->snmp_widgets->append(this->snmp_port);
+
+
+    QFrame* separator2 = new QFrame(this);
+    separator2->setFixedHeight(5);
+    form->addRow(separator2);
+
     QLabel* community_lab = new QLabel("Community:", this);
     this->snmp_community = new QLineEdit(this);
     this->snmp_community->setText("public");
@@ -82,6 +89,11 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_widgets->append(this->snmp_community);
     this->snmp_v2_widgets->append(community_lab);
     this->snmp_v2_widgets->append(this->snmp_community);
+
+
+    QFrame* separator3 = new QFrame(this);
+    separator3->setFixedHeight(5);
+    form->addRow(separator3);
 
     QLabel* seclevel_lab = new QLabel("Security level:", this);
     this->snmp_seclevel = new QComboBox(this);
@@ -176,9 +188,9 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_v3_priv_widgets->append(priv_frame);
 
 
-    QFrame* separator2 = new QFrame(this);
-    separator1->setFixedHeight(10);
-    form->addRow(separator2);
+    QFrame* separator4 = new QFrame(this);
+    separator4->setFixedHeight(10);
+    form->addRow(separator4);
 
 
     this->include_icmp = new QCheckBox("Create ICMP echo presence probe", this);
@@ -193,13 +205,32 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 bool NewTargetPage1::isComplete() const
 {
     this->disableUnusedWidgets();
-    return false;
+    if (this->target_host->text() == "") { return false; }
+    if (this->target_name->text() == "") { return false; }
+    if (!this->snmp_enable->isChecked()) { return true; }
+
+    if (this->snmp_version->currentIndex() != Sysmo::SNMP_VERSION_3) {
+        if (this->snmp_community->text() == "" ) {return false;}
+        return true;
+    }
+
+    // V3 snmp
+    if (this->snmp_usm_user->text() == "") {return false;}
+    if (this->snmp_seclevel->currentIndex() ==
+            Sysmo::SNMP_SECLEVEL_NO_AUTH_NO_PRIV) {return true;}
+
+    if (this->snmp_auth_key->text() == "") {return false;}
+    if (this->snmp_seclevel->currentIndex() ==
+            Sysmo::SNMP_SECLEVEL_AUTH_NO_PRIV) {return true;}
+
+    if (this->snmp_priv_key->text() == "") {return false;}
+    return true;
 }
 
 
 void NewTargetPage1::disableUnusedWidgets() const
 {
-    if (this->snmp_enable->isChecked() == false) {
+    if (!this->snmp_enable->isChecked()) {
         QListIterator<QWidget*> it(*this->snmp_widgets);
         while (it.hasNext()) {
             QWidget* w = it.next();

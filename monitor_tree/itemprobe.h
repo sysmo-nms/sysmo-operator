@@ -1,5 +1,5 @@
-#ifndef PROBEITEM_H
-#define PROBEITEM_H
+#ifndef ITEMPROBE_H
+#define ITEMPROBE_H
 
 #include "sysmo.h"
 
@@ -14,10 +14,10 @@
 #include <QPixmap>
 #include <QDateTime>
 
-class ProbeItem : public QStandardItem
+class ItemProbe : public QStandardItem
 {
 public:
-    ProbeItem(QJsonObject info_probe);
+    ItemProbe(QJsonObject info_probe);
     QString name;
     QString belong_to;
     QStandardItem* item_status      = NULL;
@@ -33,4 +33,4 @@ private:
     int status;
 };
 
-#endif // PROBEITEM_H
+#endif // ITEMPROBE_H

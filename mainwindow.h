@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QAbstractSocket>
+#include <QSize>
 
 class MainWindow : public QMainWindow
 {
@@ -31,6 +32,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
+    QSize sizeHint() const;
 
 public slots:
     void connexionStatus(int status);
@@ -38,6 +40,7 @@ public slots:
 private:
     LogIn*     log_in_dialog = NULL;
     Supercast* supercast     = NULL;
+    QSize      default_size;
 
 private slots:
     void toggleFullScreen();

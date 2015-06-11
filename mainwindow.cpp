@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+QSize MainWindow::sizeHint() const {return this->default_size;}
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
     this->supercast = new Supercast(this);
@@ -7,6 +9,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     this->setWindowIcon(QIcon(":/icons/logo.png"));
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
+    this->default_size = QSize(1040,585);
 
     // TODO init QMessageLogger
 
@@ -63,8 +66,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     color_menu->setIcon(
              QIcon(":/icons/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
-    this->hide();
 
+    // TODO restore state
+
+    this->hide();
     this->log_in_dialog = new LogIn(this);
     QObject::connect(
                 this->log_in_dialog, SIGNAL(rejected()),
@@ -74,6 +79,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
                 this,                SLOT(tryValidate()));
     this->log_in_dialog->open();
 }
+
 
 
 MainWindow::~MainWindow()

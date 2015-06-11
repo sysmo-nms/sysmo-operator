@@ -4,8 +4,8 @@
 #include "iostream"
 
 #include "monitor.h"
-#include "targetitem.h"
-#include "probeitem.h"
+#include "itemtarget.h"
+#include "itemprobe.h"
 
 #include <QObject>
 #include <QWidget>
@@ -35,8 +35,8 @@ public slots:
     void handleProbeReturn(QJsonObject  message);
 
 private:
-    QHash<QString, TargetItem*>* targets = NULL;
-    QHash<QString, ProbeItem*>*  probes  = NULL;
+    QHash<QString, ItemTarget*>* targets = NULL;
+    QHash<QString, ItemProbe*>*  probes  = NULL;
 
 signals:
     void expandIndex(QModelIndex index);

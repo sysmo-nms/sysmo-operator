@@ -29,7 +29,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->timer->setInterval(1000);
     this->timer->setSingleShot(false);
     this->timer->start();
-    TreeDelegateProgress* progress = new TreeDelegateProgress(this);
+    DelegateProbeProgress* progress = new DelegateProbeProgress(this);
 
     QObject::connect(
                 model, SIGNAL(expandIndex(QModelIndex)),
@@ -53,8 +53,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     file.close();
 
     /*
-     * Default size of columns to acceptable values.
-     * Is overiden by restore state.
+     * Acceptable defaults. Overriden by restore state.
      */
     this->setColumnWidth(0, 250);
     this->setColumnWidth(1, 65);

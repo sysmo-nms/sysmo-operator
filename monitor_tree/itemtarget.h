@@ -1,5 +1,5 @@
-#ifndef TARGETITEM_H
-#define TARGETITEM_H
+#ifndef ITEMTARGET_H
+#define ITEMTARGET_H
 
 #include "iostream"
 
@@ -16,11 +16,11 @@
 #include <QDebug>
 #include <QString>
 
-class TargetItem : public QStandardItem
+class ItemTarget : public QStandardItem
 {
 
 public:
-    TargetItem(QJsonObject info_target);
+    ItemTarget(QJsonObject info_target);
     QString name;
     int type() const;
     void updateInfo(QJsonObject info_target);
@@ -30,4 +30,4 @@ private:
     QJsonObject target_properties;
 };
 
-#endif // TARGETITEM_H
+#endif // ITEMTARGET_H

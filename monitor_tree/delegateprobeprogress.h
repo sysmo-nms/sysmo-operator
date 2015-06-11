@@ -1,5 +1,5 @@
-#ifndef TREEDELEGATEPROGRESS_H
-#define TREEDELEGATEPROGRESS_H
+#ifndef DELEGATEPROBEPROGRESS_H
+#define DELEGATEPROBEPROGRESS_H
 
 #include "treemodel.h"
 
@@ -17,12 +17,12 @@
 #include <QFont>
 #include <QDateTime>
 
-class TreeDelegateProgress : public QStyledItemDelegate
+class DelegateProbeProgress : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    explicit TreeDelegateProgress(QWidget* parent);
+    explicit DelegateProbeProgress(QWidget* parent);
     void paint(
             QPainter* painter,
             const QStyleOptionViewItem &option,
@@ -36,4 +36,4 @@ private:
 
 };
 
-#endif // TREEDELEGATEPROGRESS_H
+#endif // DELEGATEPROBEPROGRESS_H
