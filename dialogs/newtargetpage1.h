@@ -7,6 +7,8 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QList>
+#include <QListIterator>
 #include <QWizardPage>
 #include <QFormLayout>
 #include <QLineEdit>
@@ -15,6 +17,9 @@
 #include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QFrame>
+#include <QLabel>
+
+#include <QDebug>
 
 class NewTargetPage1 : public QWizardPage
 {
@@ -22,6 +27,9 @@ class NewTargetPage1 : public QWizardPage
 
 public:
     NewTargetPage1(QWidget* parent = 0);
+    ~NewTargetPage1();
+    bool isComplete() const;
+    void disableUnusedWidgets() const;
 
 private:
     QLineEdit* target_host     = NULL;
@@ -41,6 +49,12 @@ private:
 
     QDoubleSpinBox* longitude  = NULL;
     QDoubleSpinBox* latitude   = NULL;
+
+    QList<QWidget*>* snmp_widgets = NULL;
+    QList<QWidget*>* snmp_v2_widgets = NULL;
+    QList<QWidget*>* snmp_v3_widgets = NULL;
+    QList<QWidget*>* snmp_v3_auth_widgets = NULL;
+    QList<QWidget*>* snmp_v3_priv_widgets = NULL;
 
 };
 

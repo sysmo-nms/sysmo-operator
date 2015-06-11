@@ -51,6 +51,17 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     this->setStyleSheet(file.readAll());
     file.close();
+
+    /*
+     * Default size of columns to acceptable values.
+     * Is overiden by restore state.
+     */
+    this->setColumnWidth(0, 250);
+    this->setColumnWidth(1, 65);
+    this->setColumnWidth(2, 65);
+    this->setColumnWidth(3, 100);
+
+    // TODO restore state
 }
 
 
