@@ -37,14 +37,14 @@ public:
     void stopTimer();
     QSortFilterProxyModel* filter_model;
     QStandardItemModel*    original_model;
+    MenuTarget* target_menu;
+    MenuProbe*  probe_menu;
 
 public slots:
     void expandIndex(QModelIndex index);
 
 private:
     QTimer* timer;
-    MenuTarget* target_menu;
-    MenuProbe*  probe_menu;
 
 private slots:
     void openContextMenu(const QPoint point);

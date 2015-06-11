@@ -61,6 +61,11 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
                         SIGNAL(textChanged(QString)),
                 tree,   SLOT(expandAll()));
 
+    // new probe dialog connect
+    QObject::connect(
+                tree->target_menu, SIGNAL(openNewProbeDialog(QString)),
+                this, SLOT(newProbe(QString)));
+
     grid->addWidget(create, 0,0);
     grid->addWidget(search_clear,  0,1);
     grid->addWidget(help, 0,3);
@@ -74,6 +79,7 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
 
     // get a NewTarget instance
     this->add_target_dialog = new NewTarget(this);
+    this->add_probe_dialog  = new NewProbe(this);
 
     // supercast init
     SupercastSignal* sig = new SupercastSignal(this);
@@ -162,4 +168,11 @@ void Monitor::connexionStatus(int status)
 void Monitor::newTarget()
 {
     this->add_target_dialog->show();
+}
+
+void Monitor::newProbe(QString forTarget)
+{
+    this->add_probe_dialog->setTarget(forTarget);
+    this->add_probe_dialog->show();
+
 }

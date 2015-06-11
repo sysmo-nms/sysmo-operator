@@ -2,9 +2,6 @@
 
 MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 {
-
-    this->probe_dialog = new NewProbe(this);
-
     this->operation_menu = new QMenu("Operator Actions", this);
     this->operation_menu->setIcon(QIcon(":/icons/utilities-terminal.png"));
     this->addMenu(this->operation_menu);
@@ -17,9 +14,17 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
     QAction* add_probe = new QAction("Add a new probe...", this);
     add_probe->setIcon(QIcon(":/icons/list-add.png"));
     this->addAction(add_probe);
+
+    // catch triggered
     QObject::connect(
-                add_probe,          SIGNAL(triggered(bool)),
-                this->probe_dialog, SLOT(show()));
+                add_probe, SIGNAL(triggered(bool)),
+                this,      SLOT(connectNewProbeDialog()));
+    // and forward with a string argument
+    /*
+    QObject::connect(
+                this,   SIGNAL(openNewProbeDialog(QString)),
+                Monitor::getInstance(), SLOT(newProbe(QString)));
+                */
 
     this->addSeparator();
 
@@ -45,4 +50,9 @@ void MenuTarget::showMenuFor(QString target, QPoint at)
     at.setX(at.x() + 12);
     this->target_name = target;
     this->popup(at);
+}
+
+void MenuTarget::connectNewProbeDialog() {
+    emit this->openNewProbeDialog(this->target_name);
+
 }

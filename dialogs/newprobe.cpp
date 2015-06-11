@@ -2,6 +2,7 @@
 
 NewProbe::NewProbe(QWidget* parent) : QWizard(parent)
 {
+    this->current_target = "";
     this->hide();
     this->setWindowTitle("New probe");
     this->setModal(true);
@@ -15,3 +16,7 @@ NewProbe::NewProbe(QWidget* parent) : QWizard(parent)
     this->setStartId(1);
 }
 
+void NewProbe::setTarget(QString target)
+{
+    this->current_target = target;
+}

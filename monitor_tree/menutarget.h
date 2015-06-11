@@ -1,7 +1,7 @@
 #ifndef MENUTARGET_H
 #define MENUTARGET_H
 
-#include "dialogs/newprobe.h"
+//#include "monitor.h"
 
 #include <QObject>
 #include <QWidget>
@@ -24,7 +24,12 @@ public:
 private:
     QString target_name = "";
     QMenu*  operation_menu = NULL;
-    NewProbe* probe_dialog = NULL;
+
+private slots:
+    void connectNewProbeDialog();
+
+signals:
+    void openNewProbeDialog(QString target);
 };
 
 #endif // MENUTARGET_H
