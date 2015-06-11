@@ -3,6 +3,8 @@
 
 #include "delegateprobeprogress.h"
 #include "treemodel.h"
+#include "menuprobe.h"
+#include "menutarget.h"
 #include "monitor.h"
 #include "sysmo.h"
 
@@ -21,7 +23,7 @@
 #include <QPoint>
 #include <QStandardItemModel>
 #include <QStandardItem>
-#include <QJsonObject>
+#include <QModelIndex>
 
 #include <QDebug>
 
@@ -41,9 +43,12 @@ public slots:
 
 private:
     QTimer* timer;
+    MenuTarget* target_menu;
+    MenuProbe*  probe_menu;
 
 private slots:
     void openContextMenu(const QPoint point);
+    void handleDoubleClicked(const QModelIndex index);
 };
 
 #endif // TREEVIEW_H

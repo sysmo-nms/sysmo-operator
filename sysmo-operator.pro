@@ -38,7 +38,9 @@ SOURCES += main.cpp\
     network/supercastquery.cpp \
     themes.cpp \
     monitor_tree/menuprobe.cpp \
-    monitor_tree/menutarget.cpp
+    monitor_tree/menutarget.cpp \
+    dialogs/newprobe.cpp \
+    dialogs/newprobepage1.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -65,7 +67,9 @@ HEADERS  += mainwindow.h \
     themes.h \
     sysmo.h \
     monitor_tree/menuprobe.h \
-    monitor_tree/menutarget.h
+    monitor_tree/menutarget.h \
+    dialogs/newprobe.h \
+    dialogs/newprobepage1.h
 
 RESOURCES += \
     icons.qrc \

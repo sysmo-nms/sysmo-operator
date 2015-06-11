@@ -7,5 +7,10 @@
         <file alias="view-fullscreen.png">ressources/icons/view-fullscreen.png</file>
         <file alias="preferences-desktop-theme.png">ressources/icons/preferences-desktop-theme.png</file>
         <file alias="dialog-information.png">ressources/icons/dialog-information.png</file>
+        <file alias="force.png">ressources/icons/force.png</file>
+        <file alias="utilities-terminal.png">ressources/icons/utilities-terminal.png</file>
+        <file alias="process-stop.png">ressources/icons/process-stop.png</file>
+        <file alias="utilities-system-monitor.png">ressources/icons/utilities-system-monitor.png</file>
+        <file alias="folder-saved-search.png">ressources/icons/folder-saved-search.png</file>
     </qresource>
 </RCC>

@@ -49,9 +49,9 @@ private:
     QDoubleSpinBox* longitude  = NULL;
     QDoubleSpinBox* latitude   = NULL;
 
-    QList<QWidget*>* snmp_widgets = NULL;
-    QList<QWidget*>* snmp_v2_widgets = NULL;
-    QList<QWidget*>* snmp_v3_widgets = NULL;
+    QList<QWidget*>* snmp_widgets         = NULL;
+    QList<QWidget*>* snmp_v2_widgets      = NULL;
+    QList<QWidget*>* snmp_v3_widgets      = NULL;
     QList<QWidget*>* snmp_v3_auth_widgets = NULL;
     QList<QWidget*>* snmp_v3_priv_widgets = NULL;
 

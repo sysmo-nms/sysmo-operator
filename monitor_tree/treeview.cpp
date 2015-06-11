@@ -2,6 +2,11 @@
 
 TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
+    this->target_menu = new MenuTarget(this);
+    this->probe_menu  = new MenuProbe(this);
+    QObject::connect(
+                this,   SIGNAL(doubleClicked(QModelIndex)),
+                this,   SLOT(handleDoubleClicked(QModelIndex)));
     this->setItemsExpandable(true);
     this->setRootIsDecorated(false);
     this->setWordWrap(true);
@@ -84,15 +89,29 @@ void TreeView::expandIndex(QModelIndex index)
 void TreeView::stopTimer() { this->timer->stop(); }
 
 void TreeView::openContextMenu(const QPoint point) {
+
     QModelIndex    index = this->filter_model->mapToSource(this->indexAt(point));
     QStandardItem* item  = this->original_model->itemFromIndex(index);
+
     if (item->type() == Sysmo::TYPE_PROBE) {
-        QString element_name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
-        QJsonObject val = Monitor::probe_map->value(element_name);
-        qDebug() << "probe name: " << element_name << val;
+
+        QString probe = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
+
+        this->probe_menu->showMenuFor(probe, this->mapToGlobal(point));
+
     } else if (item->type() == Sysmo::TYPE_TARGET) {
-        QString element_name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
-        QJsonObject val = Monitor::target_map->value(element_name);
-        qDebug() << "target name: " << element_name << val;
+
+        QString target = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
+
+        this->target_menu->showMenuFor(target, this->mapToGlobal(point));
+
     }
+}
+
+void TreeView::handleDoubleClicked(const QModelIndex index)
+{
+
+    QString name = index.data(Sysmo::ROLE_ELEMENT_NAME).toString();
+    qDebug() << "handle double clicked " << name;
+
 }

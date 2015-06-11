@@ -4,5 +4,6 @@
         <file alias="vline.png">ressources/tree/vline.png</file>
         <file alias="branch-end.png">ressources/tree/branch-end.png</file>
         <file alias="branch-more.png">ressources/tree/branch-more.png</file>
+        <file alias="back.png">ressources/tree/back.png</file>
     </qresource>
 </RCC>
