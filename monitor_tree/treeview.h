@@ -3,6 +3,7 @@
 
 #include "delegateprobeprogress.h"
 #include "treemodel.h"
+#include "monitor.h"
 #include "sysmo.h"
 
 #include <QObject>
@@ -17,6 +18,12 @@
 #include <QModelIndex>
 #include <QFile>
 #include <QIODevice>
+#include <QPoint>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QJsonObject>
+
+#include <QDebug>
 
 class TreeView : public QTreeView
 {
@@ -27,12 +34,16 @@ public:
     ~TreeView();
     void stopTimer();
     QSortFilterProxyModel* filter_model;
+    QStandardItemModel*    original_model;
 
 public slots:
     void expandIndex(QModelIndex index);
 
 private:
     QTimer* timer;
+
+private slots:
+    void openContextMenu(const QPoint point);
 };
 
 #endif // TREEVIEW_H

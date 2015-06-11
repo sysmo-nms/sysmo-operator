@@ -86,6 +86,8 @@ Monitor::Monitor(QWidget* parent) : NFrame(parent)
 
 Monitor::~Monitor()
 {
+    delete Monitor::target_map;
+    delete Monitor::probe_map;
     /*
      * Save state
      */

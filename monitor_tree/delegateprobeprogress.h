@@ -13,9 +13,10 @@
 #include <QApplication>
 #include <QStyle>
 #include <QVariant>
-#include <QDebug>
 #include <QFont>
 #include <QDateTime>
+
+#include <QDebug>
 
 class DelegateProbeProgress : public QStyledItemDelegate
 {

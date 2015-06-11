@@ -9,12 +9,12 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QVariant>
-#include <QDebug>
 #include <QPixmap>
 #include <QIcon>
 #include <Qt>
-#include <QDebug>
 #include <QString>
+
+#include <QDebug>
 
 class ItemTarget : public QStandardItem
 {

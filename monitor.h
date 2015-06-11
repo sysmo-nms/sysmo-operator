@@ -22,6 +22,7 @@
 #include <QMap>
 #include <QJsonObject>
 #include <QJsonDocument>
+
 #include <QDebug>
 
 class Monitor : public NFrame

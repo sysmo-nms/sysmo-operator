@@ -36,7 +36,9 @@ SOURCES += main.cpp\
     network/supercasthttp.cpp \
     network/supercastsignal.cpp \
     network/supercastquery.cpp \
-    themes.cpp
+    themes.cpp \
+    monitor_tree/menuprobe.cpp \
+    monitor_tree/menutarget.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -61,7 +63,9 @@ HEADERS  += mainwindow.h \
     network/supercastsignal.h \
     network/supercastquery.h \
     themes.h \
-    sysmo.h
+    sysmo.h \
+    monitor_tree/menuprobe.h \
+    monitor_tree/menutarget.h
 
 RESOURCES += \
     icons.qrc \

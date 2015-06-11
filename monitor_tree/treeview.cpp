@@ -9,6 +9,9 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setSelectionMode(QAbstractItemView::SingleSelection);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(
+                this, SIGNAL(customContextMenuRequested(QPoint)),
+                this, SLOT(openContextMenu(QPoint)));
     this->setObjectName("MonitorTreeView");
     this->setIconSize(QSize(22,22));
     this->setAnimated(true);
@@ -17,9 +20,9 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setSortingEnabled(true);
     this->setExpandsOnDoubleClick(false);
 
-    TreeModel* model   = new TreeModel(this);
-    this->filter_model = new QSortFilterProxyModel(this);
-    this->filter_model->setSourceModel(model);
+    this->original_model = new TreeModel(this);
+    this->filter_model   = new QSortFilterProxyModel(this);
+    this->filter_model->setSourceModel(this->original_model);
     this->filter_model->setDynamicSortFilter(true);
     this->filter_model->setFilterCaseSensitivity(Qt::CaseSensitive);
     this->filter_model->setFilterRole(Sysmo::ROLE_FILTER_STRING);
@@ -32,8 +35,8 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     DelegateProbeProgress* progress = new DelegateProbeProgress(this);
 
     QObject::connect(
-                model, SIGNAL(expandIndex(QModelIndex)),
-                this,  SLOT(expandIndex(QModelIndex)));
+                this->original_model, SIGNAL(expandIndex(QModelIndex)),
+                this,                 SLOT(expandIndex(QModelIndex)));
     /*
      * connect delegate first
      */
@@ -79,3 +82,17 @@ void TreeView::expandIndex(QModelIndex index)
 }
 
 void TreeView::stopTimer() { this->timer->stop(); }
+
+void TreeView::openContextMenu(const QPoint point) {
+    QModelIndex    index = this->filter_model->mapToSource(this->indexAt(point));
+    QStandardItem* item  = this->original_model->itemFromIndex(index);
+    if (item->type() == Sysmo::TYPE_PROBE) {
+        QString element_name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
+        QJsonObject val = Monitor::probe_map->value(element_name);
+        qDebug() << "probe name: " << element_name << val;
+    } else if (item->type() == Sysmo::TYPE_TARGET) {
+        QString element_name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
+        QJsonObject val = Monitor::target_map->value(element_name);
+        qDebug() << "target name: " << element_name << val;
+    }
+}

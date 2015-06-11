@@ -10,9 +10,10 @@
 #include <QVariant>
 #include <QIcon>
 #include <Qt>
-#include <QDebug>
 #include <QPixmap>
 #include <QDateTime>
+
+#include <QDebug>
 
 class ItemProbe : public QStandardItem
 {

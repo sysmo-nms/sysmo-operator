@@ -14,6 +14,8 @@ void ItemTarget::updateInfo(QJsonObject info_target)
     this->name              = info_target.value("name").toString("undefined");
     this->target_properties = info_target.value("properties").toObject();
 
+    this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
+
     QString hostname   = this->target_properties.value("host").toString("undefined");
     QString fixed_name = this->target_properties.value("name").toString("undefined");
     QString sys_name   = this->target_properties.value("sysName").toString("undefined");

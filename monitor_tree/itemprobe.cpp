@@ -8,6 +8,7 @@ ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
     this->belong_to = info_probe.value("target").toString("undefined");
     int step        = info_probe.value("step").toInt(0);
 
+    this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
     this->item_progress    = new QStandardItem();
     this->item_progress->setData(1,    Sysmo::ROLE_IS_PROGRESS_ITEM);
     this->item_progress->setData(step, Sysmo::ROLE_PROGRESS_STEP);

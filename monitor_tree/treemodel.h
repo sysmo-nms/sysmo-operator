@@ -14,10 +14,11 @@
 #include <QStringList>
 #include <QJsonObject>
 #include <QHash>
-#include <QDebug>
 #include <QList>
 #include <QTimer>
 #include <QModelIndex>
+
+#include <QDebug>
 
 class TreeModel : public QStandardItemModel
 {
