@@ -23,7 +23,7 @@ class DelegateProbeProgress : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    explicit DelegateProbeProgress(QWidget* parent);
+    explicit DelegateProbeProgress(QWidget* parent = 0);
     void paint(
             QPainter* painter,
             const QStyleOptionViewItem &option,

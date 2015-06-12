@@ -6,7 +6,7 @@
 #include "nframe.h"
 #include "nframecontainer.h"
 #include "sidebutton.h"
-#include "monitor.h"
+#include "monitorwidget.h"
 #include "dashboard.h"
 
 #include <QObject>

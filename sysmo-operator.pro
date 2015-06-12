@@ -21,7 +21,6 @@ SOURCES += main.cpp\
     nframe.cpp \
     nframecontainer.cpp \
     sidebutton.cpp \
-    monitor.cpp \
     dashboard.cpp \
     monitor_tree/treeview.cpp \
     monitor_tree/treemodel.cpp \
@@ -40,7 +39,9 @@ SOURCES += main.cpp\
     monitor_tree/menuprobe.cpp \
     monitor_tree/menutarget.cpp \
     dialogs/newprobe.cpp \
-    dialogs/newprobepage1.cpp
+    dialogs/newprobepage1.cpp \
+    monitorwidget.cpp \
+    monitor.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -49,7 +50,6 @@ HEADERS  += mainwindow.h \
     nframe.h \
     nframecontainer.h \
     sidebutton.h \
-    monitor.h \
     dashboard.h \
     monitor_tree/treeview.h \
     monitor_tree/treemodel.h \
@@ -69,7 +69,9 @@ HEADERS  += mainwindow.h \
     monitor_tree/menuprobe.h \
     monitor_tree/menutarget.h \
     dialogs/newprobe.h \
-    dialogs/newprobepage1.h
+    dialogs/newprobepage1.h \
+    monitorwidget.h \
+    monitor.h
 
 RESOURCES += \
     icons.qrc \

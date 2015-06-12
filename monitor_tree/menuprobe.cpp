@@ -12,13 +12,13 @@ MenuProbe::MenuProbe(QWidget* parent) : QMenu(parent)
 
     this->addSeparator();
 
-    QAction* perfs = new QAction("Performances...", this);
+    QAction* perfs = new QAction("Performances", this);
     perfs->setIcon(QIcon(":/icons/utilities-system-monitor.png"));
     this->addAction(perfs);
 
     this->addSeparator();
 
-    QAction* delete_probe = new QAction("Delete this probe...", this);
+    QAction* delete_probe = new QAction("Delete this probe", this);
     delete_probe->setIcon(QIcon(":/icons/process-stop.png"));
     this->addAction(delete_probe);
 }

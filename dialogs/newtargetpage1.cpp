@@ -29,7 +29,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
     QLabel* name_lab = new QLabel("Display name:", this);
     this->target_name = new QLineEdit(this);
-    this->target_name->setPlaceholderText("Is hidden by MIB2::sysName if SNMP is enabled.");
+    this->target_name->setPlaceholderText("Hidden by MIB2::sysName if SNMP is enabled.");
     form->addRow(name_lab, this->target_name);
     QObject::connect(
                 this->target_name, SIGNAL(textChanged(QString)),

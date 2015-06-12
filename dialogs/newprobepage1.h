@@ -8,7 +8,7 @@
 class NewProbePage1 : public QWizardPage
 {
 public:
-    NewProbePage1(QWidget* parent);
+    NewProbePage1(QWidget* parent = 0);
     bool isComplete() const;
 };
 

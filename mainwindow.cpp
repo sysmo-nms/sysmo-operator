@@ -107,7 +107,7 @@ void MainWindow::tryValidate()
 {
     this->log_in_dialog->setEnabled(false);
 
-    Monitor* monitor = Monitor::getInstance();
+    MonitorWidget* monitor = MonitorWidget::getInstance();
     QObject::connect(
                 this->supercast, SIGNAL(connexionStatus(int)),
                 monitor,         SLOT(connexionStatus(int)));

@@ -3,7 +3,7 @@
 
 #include "iostream"
 
-#include "monitor.h"
+#include "monitorwidget.h"
 #include "itemtarget.h"
 #include "itemprobe.h"
 

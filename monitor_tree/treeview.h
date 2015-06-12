@@ -5,7 +5,7 @@
 #include "treemodel.h"
 #include "menuprobe.h"
 #include "menutarget.h"
-#include "monitor.h"
+#include "monitorwidget.h"
 #include "sysmo.h"
 
 #include <QObject>

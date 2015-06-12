@@ -1,59 +1,17 @@
 #ifndef MONITOR_H
 #define MONITOR_H
 
-#include "iostream"
-
-#include "nframe.h"
-#include "nframecontainer.h"
-#include "ngrid.h"
-#include "ngridcontainer.h"
-#include "dialogs/newtarget.h"
-#include "dialogs/newprobe.h"
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "monitor_tree/treeview.h"
-
 #include <QObject>
-#include <QWidget>
-#include <QLabel>
-#include <QFrame>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QIcon>
-#include <QMap>
-#include <QJsonObject>
-#include <QJsonDocument>
 
-#include <QDebug>
-
-class Monitor : public NFrame
+class Monitor : public QObject
 {
     Q_OBJECT
-
 public:
-    explicit Monitor(QWidget* parent = 0);
-    ~Monitor();
-    NewTarget* add_target_dialog = NULL;
-    NewProbe*  add_probe_dialog  = NULL;
-    static Monitor* getInstance();
-    static QMap<QString, QJsonObject>* target_map;
-    static QMap<QString, QJsonObject>* probe_map;
-
-public slots:
-    void newTarget();
-    void newProbe(QString forTarget);
-    void connexionStatus(int status);
-    void handleServerMessage(QJsonObject message);
-
-private:
-    static Monitor* singleton;
+    explicit Monitor(QObject *parent = 0);
 
 signals:
-    void infoProbe(QJsonObject message);
-    void infoTarget(QJsonObject message);
-    void deleteTarget(QJsonObject message);
-    void deleteProbe(QJsonObject message);
-    void probeReturn(QJsonObject message);
+
+public slots:
 };
 
 #endif // MONITOR_H

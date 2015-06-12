@@ -24,7 +24,7 @@ class LogIn : public QDialog
     Q_OBJECT
 
 public:
-    explicit LogIn(QWidget* parent);
+    explicit LogIn(QWidget* parent = 0);
     QString getUserName();
     QString getPassword();
     QString getServerName();

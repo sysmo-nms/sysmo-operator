@@ -18,7 +18,7 @@ class MenuTarget : public QMenu
     Q_OBJECT
 
 public:
-    MenuTarget(QWidget* parent);
+    MenuTarget(QWidget* parent = 0);
     void showMenuFor(QString target, QPoint at);
 
 private:

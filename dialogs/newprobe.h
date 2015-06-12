@@ -11,7 +11,7 @@
 class NewProbe : public QWizard
 {
 public:
-    NewProbe(QWidget* parent);
+    NewProbe(QWidget* parent = 0);
     void setTarget(QString target);
 private:
     QString current_target;

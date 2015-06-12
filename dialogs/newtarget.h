@@ -13,7 +13,7 @@ class NewTarget : public QWizard
     Q_OBJECT
 
 public:
-    explicit NewTarget(QWidget* parent);
+    explicit NewTarget(QWidget* parent = 0);
 };
 
 #endif // NEWTARGET_H

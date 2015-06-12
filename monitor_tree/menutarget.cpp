@@ -28,17 +28,17 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 
     this->addSeparator();
 
-    QAction* dash = new QAction("Dashboard...", this);
+    QAction* dash = new QAction("Dashboard", this);
     dash->setIcon(QIcon(":/icons/utilities-system-monitor.png"));
     this->addAction(dash);
 
-    QAction* doc = new QAction("Documentation...", this);
+    QAction* doc = new QAction("Documentation", this);
     doc->setIcon(QIcon(":/icons/folder-saved-search.png"));
     this->addAction(doc);
 
     this->addSeparator();
 
-    QAction* delete_target = new QAction("Delete this target...", this);
+    QAction* delete_target = new QAction("Delete this target", this);
     delete_target->setIcon(QIcon(":/icons/process-stop.png"));
     this->addAction(delete_target);
 }

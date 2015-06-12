@@ -15,7 +15,7 @@ class MenuProbe : public QMenu
     Q_OBJECT
 
 public:
-    MenuProbe(QWidget* parent);
+    MenuProbe(QWidget* parent = 0);
     void showMenuFor(QString target, QPoint at);
 
 };
