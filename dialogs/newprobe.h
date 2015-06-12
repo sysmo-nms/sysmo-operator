@@ -1,7 +1,7 @@
 #ifndef NEWPROBE_H
 #define NEWPROBE_H
 
-#include "newprobepage1.h"
+#include "dialogs/newprobepage1.h"
 
 #include <QWizard>
 #include <QWidget>

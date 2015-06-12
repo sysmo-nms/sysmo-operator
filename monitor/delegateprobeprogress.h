@@ -1,7 +1,7 @@
 #ifndef DELEGATEPROBEPROGRESS_H
 #define DELEGATEPROBEPROGRESS_H
 
-#include "treemodel.h"
+#include "monitor/treemodel.h"
 
 #include <QObject>
 #include <QWidget>

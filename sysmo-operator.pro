@@ -22,11 +22,15 @@ SOURCES += main.cpp\
     nframecontainer.cpp \
     sidebutton.cpp \
     dashboard.cpp \
-    monitor_tree/treeview.cpp \
-    monitor_tree/treemodel.cpp \
-    monitor_tree/itemtarget.cpp \
-    monitor_tree/delegateprobeprogress.cpp \
-    monitor_tree/itemprobe.cpp \
+    monitor/treeview.cpp \
+    monitor/treemodel.cpp \
+    monitor/itemtarget.cpp \
+    monitor/delegateprobeprogress.cpp \
+    monitor/itemprobe.cpp \
+    monitor/menuprobe.cpp \
+    monitor/menutarget.cpp \
+    monitor/monitorwidget.cpp \
+    monitor/monitor.cpp \
     dialogs/login.cpp \
     dialogs/newtarget.cpp \
     dialogs/newtargetpage1.cpp \
@@ -35,13 +39,9 @@ SOURCES += main.cpp\
     network/supercasthttp.cpp \
     network/supercastsignal.cpp \
     network/supercastquery.cpp \
-    themes.cpp \
-    monitor_tree/menuprobe.cpp \
-    monitor_tree/menutarget.cpp \
     dialogs/newprobe.cpp \
     dialogs/newprobepage1.cpp \
-    monitorwidget.cpp \
-    monitor.cpp
+    themes.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -51,11 +51,15 @@ HEADERS  += mainwindow.h \
     nframecontainer.h \
     sidebutton.h \
     dashboard.h \
-    monitor_tree/treeview.h \
-    monitor_tree/treemodel.h \
-    monitor_tree/itemprobe.h \
-    monitor_tree/itemtarget.h \
-    monitor_tree/delegateprobeprogress.h \
+    monitor/treeview.h \
+    monitor/treemodel.h \
+    monitor/itemprobe.h \
+    monitor/itemtarget.h \
+    monitor/delegateprobeprogress.h \
+    monitor/monitorwidget.h \
+    monitor/monitor.h \
+    monitor/menuprobe.h \
+    monitor/menutarget.h \
     dialogs/login.h \
     dialogs/newtarget.h \
     dialogs/newtargetpage1.h \
@@ -64,14 +68,10 @@ HEADERS  += mainwindow.h \
     network/supercasthttp.h \
     network/supercastsignal.h \
     network/supercastquery.h \
-    themes.h \
-    sysmo.h \
-    monitor_tree/menuprobe.h \
-    monitor_tree/menutarget.h \
     dialogs/newprobe.h \
     dialogs/newprobepage1.h \
-    monitorwidget.h \
-    monitor.h
+    themes.h \
+    sysmo.h
 
 RESOURCES += \
     icons.qrc \

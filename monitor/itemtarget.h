@@ -1,8 +1,6 @@
 #ifndef ITEMTARGET_H
 #define ITEMTARGET_H
 
-#include "iostream"
-
 #include "sysmo.h"
 
 #include <QStandardItem>

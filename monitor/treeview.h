@@ -1,11 +1,11 @@
 #ifndef TREEVIEW_H
 #define TREEVIEW_H
 
-#include "delegateprobeprogress.h"
-#include "treemodel.h"
-#include "menuprobe.h"
-#include "menutarget.h"
-#include "monitorwidget.h"
+#include "monitor/delegateprobeprogress.h"
+#include "monitor/treemodel.h"
+#include "monitor/menuprobe.h"
+#include "monitor/menutarget.h"
+#include "monitor/monitorwidget.h"
 #include "sysmo.h"
 
 #include <QObject>
@@ -35,10 +35,10 @@ public:
     explicit TreeView(QWidget* parent = 0);
     ~TreeView();
     void stopTimer();
-    QSortFilterProxyModel* filter_model;
-    QStandardItemModel*    original_model;
-    MenuTarget* target_menu;
-    MenuProbe*  probe_menu;
+    QSortFilterProxyModel* filter_model   = NULL;
+    QStandardItemModel*    original_model = NULL;
+    MenuTarget* target_menu = NULL;
+    MenuProbe*  probe_menu  = NULL;
 
 public slots:
     void expandIndex(QModelIndex index);

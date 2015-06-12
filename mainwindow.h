@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "iostream"
-
 #include "centralwidget.h"
 #include "dialogs/login.h"
 #include "network/supercast.h"

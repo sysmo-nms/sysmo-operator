@@ -146,8 +146,8 @@ void MonitorWidget::handleServerMessage(QJsonObject message)
     } else if (type == "unSubscribeOk") {
     } else {
         QJsonDocument doc(message);
-        std::cout << "received message!!" << type.toStdString() << std::endl;
-        std::cout << doc.toJson().toStdString() << std::endl;
+        qDebug() << "received message!!" << type;
+        qDebug() << doc.toJson();
    }
 }
 

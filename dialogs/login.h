@@ -31,11 +31,11 @@ public:
     qint16  getServerPort();
 
 private:
-    QLineEdit*	 user_name;
-    QLineEdit*	 user_pass;
-    QLineEdit*	 server_name;
-    QSpinBox*    server_port;
-    QPushButton* ok_but;
+    QLineEdit*	 user_name    = NULL;
+    QLineEdit*	 user_pass    = NULL;
+    QLineEdit*	 server_name  = NULL;
+    QSpinBox*    server_port  = NULL;
+    QPushButton* ok_but       = NULL;
     void restoreForm();
 
 private slots:

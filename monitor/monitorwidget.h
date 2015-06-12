@@ -1,8 +1,6 @@
 #ifndef MONITORWIDGET_H
 #define MONITORWIDGET_H
 
-#include "iostream"
-
 #include "nframe.h"
 #include "nframecontainer.h"
 #include "ngrid.h"
@@ -11,7 +9,8 @@
 #include "dialogs/newprobe.h"
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
-#include "monitor_tree/treeview.h"
+#include "monitor/treeview.h"
+#include "monitor/monitor.h"
 
 #include <QObject>
 #include <QWidget>
@@ -47,6 +46,7 @@ public slots:
 
 private:
     static MonitorWidget* singleton;
+    Monitor* monitor = NULL;
 
 signals:
     void infoProbe(QJsonObject message);

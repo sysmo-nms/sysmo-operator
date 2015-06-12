@@ -2,7 +2,7 @@
 #define NEWTARGET_H
 
 #include "sysmo.h"
-#include "newtargetpage1.h"
+#include "dialogs/newtargetpage1.h"
 
 #include <QObject>
 #include <QWidget>

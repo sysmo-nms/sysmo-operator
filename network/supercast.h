@@ -1,8 +1,6 @@
 #ifndef SUPERCAST_H
 #define SUPERCAST_H
 
-#include "iostream"
-
 #include "network/supercastsocket.h"
 #include "network/supercastsignal.h"
 

@@ -1,11 +1,9 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
-#include "iostream"
-
-#include "monitorwidget.h"
-#include "itemtarget.h"
-#include "itemprobe.h"
+#include "monitor/monitorwidget.h"
+#include "monitor/itemtarget.h"
+#include "monitor/itemprobe.h"
 
 #include <QObject>
 #include <QWidget>
