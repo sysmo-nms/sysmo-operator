@@ -15,16 +15,9 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
     add_probe->setIcon(QIcon(":/icons/list-add.png"));
     this->addAction(add_probe);
 
-    // catch triggered
     QObject::connect(
                 add_probe, SIGNAL(triggered(bool)),
                 this,      SLOT(connectNewProbeDialog()));
-    // and forward with a string argument
-    /*
-    QObject::connect(
-                this,   SIGNAL(openNewProbeDialog(QString)),
-                Monitor::getInstance(), SLOT(newProbe(QString)));
-                */
 
     this->addSeparator();
 
@@ -52,7 +45,10 @@ void MenuTarget::showMenuFor(QString target, QPoint at)
     this->popup(at);
 }
 
+/*
+ * Is connected to MonitorWidgets::showNewPobeDialog(QString) by
+ * MonitorWidgets: Treeview.target_menu. (avoid dependecy loop).
+ */
 void MenuTarget::connectNewProbeDialog() {
     emit this->openNewProbeDialog(this->target_name);
-
 }

@@ -1,7 +1,7 @@
 #ifndef MENUTARGET_H
 #define MENUTARGET_H
 
-//#include "monitor.h"
+#include "monitor/monitor.h"
 
 #include <QObject>
 #include <QWidget>

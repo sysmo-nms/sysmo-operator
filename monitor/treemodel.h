@@ -1,7 +1,7 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
-#include "monitor/monitorwidget.h"
+#include "monitor/monitor.h"
 #include "monitor/itemtarget.h"
 #include "monitor/itemprobe.h"
 

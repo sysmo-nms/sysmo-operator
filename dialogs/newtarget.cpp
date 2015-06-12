@@ -2,7 +2,6 @@
 
 NewTarget::NewTarget(QWidget* parent) : QWizard(parent)
 {
-    this->hide();
     this->setWindowTitle("New target");
     this->setModal(true);
     this->setOption(QWizard::NoBackButtonOnLastPage, true);

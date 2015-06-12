@@ -1,9 +1,8 @@
 #include "newprobe.h"
 
-NewProbe::NewProbe(QWidget* parent) : QWizard(parent)
+NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent)
 {
-    this->current_target = "";
-    this->hide();
+    this->current_target = forTarget;
     this->setWindowTitle("New probe");
     this->setModal(true);
     this->setOption(QWizard::NoBackButtonOnLastPage, true);
@@ -14,9 +13,4 @@ NewProbe::NewProbe(QWidget* parent) : QWizard(parent)
     NewProbePage1* page1 = new NewProbePage1(this);
     this->setPage(1, page1);
     this->setStartId(1);
-}
-
-void NewProbe::setTarget(QString target)
-{
-    this->current_target = target;
 }

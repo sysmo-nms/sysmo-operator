@@ -12,7 +12,7 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
           << "Progress"
           << "Last return");
     this->setHorizontalHeaderLabels(headers);
-    MonitorWidget* monitor = MonitorWidget::getInstance();
+    Monitor* monitor = Monitor::getInstance();
     QObject::connect(
                 monitor, SIGNAL(infoProbe(QJsonObject)),
                 this,	 SLOT(handleInfoProbe(QJsonObject)));
