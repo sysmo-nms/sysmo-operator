@@ -20,8 +20,8 @@ end
 
 
 task :side_icons do
-  sh "inkscape -z --export-png=graphics/images/dashboard-black.png -w 30 graphics/src/dashboard-black.svg"
-  sh "inkscape -z --export-png=graphics/images/monitor-black.png   -w 30 graphics/src/monitor-black.svg"
+  sh "inkscape -z --export-png=ressources/images/dashboard-black.png -w 30 ressources/src/dashboard-black.svg"
+  sh "inkscape -z --export-png=ressources/images/monitor-black.png   -w 30 ressources/src/monitor-black.svg"
 end
 
 task :tree_pixmaps do
@@ -34,11 +34,19 @@ task :tree_pixmaps do
           "weather-snow", "weather-storm", "media-playback-pause",
           "media-playback-start"]
   pixs.each{ |p|
-   sh "inkscape -z --export-png=graphics/pixmaps/#{p}.png -w #{pix_size} -h #{pix_size} graphics/src/#{p}.svg"
+   sh "inkscape -z --export-png=ressources/pixmaps/#{p}.png -w #{pix_size} -h #{pix_size} ressources/src/#{p}.svg"
+  }
+end
+
+task :box_icons do
+  pix_size = 52
+  pixs = ["dialog-warning", "dialog-information", "dialog-error"]
+  pixs.each{ |p|
+   sh "inkscape -z --export-png=ressources/box_icons/#{p}.png -w #{pix_size} -h #{pix_size} ressources/src/#{p}.svg"
   }
 end
 
 task :std_icons do
   icon_size = 32
-  sh "inkscape -z --export-png=graphics/icons/hub.png -w #{pix_size} -h #{pix_size} graphics/src/hub.svg"
+  sh "inkscape -z --export-png=ressources/icons/hub.png -w #{pix_size} -h #{pix_size} ressources/src/hub.svg"
 end

@@ -4,7 +4,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 {
     this->setTitle("Add new targets");
     this->setSubTitle("Use this form to add new targets to the system.");
-    this->setCommitPage(true);
+    this->setFinalPage(true);
     QFormLayout* form = new QFormLayout();
     form->setContentsMargins(20,15,20,15);
     this->setLayout(form);

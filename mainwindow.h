@@ -4,6 +4,7 @@
 #include "centralwidget.h"
 #include "dialogs/login.h"
 #include "network/supercast.h"
+#include "dialogs/messagebox.h"
 
 #include <QMainWindow>
 #include <QIcon>

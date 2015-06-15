@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     dialogs/newprobepage1.cpp \
     themes.cpp \
     dashboard/dashboardwidget.cpp \
-    dashboard/dashboardtab.cpp
+    dashboard/dashboardtab.cpp \
+    dialogs/messagebox.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -73,10 +74,12 @@ HEADERS  += mainwindow.h \
     themes.h \
     sysmo.h \
     dashboard/dashboardwidget.h \
-    dashboard/dashboardtab.h
+    dashboard/dashboardtab.h \
+    dialogs/messagebox.h
 
 RESOURCES += \
     icons.qrc \
+    box_icons.qrc \
     images.qrc \
     pixmaps.qrc \
     tree.qrc

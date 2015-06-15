@@ -137,9 +137,9 @@ void MainWindow::connexionStatus(int status)
         return;
     }
 
-    QMessageBox err_box;
+    MessageBox err_box;
     err_box.setModal(true);
-    err_box.setIcon(QMessageBox::Critical);
+    err_box.setIconType(Sysmo::MESSAGE_WARNING);
     this->setEnabled(false);
     switch(status) {
         case Supercast::AuthenticationError: {

@@ -5,6 +5,11 @@
 
 namespace Sysmo {
 
+    // Message box status
+    const int MESSAGE_INFO     = 0;
+    const int MESSAGE_WARNING  = 1;
+    const int MESSAGE_ERROR    = 2;
+
     // QStandardItem::type() and data(Sysmo::ROLE_TYPE)
     const int TYPE_TARGET         = 1000;
     const int TYPE_PROBE          = 1001;

@@ -26,7 +26,7 @@ class NewTargetPage1 : public QWizardPage
     Q_OBJECT
 
 public:
-    NewTargetPage1(QWidget* parent = 0);
+    explicit NewTargetPage1(QWidget* parent = 0);
     ~NewTargetPage1();
     bool isComplete() const;
 
