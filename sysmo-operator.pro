@@ -21,7 +21,6 @@ SOURCES += main.cpp\
     nframe.cpp \
     nframecontainer.cpp \
     sidebutton.cpp \
-    dashboard.cpp \
     monitor/treeview.cpp \
     monitor/treemodel.cpp \
     monitor/itemtarget.cpp \
@@ -41,7 +40,9 @@ SOURCES += main.cpp\
     network/supercastquery.cpp \
     dialogs/newprobe.cpp \
     dialogs/newprobepage1.cpp \
-    themes.cpp
+    themes.cpp \
+    dashboard/dashboardwidget.cpp \
+    dashboard/dashboardtab.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -50,7 +51,6 @@ HEADERS  += mainwindow.h \
     nframe.h \
     nframecontainer.h \
     sidebutton.h \
-    dashboard.h \
     monitor/treeview.h \
     monitor/treemodel.h \
     monitor/itemprobe.h \
@@ -71,7 +71,9 @@ HEADERS  += mainwindow.h \
     dialogs/newprobe.h \
     dialogs/newprobepage1.h \
     themes.h \
-    sysmo.h
+    sysmo.h \
+    dashboard/dashboardwidget.h \
+    dashboard/dashboardtab.h
 
 RESOURCES += \
     icons.qrc \

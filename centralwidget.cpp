@@ -31,7 +31,7 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent)
     NFrameContainer* stack        = new NFrameContainer(this);
     QStackedLayout*  stack_layout = new QStackedLayout();
     MonitorWidget*   monitor      = new MonitorWidget(this);
-    Dashboard* dashboard = new Dashboard(this);
+    DashboardWidget* dashboard = new DashboardWidget(this);
     stack_layout->setContentsMargins(0,0,0,0);
     stack_layout->insertWidget(CentralWidget::MonitorApp,   monitor);
     stack_layout->insertWidget(CentralWidget::DashboardApp, dashboard);

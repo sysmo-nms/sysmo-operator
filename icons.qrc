@@ -12,5 +12,7 @@
         <file alias="process-stop.png">ressources/icons/process-stop.png</file>
         <file alias="utilities-system-monitor.png">ressources/icons/utilities-system-monitor.png</file>
         <file alias="folder-saved-search.png">ressources/icons/folder-saved-search.png</file>
+        <file alias="document-save.png">ressources/icons/document-save.png</file>
+        <file alias="edit-undo.png">ressources/icons/edit-undo.png</file>
     </qresource>
 </RCC>

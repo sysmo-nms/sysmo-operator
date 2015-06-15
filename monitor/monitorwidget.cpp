@@ -7,13 +7,15 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
 {
     MonitorWidget::singleton = this;
 
-
     /*
      * Initialize Monitor first.
      */
     Monitor* mon = new Monitor(this);
 
 
+    /*
+     * init layout
+     */
     this->setFrameShape(QFrame::StyledPanel);
     NGrid* grid = new NGrid();
     grid->setVerticalSpacing(4);
