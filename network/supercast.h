@@ -12,6 +12,7 @@
 #include <QJsonValue>
 #include <QStringList>
 #include <QHash>
+#include <QMap>
 
 #include <QDebug>
 
@@ -34,11 +35,13 @@ public:
     QString user_pass;
     QString testouille;
     QHash<QString, SupercastSignal*>* message_processors = NULL;
+    QMap<int, SupercastSignal*>*      queries            = NULL;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
     static Supercast* getInstance();
     static void subscribe(QString channel);
     static void setMessageProcessor(QString key, SupercastSignal* dest);
+    static void sendQuery(QJsonObject query, SupercastSignal* reply);
 
 public slots:
     void routeServerMessage(QJsonObject msg);

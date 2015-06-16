@@ -8,11 +8,12 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     Supercast::singleton   = this;
     SupercastSignal* sig   = new SupercastSignal(this);
     QObject::connect(
-                sig,  SIGNAL(sendMessage(QJsonObject)),
+                sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleSupercastMessage(QJsonObject)));
 
     this->message_processors = new QHash<QString, SupercastSignal*>();
     this->message_processors->insert("supercast", sig);
+    this->queries = new QMap<int, SupercastSignal*>();
 }
 
 
@@ -63,6 +64,7 @@ Supercast::~Supercast()
     this->socket_thread.quit();
     this->socket_thread.wait();
     delete this->message_processors;
+    delete this->queries;
 }
 
 
@@ -93,7 +95,9 @@ void Supercast::routeServerMessage(QJsonObject msg)
     QString from = msg.value("from").toString("undefined");
     if (this->message_processors->contains(from)) {
         SupercastSignal* sig = this->message_processors->value(from);
-        emit sig->sendMessage(msg);
+        emit sig->serverMessage(msg);
+    } else {
+        qDebug() << "what should i do with this: " << msg;
     }
 }
 
@@ -124,4 +128,19 @@ void Supercast::subscribe(QString channel)
 void Supercast::setMessageProcessor(QString key, SupercastSignal* dest)
 {
     Supercast::singleton->message_processors->insert(key, dest);
+}
+
+void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
+{
+    QMap<int, SupercastSignal*>* squeries = Supercast::singleton->queries;
+
+    int queryId = 0;
+    while (squeries->contains(queryId)) queryId += 1;
+
+    squeries->insert(queryId, reply);
+    query.insert("queryId", queryId);
+    qDebug() << "queryid is: " << query;
+    /*
+    emit Supercast::singleton->clientMessage(query);
+    */
 }

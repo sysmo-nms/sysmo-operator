@@ -95,7 +95,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
      */
     SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
-                sig, SIGNAL(sendMessage(QJsonObject)),
+                sig, SIGNAL(serverMessage(QJsonObject)),
                 mon, SLOT(handleServerMessage(QJsonObject)));
     Supercast::setMessageProcessor(QString("monitor"), sig);
 

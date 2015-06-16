@@ -4,6 +4,8 @@
 #include "sysmo.h"
 #include "nframecontainer.h"
 #include "ngridcontainer.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
 
 #include <QObject>
 #include <QWidget>
@@ -31,6 +33,9 @@ public:
     ~NewTargetPage1();
     bool isComplete() const;
     bool validatePage();
+
+public slots:
+    void createTargetReply(QJsonObject reply);
 
 private:
     QLineEdit* target_host     = NULL;

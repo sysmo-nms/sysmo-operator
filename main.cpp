@@ -2,10 +2,8 @@
 #include "themes.h"
 
 #include <QApplication>
-#include <QPalette>
 #include <QSettings>
 #include <QIcon>
-#include <Qt>
 
 
 int main(int argc, char* argv[])
@@ -16,11 +14,12 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationName("Sysmo IO");
     QApplication::setOrganizationDomain("sysmo.io");
     QApplication::setQuitOnLastWindowClosed(true);
-    QApplication::setPalette(Themes::native);
+    QApplication::setPalette(Themes::iced);
     QApplication::setStyle("fusion");
 
     QApplication app(argc, argv);
     QApplication::setWindowIcon(QIcon(":/icons/logo.png"));
-    MainWindow   main_window;
+
+    MainWindow w;
     return app.exec();
 }

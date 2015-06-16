@@ -202,6 +202,16 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 }
 
 
+NewTargetPage1::~NewTargetPage1()
+{
+    delete this->snmp_widgets;
+    delete this->snmp_v2_widgets;
+    delete this->snmp_v3_widgets;
+    delete this->snmp_v3_auth_widgets;
+    delete this->snmp_v3_priv_widgets;
+}
+
+
 bool NewTargetPage1::isComplete() const
 {
     this->disableUnusedWidgets();
@@ -288,7 +298,8 @@ void NewTargetPage1::disableUnusedWidgets() const
 
 int NewTargetPage1::configType() const
 {
-    if (!this->snmp_enable->isChecked()) return NO_SNMP;
+    if (!this->snmp_enable->isChecked())
+        return NO_SNMP;
 
     if (this->snmp_version->currentIndex() == Sysmo::SNMP_VERSION_1)
         return SNMP_V1;
@@ -390,15 +401,16 @@ bool NewTargetPage1::validatePage()
                         {"host", this->target_host->text()},
                         {"name", this->target_name->text()}}},
                 {"sysProperties", sysProperties}}}};
-    qDebug() << createTargetQuery;
+    SupercastSignal* sig = new SupercastSignal(this);
+    QObject::connect(
+                sig,  SIGNAL(serverMessage(QJsonObject)),
+                this, SLOT(createTargetReply(QJsonObject)));
+    Supercast::sendQuery(createTargetQuery, sig);
     return false;
 }
 
-NewTargetPage1::~NewTargetPage1()
+void NewTargetPage1::createTargetReply(QJsonObject reply)
 {
-    delete this->snmp_widgets;
-    delete this->snmp_v2_widgets;
-    delete this->snmp_v3_widgets;
-    delete this->snmp_v3_auth_widgets;
-    delete this->snmp_v3_priv_widgets;
+    qDebug() << "received qt reply: " << reply;
+
 }

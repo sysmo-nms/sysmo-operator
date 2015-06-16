@@ -6,8 +6,8 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
     this->socket     = new QTcpSocket(this);
 
     /*
-     * QueuedConnection because the SLOT may emit SIGNAL.
-     * Avoid recursion.
+     * QueuedConnection because the SLOT may emit the SIGNAL he is
+     * connected to.
      */
     QObject::connect(
                 this->socket, SIGNAL(readyRead()),
@@ -65,7 +65,8 @@ void SupercastSocket::socketReadyRead()
 
 
     /*
-     * Some PDUs might comme in one readyRead() signal.
+     * Emit aditional readyRead() wich will call this function again
+     * without recursion (QueuedConnection).
      */
     if (this->socket->bytesAvailable() != 0)
         emit this->socket->readyRead();

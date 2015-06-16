@@ -12,7 +12,7 @@ public:
     explicit SupercastSignal(QObject* parent = 0);
 
 signals:
-    void sendMessage(QJsonObject json);
+    void serverMessage(QJsonObject json);
 };
 
 #endif // SUPERCASTSIGNAL_H
