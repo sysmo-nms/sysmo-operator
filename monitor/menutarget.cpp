@@ -2,6 +2,7 @@
 
 MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 {
+    this->target_name = "undefined";
     this->operation_menu = new QMenu("Operator Actions", this);
     this->operation_menu->setIcon(QIcon(":/icons/utilities-terminal.png"));
     this->addMenu(this->operation_menu);

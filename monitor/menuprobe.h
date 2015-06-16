@@ -18,6 +18,8 @@ public:
     MenuProbe(QWidget* parent = 0);
     void showMenuFor(QString target, QPoint at);
 
+private:
+    QString probe_name;
 };
 
 #endif // MENUPROBE_H

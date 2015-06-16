@@ -2,6 +2,7 @@
 
 MenuProbe::MenuProbe(QWidget* parent) : QMenu(parent)
 {
+    this->probe_name = "undefined";
 
     QAction* force = new QAction("Force check", this);
     force->setIcon(QIcon(":/icons/force.png"));
@@ -24,9 +25,10 @@ MenuProbe::MenuProbe(QWidget* parent) : QMenu(parent)
 }
 
 
-void MenuProbe::showMenuFor(QString target, QPoint at)
+void MenuProbe::showMenuFor(QString probe, QPoint at)
 {
     qDebug() << "show menu for probe";
+    this->probe_name = probe;
     at.setX(at.x() + 12);
     this->popup(at);
 
