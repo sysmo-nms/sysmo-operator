@@ -18,6 +18,7 @@
 #include <QDoubleSpinBox>
 #include <QFrame>
 #include <QLabel>
+#include <QJsonObject>
 
 #include <QDebug>
 
@@ -29,6 +30,7 @@ public:
     explicit NewTargetPage1(QWidget* parent = 0);
     ~NewTargetPage1();
     bool isComplete() const;
+    bool validatePage();
 
 private:
     QLineEdit* target_host     = NULL;
@@ -56,6 +58,13 @@ private:
     QList<QWidget*>* snmp_v3_priv_widgets = NULL;
 
     void disableUnusedWidgets() const;
+    int  configType() const;
+    int const NO_SNMP              = 0;
+    int const SNMP_V1              = 1;
+    int const SNMP_V2              = 2;
+    int const SNMP_V3_AUTHPRIV     = 3;
+    int const SNMP_V3_AUTHNOPRIV   = 4;
+    int const SNMP_V3_NOAUTHNOPRIV = 5;
 };
 
 #endif // NEWTARGETPAGE1_H

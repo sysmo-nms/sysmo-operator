@@ -286,6 +286,113 @@ void NewTargetPage1::disableUnusedWidgets() const
     return; // END (snmp v3 authPriv)
 }
 
+int NewTargetPage1::configType() const
+{
+    if (!this->snmp_enable->isChecked()) return NO_SNMP;
+
+    if (this->snmp_version->currentIndex() == Sysmo::SNMP_VERSION_1)
+        return SNMP_V1;
+    if (this->snmp_version->currentIndex() == Sysmo::SNMP_VERSION_2)
+        return SNMP_V2;
+
+    // then it is v3
+    if (this->snmp_seclevel->currentIndex() == Sysmo::SNMP_SECLEVEL_NO_AUTH_NO_PRIV)
+        return SNMP_V3_NOAUTHNOPRIV;
+    if (this->snmp_seclevel->currentIndex() == Sysmo::SNMP_SECLEVEL_AUTH_NO_PRIV)
+        return SNMP_V3_AUTHNOPRIV;
+
+    // then it is v3 authpriv
+    return SNMP_V3_AUTHPRIV;
+}
+
+
+bool NewTargetPage1::validatePage()
+{
+
+    QJsonObject sysProperties;
+    if (this->configType() == NO_SNMP) {
+        sysProperties = {};
+
+
+    } else if (this->configType() == SNMP_V1) {
+        sysProperties = {
+            {"snmp_port",    this->snmp_port->value()},
+            {"snmp_version", "1"},
+            {"snmp_community", this->snmp_community->text()}};
+
+    } else if (this->configType() == SNMP_V2) {
+        sysProperties = {
+            {"snmp_port",    this->snmp_port->value()},
+            {"snmp_version", "2c"},
+            {"snmp_community", this->snmp_community->text()}};
+
+    } else if (this->configType() ==  SNMP_V3_NOAUTHNOPRIV) {
+        sysProperties = {
+            {"snmp_port",    this->snmp_port->value()},
+            {"snmp_version", "3"},
+            {"snmp_seclevel",  "noAuthNoPriv"},
+            {"snmp_usm_user", this->snmp_usm_user->text()}};
+
+
+    } else if (this->configType() ==  SNMP_V3_AUTHNOPRIV) {
+        QString authproto;
+        if (this->snmp_auth_proto->currentIndex() == Sysmo::SNMP_AUTH_MD5)
+            authproto = "MD5";
+        else
+            authproto = "SHA";
+
+        sysProperties = {
+            {"snmp_port",      this->snmp_port->value()},
+            {"snmp_version",   "3"},
+            {"snmp_seclevel",  "authNoPriv"},
+            {"snmp_usm_user",  this->snmp_usm_user->text()},
+            {"snmp_authproto", authproto},
+            {"snmp_authkey",   this->snmp_auth_key->text()}};
+
+
+    } else if (this->configType() == SNMP_V3_AUTHPRIV) {
+        QString authproto;
+        QString privproto;
+        if (this->snmp_auth_proto->currentIndex() == Sysmo::SNMP_AUTH_MD5)
+            authproto = "MD5";
+        else
+            authproto = "SHA";
+
+        int privprotoIndex = this->snmp_priv_proto->currentIndex();
+        if (privprotoIndex == Sysmo::SNMP_PRIV_3DES)
+            privproto = "3DES";
+        else if (privprotoIndex == Sysmo::SNMP_PRIV_AES128)
+            privproto = "AES128";
+        else if (privprotoIndex == Sysmo::SNMP_PRIV_AES192)
+            privproto = "AES192";
+        else if (privprotoIndex == Sysmo::SNMP_PRIV_AES256)
+            privproto = "AES256";
+        else if (privprotoIndex == Sysmo::SNMP_PRIV_DES)
+            privproto = "DES";
+
+        sysProperties = {
+            {"snmp_port",      this->snmp_port->value()},
+            {"snmp_version",   "v3"},
+            {"snmp_seclevel",  "authNoPriv"},
+            {"snmp_usm_user",  this->snmp_usm_user->text()},
+            {"snmp_authproto", authproto},
+            {"snmp_authkey",   this->snmp_auth_key->text()},
+            {"snmp_privproto", privproto},
+            {"snmp_privkey",   this->snmp_priv_key->text()}};
+
+    }
+
+    QJsonObject createTargetQuery {
+        {"from", "monitor"},
+        {"type", "createTargetQuery"},
+        {"value", QJsonObject {
+                {"properties", QJsonObject {
+                        {"host", this->target_host->text()},
+                        {"name", this->target_name->text()}}},
+                {"sysProperties", sysProperties}}}};
+    qDebug() << createTargetQuery;
+    return false;
+}
 
 NewTargetPage1::~NewTargetPage1()
 {
