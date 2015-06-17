@@ -50,6 +50,7 @@ public slots:
 
 private:
     static Supercast* singleton;
+    static const int QUERYID_UNDEF = 100;
 
 private slots:
     void handleSupercastMessage(QJsonObject message);

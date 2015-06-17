@@ -5,8 +5,8 @@ Supercast* Supercast::getInstance() {return Supercast::singleton;}
 
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
-    Supercast::singleton   = this;
-    SupercastSignal* sig   = new SupercastSignal(this);
+    Supercast::singleton = this;
+    SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleSupercastMessage(QJsonObject)));
@@ -92,13 +92,42 @@ void Supercast::socketError(QAbstractSocket::SocketError error)
 
 void Supercast::routeServerMessage(QJsonObject msg)
 {
+
+    /*
+     * Test if message is for message_processor.
+     * TODO "subscribe" to channel should be enought?
+     */
     QString from = msg.value("from").toString("undefined");
     if (this->message_processors->contains(from)) {
         SupercastSignal* sig = this->message_processors->value(from);
         emit sig->serverMessage(msg);
-    } else {
-        qDebug() << "what should i do with this: " << msg;
+        return;
     }
+
+
+    /*
+     * Then it must be a reply message.
+     */
+    QString msg_type = msg.value("type").toString("undefined");
+    if(msg_type == "reply") {
+
+        int  queryId = msg.take("queryId").toInt(QUERYID_UNDEF);
+        bool lastPdu = msg.take("lastPdu").toBool(true);
+        if (queryId == QUERYID_UNDEF) return;
+
+        SupercastSignal* sig = this->queries->value(queryId);
+        emit sig->serverMessage(msg);
+
+        if (lastPdu) {
+            this->queries->remove(queryId);
+            sig->deleteLater();
+        }
+
+        return;
+    }
+
+
+    qDebug() << "unknown pdu: " << msg;
 }
 
 
@@ -139,8 +168,5 @@ void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
 
     squeries->insert(queryId, reply);
     query.insert("queryId", queryId);
-    qDebug() << "queryid is: " << query;
-    /*
     emit Supercast::singleton->clientMessage(query);
-    */
 }

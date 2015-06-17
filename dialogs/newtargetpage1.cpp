@@ -327,21 +327,21 @@ bool NewTargetPage1::validatePage()
 
     } else if (this->configType() == SNMP_V1) {
         sysProperties = {
-            {"snmp_port",    this->snmp_port->value()},
-            {"snmp_version", "1"},
+            {"snmp_port",     QString::number(this->snmp_port->value())},
+            {"snmp_version",  "1"},
             {"snmp_community", this->snmp_community->text()}};
 
     } else if (this->configType() == SNMP_V2) {
         sysProperties = {
-            {"snmp_port",    this->snmp_port->value()},
-            {"snmp_version", "2c"},
+            {"snmp_port",     QString::number(this->snmp_port->value())},
+            {"snmp_version",  "2c"},
             {"snmp_community", this->snmp_community->text()}};
 
     } else if (this->configType() ==  SNMP_V3_NOAUTHNOPRIV) {
         sysProperties = {
-            {"snmp_port",    this->snmp_port->value()},
-            {"snmp_version", "3"},
-            {"snmp_seclevel",  "noAuthNoPriv"},
+            {"snmp_port",     QString(this->snmp_port->value())},
+            {"snmp_version",  "3"},
+            {"snmp_seclevel", "noAuthNoPriv"},
             {"snmp_usm_user", this->snmp_usm_user->text()}};
 
 
@@ -353,7 +353,7 @@ bool NewTargetPage1::validatePage()
             authproto = "SHA";
 
         sysProperties = {
-            {"snmp_port",      this->snmp_port->value()},
+            {"snmp_port",      QString::number(this->snmp_port->value())},
             {"snmp_version",   "3"},
             {"snmp_seclevel",  "authNoPriv"},
             {"snmp_usm_user",  this->snmp_usm_user->text()},
@@ -382,7 +382,7 @@ bool NewTargetPage1::validatePage()
             privproto = "DES";
 
         sysProperties = {
-            {"snmp_port",      this->snmp_port->value()},
+            {"snmp_port",      QString::number(this->snmp_port->value())},
             {"snmp_version",   "v3"},
             {"snmp_seclevel",  "authNoPriv"},
             {"snmp_usm_user",  this->snmp_usm_user->text()},

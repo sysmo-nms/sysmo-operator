@@ -21,6 +21,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QJsonObject>
+#include <QString>
 
 #include <QDebug>
 
