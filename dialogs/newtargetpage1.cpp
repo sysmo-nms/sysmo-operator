@@ -29,7 +29,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
     QLabel* name_lab = new QLabel("Display name:", this);
     this->target_name = new QLineEdit(this);
-    this->target_name->setPlaceholderText("Hidden by MIB2::sysName if SNMP is enabled.");
+    this->target_name->setPlaceholderText("Optional. Hidden by MIB2::sysName if SNMP is enabled.");
     form->addRow(name_lab, this->target_name);
     QObject::connect(
                 this->target_name, SIGNAL(textChanged(QString)),
@@ -215,25 +215,24 @@ NewTargetPage1::~NewTargetPage1()
 bool NewTargetPage1::isComplete() const
 {
     this->disableUnusedWidgets();
-    if (this->target_host->text() == "") { return false; }
-    if (this->target_name->text() == "") { return false; }
-    if (!this->snmp_enable->isChecked()) { return true; }
+    if (this->target_host->text() == "") return false;
+    if (!this->snmp_enable->isChecked()) return true;
 
     if (this->snmp_version->currentIndex() != Sysmo::SNMP_VERSION_3) {
-        if (this->snmp_community->text() == "" ) {return false;}
+        if (this->snmp_community->text() == "" ) return false;
         return true;
     }
 
     // V3 snmp
-    if (this->snmp_usm_user->text() == "") {return false;}
+    if (this->snmp_usm_user->text() == "") return false;
     if (this->snmp_seclevel->currentIndex() ==
-            Sysmo::SNMP_SECLEVEL_NO_AUTH_NO_PRIV) {return true;}
+            Sysmo::SNMP_SECLEVEL_NO_AUTH_NO_PRIV) return true;
 
-    if (this->snmp_auth_key->text() == "") {return false;}
+    if (this->snmp_auth_key->text() == "") return false;
     if (this->snmp_seclevel->currentIndex() ==
-            Sysmo::SNMP_SECLEVEL_AUTH_NO_PRIV) {return true;}
+            Sysmo::SNMP_SECLEVEL_AUTH_NO_PRIV) return true;
 
-    if (this->snmp_priv_key->text() == "") {return false;}
+    if (this->snmp_priv_key->text() == "") return false;
     return true;
 }
 
@@ -246,7 +245,7 @@ void NewTargetPage1::disableUnusedWidgets() const
             QWidget* w = it.next();
             w->setDisabled(true);
         }
-        return; // END: all snmp widgets disabled (no snmp)
+        return; // <---- END: all snmp widgets disabled (no snmp)
     } else {
         QListIterator<QWidget*> it(*this->snmp_widgets);
         while (it.hasNext()) {
@@ -261,7 +260,7 @@ void NewTargetPage1::disableUnusedWidgets() const
             QWidget* w = it.next();
             w->setDisabled(true);
         }
-        return; // END all snmp v3 widgets disabled (snmp v2)
+        return; // <---- END all snmp v3 widgets disabled (snmp v2)
     } else {
         QListIterator<QWidget*> it(*this->snmp_v2_widgets);
         while (it.hasNext()) {
@@ -282,7 +281,7 @@ void NewTargetPage1::disableUnusedWidgets() const
             QWidget* w = it2.next();
             w->setDisabled(true);
         }
-        return; // END snmp v3 auth and priv widgets disabled (snmp v3 noAuthNoPriv)
+        return; // <---- END auth/priv widgets disabled (snmp v3 noAuthNoPriv)
     } else if (this->snmp_seclevel->currentIndex() ==
                Sysmo::SNMP_SECLEVEL_AUTH_NO_PRIV) {
         QListIterator<QWidget*> it2(*this->snmp_v3_priv_widgets);
@@ -290,10 +289,10 @@ void NewTargetPage1::disableUnusedWidgets() const
             QWidget* w = it2.next();
             w->setDisabled(true);
         }
-        return; // END snmp v3 priv widgets disabled (snmp v3 authNoPriv)
+        return; // <---- END priv widgets disabled (snmp v3 authNoPriv)
     }
 
-    return; // END (snmp v3 authPriv)
+    return; // <---- END (snmp v3 authPriv)
 }
 
 int NewTargetPage1::configType() const

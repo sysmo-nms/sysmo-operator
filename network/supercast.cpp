@@ -127,7 +127,7 @@ void Supercast::routeServerMessage(QJsonObject msg)
     }
 
 
-    qDebug() << "unknown pdu: " << msg;
+    qDebug() << "unknown msg type: " << msg;
 }
 
 

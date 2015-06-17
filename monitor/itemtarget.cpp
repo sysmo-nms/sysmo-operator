@@ -24,7 +24,7 @@ void ItemTarget::updateInfo(QJsonObject info_target)
     if (sys_name != "undefined") {
         display.append(sys_name);
         display.append(QString("  (%1)").arg(hostname));
-    } else if (fixed_name != "undefined") {
+    } else if ((fixed_name != "undefined") & (fixed_name != "")) {
         display.append(fixed_name);
         display.append(QString("  (%1)").arg(hostname));
     } else {
