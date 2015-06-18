@@ -1,14 +1,21 @@
 #ifndef SUPERCASTHTTP_H
 #define SUPERCASTHTTP_H
 
+#include "network/supercasthttpreply.h"
+#include "network/supercasthttprequest.h"
+
 #include <QObject>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
 #include <QString>
-#include <QXmlSimpleReader>
-#include <QXmlInputSource>
+#include <QVariant>
+#include <QHash>
 
 #include <QDebug>
 
-class SupercastHTTP : public QObject
+class SupercastHTTP : public QNetworkAccessManager
 {
     Q_OBJECT
 
@@ -17,10 +24,13 @@ public:
     ~SupercastHTTP();
 
 public slots:
-    void handleClientRequest(QString url);
+    void handleClientRequest(SupercastHttpRequest request);
+
+private slots:
+    void handleNetworkReply(QNetworkReply* reply);
 
 signals:
-    void serverReply(QString body);
+    void serverReply(SupercastHttpReply reply);
 };
 
 #endif // SUPERCASTHTTP_H

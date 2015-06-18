@@ -4,6 +4,8 @@
 #include "network/supercastsocket.h"
 #include "network/supercastsignal.h"
 #include "network/supercasthttp.h"
+#include "network/supercasthttprequest.h"
+#include "network/supercasthttpreply.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -38,12 +40,14 @@ public:
     QString testouille;
     QHash<QString, SupercastSignal*>* message_processors = NULL;
     QMap<int, SupercastSignal*>*      queries            = NULL;
+    QMap<int, SupercastSignal*>*      http_requests      = NULL;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
     static Supercast* getInstance();
     static void subscribe(QString channel);
     static void setMessageProcessor(QString key, SupercastSignal* dest);
     static void sendQuery(QJsonObject query, SupercastSignal* reply);
+    static void httpGet(QString url, SupercastSignal* reply);
 
 public slots:
     void routeServerMessage(QJsonObject msg);
@@ -56,11 +60,11 @@ private:
 
 private slots:
     void handleSupercastMessage(QJsonObject message);
-    void handleHttpReply(QString body);
+    void handleHttpReply(SupercastHttpReply reply);
 
 signals:
     void clientMessage(QJsonObject msg);
-    void clientHttpRequest(QString request);
+    void clientHttpRequest(SupercastHttpRequest request);
     void connexionStatus(int status);
     // messages for the monitor proxy
     void monitorServerMessage(QJsonObject msg);

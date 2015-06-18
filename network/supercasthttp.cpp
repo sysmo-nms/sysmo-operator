@@ -1,14 +1,25 @@
 #include "supercasthttp.h"
 
-SupercastHTTP::SupercastHTTP(QObject* parent) : QObject(parent)
+SupercastHTTP::~SupercastHTTP() {}
+SupercastHTTP::SupercastHTTP(QObject* parent) : QNetworkAccessManager(parent)
 {
-
+    QObject::connect(
+                this, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(handleNetworkReply(QNetworkReply*)));
 }
 
-SupercastHTTP::~SupercastHTTP() {}
-
-void SupercastHTTP::handleClientRequest(QString url)
+void SupercastHTTP::handleClientRequest(SupercastHttpRequest request)
 {
-    qDebug() << "should handle request" << url;
-    emit this->serverReply("hello");
+    QNetworkRequest net_request = QNetworkRequest(QUrl("http://192.168.0.11:8080/nchecks/AllChecks.xml"));
+    net_request.setAttribute(QNetworkRequest::User, QVariant(request.id));
+    this->get(net_request);
+}
+
+void SupercastHTTP::handleNetworkReply(QNetworkReply* net_reply)
+{
+    int request_id   = net_reply->request().attribute(QNetworkRequest::User).toInt();
+    QString            reply_body(net_reply->readAll());
+    SupercastHttpReply reply(request_id, reply_body);
+    net_reply->deleteLater();
+    emit this->serverReply(reply);
 }

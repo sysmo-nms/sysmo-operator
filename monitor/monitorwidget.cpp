@@ -11,7 +11,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
      * Initialize utils first
      */
     Monitor* mon = new Monitor(this);
-    //NChecks* nck = new NChecks(this);
+    NChecks* nck = new NChecks(this);
 
 
 

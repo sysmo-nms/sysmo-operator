@@ -1,7 +1,13 @@
 #ifndef NCHECKS_H
 #define NCHECKS_H
 
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+
 #include <QObject>
+#include <QString>
+#include <QJsonObject>
+#include <QDebug>
 
 class NChecks : public QObject
 {
@@ -13,6 +19,7 @@ public:
 signals:
 
 public slots:
+    void handleNetworkReply(QJsonObject obj);
 };
 
 #endif // NCHECKS_H

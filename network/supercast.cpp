@@ -13,19 +13,22 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
 
     this->message_processors = new QHash<QString, SupercastSignal*>();
     this->message_processors->insert("supercast", sig);
-    this->queries = new QMap<int, SupercastSignal*>();
+    this->queries       = new QMap<int, SupercastSignal*>();
+    this->http_requests = new QMap<int, SupercastSignal*>();
 
     /*
      * init SupercastHTTP
      */
     SupercastHTTP* http_t = new SupercastHTTP();
+    qRegisterMetaType<SupercastHttpReply>("SupercastHttpReply");
     QObject::connect(
-                http_t, SIGNAL(serverReply(QString)),
-                this,   SLOT(handleHttpReply(QString)),
+                http_t, SIGNAL(serverReply(SupercastHttpReply)),
+                this,   SLOT(handleHttpReply(SupercastHttpReply)),
                 Qt::QueuedConnection);
+    qRegisterMetaType<SupercastHttpRequest>("SupercastHttpRequest");
     QObject::connect(
-                this,   SIGNAL(clientHttpRequest(QString)),
-                http_t, SLOT(handleClientRequest(QString)));
+                this,   SIGNAL(clientHttpRequest(SupercastHttpRequest)),
+                http_t, SLOT(handleClientRequest(SupercastHttpRequest)));
     http_t->moveToThread(&this->http_thread);
     QObject::connect(
                 &this->socket_thread, SIGNAL(finished()),
@@ -98,8 +101,8 @@ void Supercast::socketConnected()
         {"from", "supercast"},
         {"type", "authResp"},
         {"value", QJsonObject {
-            {"name",        this->user_name},
-            {"password",    this->user_pass}}}};
+            {"name",     this->user_name},
+            {"password", this->user_pass}}}};
 
     emit this->clientMessage(authResp);
 }
@@ -162,11 +165,6 @@ void Supercast::handleSupercastMessage(QJsonObject message)
     }
 }
 
-void Supercast::handleHttpReply(QString body)
-{
-    qDebug() << "handle http reply: " << body;
-}
-
 void Supercast::subscribe(QString channel)
 {
     QJsonObject subscribeMsg {
@@ -193,3 +191,26 @@ void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
     query.insert("queryId", queryId);
     emit Supercast::singleton->clientMessage(query);
 }
+
+void Supercast::httpGet(QString url, SupercastSignal *reply)
+{
+    int queryId = 0;
+    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
+    Supercast::singleton->http_requests->insert(queryId, reply);
+    emit Supercast::singleton->clientHttpRequest(SupercastHttpRequest(queryId, url));
+}
+
+
+void Supercast::handleHttpReply(SupercastHttpReply reply)
+{
+    int queryId = reply.id;
+    SupercastSignal* sig = Supercast::singleton->http_requests->take(queryId);
+    QJsonObject body {
+        {"http_reply", reply.body}
+    };
+    emit sig->serverMessage(body);
+    sig->deleteLater();
+}
+
+
+

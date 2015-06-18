@@ -43,7 +43,9 @@ SOURCES += main.cpp\
     dashboard/dashboardwidget.cpp \
     dashboard/dashboardtab.cpp \
     dialogs/messagebox.cpp \
-    monitor/nchecks.cpp
+    monitor/nchecks.cpp \
+    network/supercasthttprequest.cpp \
+    network/supercasthttpreply.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -75,7 +77,9 @@ HEADERS  += mainwindow.h \
     dashboard/dashboardwidget.h \
     dashboard/dashboardtab.h \
     dialogs/messagebox.h \
-    monitor/nchecks.h
+    monitor/nchecks.h \
+    network/supercasthttprequest.h \
+    network/supercasthttpreply.h
 
 RESOURCES += \
     icons.qrc \
