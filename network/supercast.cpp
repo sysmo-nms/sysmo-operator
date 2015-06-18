@@ -6,15 +6,16 @@ Supercast* Supercast::getInstance() {return Supercast::singleton;}
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
     Supercast::singleton = this;
+    this->message_processors = new QHash<QString, SupercastSignal*>();
+    this->queries       = new QHash<int, SupercastSignal*>();
+    this->http_requests = new QHash<int, SupercastSignal*>();
+
     SupercastSignal* sig = new SupercastSignal(this);
+    this->message_processors->insert("supercast", sig);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleSupercastMessage(QJsonObject)));
 
-    this->message_processors = new QHash<QString, SupercastSignal*>();
-    this->message_processors->insert("supercast", sig);
-    this->queries       = new QMap<int, SupercastSignal*>();
-    this->http_requests = new QMap<int, SupercastSignal*>();
 
     /*
      * init SupercastHTTP
@@ -81,14 +82,15 @@ void Supercast::tryConnect(
 
 Supercast::~Supercast()
 {
-    this->socket_thread.quit();
-    this->socket_thread.wait();
-
     this->http_thread.quit();
+    this->socket_thread.quit();
+
     this->http_thread.wait();
+    this->socket_thread.wait();
 
     delete this->message_processors;
     delete this->queries;
+    delete this->http_requests;
 }
 
 

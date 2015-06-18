@@ -15,7 +15,6 @@
 #include <QJsonValue>
 #include <QStringList>
 #include <QHash>
-#include <QMap>
 
 #include <QDebug>
 
@@ -39,8 +38,8 @@ public:
     QString user_pass;
     QString testouille;
     QHash<QString, SupercastSignal*>* message_processors = NULL;
-    QMap<int, SupercastSignal*>*      queries            = NULL;
-    QMap<int, SupercastSignal*>*      http_requests      = NULL;
+    QHash<int, SupercastSignal*>*      queries            = NULL;
+    QHash<int, SupercastSignal*>*      http_requests      = NULL;
     static const int ConnexionSuccess    = 100;
     static const int AuthenticationError = 101;
     static Supercast* getInstance();

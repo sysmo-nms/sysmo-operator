@@ -1,6 +1,7 @@
 #include "supercasthttp.h"
 
 SupercastHTTP::~SupercastHTTP() {}
+
 SupercastHTTP::SupercastHTTP(QObject* parent) : QNetworkAccessManager(parent)
 {
     QObject::connect(
@@ -10,8 +11,9 @@ SupercastHTTP::SupercastHTTP(QObject* parent) : QNetworkAccessManager(parent)
 
 void SupercastHTTP::handleClientRequest(SupercastHttpRequest request)
 {
-    QNetworkRequest net_request = QNetworkRequest(QUrl("http://192.168.0.11:8080/nchecks/AllChecks.xml"));
+    QNetworkRequest net_request = QNetworkRequest(QUrl(request.url));
     net_request.setAttribute(QNetworkRequest::User, QVariant(request.id));
+    net_request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     this->get(net_request);
 }
 
