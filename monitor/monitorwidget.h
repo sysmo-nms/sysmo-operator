@@ -10,6 +10,7 @@
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
 #include "monitor/treeview.h"
+#include "monitor/nchecks.h"
 #include "monitor/monitor.h"
 
 #include <QObject>

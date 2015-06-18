@@ -8,9 +8,11 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     MonitorWidget::singleton = this;
 
     /*
-     * Initialize Monitor first.
+     * Initialize utils first
      */
     Monitor* mon = new Monitor(this);
+    //NChecks* nck = new NChecks(this);
+
 
 
     /*

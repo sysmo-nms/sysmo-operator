@@ -14,6 +14,23 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     this->message_processors = new QHash<QString, SupercastSignal*>();
     this->message_processors->insert("supercast", sig);
     this->queries = new QMap<int, SupercastSignal*>();
+
+    /*
+     * init SupercastHTTP
+     */
+    SupercastHTTP* http_t = new SupercastHTTP();
+    QObject::connect(
+                http_t, SIGNAL(serverReply(QString)),
+                this,   SLOT(handleHttpReply(QString)),
+                Qt::QueuedConnection);
+    QObject::connect(
+                this,   SIGNAL(clientHttpRequest(QString)),
+                http_t, SLOT(handleClientRequest(QString)));
+    http_t->moveToThread(&this->http_thread);
+    QObject::connect(
+                &this->socket_thread, SIGNAL(finished()),
+                http_t,               SLOT(deleteLater()));
+    this->http_thread.start();
 }
 
 
@@ -25,36 +42,36 @@ void Supercast::tryConnect(
 {
     this->user_name = user_name;
     this->user_pass = user_pass;
-    SupercastSocket* socket_sup = new SupercastSocket(host,port);
+    SupercastSocket* socket_t = new SupercastSocket(host,port);
 
     // server -> message -> client
     QObject::connect(
-                socket_sup, SIGNAL(serverMessage(QJsonObject)),
-                this,       SLOT(routeServerMessage(QJsonObject)),
+                socket_t, SIGNAL(serverMessage(QJsonObject)),
+                this,     SLOT(routeServerMessage(QJsonObject)),
                 Qt::QueuedConnection);
     // client -> message -> server
     QObject::connect(
-                this,       SIGNAL(clientMessage(QJsonObject)),
-                socket_sup, SLOT(handleClientMessage(QJsonObject)),
+                this,     SIGNAL(clientMessage(QJsonObject)),
+                socket_t, SLOT(handleClientMessage(QJsonObject)),
                 Qt::QueuedConnection);
 
     // socket state
     qRegisterMetaType<QAbstractSocket::SocketError>();
     QObject::connect(
-                socket_sup->socket,
+                socket_t->socket,
                     SIGNAL(error(QAbstractSocket::SocketError)),
                 this,
                     SLOT(socketError(QAbstractSocket::SocketError)),
                 Qt::QueuedConnection);
     QObject::connect(
-                socket_sup->socket, SIGNAL(connected()),
-                this,               SLOT(socketConnected()),
+                socket_t->socket, SIGNAL(connected()),
+                this,             SLOT(socketConnected()),
                 Qt::QueuedConnection);
 
-    socket_sup->moveToThread(&this->socket_thread);
+    socket_t->moveToThread(&this->socket_thread);
     QObject::connect(
                 &this->socket_thread, SIGNAL(finished()),
-                socket_sup,           SLOT(deleteLater()));
+                socket_t,             SLOT(deleteLater()));
     this->socket_thread.start();
 }
 
@@ -63,6 +80,10 @@ Supercast::~Supercast()
 {
     this->socket_thread.quit();
     this->socket_thread.wait();
+
+    this->http_thread.quit();
+    this->http_thread.wait();
+
     delete this->message_processors;
     delete this->queries;
 }
@@ -141,6 +162,10 @@ void Supercast::handleSupercastMessage(QJsonObject message)
     }
 }
 
+void Supercast::handleHttpReply(QString body)
+{
+    qDebug() << "handle http reply: " << body;
+}
 
 void Supercast::subscribe(QString channel)
 {
@@ -161,12 +186,10 @@ void Supercast::setMessageProcessor(QString key, SupercastSignal* dest)
 
 void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
 {
-    QMap<int, SupercastSignal*>* squeries = Supercast::singleton->queries;
-
     int queryId = 0;
-    while (squeries->contains(queryId)) queryId += 1;
+    while (Supercast::singleton->queries->contains(queryId)) queryId += 1;
 
-    squeries->insert(queryId, reply);
+    Supercast::singleton->queries->insert(queryId, reply);
     query.insert("queryId", queryId);
     emit Supercast::singleton->clientMessage(query);
 }

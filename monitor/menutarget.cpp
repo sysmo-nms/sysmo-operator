@@ -15,7 +15,6 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
     QAction* add_probe = new QAction("Add a new probe...", this);
     add_probe->setIcon(QIcon(":/icons/list-add.png"));
     this->addAction(add_probe);
-
     QObject::connect(
                 add_probe, SIGNAL(triggered(bool)),
                 this,      SLOT(connectNewProbeDialog()));
@@ -35,6 +34,9 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
     QAction* delete_target = new QAction("Delete this target", this);
     delete_target->setIcon(QIcon(":/icons/process-stop.png"));
     this->addAction(delete_target);
+    QObject::connect(
+                delete_target, SIGNAL(triggered(bool)),
+                this,          SLOT(deleteTarget()));
 }
 
 
@@ -52,4 +54,38 @@ void MenuTarget::showMenuFor(QString target, QPoint at)
  */
 void MenuTarget::connectNewProbeDialog() {
     emit this->openNewProbeDialog(this->target_name);
+}
+
+/*
+ * Delete target logic and slots
+ */
+void MenuTarget::deleteTarget()
+{
+    MessageBox* box = new MessageBox(this);
+    box->setIconType(Sysmo::MESSAGE_WARNING);
+    box->setModal(true);
+    box->setText("This action will permanently delete this target and his probes.");
+    box->setInformativeText("Do you want to continue?");
+    box->setStandardButtons(QMessageBox::Apply | QMessageBox::Abort);
+    box->setDefaultButton(QMessageBox::Abort);
+    int ret = box->exec();
+    if (ret == QMessageBox::Abort) return;
+    QJsonObject query {
+        {"from", "monitor"},
+        {"type", "deleteTargetQuery"},
+        {"value", QJsonObject {
+                {"name", this->target_name}
+            }
+        }
+    };
+    SupercastSignal* sig = new SupercastSignal(this);
+    QObject::connect(
+                sig,  SIGNAL(serverMessage(QJsonObject)),
+                this, SLOT(deleteTargetReply(QJsonObject)));
+    Supercast::sendQuery(query, sig);
+}
+
+void MenuTarget::deleteTargetReply(QJsonObject reply)
+{
+    qDebug() << "delete target reply: " << reply;
 }

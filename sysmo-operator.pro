@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network xml
 
 CONFIG += c++11
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -37,13 +37,13 @@ SOURCES += main.cpp\
     network/supercastsocket.cpp \
     network/supercasthttp.cpp \
     network/supercastsignal.cpp \
-    network/supercastquery.cpp \
     dialogs/newprobe.cpp \
     dialogs/newprobepage1.cpp \
     themes.cpp \
     dashboard/dashboardwidget.cpp \
     dashboard/dashboardtab.cpp \
-    dialogs/messagebox.cpp
+    dialogs/messagebox.cpp \
+    monitor/nchecks.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -68,14 +68,14 @@ HEADERS  += mainwindow.h \
     network/supercastsocket.h \
     network/supercasthttp.h \
     network/supercastsignal.h \
-    network/supercastquery.h \
     dialogs/newprobe.h \
     dialogs/newprobepage1.h \
     themes.h \
     sysmo.h \
     dashboard/dashboardwidget.h \
     dashboard/dashboardtab.h \
-    dialogs/messagebox.h
+    dialogs/messagebox.h \
+    monitor/nchecks.h
 
 RESOURCES += \
     icons.qrc \

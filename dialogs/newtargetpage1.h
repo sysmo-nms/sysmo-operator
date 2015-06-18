@@ -52,7 +52,8 @@ private:
     QLineEdit* snmp_auth_key   = NULL;
     QLineEdit* snmp_priv_key   = NULL;
     QCheckBox* snmp_enable     = NULL;
-    QCheckBox* include_icmp    = NULL;
+    QCheckBox* include_icmp_probe = NULL;
+    QCheckBox* include_snmp_probe = NULL;
 
     QDoubleSpinBox* longitude  = NULL;
     QDoubleSpinBox* latitude   = NULL;

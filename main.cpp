@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationName("Sysmo IO");
     QApplication::setOrganizationDomain("sysmo.io");
     QApplication::setQuitOnLastWindowClosed(true);
-    QApplication::setPalette(Themes::iced);
+    QApplication::setPalette(Themes::midnight);
     QApplication::setStyle("fusion");
 
     QApplication app(argc, argv);

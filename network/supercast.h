@@ -3,6 +3,7 @@
 
 #include "network/supercastsocket.h"
 #include "network/supercastsignal.h"
+#include "network/supercasthttp.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -22,6 +23,7 @@ class Supercast : public QObject
     Q_OBJECT
 
     QThread socket_thread;
+    QThread http_thread;
 
 public:
     explicit Supercast(QObject* parent = 0);
@@ -54,9 +56,11 @@ private:
 
 private slots:
     void handleSupercastMessage(QJsonObject message);
+    void handleHttpReply(QString body);
 
 signals:
     void clientMessage(QJsonObject msg);
+    void clientHttpRequest(QString request);
     void connexionStatus(int status);
     // messages for the monitor proxy
     void monitorServerMessage(QJsonObject msg);

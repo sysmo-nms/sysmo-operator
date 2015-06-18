@@ -2,14 +2,25 @@
 #define SUPERCASTHTTP_H
 
 #include <QObject>
-#include <QWidget>
+#include <QString>
+#include <QXmlSimpleReader>
+#include <QXmlInputSource>
+
+#include <QDebug>
 
 class SupercastHTTP : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SupercastHTTP(QWidget* parent = 0);
+    explicit SupercastHTTP(QObject* parent = 0);
+    ~SupercastHTTP();
+
+public slots:
+    void handleClientRequest(QString url);
+
+signals:
+    void serverReply(QString body);
 };
 
 #endif // SUPERCASTHTTP_H

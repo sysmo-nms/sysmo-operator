@@ -35,6 +35,15 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
                 this->target_name, SIGNAL(textChanged(QString)),
                 this,              SIGNAL(completeChanged()));
 
+    this->include_icmp_probe = new QCheckBox("Create ICMP echo presence probe", this);
+    this->include_icmp_probe->setChecked(true);
+    form->addRow("", this->include_icmp_probe);
+
+    QObject::connect(
+                this->include_icmp_probe, SIGNAL(stateChanged(int)),
+                this,                     SIGNAL(completeChanged()));
+
+
     QFrame* separator1 = new QFrame(this);
     separator1->setFixedHeight(10);
     form->addRow(separator1);
@@ -45,6 +54,15 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     QObject::connect(
                 this->snmp_enable, SIGNAL(stateChanged(int)),
                 this,              SIGNAL(completeChanged()));
+
+    this->include_snmp_probe = new QCheckBox("Create SNMP echo presence probe", this);
+    this->include_snmp_probe->setChecked(true);
+    this->snmp_widgets->append(this->include_snmp_probe);
+    form->addRow("", this->include_snmp_probe);
+
+    QObject::connect(
+                this->include_snmp_probe, SIGNAL(stateChanged(int)),
+                this,                     SIGNAL(completeChanged()));
 
     QLabel* version_lab = new QLabel("Version:", this);
     this->snmp_version = new QComboBox(this);
@@ -187,18 +205,6 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_v3_priv_widgets->append(priv_lab);
     this->snmp_v3_priv_widgets->append(priv_frame);
 
-
-    QFrame* separator4 = new QFrame(this);
-    separator4->setFixedHeight(10);
-    form->addRow(separator4);
-
-
-    this->include_icmp = new QCheckBox("Create ICMP echo presence probe", this);
-    this->include_icmp->setChecked(true);
-    form->addRow(this->include_icmp);
-    QObject::connect(
-                this->include_icmp, SIGNAL(stateChanged(int)),
-                this,               SIGNAL(completeChanged()));
 }
 
 

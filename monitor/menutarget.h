@@ -1,7 +1,11 @@
 #ifndef MENUTARGET_H
 #define MENUTARGET_H
 
+#include "sysmo.h"
 #include "monitor/monitor.h"
+#include "dialogs/messagebox.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
 
 #include <QObject>
 #include <QWidget>
@@ -10,6 +14,8 @@
 #include <QPoint>
 #include <QAction>
 #include <QIcon>
+#include <QMessageBox>
+#include <QJsonObject>
 
 #include <QDebug>
 
@@ -27,6 +33,8 @@ private:
 
 private slots:
     void connectNewProbeDialog();
+    void deleteTarget();
+    void deleteTargetReply(QJsonObject reply);
 
 signals:
     void openNewProbeDialog(QString target);
