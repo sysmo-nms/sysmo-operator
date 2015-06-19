@@ -39,7 +39,7 @@ task :tree_pixmaps do
 end
 
 task :box_icons do
-  pix_size = 52
+  pix_size = 48
   pixs = ["dialog-warning", "dialog-information", "dialog-error"]
   pixs.each{ |p|
    sh "inkscape -z --export-png=ressources/box_icons/#{p}.png -w #{pix_size} -h #{pix_size} ressources/src/#{p}.svg"
