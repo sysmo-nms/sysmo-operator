@@ -6,7 +6,6 @@
 
 #include <QObject>
 #include <QString>
-#include <QJsonObject>
 #include <QDebug>
 
 class NChecks : public QObject
@@ -16,10 +15,14 @@ class NChecks : public QObject
 public:
     explicit NChecks(QObject *parent = 0);
 
+private:
+    QString server_url;
+
 signals:
 
 public slots:
-    void handleNetworkReply(QJsonObject obj);
+    void handleAllChecksReply(QString body);
+    void connectionStatus(int status);
 };
 
 #endif // NCHECKS_H

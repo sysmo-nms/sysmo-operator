@@ -5,6 +5,10 @@ Supercast* Supercast::getInstance() {return Supercast::singleton;}
 
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
+    this->user_name = "";
+    this->user_pass = "";
+    this->data_base_url = QUrl();
+
     Supercast::singleton = this;
     this->message_processors = new QHash<QString, SupercastSignal*>();
     this->queries       = new QHash<int, SupercastSignal*>();
@@ -15,7 +19,6 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleSupercastMessage(QJsonObject)));
-
 
     /*
      * init SupercastHTTP
@@ -29,12 +32,14 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     qRegisterMetaType<SupercastHttpRequest>("SupercastHttpRequest");
     QObject::connect(
                 this,   SIGNAL(clientHttpRequest(SupercastHttpRequest)),
-                http_t, SLOT(handleClientRequest(SupercastHttpRequest)));
+                http_t, SLOT(handleClientRequest(SupercastHttpRequest)),
+                Qt::QueuedConnection);
     http_t->moveToThread(&this->http_thread);
     QObject::connect(
                 &this->socket_thread, SIGNAL(finished()),
                 http_t,               SLOT(deleteLater()));
     this->http_thread.start();
+
 }
 
 
@@ -46,6 +51,8 @@ void Supercast::tryConnect(
 {
     this->user_name = user_name;
     this->user_pass = user_pass;
+    this->data_base_url.setHost(host.toString());
+
     SupercastSocket* socket_t = new SupercastSocket(host,port);
 
     // server -> message -> client
@@ -112,7 +119,7 @@ void Supercast::socketConnected()
 
 void Supercast::socketError(QAbstractSocket::SocketError error)
 {
-    emit this->connexionStatus(error);
+    emit this->connectionStatus(error);
 }
 
 
@@ -161,9 +168,13 @@ void Supercast::handleSupercastMessage(QJsonObject message)
 {
     QString type = message.value("type").toString("undefined");
     if (type == "authAck") {
-        emit this->connexionStatus(Supercast::ConnexionSuccess);
+        emit this->connectionStatus(Supercast::ConnectionSuccess);
     } else if (type == "authErr") {
-        emit this->connexionStatus(Supercast::AuthenticationError);
+        emit this->connectionStatus(Supercast::AuthenticationError);
+    } else if (type == "serverInfo") {
+        QJsonObject val = message.value("value").toObject();
+        this->data_base_url.setPort(val.value("dataPort").toInt());
+        this->data_base_url.setScheme(val.value("dataProto").toString());
     }
 }
 
@@ -194,9 +205,11 @@ void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
     emit Supercast::singleton->clientMessage(query);
 }
 
-void Supercast::httpGet(QString url, SupercastSignal *reply)
+void Supercast::httpGet(QString path, SupercastSignal *reply)
 {
     int queryId = 0;
+    QUrl url(Supercast::singleton->data_base_url);
+    url.setPath(path);
     while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
     Supercast::singleton->http_requests->insert(queryId, reply);
     emit Supercast::singleton->clientHttpRequest(SupercastHttpRequest(queryId, url));
@@ -207,12 +220,6 @@ void Supercast::handleHttpReply(SupercastHttpReply reply)
 {
     int queryId = reply.id;
     SupercastSignal* sig = Supercast::singleton->http_requests->take(queryId);
-    QJsonObject body {
-        {"http_reply", reply.body}
-    };
-    emit sig->serverMessage(body);
+    emit sig->serverMessage(reply.body);
     sig->deleteLater();
 }
-
-
-

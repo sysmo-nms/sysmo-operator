@@ -13,6 +13,8 @@ public:
 
 signals:
     void serverMessage(QJsonObject json);
+    void serverMessage(QString     string);
+    void serverMessage(int         integer);
 };
 
 #endif // SUPERCASTSIGNAL_H

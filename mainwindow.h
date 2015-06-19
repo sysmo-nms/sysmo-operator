@@ -34,7 +34,7 @@ public:
     QSize sizeHint() const;
 
 public slots:
-    void connexionStatus(int status);
+    void connectionStatus(int status);
 
 private:
     LogIn*     log_in_dialog = NULL;

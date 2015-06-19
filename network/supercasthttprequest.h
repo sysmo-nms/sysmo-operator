@@ -1,7 +1,7 @@
 #ifndef SUPERCASTHTTPREQUEST_H
 #define SUPERCASTHTTPREQUEST_H
 
-#include <QString>
+#include <QUrl>
 
 class SupercastHttpRequest
 {
@@ -10,9 +10,9 @@ public:
      * Default constructor for qRegisterMetaType
      */
     SupercastHttpRequest();
-    SupercastHttpRequest(int request_id, QString request_url);
-    int     id;
-    QString url;
+    SupercastHttpRequest(int request_id, QUrl request_url);
+    int  id;
+    QUrl url;
 };
 
 #endif // SUPERCASTHTTPREQUEST_H

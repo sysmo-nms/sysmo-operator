@@ -8,6 +8,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QHostAddress>
 #include <QUrl>
 #include <QString>
 #include <QVariant>

@@ -93,7 +93,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
 
 
     /*
-     * supercast connexion
+     * supercast connection
      */
     SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
@@ -112,10 +112,10 @@ MonitorWidget::~MonitorWidget()
 }
 
 
-void MonitorWidget::connexionStatus(int status)
+void MonitorWidget::connectionStatus(int status)
 {
 
-    if (status == Supercast::ConnexionSuccess) {
+    if (status == Supercast::ConnectionSuccess) {
         Supercast::subscribe("target-MasterChan");
 
     } else {

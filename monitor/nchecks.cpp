@@ -2,14 +2,24 @@
 
 NChecks::NChecks(QObject *parent) : QObject(parent)
 {
-    SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig, SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(handleNetworkReply(QJsonObject)));
-    Supercast::httpGet("http://www.sysmo.io", sig);
+                Supercast::getInstance(), SIGNAL(connectionStatus(int)),
+                this, SLOT(connectionStatus(int)));
 }
 
-void NChecks::handleNetworkReply(QJsonObject obj)
+void NChecks::connectionStatus(int status)
 {
-    qDebug() << "nchecks network reply" << obj;
+
+    if (status != Supercast::ConnectionSuccess) return;
+
+    SupercastSignal* sig = new SupercastSignal();
+    QObject::connect(
+                sig, SIGNAL(serverMessage(QString)),
+                this, SLOT(handleAllChecksReply(QString)));
+    Supercast::httpGet("/nchecks/AllChecks.xml", sig);
+}
+
+void NChecks::handleAllChecksReply(QString body)
+{
+    qDebug() << "nchecks network reply" << body;
 }

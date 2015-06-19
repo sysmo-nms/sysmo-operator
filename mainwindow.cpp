@@ -111,12 +111,12 @@ void MainWindow::tryValidate()
 
     MonitorWidget* monitor = MonitorWidget::getInstance();
     QObject::connect(
-                this->supercast, SIGNAL(connexionStatus(int)),
-                monitor,         SLOT(connexionStatus(int)));
+                this->supercast, SIGNAL(connectionStatus(int)),
+                monitor,         SLOT(connectionStatus(int)));
 
     QObject::connect(
-                this->supercast, SIGNAL(connexionStatus(int)),
-                this,            SLOT(connexionStatus(int)));
+                this->supercast, SIGNAL(connectionStatus(int)),
+                this,            SLOT(connectionStatus(int)));
 
     QString user(   this->log_in_dialog->getUserName()   );
     QString pass(   this->log_in_dialog->getPassword()   );
@@ -131,9 +131,9 @@ void MainWindow::tryValidate()
  * Triggered by Supercast. Finalize the connection, or
  * close the application.
  */
-void MainWindow::connexionStatus(int status)
+void MainWindow::connectionStatus(int status)
 {
-    if (status == Supercast::ConnexionSuccess) {
+    if (status == Supercast::ConnectionSuccess) {
         this->log_in_dialog->close();
         this->show();
         return;
@@ -155,7 +155,7 @@ void MainWindow::connexionStatus(int status)
             break;
         }
         case QAbstractSocket::RemoteHostClosedError: {
-            err_box.setText("The remote host closed the connexion.");
+            err_box.setText("The remote host closed the connection.");
             err_box.setInformativeText("This can append if the host came down, or if the service is restarting.");
             break;
         }

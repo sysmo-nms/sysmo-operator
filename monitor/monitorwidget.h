@@ -39,7 +39,7 @@ public:
 public slots:
     void showNewTargetDialog();
     void showNewProbeDialog(QString forTarget);
-    void connexionStatus(int status);
+    void connectionStatus(int status);
 
 private:
     static MonitorWidget* singleton;

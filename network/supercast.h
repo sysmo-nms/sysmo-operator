@@ -34,19 +34,17 @@ public:
             qint16       port,
             QString      user_name,
             QString      user_pass);
-    QString user_name;
-    QString user_pass;
-    QString testouille;
-    QHash<QString, SupercastSignal*>* message_processors = NULL;
-    QHash<int, SupercastSignal*>*      queries            = NULL;
-    QHash<int, SupercastSignal*>*      http_requests      = NULL;
-    static const int ConnexionSuccess    = 100;
+    static const int ConnectionSuccess   = 100;
     static const int AuthenticationError = 101;
-    static Supercast* getInstance();
+
+    // API
     static void subscribe(QString channel);
     static void setMessageProcessor(QString key, SupercastSignal* dest);
     static void sendQuery(QJsonObject query, SupercastSignal* reply);
-    static void httpGet(QString url, SupercastSignal* reply);
+    static void httpGet(QString path, SupercastSignal* reply);
+
+    // get
+    static Supercast* getInstance();
 
 public slots:
     void routeServerMessage(QJsonObject msg);
@@ -56,6 +54,12 @@ public slots:
 private:
     static Supercast* singleton;
     static const int QUERYID_UNDEF = 100;
+    QString user_name;
+    QString user_pass;
+    QUrl    data_base_url;
+    QHash<QString, SupercastSignal*>* message_processors = NULL;
+    QHash<int,     SupercastSignal*>* queries            = NULL;
+    QHash<int,     SupercastSignal*>* http_requests      = NULL;
 
 private slots:
     void handleSupercastMessage(QJsonObject message);
@@ -64,7 +68,7 @@ private slots:
 signals:
     void clientMessage(QJsonObject msg);
     void clientHttpRequest(SupercastHttpRequest request);
-    void connexionStatus(int status);
+    void connectionStatus(int status);
     // messages for the monitor proxy
     void monitorServerMessage(QJsonObject msg);
 };
