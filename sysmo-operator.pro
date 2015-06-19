@@ -45,7 +45,10 @@ SOURCES += main.cpp\
     dialogs/messagebox.cpp \
     monitor/nchecks.cpp \
     network/supercasthttprequest.cpp \
-    network/supercasthttpreply.cpp
+    network/supercasthttpreply.cpp \
+    rrds/rrd4c.cpp \
+    rrds/rrd4csocket.cpp
+    rrds/rrd4csignal.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -79,7 +82,10 @@ HEADERS  += mainwindow.h \
     dialogs/messagebox.h \
     monitor/nchecks.h \
     network/supercasthttprequest.h \
-    network/supercasthttpreply.h
+    network/supercasthttpreply.h \
+    rrds/rrd4c.h \
+    rrds/rrd4csocket.h \
+    rrds/rrd4csignal.h
 
 RESOURCES += \
     icons.qrc \

@@ -69,8 +69,6 @@ signals:
     void clientMessage(QJsonObject msg);
     void clientHttpRequest(SupercastHttpRequest request);
     void connectionStatus(int status);
-    // messages for the monitor proxy
-    void monitorServerMessage(QJsonObject msg);
 };
 
 #endif // SUPERCAST_H
