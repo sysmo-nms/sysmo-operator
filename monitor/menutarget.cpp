@@ -66,8 +66,8 @@ void MenuTarget::deleteTarget()
     box->setModal(true);
     box->setText("This action will permanently delete this target and his probes.");
     box->setInformativeText("Do you want to continue?");
-    box->setStandardButtons(QMessageBox::Apply | QMessageBox::Abort);
-    box->setDefaultButton(QMessageBox::Abort);
+    box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    box->setDefaultButton(QMessageBox::No);
     int ret = box->exec();
     if (ret == QMessageBox::Abort) return;
     QJsonObject query {

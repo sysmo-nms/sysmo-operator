@@ -47,7 +47,7 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
                 this, 		SLOT(reject()));
 
     QDialogButtonBox* but_box = new QDialogButtonBox(this);
-    but_box->addButton(ok_but, 	   QDialogButtonBox::ApplyRole);
+    but_box->addButton(ok_but, 	   QDialogButtonBox::AcceptRole);
     but_box->addButton(cancel_but, QDialogButtonBox::RejectRole);
     ok_but->setDefault(true);
 

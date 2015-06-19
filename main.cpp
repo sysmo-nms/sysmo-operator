@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
 
 // see http://doc.qt.io/qt-5/qtglobal.html
-#ifndef QT_DEBUG
+#if !defined QT_DEBUG
     qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
 #endif
 
@@ -20,10 +20,17 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationName("Sysmo IO");
     QApplication::setOrganizationDomain("sysmo.io");
     QApplication::setQuitOnLastWindowClosed(true);
-#ifndef Q_OS_MAC
-    QApplication::setPalette(Themes::midnight);
+
+#if   defined Q_OS_MAC
+    /* put mac things here*/
+#elif defined Q_OS_WIN
+    /* put windows things here*/
+#else
+    /* other OS things here */
+    QApplication::setPalette(Themes::iced);
     QApplication::setStyle("fusion");
 #endif
+
 
     QApplication app(argc, argv);
     QApplication::setWindowIcon(QIcon(":/icons/logo.png"));
