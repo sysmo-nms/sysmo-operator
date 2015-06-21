@@ -1,13 +1,18 @@
 #include "nchecks.h"
 
-QList<QString> NChecks::getCheckList() {return this->checks->keys();}
+NChecks* NChecks::singleton = NULL;
+
+QList<QString> NChecks::getCheckList() {
+    return NChecks::singleton->checks->keys();
+}
 QString        NChecks::getCheck(QString check) {
-    return this->checks->value(check);
+    return NChecks::singleton->checks->value(check);
 }
 
 NChecks::~NChecks() {delete this->checks;}
 NChecks::NChecks(QObject *parent) : QObject(parent)
 {
+    NChecks::singleton = this;
     this->checks = new QHash<QString, QString>();
     QObject::connect(
                 Supercast::getInstance(), SIGNAL(connectionStatus(int)),

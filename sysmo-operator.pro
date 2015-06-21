@@ -47,7 +47,8 @@ SOURCES += main.cpp\
     network/supercasthttprequest.cpp \
     network/supercasthttpreply.cpp \
     rrds/rrd4c.cpp \
-    rrds/rrd4csocket.cpp
+    rrds/rrd4csocket.cpp \
+    dialogs/newprobepage2.cpp
     rrds/rrd4csignal.cpp
 
 HEADERS  += mainwindow.h \
@@ -85,7 +86,8 @@ HEADERS  += mainwindow.h \
     network/supercasthttpreply.h \
     rrds/rrd4c.h \
     rrds/rrd4csocket.h \
-    rrds/rrd4csignal.h
+    rrds/rrd4csignal.h \
+    dialogs/newprobepage2.h
 
 RESOURCES += \
     icons.qrc \

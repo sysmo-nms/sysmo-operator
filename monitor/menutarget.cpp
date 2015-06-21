@@ -69,7 +69,7 @@ void MenuTarget::deleteTarget()
     box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     box->setDefaultButton(QMessageBox::No);
     int ret = box->exec();
-    if (ret == QMessageBox::Abort) return;
+    if (ret == QMessageBox::No) return;
     QJsonObject query {
         {"from", "monitor"},
         {"type", "deleteTargetQuery"},

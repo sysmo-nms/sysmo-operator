@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     /* put windows things here*/
 #else
     /* other OS things here */
-    QApplication::setPalette(Themes::iced);
+    QApplication::setPalette(Themes::midnight);
     QApplication::setStyle("fusion");
 #endif
 

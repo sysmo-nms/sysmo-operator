@@ -19,11 +19,12 @@ class NChecks : public QObject
 public:
     explicit NChecks(QObject *parent = 0);
     ~NChecks();
-    QList<QString> getCheckList();
-    QString        getCheck(QString check);
+    static QList<QString> getCheckList();
+    static QString        getCheck(QString check);
 
 private:
     QHash<QString, QString>* checks      = NULL;
+    static NChecks* singleton;
 
 signals:
 
