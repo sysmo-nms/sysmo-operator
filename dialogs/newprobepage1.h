@@ -21,7 +21,7 @@
 #include <QStringList>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
-#include <QXmlDeclHandler>
+#include <QXmlDefaultHandler>
 #include <QVariant>
 
 #include <QDebug>

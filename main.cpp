@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 #elif defined Q_OS_WIN
     /* put windows things here*/
 #else
-    /* other OS things here */
+    /* other OS/X11 things here */
     QApplication::setPalette(Themes::midnight);
     QApplication::setStyle("fusion");
 #endif

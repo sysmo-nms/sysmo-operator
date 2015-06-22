@@ -111,6 +111,8 @@ NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
         delete parser;
     }
     delete input;
+    this->treeview->resizeColumnToContents(0);
+    this->treeview->resizeColumnToContents(1);
 }
 
 bool NewProbePage1::isComplete() const

@@ -34,11 +34,11 @@ void DelegateProbeProgress::paint(
     opts.minimum = 0;
     opts.maximum = step;
 
-    if (in_next < 0) {
-        opts.progress = 0;
-        opts.text = QString("Step 0/%2")
-            .arg(QString::number(step));
-    } else if (in_next < step) {
+    if (in_next <= 0) {
+        opts.text = QString("Processing...");
+        opts.progress = step;
+        painter->setFont(this->font);
+    } else if (in_next <= step) {
         opts.progress = step - in_next;
         opts.text = QString("Step %1/%2")
             .arg(QString::number(step - in_next))
@@ -49,10 +49,8 @@ void DelegateProbeProgress::paint(
         opts.text = QString("Step %1/%2")
             .arg(QString::number(step))
             .arg(QString::number(step));
-
     }
 
     opts.textVisible = true;
-    //painter->setFont(this->font);
     QApplication::style()->drawControl(QStyle::CE_ProgressBar, &opts, painter);
 }
