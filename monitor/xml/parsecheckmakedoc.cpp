@@ -13,6 +13,7 @@ bool ParseCheckMakeDoc::endDocument()
 {
     this->flags.append("</ul></p>");
     this->doc.append(this->flags);
+    this->doc.append("</ul></p>");
     this->doc.append("</body></html>");
     return true;
 }
@@ -30,17 +31,22 @@ bool ParseCheckMakeDoc::startElement(
         doctpl.append("<h1>%1</h1>")
                 .append("<p><ul>")
                 .append("<li><strong>Class:</strong> %2</li>")
-                .append("<li><strong>Updates:</strong> <a href=\"%3\">%3</a></li>")
-                .append("<li><strong>Type:</strong> %4</li>");
+                .append("<li><strong>Version:</strong> %3</li>");
         QString docstr = doctpl
                 .arg(atts.value("Id"))
                 .arg(atts.value("Class"))
-                .arg(atts.value("UpdatesUrl"))
-                .arg(atts.value("Type"))
-                .append("</ul></p>");
+                .arg(atts.value("Version"));
         qDebug() << docstr;
         this->doc.append(docstr);
         return true;
+    }
+    if (qName == "UpdatesUrl") {
+        this->char_type = "UpdatesUrl";
+        this->doc.append("<li><strong>Updates:</strong> ");
+    }
+    if (qName == "Author") {
+        this->char_type = "Author";
+        this->doc.append("<li><strong>Author:</Strong> ");
     }
     if (qName == "Description") {
         this->char_type = "Description";
@@ -83,6 +89,14 @@ bool ParseCheckMakeDoc::endElement(
 {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
+    if (qName == "UpdatesUrl") {
+        this->char_type = "";
+        this->doc.append("</li>");
+    }
+    if (qName == "Author") {
+        this->char_type = "";
+        this->doc.append("</li>");
+    }
     if (qName == "Description") {
         this->char_type = "";
         this->doc.append("</p>");
@@ -113,6 +127,14 @@ bool ParseCheckMakeDoc::endElement(
 
 bool ParseCheckMakeDoc::characters(const QString &ch)
 {
+    if (this->char_type == "UpdatesUrl") {
+        this->doc.append(ch);
+        return true;
+    }
+    if (this->char_type == "Author") {
+        this->doc.append(ch);
+        return true;
+    }
     if (this->char_type == "Description") {
         this->doc.append(ch);
         return true;

@@ -18,24 +18,34 @@ void NewProbePage2::initializePage()
     QString probe_name(this->field("selection").toString());
     this->setTitle(str.arg(probe_name));
 
+
+    QXmlSimpleReader reader;
+
     /*
      * Generate documentation
      */
-    QXmlInputSource* input = new QXmlInputSource();
-    QXmlSimpleReader reader;
-    ParseCheckMakeDoc*  parser = new ParseCheckMakeDoc();
-    input->setData(NChecks::getCheck(probe_name));
-    reader.setContentHandler(parser);
-    reader.setErrorHandler(parser);
-    reader.parse(input);
-    this->docs->setHtml(parser->doc);
-    delete input;
-    delete parser;
+    QXmlInputSource* doc_input = new QXmlInputSource();
+    doc_input->setData(NChecks::getCheck(probe_name));
+    ParseCheckMakeDoc*  doc_parser = new ParseCheckMakeDoc();
+    reader.setContentHandler(doc_parser);
+    reader.setErrorHandler(doc_parser);
+    reader.parse(doc_input);
+    this->docs->setHtml(doc_parser->doc);
+    delete doc_parser;
+    delete doc_input;
 
 
     /*
      * Generate form
      */
+    QXmlInputSource* form_input = new QXmlInputSource();
+    form_input->setData(NChecks::getCheck(probe_name));
+    ParseCheckMakeForm* form_parser = new ParseCheckMakeForm();
+    reader.setContentHandler(form_parser);
+    reader.setErrorHandler(form_parser);
+    reader.parse(form_input);
+    delete form_parser;
+    delete form_input;
 }
 
 bool NewProbePage2::isComplete() const

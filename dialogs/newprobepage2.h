@@ -5,6 +5,7 @@
 #include "ngrid.h"
 #include "monitor/nchecks.h"
 #include "monitor/xml/parsecheckmakedoc.h"
+#include "monitor/xml/parsecheckmakeform.h"
 
 #include <QWidget>
 #include <QWizardPage>

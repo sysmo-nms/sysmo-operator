@@ -53,7 +53,8 @@ SOURCES += main.cpp\
     monitor/xml/parseallchecks.cpp \
     monitor/xml/parsecheckgetid.cpp \
     monitor/xml/parsecheckgetinfos.cpp \
-    monitor/xml/parsecheckmakedoc.cpp
+    monitor/xml/parsecheckmakedoc.cpp \
+    monitor/xml/parsecheckmakeform.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -95,7 +96,8 @@ HEADERS  += mainwindow.h \
     monitor/xml/parseallchecks.h \
     monitor/xml/parsecheckgetid.h \
     monitor/xml/parsecheckgetinfos.h \
-    monitor/xml/parsecheckmakedoc.h
+    monitor/xml/parsecheckmakedoc.h \
+    monitor/xml/parsecheckmakeform.h
 
 RESOURCES += \
     icons.qrc \
