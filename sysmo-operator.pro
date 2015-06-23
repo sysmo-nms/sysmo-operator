@@ -54,7 +54,9 @@ SOURCES += main.cpp\
     monitor/xml/parsecheckgetid.cpp \
     monitor/xml/parsecheckgetinfos.cpp \
     monitor/xml/parsecheckmakedoc.cpp \
-    monitor/xml/parsecheckmakeform.cpp
+    monitor/xml/parsecheckmakeform.cpp \
+    dialogs/newprobepage3.cpp \
+    dialogs/newprobeprogressdialog.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -97,7 +99,9 @@ HEADERS  += mainwindow.h \
     monitor/xml/parsecheckgetid.h \
     monitor/xml/parsecheckgetinfos.h \
     monitor/xml/parsecheckmakedoc.h \
-    monitor/xml/parsecheckmakeform.h
+    monitor/xml/parsecheckmakeform.h \
+    dialogs/newprobepage3.h \
+    dialogs/newprobeprogressdialog.h
 
 RESOURCES += \
     icons.qrc \

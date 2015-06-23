@@ -3,6 +3,7 @@
 
 #include "dialogs/newprobepage1.h"
 #include "dialogs/newprobepage2.h"
+#include "dialogs/newprobepage3.h"
 
 #include <QWizard>
 #include <QWidget>
@@ -13,9 +14,6 @@ class NewProbe : public QWizard
 {
 public:
     NewProbe(QString forTarget, QWidget* parent = 0);
-
-private:
-    QString current_target;
 };
 
 #endif // NEWPROBE_H

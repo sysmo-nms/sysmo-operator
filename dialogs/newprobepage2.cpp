@@ -1,23 +1,43 @@
 #include "newprobepage2.h"
 
-NewProbePage2::NewProbePage2(QWidget* parent) : QWizardPage(parent)
+NewProbePage2::NewProbePage2(
+        QString  forTarget,
+        QWizard* parent) : QWizardPage(parent)
 {
+    this->target = forTarget;
     this->setSubTitle("Complete the form to configure the new probe");
     this->setFinalPage(true);
-    NGrid* grid = new NGrid();
+    this->grid = new NGrid();
     this->setLayout(grid);
 
     this->docs = new QTextEdit(this);
     this->docs->setReadOnly(true);
-    grid->addWidget(this->docs);
+    this->grid->addWidget(this->docs, 0, 1);
+    this->grid->setColumnStretch(0,1);
+    this->grid->setColumnStretch(1,1);
+}
+
+int NewProbePage2::nextId() const
+{
+    return -1;
+}
+
+void NewProbePage2::cleanupPage()
+{
+    this->grid->removeWidget(this->form_frame);
+    this->form_frame->deleteLater();
+    delete this->args;
 }
 
 void NewProbePage2::initializePage()
 {
+    this->form_frame = new NFrame(this);
+    this->grid->addWidget(this->form_frame, 0, 0);
+    this->args = new QHash<QString, QLineEdit*>();
+
     QString str("Configure probe %1");
     QString probe_name(this->field("selection").toString());
     this->setTitle(str.arg(probe_name));
-
 
     QXmlSimpleReader reader;
 
@@ -44,18 +64,90 @@ void NewProbePage2::initializePage()
     reader.setContentHandler(form_parser);
     reader.setErrorHandler(form_parser);
     reader.parse(form_input);
+
+    QFormLayout* form = new QFormLayout();
+    this->form_frame->setLayout(form);
+
+    QList<FormConfig>* mandat = form_parser->mandatory;
+    QList<FormConfig>::iterator i;
+    for (i = mandat->begin(); i != mandat->end(); ++i)
+    {
+        qDebug() << "iterate" << i->flag_name;
+        QLineEdit* edit = new QLineEdit(this->form_frame);
+        this->args->insert(i->flag_name, edit);
+        edit->setPlaceholderText(i->hint);
+        edit->setToolTip(i->hint);
+        if (i->has_helper) {
+            NFrameContainer* fr = new NFrameContainer(this->form_frame);
+            NGridContainer*  gr = new NGridContainer(fr);
+            QPushButton*     hbut = new QPushButton(this->form_frame);
+            gr->addWidget(edit, 0,0);
+            gr->addWidget(hbut, 0,1);
+            gr->setColumnStretch(0,1);
+            gr->setColumnStretch(1,0);
+            form->addRow(i->flag_name, fr);
+        } else {
+            form->addRow(i->flag_name, edit);
+        }
+    }
+
+    NFrame* separator = new NFrame(this->form_frame);
+    separator->setFixedHeight(30);
+    form->addRow(separator);
+
+    QList<FormConfig>* options = form_parser->options;
+    QList<FormConfig>::iterator j;
+    for (j = options->begin(); j != options->end(); ++j)
+    {
+        qDebug() << "iterate" << j->flag_name;
+        QLineEdit* edit = new QLineEdit(this->form_frame);
+        this->args->insert(j->flag_name, edit);
+        edit->setPlaceholderText(j->hint);
+        edit->setText(j->defaults);
+        edit->setToolTip(j->hint);
+        if (j->has_helper) {
+            NFrameContainer* fr = new NFrameContainer(this->form_frame);
+            NGridContainer*  gr = new NGridContainer(fr);
+            QPushButton*     hbut = new QPushButton(this->form_frame);
+            gr->addWidget(edit, 0,0);
+            gr->addWidget(hbut, 0,1);
+            gr->setColumnStretch(0,1);
+            gr->setColumnStretch(1,0);
+            form->addRow(j->flag_name, fr);
+        } else {
+            form->addRow(j->flag_name, edit);
+        }
+    }
+
     delete form_parser;
     delete form_input;
+
+    QLineEdit* host_edit = this->args->value("host");
+    if (host_edit == NULL) return;
+
+    QJsonObject val  = Monitor::getInstance()->targets->value(this->target);
+    QString     host = val.value("properties").toObject().value("host").toString("");
+    host_edit->setText(host);
+}
+
+bool NewProbePage2::validatePage()
+{
+    NewProbeProgressDialog* dial = new NewProbeProgressDialog(this);
+    QObject::connect(
+                dial, SIGNAL(accepted()),
+                this, SLOT(close()));
+    QObject::connect(
+                dial, SIGNAL(canceled()),
+                this, SLOT(close()));
+    QObject::connect(
+                dial, SIGNAL(rejected()),
+                this, SLOT(close()));
+
+    dial->open();
+    return false;
 }
 
 bool NewProbePage2::isComplete() const
 {
-    return false;
+    return true;
 }
-
-
-
-
-
-
-
