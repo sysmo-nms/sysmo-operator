@@ -4,12 +4,12 @@
 #include "nframe.h"
 #include "ngrid.h"
 #include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckmakedoc.h"
 
 #include <QWidget>
 #include <QWizardPage>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
-#include <QXmlDefaultHandler>
 #include <QTextEdit>
 
 #include <QDebug>
@@ -25,25 +25,5 @@ private:
     QTextEdit* docs = NULL;
 };
 
-
-class CheckUIBuilder: public QXmlDefaultHandler
-{
-public:
-    QString  doc       = "";
-    QString  flags     = "";
-    QString  char_type = "";
-    bool startDocument();
-    bool startElement(
-            const QString &namespaceURI,
-            const QString &localName,
-            const QString &qName,
-            const QXmlAttributes &atts);
-    bool endElement(
-            const QString &namespaceURI,
-            const QString &localName,
-            const QString &qName);
-    bool characters(const QString &ch);
-    bool endDocument();
-};
 
 #endif // NEWPROBEPAGE2_H

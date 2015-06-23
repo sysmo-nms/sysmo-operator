@@ -38,16 +38,19 @@ void NChecks::handleAllChecksReply(QString body)
     QXmlInputSource* input = new QXmlInputSource();
     input->setData(body);
 
-    AllChecksParser* parser = new AllChecksParser();
+    ParseAllChecks* parser = new ParseAllChecks();
 
     QXmlSimpleReader reader;
     reader.setContentHandler(parser);
     reader.setErrorHandler(parser);
     reader.parse(input);
+
+    QList<QString>* result = parser->getValue();
+
     QList<QString>::iterator it;
     for (
-         it  = parser->values->begin();
-         it != parser->values->end();
+         it  = result->begin();
+         it != result->end();
          ++it)
     {
         SupercastSignal* sig = new SupercastSignal();
@@ -65,14 +68,14 @@ void NChecks::handleAllChecksReply(QString body)
 
 void NChecks::handleCheckDefDeply(QString body)
 {
-    SimpleCheckParser* parser = new SimpleCheckParser();
-    QXmlInputSource*   input  = new QXmlInputSource();
+    ParseCheckGetId* parser = new ParseCheckGetId();
+    QXmlInputSource* input  = new QXmlInputSource();
     input->setData(body);
     QXmlSimpleReader reader;
     reader.setContentHandler(parser);
     reader.setErrorHandler(parser);
     reader.parse(input);
-    this->checks->insert(parser->name, body);
+    this->checks->insert(parser->getValue(), body);
     delete parser;
     delete input;
 }
@@ -82,49 +85,5 @@ void NChecks::handleCheckDefDeply(QString body)
 
 
 
-/*
- * SimpleCheckParser
- */
-bool SimpleCheckParser::startElement(
-        const QString &namespaceURI,
-        const QString &localName,
-        const QString &qName,
-        const QXmlAttributes &atts)
-{
-    Q_UNUSED(namespaceURI);
-    Q_UNUSED(localName);
-
-    if (qName == "Check")
-    {
-        this->name = atts.value("Id");
-        return false;
-    }
-    return true;
-}
 
 
-/*
- * AllChecksParser
- */
-AllChecksParser::~AllChecksParser() {delete this->values;}
-
-bool AllChecksParser::startDocument()
-{
-    this->values = new QList<QString>();
-    return true;
-}
-
-bool AllChecksParser::startElement(
-        const QString &namespaceURI,
-        const QString &localName,
-        const QString &qName,
-        const QXmlAttributes &atts)
-{
-    Q_UNUSED(namespaceURI);
-    Q_UNUSED(localName);
-
-    if (qName == "CheckUrl") {
-        this->values->append(atts.value("Value"));
-    }
-    return true;
-}

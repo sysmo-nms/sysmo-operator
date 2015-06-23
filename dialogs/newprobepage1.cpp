@@ -27,6 +27,7 @@ NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
 
     this->treeview = new QTreeView(this);
     this->treeview->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->treeview->setSortingEnabled(true);
 
     QObject::connect(
                 this->treeview, SIGNAL(clicked(QModelIndex)),
@@ -86,7 +87,7 @@ NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
     QList<QString>::iterator i;
     for (i = checks.begin(); i != checks.end(); ++i) {
         input->setData(NChecks::getCheck(*i));
-        CheckDefParser* parser = new CheckDefParser();
+        ParseCheckGetInfos* parser = new ParseCheckGetInfos();
         reader.setContentHandler(parser);
         reader.setErrorHandler(parser);
         reader.parse(input);
@@ -95,9 +96,9 @@ NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
         item_name->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         item_name->setData(parser->name, Qt::DisplayRole);
 
-        QStandardItem* item_type = new QStandardItem();
-        item_type->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        item_type->setData(parser->type, Qt::DisplayRole);
+        QStandardItem* item_req = new QStandardItem();
+        item_req->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        item_req->setData(parser->require, Qt::DisplayRole);
 
         QStandardItem* item_desc = new QStandardItem();
         item_desc->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
@@ -105,7 +106,7 @@ NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
 
         QList<QStandardItem*> row;
         row.append(item_name);
-        row.append(item_type);
+        row.append(item_req);
         row.append(item_desc);
         model->appendRow(row);
         delete parser;
@@ -134,32 +135,4 @@ int NewProbePage1::nextId() const {return 2;}
 
 
 
-/*
- * Check xml parser
- */
-bool CheckDefParser::startElement(
-        const QString &namespaceURI,
-        const QString &localName,
-        const QString &qName,
-        const QXmlAttributes &atts)
-{
-    Q_UNUSED(namespaceURI);
-    Q_UNUSED(localName);
-    if (qName == "Check")
-    {
-        this->name = atts.value("Id");
-        this->type = atts.value("Type");
-    } else if (qName == "Description") {
-        this->descIsNext = true;
-    }
-    return true;
-}
 
-bool CheckDefParser::characters(const QString &ch)
-{
-    if (this->descIsNext) {
-        this->desc = ch;
-        return false;
-    }
-    return true;
-}

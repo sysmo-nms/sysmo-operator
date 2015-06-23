@@ -3,6 +3,7 @@
 
 #include "ngrid.h"
 #include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckgetinfos.h"
 
 #include <Qt>
 #include <QObject>
@@ -21,7 +22,6 @@
 #include <QStringList>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
-#include <QXmlDefaultHandler>
 #include <QVariant>
 
 #include <QDebug>
@@ -40,23 +40,6 @@ public:
 private:
     QTreeView* treeview  = NULL;
     QLineEdit* selection = NULL;
-};
-
-
-class CheckDefParser: public QXmlDefaultHandler
-{
-public:
-    QString name = "";
-    QString type = "";
-    QString desc = "";
-    bool    descIsNext = false;
-    bool startElement(
-            const QString &namespaceURI,
-            const QString &localName,
-            const QString &qName,
-            const QXmlAttributes &atts);
-    bool characters(const QString &ch);
-
 };
 
 #endif // NEWPROBEPAGE1_H

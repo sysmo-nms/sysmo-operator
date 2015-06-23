@@ -30,6 +30,7 @@ SOURCES += main.cpp\
     monitor/menutarget.cpp \
     monitor/monitorwidget.cpp \
     monitor/monitor.cpp \
+    monitor/nchecks.cpp \
     dialogs/login.cpp \
     dialogs/newtarget.cpp \
     dialogs/newtargetpage1.cpp \
@@ -48,8 +49,11 @@ SOURCES += main.cpp\
     rrds/rrd4c.cpp \
     rrds/rrd4csocket.cpp \
     dialogs/newprobepage2.cpp \
-    monitor/xml/nchecksimpleparser.cpp
-    rrds/rrd4csignal.cpp
+    rrds/rrd4csignal.cpp \
+    monitor/xml/parseallchecks.cpp \
+    monitor/xml/parsecheckgetid.cpp \
+    monitor/xml/parsecheckgetinfos.cpp \
+    monitor/xml/parsecheckmakedoc.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -67,6 +71,7 @@ HEADERS  += mainwindow.h \
     monitor/monitor.h \
     monitor/menuprobe.h \
     monitor/menutarget.h \
+    monitor/nchecks.h \
     dialogs/login.h \
     dialogs/newtarget.h \
     dialogs/newtargetpage1.h \
@@ -81,14 +86,16 @@ HEADERS  += mainwindow.h \
     dashboard/dashboardwidget.h \
     dashboard/dashboardtab.h \
     dialogs/messagebox.h \
-    monitor/nchecks.h \
     network/supercasthttprequest.h \
     network/supercasthttpreply.h \
     rrds/rrd4c.h \
     rrds/rrd4csocket.h \
     rrds/rrd4csignal.h \
     dialogs/newprobepage2.h \
-    monitor/xml/nchecksimpleparser.h
+    monitor/xml/parseallchecks.h \
+    monitor/xml/parsecheckgetid.h \
+    monitor/xml/parsecheckgetinfos.h \
+    monitor/xml/parsecheckmakedoc.h
 
 RESOURCES += \
     icons.qrc \
