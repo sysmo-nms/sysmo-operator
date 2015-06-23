@@ -8,6 +8,7 @@
 #include <QSize>
 #include <QIcon>
 
+
 class SideButton : public QPushButton
 {
     Q_OBJECT
