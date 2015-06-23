@@ -76,7 +76,7 @@ class ProgressItemDelegate(QStyledItemDelegate):
                 prog = progress
                 maxi = step
                 opts.text    = 'Step: %s' % (step - prog)
-    
+
             opts.rect = option.rect
             opts.textVisible = True
             opts.minimum = 0

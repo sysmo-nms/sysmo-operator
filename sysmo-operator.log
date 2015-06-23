@@ -1,0 +1,25 @@
+2015-05-25 14:21:53,762 - ERROR - Traceback (most recent call last):
+
+2015-05-25 14:21:53,762 - ERROR -   File "/home/seb/src/sysmo-operator/supercast/main.py", line 121, in _handleThreadMsg
+
+2015-05-25 14:21:53,762 - ERROR -     
+2015-05-25 14:21:53,763 - ERROR - handler(payload)
+2015-05-25 14:21:53,763 - ERROR -   File "/home/seb/src/sysmo-operator/supercast/main.py", line 157, in _handleSupercastPDU
+
+2015-05-25 14:21:53,763 - ERROR -     
+2015-05-25 14:21:53,763 - ERROR - self._initHttpManager()
+2015-05-25 14:21:53,763 - ERROR -   File "/home/seb/src/sysmo-operator/supercast/main.py", line 181, in _initHttpManager
+
+2015-05-25 14:21:53,764 - ERROR -     
+2015-05-25 14:21:53,764 - ERROR - self, self.server, self.dataProto, self.dataPort)
+2015-05-25 14:21:53,764 - ERROR -   File "/home/seb/src/sysmo-operator/supercast/http_manager.py", line 71, in __init__
+
+2015-05-25 14:21:53,764 - ERROR -     
+2015-05-25 14:21:53,764 - ERROR - self._managerDown = SupercastAccessManagerThread(server, proto, dataPort)
+2015-05-25 14:21:53,764 - ERROR -   File "/home/seb/src/sysmo-operator/supercast/http_manager.py", line 45, in __init__
+
+2015-05-25 14:21:53,765 - ERROR -     
+2015-05-25 14:21:53,765 - ERROR - self._manager.finished[QNetworkReply].connect(self._handleReply)
+2015-05-25 14:21:53,765 - ERROR - KeyError
+2015-05-25 14:21:53,765 - ERROR - : 
+2015-05-25 14:21:53,765 - ERROR - 'there is no matching overloaded signal'

@@ -1,10 +1,15 @@
 from PyQt5.QtCore import Qt, pyqtSignal, QSettings, QSize, QObject
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton, QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy, QStackedLayout, QLabel, QStatusBar, QDialog, QMessageBox
-from PyQt5.QtGui import QIcon
-from PyQt5.QtSvg import QSvgWidget
-from sysmo_images import sysmoGraphicsInit, dumpPalette, getPixmap, getImage, getRgba
+from PyQt5.QtGui  import QIcon
+from PyQt5.QtSvg  import QSvgWidget
+from PyQt5.QtWidgets import (
+    QMainWindow, QSystemTrayIcon, QAction, QActionGroup, QPushButton,
+    QButtonGroup, QMenu, QMessageBox, QWidgetAction, QSizePolicy,
+    QStackedLayout, QLabel, QStatusBar, QDialog, QMessageBox )
+from sysmo_images  import (
+    sysmoGraphicsInit, dumpPalette, getPixmap, getImage, getRgba)
 from sysmo_dialogs import ProxyConf
-from sysmo_widgets import NFrameContainer, NFrame, NGridContainer, NGrid, CommunityMenu
+from sysmo_widgets import (
+    NFrameContainer, NFrame, NGridContainer, NGrid, CommunityMenu)
 from monitor.gui.timeline.main import Timeline
 
 from supercast.main import Supercast
@@ -67,7 +72,7 @@ class NMainWindow(QMainWindow):
         self._initLayout()
         nchecks.start(self)
         self.show()
-        
+
 
     #########
     # INITS #
@@ -218,7 +223,7 @@ class NMainWindow(QMainWindow):
     ###########
     def _launchProxySettings(self):
         proxyUi = ProxyConf(self._setProxySettings, parent=self)
-        
+
     def _setProxySettings(self, proxySet):
         self.activeProxySettings = proxySet
         self.proxySettings.emit(self.activeProxySettings)
@@ -241,7 +246,6 @@ class NMainWindow(QMainWindow):
             QMainWindow.closeEvent(self, event)
         else:
             QMainWindow.closeEvent(self, event)
-        
 
     ############
     # SETTINGS #
@@ -252,12 +256,12 @@ class NMainWindow(QMainWindow):
         style = settings.value("NMainWindow/style")
 
         if theme is not None:
-            self._sysmoTheme = theme 
+            self._sysmoTheme = theme
         else:
             self._sysmoTheme = 'native'
 
         if style is not None:
-            self._sysmoStyle = style 
+            self._sysmoStyle = style
         else:
             self._sysmoStyle = 'native'
 
@@ -274,7 +278,7 @@ class NMainWindow(QMainWindow):
         if geo is not None:
             self.restoreGeometry(geo)
 
-        if state is not None: 
+        if state is not None:
             self.restoreState(state)
 
         QMainWindow.show(self)
@@ -338,13 +342,13 @@ class NMainWindow(QMainWindow):
         menuFile.addAction(actionConfigureProxy)
         menuFile.addSeparator()
         menuFile.addAction(exitAction)
-    
+
         "View menu"
         fullScreenAction  = QAction(
             QIcon(getPixmap('video-display')), self.tr('&Full screen'), self)
         fullScreenAction.setShortcut('Ctrl+F')
         fullScreenAction.triggered.connect(self._toggleFullScreen)
-    
+
         menuStyle = menu.addMenu(self.tr('View'))
         menuStyle.addAction(fullScreenAction)
 
@@ -358,7 +362,7 @@ class NMainWindow(QMainWindow):
         midnightAction = QAction(self.tr('Midnight'), self)
         midnightAction.setCheckable(True)
         midnightAction.triggered.connect(partial(self._setTheme, 'dark'))
-    
+
         islandAction = QAction(self.tr('Inland'), self)
         islandAction.setCheckable(True)
         islandAction.triggered.connect(partial(self._setTheme, 'terra'))
@@ -482,7 +486,7 @@ class NSelector(NFrameContainer):
                 self.appButtonPressed.emit('monitor')
             elif self.currentIndex == DASHBOARD:
                 self.appButtonPressed.emit('dashboard')
-                
+
 class MonitorButton(QPushButton):
     toggle = pyqtSignal(dict)
     def __init__(self, parent):

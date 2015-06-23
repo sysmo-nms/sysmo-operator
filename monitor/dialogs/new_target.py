@@ -553,7 +553,7 @@ class CreateTargetDialog(QProgressDialog):
 #             }
 #         }
 #         supercast.send(pdu, self._createIfPerfReply)
-# 
+#
 #     def _createIfPerfReply(self, msg):
 #         self.deleteLater()
 
@@ -570,7 +570,7 @@ class CreateTargetDialog(QProgressDialog):
 #         self.show()
 #         self._grid = NGrid(self)
 #         self.setLayout(self._grid)
-# 
+#
 #         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
 #         okbutton = buttonBox.button(QDialogButtonBox.Ok)
 #         okbutton.clicked.connect(self._validate)

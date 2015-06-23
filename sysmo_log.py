@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 import logging.handlers
-from PyQt5.QtCore import QStandardPaths
+#from PyQt5.QtCore import QStandardPaths
 
 
 
@@ -19,14 +19,15 @@ class SysmoLogger:
 
 def init_logger():
     # get user application data dir
-    data = QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
+    #data = QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
     # generate sysmo operator dir
-    data_sysmo = os.path.join(data, "Sysmo-Operator")
+    #data_sysmo = os.path.join(data, "Sysmo-Operator")
     # create if inexistant
-    if os.path.isdir(data_sysmo) == False: os.mkdir(data_sysmo)
+    #if os.path.isdir(data_sysmo) == False: os.mkdir(data_sysmo)
     # generate logfile
-    LOGFILE = os.path.join(data_sysmo, "operator.log")
+    #LOGFILE = os.path.join(data_sysmo, "operator.log")
 
+    LOGFILE = "sysmo-operator.log"
 
     # init logger
     logger = logging.getLogger("sysmo")
