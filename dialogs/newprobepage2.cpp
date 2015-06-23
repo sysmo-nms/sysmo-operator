@@ -4,6 +4,12 @@ NewProbePage2::NewProbePage2(QWidget* parent) : QWizardPage(parent)
 {
     this->setSubTitle("Complete the form to configure the new probe");
     this->setFinalPage(true);
+    NGrid* grid = new NGrid();
+    this->setLayout(grid);
+
+    this->docs = new QTextEdit(this);
+    this->docs->setReadOnly(true);
+    grid->addWidget(this->docs);
 }
 
 void NewProbePage2::initializePage()
@@ -13,11 +19,12 @@ void NewProbePage2::initializePage()
     this->setTitle(str.arg(probe_name));
     QXmlInputSource* input = new QXmlInputSource();
     QXmlSimpleReader reader;
-    CheckUIBuilder*  parser = new CheckUIBuilder(this);
+    CheckUIBuilder*  parser = new CheckUIBuilder();
     input->setData(NChecks::getCheck(probe_name));
     reader.setContentHandler(parser);
     reader.setErrorHandler(parser);
     reader.parse(input);
+    this->docs->setHtml(parser->doc);
     delete input;
     delete parser;
 }
@@ -28,9 +35,26 @@ bool NewProbePage2::isComplete() const
 }
 
 
-CheckUIBuilder::CheckUIBuilder(QWidget *parent) : QXmlDefaultHandler()
+
+
+
+
+
+bool CheckUIBuilder::startDocument()
 {
-    this->caller = parent;
+    this->doc.append("<html><body>");
+    this->flags.append("<h2>Options</h2><p><ul>");
+    return true;
+}
+
+
+
+bool CheckUIBuilder::endDocument()
+{
+    this->flags.append("</ul></p>");
+    this->doc.append(this->flags);
+    this->doc.append("</body></html>");
+    return true;
 }
 
 bool CheckUIBuilder::startElement(
@@ -42,15 +66,52 @@ bool CheckUIBuilder::startElement(
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
     if (qName == "Check") {
-        qDebug() << "id is: " << atts.value("Id");
-        qDebug() << "up is: " << atts.value("UpdatesUrl");
-        qDebug() << "type is: " << atts.value("Type");
-        qDebug() << "class is: " << atts.value("Class");
-    }
-    if (qName== "Description") this->char_type = "Description";
-    if (qName == "Flag") {
-        qDebug() << "flag is: " << atts.value("Id");
+        QString doctpl;
+        doctpl.append("<h1>%1</h1>")
+                .append("<p><ul>")
+                .append("<li><strong>Class:</strong> %2</li>")
+                .append("<li><strong>Updates:</strong> <a href=\"%3\">%3</a></li>")
+                .append("<li><strong>Type:</strong> %4</li>");
+        QString docstr = doctpl
+                .arg(atts.value("Id"))
+                .arg(atts.value("Class"))
+                .arg(atts.value("UpdatesUrl"))
+                .arg(atts.value("Type"))
+                .append("</ul></p>");
+        qDebug() << docstr;
+        this->doc.append(docstr);
         return true;
+    }
+    if (qName == "Description") {
+        this->char_type = "Description";
+        this->doc.append("<h2>Description</h2><p>");
+        return true;
+    }
+    if (qName == "Overview") {
+        this->char_type = "Overview";
+        this->doc.append("<h2>Overview</h2><p>");
+        return true;
+    }
+    if (qName == "GraphTable") {
+        this->doc.append("<h2>Graphs</h2><p><ul>");
+    }
+    if (qName == "Graph") {
+        QString g = "<li>%1</li>";
+        this->doc.append(g.arg(atts.value("Id")));
+    }
+    if (qName == "Flag") {
+        QString f = "<li><strong>%1</strong><ul>";
+        this->flags.append(f.arg(atts.value("Id")));
+        return true;
+    }
+    if (qName == "Default") {
+        QString d = "<li>Default: ";
+        this->flags.append(d);
+        this->char_type = "Default";
+    }
+    if (qName == "Usage") {
+        this->flags.append("<li>Usage: ");
+        this->char_type = "Usage";
     }
     return true;
 }
@@ -62,14 +123,49 @@ bool CheckUIBuilder::endElement(
 {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
-    if (qName == "Description") this->char_type = "";
+    if (qName == "Description") {
+        this->char_type = "";
+        this->doc.append("</p>");
+    }
+    if (qName == "Overview") {
+        this->char_type = "";
+        this->doc.append("</p>");
+    }
+    if (qName == "GraphTable") {
+        this->char_type = "";
+        this->doc.append("</ul></p>");
+    }
+    if (qName == "Flag") {
+        this->char_type = "";
+        this->flags.append("</ul></li>");
+    }
+    if (qName == "Default") {
+        this->char_type = "";
+        this->flags.append("</li>");
+    }
+    if (qName == "Usage") {
+        this->char_type = "";
+        this->flags.append("</li>");
+    }
+
     return true;
 }
 
 bool CheckUIBuilder::characters(const QString &ch)
 {
     if (this->char_type == "Description") {
-        qDebug() << "desc: " << ch;
+        this->doc.append(ch);
+        return true;
+    }
+    if (this->char_type == "Overview") {
+        this->doc.append(ch);
+        return true;
+    }
+    if (this->char_type == "Default") {
+        this->flags.append(ch);
+    }
+    if (this->char_type == "Usage") {
+        this->flags.append(ch);
     }
     return true;
 }

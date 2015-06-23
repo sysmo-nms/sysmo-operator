@@ -43,12 +43,12 @@ SOURCES += main.cpp\
     dashboard/dashboardwidget.cpp \
     dashboard/dashboardtab.cpp \
     dialogs/messagebox.cpp \
-    monitor/nchecks.cpp \
     network/supercasthttprequest.cpp \
     network/supercasthttpreply.cpp \
     rrds/rrd4c.cpp \
     rrds/rrd4csocket.cpp \
-    dialogs/newprobepage2.cpp
+    dialogs/newprobepage2.cpp \
+    monitor/xml/nchecksimpleparser.cpp
     rrds/rrd4csignal.cpp
 
 HEADERS  += mainwindow.h \
@@ -87,7 +87,8 @@ HEADERS  += mainwindow.h \
     rrds/rrd4c.h \
     rrds/rrd4csocket.h \
     rrds/rrd4csignal.h \
-    dialogs/newprobepage2.h
+    dialogs/newprobepage2.h \
+    monitor/xml/nchecksimpleparser.h
 
 RESOURCES += \
     icons.qrc \
