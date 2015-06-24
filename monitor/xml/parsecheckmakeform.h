@@ -30,6 +30,7 @@ public:
     ~ParseCheckMakeForm();
     QList<FormConfig>* mandatory = NULL;
     QList<FormConfig>* options   = NULL;
+    QString probe_class = "";
     bool startDocument();
     bool startElement(
             const QString &namespaceURI,

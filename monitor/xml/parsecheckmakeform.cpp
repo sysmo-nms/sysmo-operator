@@ -20,6 +20,9 @@ bool ParseCheckMakeForm::startElement(
 {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
+    if (qName == "Check") {
+        this->probe_class = atts.value("Class");
+    }
     if (qName == "Flag") {
         this->current_flag = atts.value("Id");
     } else if (qName == "Hint") {

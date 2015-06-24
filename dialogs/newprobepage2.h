@@ -37,6 +37,7 @@ public:
 
 private:
     QString     target     = "";
+    QString     probe_class = "";
     QHash<QString,QLineEdit*>* args = NULL;
     QTextEdit*  docs       = NULL;
     NFrame*     form_frame = NULL;

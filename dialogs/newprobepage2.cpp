@@ -67,6 +67,8 @@ void NewProbePage2::initializePage()
     reader.setErrorHandler(form_parser);
     reader.parse(form_input);
 
+    this->probe_class = form_parser->probe_class;
+
     QFormLayout* form = new QFormLayout();
     this->form_frame->setLayout(form);
 
@@ -134,7 +136,13 @@ void NewProbePage2::initializePage()
 
 bool NewProbePage2::validatePage()
 {
-    NewProbeProgressDialog* dial = new NewProbeProgressDialog(this);
+    QString probe_name(this->field("selection").toString());
+    NewProbeProgressDialog* dial = new NewProbeProgressDialog(
+                this->args,
+                this->target,
+                probe_name,
+                this->probe_class,
+                this);
     QObject::connect(
                 dial, SIGNAL(accepted()),
                 this, SLOT(close()));
