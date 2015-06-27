@@ -2,7 +2,8 @@
 
 SupercastHTTP::~SupercastHTTP() {}
 
-SupercastHTTP::SupercastHTTP(QObject* parent) : QNetworkAccessManager(parent)
+SupercastHTTP::SupercastHTTP(QObject* parent)
+    : QNetworkAccessManager(parent)
 {
     QObject::connect(
                 this, SIGNAL(finished(QNetworkReply*)),

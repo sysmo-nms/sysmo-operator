@@ -6,6 +6,7 @@
 #include "monitor/menuprobe.h"
 #include "monitor/menutarget.h"
 #include "monitor/monitorwidget.h"
+#include "windows/probewindow.h"
 #include "sysmo.h"
 
 #include <QObject>

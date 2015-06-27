@@ -90,8 +90,9 @@ void TreeView::stopTimer() { this->timer->stop(); }
 
 void TreeView::openContextMenu(const QPoint point) {
 
-    QModelIndex    index = this->filter_model->mapToSource(this->indexAt(point));
-    QStandardItem* item  = this->original_model->itemFromIndex(index);
+    QModelIndex    index   = this->filter_model->mapToSource(this->indexAt(point));
+    QModelIndex    element = index.sibling(index.row(), 0);
+    QStandardItem* item    = this->original_model->itemFromIndex(element);
 
     if (item->type() == Sysmo::TYPE_PROBE) {
 
@@ -110,8 +111,14 @@ void TreeView::openContextMenu(const QPoint point) {
 
 void TreeView::handleDoubleClicked(const QModelIndex index)
 {
+    QModelIndex idx_sibling = index.sibling(index.row(), 0);
+    QModelIndex idx_origin  = this->filter_model->mapToSource(idx_sibling);
+    QStandardItem* item = this->original_model->itemFromIndex(idx_origin);
 
-    QString name = index.data(Sysmo::ROLE_ELEMENT_NAME).toString();
-    qDebug() << "handle double clicked " << name;
+    QString name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
+    if (item->type() == Sysmo::TYPE_PROBE) {
+    } else if (item->type() == Sysmo::TYPE_TARGET) {
+    }
 
+    qDebug() << "handle double clicked " << name << item->type();
 }

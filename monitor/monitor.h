@@ -30,11 +30,11 @@ public slots:
     void handleServerMessage(QJsonObject message);
 
 signals:
-    void infoProbe(QJsonObject message);
-    void infoTarget(QJsonObject message);
-    void deleteTarget(QJsonObject message);
-    void deleteProbe(QJsonObject message);
-    void probeReturn(QJsonObject message);
+    void infoProbe(    QJsonObject message);
+    void infoTarget(   QJsonObject message);
+    void deleteTarget( QJsonObject message);
+    void deleteProbe(  QJsonObject message);
+    void probeReturn(  QJsonObject message);
 
 };
 
