@@ -10,8 +10,11 @@
 #include "monitor/xml/parsecheckmakedoc.h"
 #include "monitor/xml/parsecheckmakeform.h"
 #include "dialogs/newprobeprogressdialog.h"
+#include "network/supercastsignal.h"
+#include "network/supercast.h"
 
 #include <QWidget>
+#include <QObject>
 #include <QFormLayout>
 #include <QPushButton>
 #include <QJsonObject>
@@ -22,11 +25,35 @@
 #include <QXmlSimpleReader>
 #include <QTextEdit>
 #include <QHash>
+#include <QProgressDialog>
 
 #include <QDebug>
 
+
+class HelperExec: public QObject
+{
+    Q_OBJECT
+public:
+    HelperExec(QWidget *parent);
+    QString h_class = "";
+    QString h_id = "";
+    QString h_target = "";
+    QWidget *w_parent = NULL;
+
+private:
+    QProgressDialog* dial = NULL;
+
+public slots:
+    void execHelper();
+
+private slots:
+    void helperReply(QJsonObject reply);
+};
+
+
 class NewProbePage2 : public QWizardPage
 {
+    Q_OBJECT
 public:
     NewProbePage2(QString forTarget, QWizard* parent = 0);
     void initializePage();

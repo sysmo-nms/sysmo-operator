@@ -82,9 +82,17 @@ void NewProbePage2::initializePage()
         edit->setPlaceholderText(i->hint);
         edit->setToolTip(i->hint);
         if (i->has_helper) {
-            NFrameContainer* fr = new NFrameContainer(this->form_frame);
-            NGridContainer*  gr = new NGridContainer(fr);
+            NFrameContainer* fr   = new NFrameContainer(this->form_frame);
+            NGridContainer*  gr   = new NGridContainer(fr);
             QPushButton*     hbut = new QPushButton(this->form_frame);
+            HelperExec*      ex   = new HelperExec(this->form_frame);
+            ex->h_class  = i->helper_class;
+            ex->h_id     = i->helper_id;
+            ex->h_target = this->target;
+            QObject::connect(
+               hbut, SIGNAL(clicked(bool)),
+               ex,   SLOT(execHelper()));
+
             gr->addWidget(edit, 0,0);
             gr->addWidget(hbut, 0,1);
             gr->setColumnStretch(0,1);
@@ -103,16 +111,24 @@ void NewProbePage2::initializePage()
     QList<FormConfig>::iterator j;
     for (j = options->begin(); j != options->end(); ++j)
     {
-        qDebug() << "iterate" << j->flag_name;
         QLineEdit* edit = new QLineEdit(this->form_frame);
         this->args->insert(j->flag_name, edit);
         edit->setPlaceholderText(j->hint);
         edit->setText(j->defaults);
         edit->setToolTip(j->hint);
         if (j->has_helper) {
+            qDebug() << "had helper";
             NFrameContainer* fr = new NFrameContainer(this->form_frame);
             NGridContainer*  gr = new NGridContainer(fr);
-            QPushButton*     hbut = new QPushButton(this->form_frame);
+
+            QPushButton* hbut = new QPushButton(this->form_frame);
+            HelperExec*  ex   = new HelperExec(this->form_frame);
+            ex->h_class  = j->helper_class;
+            ex->h_id     = j->helper_id;
+            ex->h_target = this->target;
+            QObject::connect(
+               hbut, SIGNAL(clicked(bool)),
+               ex,   SLOT(execHelper()));
             gr->addWidget(edit, 0,0);
             gr->addWidget(hbut, 0,1);
             gr->setColumnStretch(0,1);
@@ -160,4 +176,50 @@ bool NewProbePage2::validatePage()
 bool NewProbePage2::isComplete() const
 {
     return true;
+}
+
+
+
+HelperExec::HelperExec(QWidget* parent) : QObject(parent)
+{
+    this->h_class = "";
+    this->h_id    = "";
+    this->h_target = "";
+    this->w_parent = parent;
+}
+
+void HelperExec::execHelper()
+{
+    QJsonObject helperQuery {
+        {"from", "monitor"},
+        {"type", "ncheckHelperQuery2"},
+        {"value",
+            QJsonObject {
+                {"target", this->h_target},
+                {"class",  this->h_class},
+                {"id",     this->h_id}
+            }
+        }
+    };
+
+    qDebug() << "exec helper " << helperQuery;
+
+
+    QString msg = QString("Executing helper: %1").arg(this->h_id);
+    this->dial = new QProgressDialog(this->w_parent);
+    this->dial->setLabelText(msg);
+    this->dial->setModal(true);
+    this->dial->setMinimum(0);
+    this->dial->setMaximum(0);
+    this->dial->open();
+    SupercastSignal* sig = new SupercastSignal(this);
+    QObject::connect(
+                sig,  SIGNAL(serverMessage(QJsonObject)),
+                this, SLOT(helperReply(QJsonObject)));
+    Supercast::sendQuery(helperQuery, sig);
+}
+
+void HelperExec::helperReply(QJsonObject reply)
+{
+    qDebug() << "helper reply" << reply;
 }
