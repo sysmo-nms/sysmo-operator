@@ -8,3 +8,7 @@
 /Makefile
 /sysmo-operator
 /sysmo-operator.pro.user*
+/rrd4qt/*.iml
+/rrd4qt/.idea
+/rrd4qt/build
+/rrd4qt/.gradle
