@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-    compile     'org.rrd4j:rrd4j:2.3-SNAPSHOT'
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile             'org.rrd4j:rrd4j:2.3-SNAPSHOT'
+    testCompile group:  'junit', name: 'junit', version: '4.11'
 }
 
 tasks.withType(FindBugs) {
@@ -29,4 +29,8 @@ tasks.withType(FindBugs) {
         xml.enabled = false
         html.enabled = true
     }
+}
+
+task wrapper(type: Wrapper) {
+     gradleVersion = '2.3'
 }

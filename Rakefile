@@ -1,8 +1,16 @@
 # -*- mode: ruby -*-
 
+ROOT     = Dir.pwd
+JAVA_DIR = File.join(ROOT, "rrd4qt")
+GRADLE   = File.join(JAVA_DIR, "gradlew")
+
 task :default => :build
 
 task :graphics => [:side_icons, :tree_pixmaps]
+
+task :rrd4qt do
+  cd JAVA_DIR; sh "#{GRADLE} installDist"
+end
 
 task :clean do
   sh "make clean; rm Makefile"
