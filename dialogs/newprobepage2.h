@@ -1,6 +1,7 @@
 #ifndef NEWPROBEPAGE2_H
 #define NEWPROBEPAGE2_H
 
+#include "sysmo.h"
 #include "nframe.h"
 #include "nframecontainer.h"
 #include "ngrid.h"
@@ -10,6 +11,7 @@
 #include "monitor/xml/parsecheckmakedoc.h"
 #include "monitor/xml/parsecheckmakeform.h"
 #include "dialogs/newprobeprogressdialog.h"
+#include "dialogs/messagebox.h"
 #include "network/supercastsignal.h"
 #include "network/supercast.h"
 
@@ -18,7 +20,11 @@
 #include <QFormLayout>
 #include <QPushButton>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QStringList>
 #include <QList>
+#include <QLabel>
 #include <QWizard>
 #include <QWizardPage>
 #include <QXmlInputSource>
@@ -26,29 +32,15 @@
 #include <QTextEdit>
 #include <QHash>
 #include <QProgressDialog>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QAbstractItemView>
+#include <QHeaderView>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 #include <QDebug>
 
-
-class HelperExec: public QObject
-{
-    Q_OBJECT
-public:
-    HelperExec(QWidget *parent);
-    QString h_class = "";
-    QString h_id = "";
-    QString h_target = "";
-    QWidget *w_parent = NULL;
-
-private:
-    QProgressDialog* dial = NULL;
-
-public slots:
-    void execHelper();
-
-private slots:
-    void helperReply(QJsonObject reply);
-};
 
 
 class NewProbePage2 : public QWizardPage
@@ -71,5 +63,45 @@ private:
     NGrid*      grid       = NULL;
 };
 
+
+class HelperExec: public QObject
+{
+    Q_OBJECT
+public:
+    HelperExec(QLineEdit* line, QWidget *parent = 0);
+    QString    h_class = "";
+    QString    h_id = "";
+    QString    h_target  = "";
+    QWidget*   w_parent  = NULL;
+    QLineEdit* flag_line = NULL;
+
+private:
+    QProgressDialog* dial = NULL;
+
+public slots:
+    void execHelper();
+
+private slots:
+    void helperReply(QJsonObject reply);
+};
+
+
+class HelperDialog : public QDialog
+{
+    Q_OBJECT
+public:
+    HelperDialog(QJsonObject helperReply, QWidget* parent = 0);
+    QString getValue();
+
+private:
+    QString value = "";
+    QString list_separator = "";
+    QHash<QString, QTreeWidgetItem*> root_items;
+
+public slots:
+    void refreshTreeState(QTreeWidgetItem* item, int column);
+    void resetTreeCheckState();
+    void validateSelection();
+};
 
 #endif // NEWPROBEPAGE2_H

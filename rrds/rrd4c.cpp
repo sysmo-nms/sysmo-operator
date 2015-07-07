@@ -78,9 +78,9 @@ void Rrd4c::routeServerMessage(QJsonObject msg)
     QString msg_type = msg.value("type").toString("undefined");
     if(msg_type == "reply") {
 
-        int  queryId = msg.take("queryId").toInt(100);
+        int  queryId = msg.take("queryId").toInt(10000);
         bool lastPdu = msg.take("lastPdu").toBool(true);
-        if (queryId == 100) return;
+        if (queryId == 10000) return;
 
         Rrd4cSignal* sig = this->queries->value(queryId);
         emit sig->serverMessage(msg);

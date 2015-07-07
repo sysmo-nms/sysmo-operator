@@ -65,6 +65,9 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     TreeView* tree = new TreeView(this);
 
     QObject::connect(
+                clear, SIGNAL(clicked(bool)),
+                tree, SLOT(clearSelection()));
+    QObject::connect(
                 search,             SIGNAL(textChanged(QString)),
                 tree->filter_model, SLOT(setFilterFixedString(QString)));
     QObject::connect(

@@ -85,7 +85,7 @@ void NewProbePage2::initializePage()
             NFrameContainer* fr   = new NFrameContainer(this->form_frame);
             NGridContainer*  gr   = new NGridContainer(fr);
             QPushButton*     hbut = new QPushButton(this->form_frame);
-            HelperExec*      ex   = new HelperExec(this->form_frame);
+            HelperExec*      ex   = new HelperExec(edit, this->form_frame);
             ex->h_class  = i->helper_class;
             ex->h_id     = i->helper_id;
             ex->h_target = this->target;
@@ -122,7 +122,7 @@ void NewProbePage2::initializePage()
             NGridContainer*  gr = new NGridContainer(fr);
 
             QPushButton* hbut = new QPushButton(this->form_frame);
-            HelperExec*  ex   = new HelperExec(this->form_frame);
+            HelperExec*  ex   = new HelperExec(edit, this->form_frame);
             ex->h_class  = j->helper_class;
             ex->h_id     = j->helper_id;
             ex->h_target = this->target;
@@ -180,12 +180,13 @@ bool NewProbePage2::isComplete() const
 
 
 
-HelperExec::HelperExec(QWidget* parent) : QObject(parent)
+HelperExec::HelperExec(QLineEdit* line, QWidget* parent) : QObject(parent)
 {
-    this->h_class = "";
-    this->h_id    = "";
-    this->h_target = "";
-    this->w_parent = parent;
+    this->h_class   = "";
+    this->h_id      = "";
+    this->h_target  = "";
+    this->w_parent  = parent;
+    this->flag_line = line;
 }
 
 void HelperExec::execHelper()
@@ -221,5 +222,249 @@ void HelperExec::execHelper()
 
 void HelperExec::helperReply(QJsonObject reply)
 {
-    qDebug() << "helper reply" << reply;
+    this->dial->close();
+    this->dial->deleteLater();
+    qDebug() << "helper success" << reply;
+
+    QJsonObject reply_content = reply.value("value").toObject().value("reply").toObject();
+    if (reply_content.value("status").toString("undefined") == "success") {
+        if (reply_content.value("type").toString("undefined") == "simple") {
+            QString value = reply_content.value("message").toString("");
+            this->flag_line->setText(value);
+        } else if (reply_content.value("type").toString("undefined") == "table") {
+            HelperDialog* hdial = new HelperDialog(reply_content, this->w_parent);
+            if (hdial->exec() == QDialog::Accepted) {
+                QString value = hdial->getValue();
+                this->flag_line->setText(value);
+            }
+            hdial->deleteLater();
+        }
+    } else {
+        MessageBox* mbox = new MessageBox(this->w_parent);
+        mbox->setIconType(Sysmo::MESSAGE_ERROR);
+        mbox->setModal(true);
+        mbox->setWindowTitle(reply_content.value("id").toString("Helper reply"));
+        mbox->setText(reply_content.value("message").toString("The helper has fail with no error message"));
+        mbox->exec();
+    }
+}
+
+HelperDialog::HelperDialog(
+        QJsonObject helperReply,
+        QWidget*    parent) : QDialog(parent)
+{
+    this->setModal(true);
+    this->setMinimumHeight(400);
+    this->setMinimumWidth(600);
+    this->setWindowTitle(helperReply.value("id").toString("Helper Dialog"));
+
+    NGrid* grid = new NGrid(this);
+    this->setLayout(grid);
+
+    QString label_text = helperReply.value("message").toString("");
+    QLabel* label = new QLabel(this);
+    label->setText(label_text);
+    grid->addWidget(label, 0,0);
+
+    QTreeWidget* tree = new QTreeWidget(this);
+    tree->setSortingEnabled(true);
+    tree->header()->setSortIndicatorShown(true);
+    grid->addWidget(tree, 1,0);
+
+    QDialogButtonBox* button_box = new QDialogButtonBox(this);
+    QPushButton* reset_button = button_box->addButton(QDialogButtonBox::Reset);
+    QPushButton* save_button  = button_box->addButton(QDialogButtonBox::Save);
+    QPushButton* close_button = button_box->addButton(QDialogButtonBox::Close);
+
+    QObject::connect(
+                reset_button, SIGNAL(clicked(bool)),
+                this, SLOT(resetTreeCheckState()));
+    QObject::connect(
+                save_button, SIGNAL(clicked(bool)),
+                this, SLOT(validateSelection()));
+    QObject::connect(
+                close_button, SIGNAL(clicked(bool)),
+                this, SLOT(reject()));
+
+    grid->addWidget(button_box,2,0);
+    grid->setRowStretch(0,0);
+    grid->setRowStretch(1,1);
+    grid->setRowStretch(2,0);
+
+    this->list_separator = helperReply.value("listSeparator").toString();
+    QJsonArray all_rows = helperReply.value("rows").toArray();
+    if (helperReply.value("treeRoot").toString() != "") {
+        /*
+         * This is a table with tree
+         */
+        QString tree_root = helperReply.value("treeRoot").toString();
+
+
+        /*
+         * get all roots types
+         */
+        QStringList roots = QStringList();
+        foreach (const QJsonValue row, all_rows) {
+            QJsonObject row_obj = row.toObject();
+            QString root = row_obj.value(tree_root).toString();
+            if (roots.contains(root)) continue;
+            roots.append(root);
+        }
+        qDebug() << "roots are: " << roots;
+
+
+        /*
+         * Create initial root items
+         */
+        foreach (const QString ritem, roots) {
+            QString txt = QString("%1(%2)").arg(tree_root).arg(ritem);
+            QStringList txt_list;
+            txt_list.append(txt);
+            QTreeWidgetItem* item = new QTreeWidgetItem(tree, txt_list, QTreeWidgetItem::Type);
+            item->setCheckState(0, Qt::Unchecked);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            this->root_items.insert(ritem, item);
+            tree->addTopLevelItem(item);
+        }
+
+
+        /*
+         * get all column types minus tree_root and set header
+         */
+        QJsonObject test_obj = all_rows.at(0).toObject();
+        QStringList cols = test_obj.keys();
+        cols.removeAll(tree_root);
+        tree->setColumnCount(cols.size());
+        tree->setHeaderLabels(cols);
+        tree->setSelectionMode(QAbstractItemView::NoSelection);
+
+
+        /*
+         * Fill childs
+         */
+        QString select = helperReply.value("select").toString();
+        foreach (const QJsonValue row, all_rows) {
+            QJsonObject row_obj = row.toObject();
+            QString     iroot   = row_obj.value(tree_root).toString();
+            QTreeWidgetItem* root_item  = this->root_items.value(iroot);
+            QStringList item_cols;
+            foreach (const QString key, cols) {
+                item_cols.append(row_obj.value(key).toString());
+            }
+
+            QString item_data = row_obj.value(select).toString();
+            QTreeWidgetItem* child_item = new QTreeWidgetItem(
+                        item_cols, QTreeWidgetItem::Type);
+            child_item->setData(0, Qt::UserRole, QVariant(item_data));
+            child_item->setCheckState(0,Qt::Unchecked);
+            child_item->setFlags(child_item->flags() | Qt::ItemIsUserCheckable);
+            root_item->addChild(child_item);
+        }
+
+
+
+        /*
+         * Selection propagation
+         */
+        QObject::connect(
+                    tree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
+                    this, SLOT(refreshTreeState(QTreeWidgetItem*,int)));
+
+        tree->header()->resizeSections(QHeaderView::ResizeToContents);
+        tree->expandAll();
+    }
+}
+
+void HelperDialog::validateSelection()
+{
+    QList<QTreeWidgetItem*> selection;
+    QHash<QString, QTreeWidgetItem*>::iterator i;
+    for (i  = this->root_items.begin();
+         i != this->root_items.end();
+         i++)
+    {
+        QTreeWidgetItem* item = i.value();
+        int child_count = item->childCount();
+        for (int i = 0; i<child_count; i++) {
+            QTreeWidgetItem* child = item->child(i);
+            if (child->checkState(0) == Qt::Checked) {
+                selection.append(child);
+            }
+        }
+    }
+
+    for(int j = 0; j < selection.count(); j++)
+    {
+        if (j != 0) this->value.append(this->list_separator);
+        this->value.append(selection[j]->data(0, Qt::UserRole).toString());
+    }
+    emit this->accept();
+}
+
+void HelperDialog::resetTreeCheckState()
+{
+    QHash<QString, QTreeWidgetItem*>::iterator i;
+    for (i  = this->root_items.begin();
+         i != this->root_items.end();
+         i++)
+    {
+        QTreeWidgetItem* item = i.value();
+        int child_count = item->childCount();
+        for (int i = 0; i<child_count; i++) {
+            QTreeWidgetItem* child = item->child(i);
+            if (child->checkState(0) != Qt::Unchecked) {
+                child->setCheckState(0, Qt::Unchecked);
+            }
+        }
+
+    }
+}
+
+void HelperDialog::refreshTreeState(QTreeWidgetItem *item, int column)
+{
+    Q_UNUSED(column);
+    int child_count = item->childCount();
+    if (child_count > 0) { // it is a root item
+        if (item->checkState(0) == Qt::PartiallyChecked) return;
+        Qt::CheckState root_state = item->checkState(0);
+        for (int i=0; i<child_count; i++) {
+            QTreeWidgetItem* child = item->child(i);
+            if (child->checkState(0) != root_state) {
+                child->setCheckState(0,root_state);
+            }
+        }
+    } else { // it is a child item may influence root item
+        QTreeWidgetItem* root_item = item->parent();
+        // get the number of child of the parent
+        int root_count = root_item->childCount();
+        // generate a state list
+        QList<Qt::CheckState> states_list;
+        for (int i=0; i<root_count; i++) {
+            QTreeWidgetItem* child_item = root_item->child(i);
+            states_list.append(child_item->checkState(0));
+        }
+
+        // if checked and unchecked are present root is tristate
+        if (states_list.contains(Qt::Unchecked) &&
+            states_list.contains(Qt::Checked)) {
+            if (root_item->checkState(0) != Qt::PartiallyChecked)
+                root_item->setCheckState(0,Qt::PartiallyChecked);
+        } else if (states_list.contains(Qt::Checked)) { // all is checked
+            if (root_item->checkState(0) != Qt::Checked)
+                root_item->setCheckState(0,Qt::Checked);
+        } else { // all is unchecked
+            if (root_item->checkState(0) != Qt::Unchecked)
+                root_item->setCheckState(0,Qt::Unchecked);
+        }
+    }
+
+    // set apply button state
+}
+
+QString HelperDialog::getValue()
+{
+    /*
+     * TODO return selected items
+     */
+    return this->value;
 }
