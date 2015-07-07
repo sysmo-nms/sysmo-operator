@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/rrd4qt">
-        <file alias="rrd4qt.sh">  ressources/rrd4qt/rrd4qt</file>
-        <file alias="rrd4qt.bat"> ressources/rrd4qt/rrd4qt.bat</file>
-        <file alias="rrd4qt.jar"> ressources/rrd4qt/rrd4qt-1.0-SNAPSHOT.jar</file>
-        <file alias="rrd4j.jar">  ressources/rrd4qt/rrd4j-2.3-SNAPSHOT.jar</file>
+        <file alias="rrd4qt.sh">ressources/rrd4qt/rrd4qt</file>
+        <file alias="rrd4qt.bat">ressources/rrd4qt/rrd4qt.bat</file>
+        <file alias="rrd4qt.jar">ressources/rrd4qt/rrd4qt-1.0-SNAPSHOT.jar</file>
+        <file alias="rrd4j.jar">ressources/rrd4qt/rrd4j-2.3-SNAPSHOT.jar</file>
     </qresource>
 </RCC>
