@@ -193,7 +193,7 @@ void HelperExec::execHelper()
 {
     QJsonObject helperQuery {
         {"from", "monitor"},
-        {"type", "ncheckHelperQuery2"},
+        {"type", "ncheckHelperQuery"},
         {"value",
             QJsonObject {
                 {"target", this->h_target},
@@ -269,6 +269,7 @@ HelperDialog::HelperDialog(
     QTreeWidget* tree = new QTreeWidget(this);
     tree->setSortingEnabled(true);
     tree->header()->setSortIndicatorShown(true);
+    tree->setAlternatingRowColors(true);
     grid->addWidget(tree, 1,0);
 
     QDialogButtonBox* button_box = new QDialogButtonBox(this);
