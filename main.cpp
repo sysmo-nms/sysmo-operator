@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     QApplication::setApplicationName("Operator");
     QApplication::setApplicationVersion("1.0");
     QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
-    QApplication::setOrganizationName("Sysmo IO");
+    QApplication::setOrganizationName("Sysmo NMS");
     QApplication::setOrganizationDomain("sysmo.io");
     QApplication::setQuitOnLastWindowClosed(true);
 

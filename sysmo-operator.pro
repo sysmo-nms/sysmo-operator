@@ -112,4 +112,5 @@ RESOURCES += \
     box_icons.qrc \
     images.qrc \
     pixmaps.qrc \
-    tree.qrc
+    tree.qrc \
+    rrd4qt.qrc

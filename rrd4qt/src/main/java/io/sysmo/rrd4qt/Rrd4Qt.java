@@ -47,6 +47,74 @@ import java.awt.image.BufferedImage;
 import java.awt.Color;
 
 
+
+public class Rrd4Qt
+{
+    public  static RrdDbPool rrdDbPool = null;
+    private static ThreadPoolExecutor threadPool = null;
+    private static int threadMaxPoolSize    = 20;
+    private static int threadCorePoolSize   = 12;
+    private static int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs
+
+    // java.exe -classpath java_lib\*; io.sysmo.rrd4qt.Rrd4Qt --die-on-broken-pipe
+    public static void main(String[] args) throws Exception {
+        threadPool = new ThreadPoolExecutor(
+            threadCorePoolSize,
+            threadMaxPoolSize,
+            10,
+            TimeUnit.MINUTES,
+            new ArrayBlockingQueue<Runnable>(threadQueueCapacity),
+            new RrdReject()
+        );
+
+        rrdDbPool = RrdDbPool.getInstance();
+        //loopIn();
+        System.exit(0);
+    }
+
+    private static void loopIn()
+    {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            String line;
+            while (true) {
+                line = in.readLine();
+                if (line == null && line.length() == 0) {
+                    break;    // An empty line or Ctrl-Z terminates the program
+                }
+                startWorkder(line);
+            }
+        }
+        catch (Exception|Error e)
+        {
+            System.exit(1);
+        }
+    }
+
+    private static void startWorkder(String arg)
+    {
+        RrdRunnable   worker = new RrdRunnable(arg);
+        threadPool.execute(worker);
+    }
+
+    public static synchronized void rrdReply(String reply)
+    {
+        System.out.println(reply);
+    }
+
+    public static Color decodeRGBA(String hexString)
+    {
+        return new Color(
+            Integer.valueOf(hexString.substring(1,3), 16),
+            Integer.valueOf(hexString.substring(3,5), 16),
+            Integer.valueOf(hexString.substring(5,7), 16),
+            Integer.valueOf(hexString.substring(7,9), 16)
+        );
+    }
+
+}
+
+
 class RrdRunnable implements Runnable
 {
     private String strArgument;
@@ -261,73 +329,6 @@ class CustomRrdGraphDef extends RrdGraphDef
         XAXIS_C     = Rrd4Qt.decodeRGBA(colorCfg[9]);
     }
 
-
-}
-
-
-public class Rrd4Qt
-{
-    public  static RrdDbPool rrdDbPool = null;
-    private static ThreadPoolExecutor threadPool = null;
-    private static int threadMaxPoolSize    = 20;
-    private static int threadCorePoolSize   = 12;
-    private static int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs
-
-    // java.exe -classpath java_lib\*; io.sysmo.rrd4qt.Rrd4Qt --die-on-broken-pipe
-    public static void main(String[] args) throws Exception {
-        threadPool = new ThreadPoolExecutor(
-            threadCorePoolSize,
-            threadMaxPoolSize,
-            10,
-            TimeUnit.MINUTES,
-            new ArrayBlockingQueue<Runnable>(threadQueueCapacity),
-            new RrdReject()
-        );
-
-        rrdDbPool = RrdDbPool.getInstance();
-        loopIn();
-    }
-
-    private static void loopIn()
-    {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            String line;
-            while (true) {
-                line = in.readLine();
-                if (line == null && line.length() == 0) {
-                    break;    // An empty line or Ctrl-Z terminates the program
-                }
-                startWorkder(line);
-            }
-        }
-        catch (Exception|Error e)
-        {
-            System.exit(1);
-            return;
-        }
-    }
-
-    private static void startWorkder(String arg)
-    {
-        RrdRunnable   worker = new RrdRunnable(arg);
-        threadPool.execute(worker);
-    }
-
-    public static synchronized void rrdReply(String reply)
-    {
-        System.out.println(reply);
-    }
-
-    public static Color decodeRGBA(String hexString)
-    {
-        return new Color(
-            Integer.valueOf(hexString.substring(1,3), 16),
-            Integer.valueOf(hexString.substring(3,5), 16),
-            Integer.valueOf(hexString.substring(5,7), 16),
-            Integer.valueOf(hexString.substring(7,9), 16)
-        );
-    }
 
 }
 

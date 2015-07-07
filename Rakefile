@@ -4,9 +4,28 @@ ROOT     = Dir.pwd
 JAVA_DIR = File.join(ROOT, "rrd4qt")
 GRADLE   = File.join(JAVA_DIR, "gradlew")
 
-task :default => :build
+task :default => :java_ressource
 
 task :graphics => [:side_icons, :tree_pixmaps]
+
+task :java_ressource => [:rrd4qt] do
+  rrddst = File.join(ROOT, "ressources/rrd4qt")
+  rrdsrc = File.join(ROOT, "rrd4qt/build/install/rrd4qt")
+  FileUtils.rm_rf(rrddst)
+  Dir.mkdir(rrddst)
+  FileUtils.cp(
+               File.join(rrdsrc, "bin/rrd4qt"),
+               File.join(rrddst))
+  FileUtils.cp(
+               File.join(rrdsrc, "bin/rrd4qt.bat"),
+               File.join(rrddst))
+  FileUtils.cp(
+               File.join(rrdsrc, "lib/rrd4qt-1.0-SNAPSHOT.jar"),
+               File.join(rrddst))
+  FileUtils.cp(
+               File.join(rrdsrc, "lib/rrd4j-2.3-SNAPSHOT.jar"),
+               File.join(rrddst))
+end
 
 task :rrd4qt do
   cd JAVA_DIR; sh "#{GRADLE} installDist"
