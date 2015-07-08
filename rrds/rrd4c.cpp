@@ -117,6 +117,14 @@ void Rrd4c::procStdoutReadyRead()
 
 }
 
+void Rrd4c::callRrd(QString msg)
+{
+    QByteArray  msg_array = msg.toLocal8Bit();
+    qint32      msg_size(msg.size());
+    this->proc->write(Rrd4c::int32ToArray(msg_size));
+    this->proc->write(msg_array.data(), msg_size);
+}
+
 qint32 Rrd4c::arrayToInt32(QByteArray source)
 {
     qint32 temp;
@@ -136,6 +144,7 @@ QByteArray Rrd4c::int32ToArray(qint32 source)
 void Rrd4c::procStarted()
 {
     qDebug() << "proc started";
+    this->callRrd("hello from qt");
 }
 
 void Rrd4c::procStopped(int exitCode, QProcess::ExitStatus exitStatus)

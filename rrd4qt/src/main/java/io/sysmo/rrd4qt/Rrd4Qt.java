@@ -21,20 +21,14 @@
 
 package io.sysmo.rrd4qt;
 
-import java.io.*;
+import java.nio.ByteBuffer;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
-
-/*
-import org.rrd4j.core.RrdDef;
-import org.rrd4j.core.ArcDef;
-import org.rrd4j.core.FetchData;
-import org.rrd4j.core.FetchRequest;
-import org.rrd4j.DsType;
-*/
 
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.Sample;
@@ -47,7 +41,6 @@ import java.awt.image.BufferedImage;
 import java.awt.Color;
 
 
-
 public class Rrd4Qt
 {
     public  static RrdDbPool          rrdDbPool  = null;
@@ -55,44 +48,42 @@ public class Rrd4Qt
 
     public static void main(String[] args) throws Exception
     {
-        int threadMaxPoolSize    = 20;
-        int threadCorePoolSize   = 12;
-        int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs and it is full
-
+        Rrd4Qt.rrdDbPool  = RrdDbPool.getInstance();
         Rrd4Qt.threadPool = new ThreadPoolExecutor(
-            threadCorePoolSize,
-            threadMaxPoolSize,
+            12, //thread Core Pool Size
+            20, //thread Max Pool Size
             10,
             TimeUnit.MINUTES,
-            new ArrayBlockingQueue<Runnable>(threadQueueCapacity),
+            new ArrayBlockingQueue<>(3000), // 3000 = queue capacity
             new RrdReject()
         );
 
-        Rrd4Qt.rrdDbPool = RrdDbPool.getInstance();
-        Rrd4Qt.loopIn();
-        System.out.println("hello world");
-        System.err.println("hello stderr");
-        Thread.sleep(3000);
-        System.exit(0);
-    }
-
-    private static void loopIn()
-    {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            String line;
+            InputStreamReader in = new InputStreamReader(System.in);
+            byte[] header = new byte[4];
+            char[] buffer = new char[1024];
+            int size;
+            int read;
             while (true) {
-                line = in.readLine();
-                if (line == null || line.length() == 0) {
-                    break;    // An empty line or Ctrl-Z terminates the program
-                }
-                Rrd4Qt.startWorker(line);
+                header[0] = (byte)in.read();
+                if (header[0] == -1) throw new IOException("End of stream");
+                header[1] = (byte)in.read();
+                header[2] = (byte)in.read();
+                header[3] = (byte)in.read();
+
+                size = ByteBuffer.wrap(header).getInt();
+                read = 0;
+                while (read != size) read += in.read(buffer, read, size - read);
+
+                System.err.println("got: " + new String(buffer));
             }
         }
         catch (Exception|Error e)
         {
+            System.err.println(e);
             System.exit(1);
         }
+        System.exit(0);
     }
 
     private static void startWorker(String arg)

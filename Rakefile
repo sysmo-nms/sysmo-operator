@@ -8,7 +8,7 @@ task :default => :java_ressource
 
 task :graphics => [:side_icons, :tree_pixmaps]
 
-task :java_ressource => [:rrd4qt] do
+task :java_ressource do
   rrddst = File.join(ROOT, "ressources/rrd4qt")
   rrdsrc = File.join(ROOT, "rrd4qt/build/install/rrd4qt")
   FileUtils.rm_rf(rrddst)

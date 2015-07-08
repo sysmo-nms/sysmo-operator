@@ -37,6 +37,7 @@ public slots:
     void procStopped(int exitCode, QProcess::ExitStatus exitStatus);
     void procStdoutReadyRead();
     void procStderrReadyRead();
+    void callRrd(QString msg);
 
 private:
     static Rrd4c*             singleton;
