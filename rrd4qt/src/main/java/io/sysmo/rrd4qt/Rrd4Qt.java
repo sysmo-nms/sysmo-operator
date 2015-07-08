@@ -69,6 +69,8 @@ public class Rrd4Qt
 
         rrdDbPool = RrdDbPool.getInstance();
         //loopIn();
+        System.out.println("hello world");
+        Thread.sleep(3000);
         System.exit(0);
     }
 

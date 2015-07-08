@@ -25,12 +25,13 @@ int main(int argc, char* argv[])
     /* put mac things here*/
 #elif defined Q_OS_WIN
     /* put windows things here*/
+    QApplication::setPalette(Themes::native);
+    QApplication::setStyle("fusion");
 #else
     /* other OS/X11 things here */
-    QApplication::setPalette(Themes::midnight);
+    QApplication::setPalette(Themes::native);
     QApplication::setStyle("fusion");
 #endif
-
 
     QApplication app(argc, argv);
     QApplication::setWindowIcon(QIcon(":/icons/logo.png"));

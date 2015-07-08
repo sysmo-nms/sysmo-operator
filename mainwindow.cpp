@@ -5,6 +5,7 @@ QSize MainWindow::sizeHint() const {return this->default_size;}
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
     this->supercast = new Supercast(this);
+    this->rrd4c     = new Rrd4c(this);
 
     this->setWindowIcon(QIcon(":/icons/logo.png"));
     this->setCentralWidget(new CentralWidget(this));

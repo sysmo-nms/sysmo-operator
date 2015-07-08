@@ -30,7 +30,8 @@ void SupercastSocket::socketReadyRead()
      * read header to set block_size. Only read when the header is
      * complete.
      */
-    if (this->block_size == 0) {
+    if (this->block_size == 0)
+    {
         if (this->socket->bytesAvailable() < HEADER_LEN) return;
 
         QByteArray header = this->socket->read(HEADER_LEN);

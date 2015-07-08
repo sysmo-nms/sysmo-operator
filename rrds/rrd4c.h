@@ -12,6 +12,11 @@
 #include <QJsonValue>
 #include <QStringList>
 #include <QHash>
+#include <QTemporaryDir>
+#include <QDir>
+#include <QFile>
+#include <QProcess>
+#include <QProcessEnvironment>
 
 #include <QDebug>
 
@@ -37,10 +42,16 @@ public:
 public slots:
     void socketError(QAbstractSocket::SocketError error);
     void socketConnected();
+    void procStarted();
+    void procStopped(int exitCode, QProcess::ExitStatus exitStatus);
+    void procStdoutReadyRead();
+    void procStderrReadyRead();
 
 private:
     static Rrd4c* singleton;
-    QHash<int,     Rrd4cSignal*>* queries            = NULL;
+    QTemporaryDir temporary_dir;
+    QProcess* rrd4qt_proc = NULL;
+    QHash<int, Rrd4cSignal*>* queries = NULL;
 
 private slots:
     void routeServerMessage(QJsonObject msg);
