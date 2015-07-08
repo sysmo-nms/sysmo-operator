@@ -47,7 +47,6 @@ SOURCES += main.cpp\
     network/supercasthttprequest.cpp \
     network/supercasthttpreply.cpp \
     rrds/rrd4c.cpp \
-    rrds/rrd4csocket.cpp \
     dialogs/newprobepage2.cpp \
     rrds/rrd4csignal.cpp \
     monitor/xml/parseallchecks.cpp \
@@ -94,7 +93,6 @@ HEADERS  += mainwindow.h \
     network/supercasthttprequest.h \
     network/supercasthttpreply.h \
     rrds/rrd4c.h \
-    rrds/rrd4csocket.h \
     rrds/rrd4csignal.h \
     dialogs/newprobepage2.h \
     monitor/xml/parseallchecks.h \

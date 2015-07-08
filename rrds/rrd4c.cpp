@@ -40,27 +40,97 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
     /*
      * Start the server
      */
-    this->rrd4qt_proc = new QProcess(parent);
-    this->rrd4qt_proc->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
+    this->proc = new QProcess(parent);
+    this->proc->setProcessChannelMode(QProcess::SeparateChannels);
+    this->proc->setReadChannel(QProcess::StandardOutput);
     QObject::connect(
-                this->rrd4qt_proc, SIGNAL(started()),
+                this->proc, SIGNAL(started()),
                 this, SLOT(procStarted()));
     QObject::connect(
-                this->rrd4qt_proc, SIGNAL(finished(int,QProcess::ExitStatus)),
+                this->proc, SIGNAL(finished(int,QProcess::ExitStatus)),
                 this, SLOT(procStopped(int,QProcess::ExitStatus)));
     QObject::connect(
-                this->rrd4qt_proc, SIGNAL(readyReadStandardError()),
-                this, SLOT(procStderrReadyRead()));
-    QObject::connect(
-                this->rrd4qt_proc, SIGNAL(readyReadStandardOutput()),
+                this->proc, SIGNAL(readyRead()),
                 this, SLOT(procStdoutReadyRead()));
+
+    QObject::connect(
+                this->proc, SIGNAL(readyReadStandardError()),
+                this, SLOT(procStderrReadyRead()));
+
     QString proc_path;
 #if defined Q_OS_WIN
     proc_path = bat_path;
 #else
     proc_path = sh_path;
 #endif
-    this->rrd4qt_proc->start(proc_path);
+    this->proc->start(proc_path);
+}
+
+void Rrd4c::procStdoutReadyRead()
+{
+    qDebug() << "stdout " << this->proc->readAllStandardOutput();
+    /*
+     * read header to set block_size. Only read when the header is
+     * complete.
+     */
+    if (this->block_size == 0)
+    {
+        if (this->proc->bytesAvailable() < HEADER_LEN) return;
+
+        QByteArray header = this->proc->read(HEADER_LEN);
+        this->block_size = Rrd4c::arrayToInt32(header);
+    }
+
+
+    /*
+     * We have the block_size. Only read when the payload is complete.
+     */
+    if (this->proc->bytesAvailable() < this->block_size) return;
+
+
+    /*
+     * Read and decode the payload.
+     */
+    QByteArray    payload  = this->proc->read(this->block_size);
+    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
+    QJsonObject   json_obj = json_doc.object();
+
+
+    /*
+     * Deliver the message
+     * TODO
+     */
+
+
+    /*
+     * Reinitialize block size to 0
+     */
+    this->block_size = 0;
+
+
+    /*
+     * Emit aditional readyRead() wich will call this function again
+     * without recursion (QueuedConnection).
+     */
+    if (this->proc->bytesAvailable() != 0)
+        emit this->proc->readyRead();
+
+}
+
+qint32 Rrd4c::arrayToInt32(QByteArray source)
+{
+    qint32 temp;
+    QDataStream data(&source, QIODevice::ReadWrite);
+    data >> temp;
+    return temp;
+}
+
+QByteArray Rrd4c::int32ToArray(qint32 source)
+{
+    QByteArray temp;
+    QDataStream data(&temp, QIODevice::ReadWrite);
+    data << source;
+    return temp;
 }
 
 void Rrd4c::procStarted()
@@ -75,105 +145,6 @@ void Rrd4c::procStopped(int exitCode, QProcess::ExitStatus exitStatus)
 
 void Rrd4c::procStderrReadyRead()
 {
-    qDebug() << "stderr " << this->rrd4qt_proc->readAllStandardError();
+    qDebug() << "stderr " << this->proc->readAllStandardError();
 }
 
-void Rrd4c::procStdoutReadyRead()
-{
-    qDebug() << "stdout " << this->rrd4qt_proc->readAllStandardOutput();
-
-}
-
-void Rrd4c::tryConnect(
-        QHostAddress host,
-        qint16       port)
-{
-    Rrd4cSocket* socket_t = new Rrd4cSocket(host,port);
-
-    // server -> message -> client
-    QObject::connect(
-                socket_t, SIGNAL(serverMessage(QJsonObject)),
-                this,     SLOT(routeServerMessage(QJsonObject)),
-                Qt::QueuedConnection);
-
-    // client -> message -> server
-    QObject::connect(
-                this,     SIGNAL(clientMessage(QJsonObject)),
-                socket_t, SLOT(handleClientMessage(QJsonObject)),
-                Qt::QueuedConnection);
-
-    // socket state
-    qRegisterMetaType<QAbstractSocket::SocketError>();
-    QObject::connect(
-                socket_t->socket,
-                    SIGNAL(error(QAbstractSocket::SocketError)),
-                this,
-                    SLOT(socketError(QAbstractSocket::SocketError)),
-                Qt::QueuedConnection);
-    QObject::connect(
-                socket_t->socket, SIGNAL(connected()),
-                this,             SLOT(socketConnected()),
-                Qt::QueuedConnection);
-
-    socket_t->moveToThread(&this->socket_thread);
-    QObject::connect(
-                &this->socket_thread, SIGNAL(finished()),
-                socket_t,             SLOT(deleteLater()));
-    this->socket_thread.start();
-}
-
-
-Rrd4c::~Rrd4c()
-{
-    this->socket_thread.quit();
-    this->socket_thread.wait();
-
-    delete this->queries;
-}
-
-
-/*
- * SLOTS
- */
-void Rrd4c::socketConnected()
-{
-
-}
-
-
-void Rrd4c::socketError(QAbstractSocket::SocketError error)
-{
-    emit this->connectionStatus(error);
-}
-
-
-void Rrd4c::routeServerMessage(QJsonObject msg)
-{
-    QString msg_type = msg.value("type").toString("undefined");
-    if(msg_type == "reply") {
-
-        int  queryId = msg.take("queryId").toInt(10000);
-        bool lastPdu = msg.take("lastPdu").toBool(true);
-        if (queryId == 10000) return;
-
-        Rrd4cSignal* sig = this->queries->value(queryId);
-        emit sig->serverMessage(msg);
-
-        if (lastPdu) {
-            this->queries->remove(queryId);
-            sig->deleteLater();
-        }
-
-        return;
-    }
-}
-
-void Rrd4c::sendQuery(QJsonObject query, Rrd4cSignal *reply)
-{
-    int queryId = 0;
-    while (Rrd4c::singleton->queries->contains(queryId)) queryId += 1;
-
-    Rrd4c::singleton->queries->insert(queryId, reply);
-    query.insert("queryId", queryId);
-    emit Rrd4c::singleton->clientMessage(query);
-}

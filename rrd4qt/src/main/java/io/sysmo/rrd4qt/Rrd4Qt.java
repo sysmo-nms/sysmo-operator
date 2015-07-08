@@ -50,15 +50,16 @@ import java.awt.Color;
 
 public class Rrd4Qt
 {
-    public  static RrdDbPool rrdDbPool = null;
+    public  static RrdDbPool          rrdDbPool  = null;
     private static ThreadPoolExecutor threadPool = null;
-    private static int threadMaxPoolSize    = 20;
-    private static int threadCorePoolSize   = 12;
-    private static int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs
 
-    // java.exe -classpath java_lib\*; io.sysmo.rrd4qt.Rrd4Qt --die-on-broken-pipe
-    public static void main(String[] args) throws Exception {
-        threadPool = new ThreadPoolExecutor(
+    public static void main(String[] args) throws Exception
+    {
+        int threadMaxPoolSize    = 20;
+        int threadCorePoolSize   = 12;
+        int threadQueueCapacity  = 3000; // 2 switch of 500 ports X 3 graphs and it is full
+
+        Rrd4Qt.threadPool = new ThreadPoolExecutor(
             threadCorePoolSize,
             threadMaxPoolSize,
             10,
@@ -67,9 +68,10 @@ public class Rrd4Qt
             new RrdReject()
         );
 
-        rrdDbPool = RrdDbPool.getInstance();
-        //loopIn();
+        Rrd4Qt.rrdDbPool = RrdDbPool.getInstance();
+        Rrd4Qt.loopIn();
         System.out.println("hello world");
+        System.err.println("hello stderr");
         Thread.sleep(3000);
         System.exit(0);
     }
@@ -84,7 +86,7 @@ public class Rrd4Qt
                 if (line == null || line.length() == 0) {
                     break;    // An empty line or Ctrl-Z terminates the program
                 }
-                startWorkder(line);
+                Rrd4Qt.startWorker(line);
             }
         }
         catch (Exception|Error e)
@@ -93,10 +95,10 @@ public class Rrd4Qt
         }
     }
 
-    private static void startWorkder(String arg)
+    private static void startWorker(String arg)
     {
-        RrdRunnable   worker = new RrdRunnable(arg);
-        threadPool.execute(worker);
+        RrdRunnable worker = new RrdRunnable(arg);
+        Rrd4Qt.threadPool.execute(worker);
     }
 
     public static synchronized void rrdReply(String reply)
