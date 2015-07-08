@@ -28,6 +28,7 @@ task :java_ressource => [:rrd4qt] do
 end
 
 task :rrd4qt do
+  # TODO why does this not work under win32?
   cd JAVA_DIR; sh "#{GRADLE} installDist"
 end
 

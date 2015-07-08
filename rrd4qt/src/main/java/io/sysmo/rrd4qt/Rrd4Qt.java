@@ -81,7 +81,7 @@ public class Rrd4Qt
             String line;
             while (true) {
                 line = in.readLine();
-                if (line == null && line.length() == 0) {
+                if (line == null || line.length() == 0) {
                     break;    // An empty line or Ctrl-Z terminates the program
                 }
                 startWorkder(line);
