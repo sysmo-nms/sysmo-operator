@@ -3,6 +3,14 @@
 Rrd4c* Rrd4c::singleton = NULL;
 Rrd4c* Rrd4c::getInstance() {return Rrd4c::singleton;}
 
+Rrd4c::~Rrd4c()
+{
+    emit this->proc->kill();
+    this->proc->waitForFinished();
+    delete this->proc;
+    delete this->queries;
+}
+
 Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
 {
     Rrd4c::singleton = this;

@@ -36,7 +36,7 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
                 Qt::QueuedConnection);
     http_t->moveToThread(&this->http_thread);
     QObject::connect(
-                &this->socket_thread, SIGNAL(finished()),
+                &this->http_thread, SIGNAL(finished()),
                 http_t,               SLOT(deleteLater()));
     this->http_thread.start();
 

@@ -30,6 +30,7 @@ class Rrd4c : public QObject
 
 public:
     explicit Rrd4c(QObject* parent = 0);
+    ~Rrd4c();
     static Rrd4c* getInstance();
 
 public slots:
