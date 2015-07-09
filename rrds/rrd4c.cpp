@@ -5,7 +5,7 @@ Rrd4c* Rrd4c::getInstance() {return Rrd4c::singleton;}
 
 Rrd4c::~Rrd4c()
 {
-    emit this->proc->kill();
+    this->proc->kill();
     this->proc->waitForFinished();
     delete this->proc;
     delete this->queries;
@@ -15,6 +15,7 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
 {
     Rrd4c::singleton = this;
     this->queries    = new QHash<int, Rrd4cSignal*>();
+    this->block_size = 0;
 
     /*
      * Java dir setup.
@@ -34,8 +35,8 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
     QString sh_path = QDir(bin_dir).absoluteFilePath("rrd4qt");
     QFile   sh(":/rrd4qt/rrd4qt.sh");
     sh.copy(sh_path);
-    QFile sh_final(sh_path);
-    sh_final.setPermissions(sh_final.permissions() | QFile::ExeOwner);
+    QFile sh_file(sh_path);
+    sh_file.setPermissions(sh_file.permissions() | QFile::ExeOwner);
 
     QString rrd4j_jar_path = QDir(lib_dir).absoluteFilePath("rrd4j-2.3-SNAPSHOT.jar");
     QFile   rrd4j(":/rrd4qt/rrd4j.jar");
@@ -44,6 +45,10 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
     QString rrd4qt_jar_path = QDir(lib_dir).absoluteFilePath("rrd4qt-1.0-SNAPSHOT.jar");
     QFile   rrd4qt(":/rrd4qt/rrd4qt.jar");
     rrd4qt.copy(rrd4qt_jar_path);
+
+    QString json_jar_path = QDir(lib_dir).absoluteFilePath("javax.json-1.0.4.jar");
+    QFile   json(":/rrd4qt/json.jar");
+    json.copy(json_jar_path);
 
     /*
      * Start the server
@@ -76,7 +81,6 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
 
 void Rrd4c::procStdoutReadyRead()
 {
-    qDebug() << "stdout " << this->proc->readAllStandardOutput();
     /*
      * read header to set block_size. Only read when the header is
      * complete.
@@ -89,7 +93,6 @@ void Rrd4c::procStdoutReadyRead()
         this->block_size = Rrd4c::arrayToInt32(header);
     }
 
-
     /*
      * We have the block_size. Only read when the payload is complete.
      */
@@ -100,21 +103,18 @@ void Rrd4c::procStdoutReadyRead()
      * Read and decode the payload.
      */
     QByteArray    payload  = this->proc->read(this->block_size);
-    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
-    QJsonObject   json_obj = json_doc.object();
-
+    //QJsonDocument json_doc = QJsonDocument::fromJson(payload);
+    //QJsonObject   json_obj = json_doc.object();
 
     /*
      * Deliver the message
-     * TODO
      */
-
+    qDebug() << "palyoad: " << QString(payload);
 
     /*
      * Reinitialize block size to 0
      */
     this->block_size = 0;
-
 
     /*
      * Emit aditional readyRead() wich will call this function again
@@ -122,7 +122,6 @@ void Rrd4c::procStdoutReadyRead()
      */
     if (this->proc->bytesAvailable() != 0)
         emit this->proc->readyRead();
-
 }
 
 void Rrd4c::callRrd(QString msg)
