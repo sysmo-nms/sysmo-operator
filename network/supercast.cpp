@@ -10,12 +10,12 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     this->data_base_url = QUrl();
 
     Supercast::singleton = this;
-    this->message_processors = new QHash<QString, SupercastSignal*>();
+    this->channels = new QHash<QString, SupercastSignal*>();
     this->queries       = new QHash<int, SupercastSignal*>();
     this->http_requests = new QHash<int, SupercastSignal*>();
 
     SupercastSignal* sig = new SupercastSignal(this);
-    this->message_processors->insert("supercast", sig);
+    this->channels->insert("supercast", sig);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleSupercastMessage(QJsonObject)));
@@ -39,7 +39,6 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
                 &this->http_thread, SIGNAL(finished()),
                 http_t,               SLOT(deleteLater()));
     this->http_thread.start();
-
 }
 
 
@@ -95,7 +94,7 @@ Supercast::~Supercast()
     this->http_thread.wait();
     this->socket_thread.wait();
 
-    delete this->message_processors;
+    delete this->channels;
     delete this->queries;
     delete this->http_requests;
 }
@@ -127,13 +126,13 @@ void Supercast::routeServerMessage(QJsonObject msg)
 {
 
     /*
-     * Test if message is for message_processor.
-     * TODO "subscribe" to channel should be enought?
+     * Test if message is for a channel.
      */
     QString from = msg.value("from").toString("undefined");
-    if (this->message_processors->contains(from)) {
-        SupercastSignal* sig = this->message_processors->value(from);
+    if (this->channels->contains(from)) {
+        SupercastSignal* sig = this->channels->value(from);
         emit sig->serverMessage(msg);
+        qDebug() << msg;
         return;
     }
 
@@ -175,10 +174,12 @@ void Supercast::handleSupercastMessage(QJsonObject message)
         QJsonObject val = message.value("value").toObject();
         this->data_base_url.setPort(val.value("dataPort").toInt());
         this->data_base_url.setScheme(val.value("dataProto").toString());
+    } else {
+        qDebug() << "should handle this message?";
     }
 }
 
-void Supercast::subscribe(QString channel)
+void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
 {
     QJsonObject subscribeMsg {
         {"from", "supercast"},
@@ -186,14 +187,10 @@ void Supercast::subscribe(QString channel)
         {"value", QJsonObject {
                 {"queryId", 0},
                 {"channel", channel}}}};
+    Supercast::singleton->channels->insert(channel, subscriber);
     emit Supercast::singleton->clientMessage(subscribeMsg);
 }
 
-
-void Supercast::setMessageProcessor(QString key, SupercastSignal* dest)
-{
-    Supercast::singleton->message_processors->insert(key, dest);
-}
 
 void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
 {

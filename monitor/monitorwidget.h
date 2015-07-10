@@ -43,6 +43,7 @@ public slots:
 
 private:
     static MonitorWidget* singleton;
+    Monitor* mon = NULL;
 };
 
 #endif // MONITORWIDGET_H

@@ -10,7 +10,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     /*
      * Initialize utils first
      */
-    Monitor* mon = new Monitor(this);
+    this->mon = new Monitor(this);
     new NChecks(this);
 
 
@@ -94,16 +94,6 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     grid->setRowStretch(0,0);
     grid->setRowStretch(1,1);
 
-
-    /*
-     * supercast connection
-     */
-    SupercastSignal* sig = new SupercastSignal(this);
-    QObject::connect(
-                sig, SIGNAL(serverMessage(QJsonObject)),
-                mon, SLOT(handleServerMessage(QJsonObject)));
-    Supercast::setMessageProcessor(QString("monitor"), sig);
-
 }
 
 
@@ -119,8 +109,11 @@ void MonitorWidget::connectionStatus(int status)
 {
 
     if (status == Supercast::ConnectionSuccess) {
-        Supercast::subscribe("target-MasterChan");
-
+        SupercastSignal* sig = new SupercastSignal(this);
+        QObject::connect(
+                sig, SIGNAL(serverMessage(QJsonObject)),
+                this->mon, SLOT(handleServerMessage(QJsonObject)));
+        Supercast::subscribe("monitor_main", sig);
     } else {
         // the application is in an error state.
         TreeView* tree = this->findChild<TreeView *>("MonitorTreeView");

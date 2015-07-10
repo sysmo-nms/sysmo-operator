@@ -38,9 +38,8 @@ public:
     static const int AuthenticationError = 101;
 
     // API
-    static void subscribe(QString channel);
-    static void setMessageProcessor(QString key, SupercastSignal* dest);
-    static void sendQuery(QJsonObject query, SupercastSignal* reply);
+    static void subscribe(QString     channel, SupercastSignal* subscriber);
+    static void sendQuery(QJsonObject query,   SupercastSignal* reply);
     static void httpGet(QString path, SupercastSignal* reply);
 
     // get
@@ -57,9 +56,9 @@ private:
     QString user_name;
     QString user_pass;
     QUrl    data_base_url;
-    QHash<QString, SupercastSignal*>* message_processors = NULL;
-    QHash<int,     SupercastSignal*>* queries            = NULL;
-    QHash<int,     SupercastSignal*>* http_requests      = NULL;
+    QHash<QString, SupercastSignal*>* channels      = NULL;
+    QHash<int,     SupercastSignal*>* queries       = NULL;
+    QHash<int,     SupercastSignal*>* http_requests = NULL;
 
 private slots:
     void handleSupercastMessage(QJsonObject message);

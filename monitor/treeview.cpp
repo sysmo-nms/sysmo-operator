@@ -75,7 +75,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 TreeView::~TreeView()
 {
     /*
-     * save state
+     * TODO save state
      */
 }
 
@@ -117,7 +117,9 @@ void TreeView::handleDoubleClicked(const QModelIndex index)
 
     QString name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
     if (item->type() == Sysmo::TYPE_PROBE) {
+        ProbeWindow::openWindow(name);
     } else if (item->type() == Sysmo::TYPE_TARGET) {
+
     }
 
     qDebug() << "handle double clicked " << name << item->type();
