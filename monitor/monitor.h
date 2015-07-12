@@ -2,6 +2,7 @@
 #define MONITOR_H
 
 #include "network/supercast.h"
+#include "monitor/monitorchannel.h"
 
 #include <QObject>
 #include <QHash>
@@ -21,7 +22,6 @@ public:
     static Monitor* getInstance();
     QHash<QString, QJsonObject>* targets = NULL;
     QHash<QString, QJsonObject>* probes  = NULL;
-
 
 private:
     static Monitor* singleton;

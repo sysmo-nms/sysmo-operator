@@ -5,6 +5,8 @@
 #include "ngridcontainer.h"
 #include "ngrid.h"
 #include "nframe.h"
+#include "monitor/monitor.h"
+#include "monitor/monitorchannel.h"
 
 #include <QObject>
 #include <QWidget>
@@ -18,14 +20,15 @@
 #include <QPalette>
 #include <QComboBox>
 #include <QScrollArea>
+#include <QJsonObject>
 
 #include <QDebug>
 
-class ProbeWindow : public QWidget
+class ProbeWindow : public QWidget, public MonitorChannel
 {
     Q_OBJECT
 private:
-    explicit ProbeWindow(QString probeName);
+    ProbeWindow(QString probeName);
     ~ProbeWindow();
     QString name = "";
     static QHash<QString, ProbeWindow*> windows;
@@ -33,6 +36,7 @@ private:
 
 public:
     static void openWindow(QString name);
+    void handleEvent(QJsonObject event);
 
 signals:
 

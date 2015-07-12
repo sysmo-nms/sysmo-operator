@@ -70,4 +70,3 @@ void Monitor::handleServerMessage(QJsonObject message)
         qDebug() << doc.toJson();
    }
 }
-

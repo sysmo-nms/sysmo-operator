@@ -3,7 +3,7 @@
 QHash<QString,ProbeWindow*> ProbeWindow::windows = QHash<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
-                        : QWidget()
+                        : QWidget(), MonitorChannel(probeName)
 {
     this->setWindowFlags(this->windowFlags() | Qt::Window);
     this->setWindowModality(Qt::NonModal);
@@ -68,6 +68,10 @@ ProbeWindow::~ProbeWindow()
     /*
      * TODO save state
      */
+}
+
+void ProbeWindow::handleEvent(QJsonObject event) {
+    Q_UNUSED(event);
 }
 
 void ProbeWindow::closeEvent(QCloseEvent* event)
