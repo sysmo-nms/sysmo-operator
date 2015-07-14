@@ -132,15 +132,14 @@ void Supercast::routeServerMessage(QJsonObject msg)
     if (this->channels->contains(from)) {
         SupercastSignal* sig = this->channels->value(from);
         emit sig->serverMessage(msg);
-        qDebug() << msg;
         return;
     }
 
 
-    /*
-     * Then it must be a reply message.
-     */
     QString msg_type = msg.value("type").toString("undefined");
+    /*
+     * Then it must be a reply message or subscribe reply
+     */
     if(msg_type == "reply") {
 
         int  queryId = msg.take("queryId").toInt(QUERYID_UNDEF);
@@ -158,7 +157,6 @@ void Supercast::routeServerMessage(QJsonObject msg)
         return;
     }
 
-
     qDebug() << "unknown msg type: " << msg;
 }
 
@@ -174,6 +172,10 @@ void Supercast::handleSupercastMessage(QJsonObject message)
         QJsonObject val = message.value("value").toObject();
         this->data_base_url.setPort(val.value("dataPort").toInt());
         this->data_base_url.setScheme(val.value("dataProto").toString());
+    } else if (type == "subscribeOk" || type == "subscribeErr") {
+        QString channel = message.value("value").toObject().value("channel").toString();
+        SupercastSignal* sig = this->channels->value(channel);
+        emit sig->serverMessage(message);
     } else {
         qDebug() << "should handle this message?";
     }
@@ -212,6 +214,16 @@ void Supercast::httpGet(QString path, SupercastSignal *reply)
     emit Supercast::singleton->clientHttpRequest(SupercastHttpRequest(queryId, url));
 }
 
+void Supercast::httpGet(QString path, QString dst_file, SupercastSignal *reply)
+{
+    int queryId = 0;
+    QUrl url(Supercast::singleton->data_base_url);
+    url.setPath(path);
+    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
+    Supercast::singleton->http_requests->insert(queryId, reply);
+    emit Supercast::singleton->clientHttpRequest(SupercastHttpRequest(queryId, dst_file, url));
+
+}
 
 void Supercast::handleHttpReply(SupercastHttpReply reply)
 {

@@ -6,7 +6,7 @@
 #include "ngrid.h"
 #include "nframe.h"
 #include "monitor/monitor.h"
-#include "monitor/monitorchannel.h"
+#include "monitor/monitorproxywidget.h"
 
 #include <QObject>
 #include <QWidget>
@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-class ProbeWindow : public QWidget, public MonitorChannel
+class ProbeWindow : public MonitorProxyWidget
 {
     Q_OBJECT
 private:

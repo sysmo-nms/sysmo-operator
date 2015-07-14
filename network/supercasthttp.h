@@ -13,6 +13,7 @@
 #include <QString>
 #include <QVariant>
 #include <QHash>
+#include <QFile>
 
 #include <QDebug>
 

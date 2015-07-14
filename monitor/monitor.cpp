@@ -7,8 +7,9 @@ Monitor* Monitor::getInstance() {return Monitor::singleton;}
 Monitor::Monitor(QObject *parent) : QObject(parent)
 {
     Monitor::singleton = this;
-    this->targets = new QHash<QString, QJsonObject>();
-    this->probes  = new QHash<QString, QJsonObject>();
+    this->targets  = new QHash<QString, QJsonObject>();
+    this->probes   = new QHash<QString, QJsonObject>();
+    this->channels = new QHash<QString, MonitorChannel*>();
 
 }
 
@@ -69,4 +70,24 @@ void Monitor::handleServerMessage(QJsonObject message)
         qDebug() << "received message!!" << type;
         qDebug() << doc.toJson();
    }
+}
+
+void Monitor::channelDeleted(QString chan_name)
+{
+    this->channels->remove(chan_name);
+}
+
+MonitorChannel* Monitor::getChannel(QString channel)
+{
+    Monitor* mon = Monitor::getInstance();
+    if (mon->channels->contains(channel)) {
+        return mon->channels->value(channel);
+    } else {
+        MonitorChannel* chan = new MonitorChannel(channel, mon);
+        QObject::connect(
+                    chan, SIGNAL(channelDeleted(QString)),
+                    mon,  SLOT(channelDeleted(QString)));
+        mon->channels->insert(channel, chan);
+        return chan;
+    }
 }

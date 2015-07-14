@@ -3,8 +3,9 @@
 QHash<QString,ProbeWindow*> ProbeWindow::windows = QHash<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
-                        : QWidget(), MonitorChannel(probeName)
+                        : MonitorProxyWidget()
 {
+    this->connectChan(probeName);
     this->setWindowFlags(this->windowFlags() | Qt::Window);
     this->setWindowModality(Qt::NonModal);
     this->name = probeName;

@@ -1,17 +1,39 @@
 #ifndef MONITORCHANNEL_H
 #define MONITORCHANNEL_H
 
-#include <QJsonObject>
-#include <QDebug>
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
 
-class MonitorChannel
+#include <QObject>
+#include <QDebug>
+#include <QJsonObject>
+#include <QQueue>
+#include <QHash>
+#include <QTemporaryFile>
+
+class MonitorChannel : public QObject
 {
+    Q_OBJECT
 public:
-    MonitorChannel(QString probe_name);
+    explicit MonitorChannel(QString channel, QObject *parent = 0);
     ~MonitorChannel();
 
+private:
+    QString channel;
+    int  subscriber_count = 0;
+    bool synchronized     = false;
+    bool simple_type      = false;
+    QHash<QString, QTemporaryFile> table_files;
+    QTemporaryFile simple_file;
+
+    QQueue<QJsonObject> waiting_msgs;
+
+signals:
+    void channelDeleted(QString channel_name);
+
 public slots:
-    virtual void handleEvent(QJsonObject event) = 0;
+    void handleServerEvent(QJsonObject event);
+    void httpReply(QString rep);
 
 };
 

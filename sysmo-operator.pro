@@ -58,6 +58,7 @@ SOURCES += main.cpp\
     dialogs/newprobeprogressdialog.cpp \
     monitor/channels/abstractchannel.cpp \
     windows/probewindow.cpp \
+    monitor/monitorproxywidget.cpp \
     monitor/monitorchannel.cpp
 
 HEADERS  += mainwindow.h \
@@ -105,6 +106,7 @@ HEADERS  += mainwindow.h \
     dialogs/newprobeprogressdialog.h \
     monitor/channels/abstractchannel.h \
     windows/probewindow.h \
+    monitor/monitorproxywidget.h \
     monitor/monitorchannel.h
 
 RESOURCES += \

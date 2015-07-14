@@ -20,14 +20,17 @@ public:
     explicit Monitor(QObject *parent = 0);
     ~Monitor();
     static Monitor* getInstance();
-    QHash<QString, QJsonObject>* targets = NULL;
-    QHash<QString, QJsonObject>* probes  = NULL;
+    QHash<QString, QJsonObject>*    targets  = NULL;
+    QHash<QString, QJsonObject>*    probes   = NULL;
+    QHash<QString, MonitorChannel*>* channels = NULL;
+    static MonitorChannel* getChannel(QString channel);
 
 private:
     static Monitor* singleton;
 
 public slots:
     void handleServerMessage(QJsonObject message);
+    void channelDeleted(QString chan_name);
 
 signals:
     void infoProbe(    QJsonObject message);
