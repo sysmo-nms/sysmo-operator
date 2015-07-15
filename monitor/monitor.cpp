@@ -18,6 +18,7 @@ Monitor::~Monitor()
 {
     delete this->targets;
     delete this->probes;
+    delete this->channels;
 }
 
 

@@ -10,6 +10,8 @@
 #include <QQueue>
 #include <QHash>
 #include <QTemporaryFile>
+#include <QStringList>
+#include <QStringListIterator>
 
 class MonitorChannel : public QObject
 {
@@ -23,7 +25,7 @@ private:
     int  subscriber_count = 0;
     bool synchronized     = false;
     bool simple_type      = false;
-    QHash<QString, QTemporaryFile> table_files;
+    QHash<QString, QTemporaryFile*> table_files;
     QTemporaryFile simple_file;
 
     QQueue<QJsonObject> waiting_msgs;
@@ -33,7 +35,7 @@ signals:
 
 public slots:
     void handleServerEvent(QJsonObject event);
-    void httpReply(QString rep);
+    void stepHttpReply(QString rep);
 
 };
 

@@ -88,6 +88,9 @@ void ProbeWindow::openWindow(QString name)
         win = ProbeWindow::windows.value(name);
     } else {
         win = new ProbeWindow(name);
+        QObject::connect(
+                    qApp, SIGNAL(aboutToQuit()),
+                    win,  SLOT(deleteLater()));
         ProbeWindow::windows.insert(name, win);
     }
     win->showNormal();
