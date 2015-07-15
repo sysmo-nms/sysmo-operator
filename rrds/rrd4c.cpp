@@ -28,15 +28,21 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
     QString lib_dir =  QDir(this->temporary_dir.path()).absoluteFilePath("lib");
     d.mkdir(lib_dir);
 
+    QString proc_path;
+
+#if defined Q_OS_WIN
     QString bat_path = QDir(bin_dir).absoluteFilePath("rrd4qt.bat");
     QFile   bat(":/rrd4qt/rrd4qt.bat");
     bat.copy(bat_path);
-
+    proc_path = bat_path;
+#else
     QString sh_path = QDir(bin_dir).absoluteFilePath("rrd4qt");
     QFile   sh(":/rrd4qt/rrd4qt.sh");
     sh.copy(sh_path);
     QFile sh_file(sh_path);
     sh_file.setPermissions(sh_file.permissions() | QFile::ExeOwner);
+    proc_path = sh_path;
+#endif
 
     QString rrd4j_jar_path = QDir(lib_dir).absoluteFilePath("rrd4j-2.3-SNAPSHOT.jar");
     QFile   rrd4j(":/rrd4qt/rrd4j.jar");
@@ -70,12 +76,6 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
                 this->proc, SIGNAL(readyReadStandardError()),
                 this, SLOT(procStderrReadyRead()));
 
-    QString proc_path;
-#if defined Q_OS_WIN
-    proc_path = bat_path;
-#else
-    proc_path = sh_path;
-#endif
     this->proc->start(proc_path);
 }
 
@@ -128,8 +128,16 @@ void Rrd4c::callRrd(QString msg)
 {
     QByteArray  msg_array = msg.toLocal8Bit();
     qint32      msg_size(msg.size());
-    this->proc->write(Rrd4c::int32ToArray(msg_size));
-    this->proc->write(msg_array.data(), msg_size);
+    Rrd4c::singleton->proc->write(Rrd4c::int32ToArray(msg_size));
+    Rrd4c::singleton->proc->write(msg_array.data(), msg_size);
+}
+
+void Rrd4c::callRrd(QJsonObject msg)
+{
+    QByteArray json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
+    qint32     json_size(json_array.size());
+    Rrd4c::singleton->proc->write(Rrd4c::int32ToArray(json_size));
+    Rrd4c::singleton->proc->write(json_array.data(), json_size);
 }
 
 qint32 Rrd4c::arrayToInt32(QByteArray source)
@@ -151,7 +159,7 @@ QByteArray Rrd4c::int32ToArray(qint32 source)
 void Rrd4c::procStarted()
 {
     qDebug() << "proc started";
-    this->callRrd("hello from qt");
+    Rrd4c::callRrd("hello from qtttt");
 }
 
 void Rrd4c::procStopped(int exitCode, QProcess::ExitStatus exitStatus)

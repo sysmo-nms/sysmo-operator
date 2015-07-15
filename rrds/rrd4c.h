@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QThread>
 #include <QAbstractSocket>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QStringList>
@@ -32,13 +33,14 @@ public:
     explicit Rrd4c(QObject* parent = 0);
     ~Rrd4c();
     static Rrd4c* getInstance();
+    static void callRrd(QString msg);
+    static void callRrd(QJsonObject msg);
 
 public slots:
     void procStarted();
     void procStopped(int exitCode, QProcess::ExitStatus exitStatus);
     void procStdoutReadyRead();
     void procStderrReadyRead();
-    void callRrd(QString msg);
 
 private:
     static Rrd4c*             singleton;
