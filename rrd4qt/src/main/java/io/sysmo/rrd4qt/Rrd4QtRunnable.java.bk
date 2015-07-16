@@ -25,18 +25,18 @@ class Rrd4QtRunnable implements Runnable
 
     public Rrd4QtRunnable(String line)
     {
-        strArgument = line.trim();
+        this.strArgument = line.trim();
     }
 
     @Override
     public void run()
     {
 
-        String[] rrdcmd = strArgument.split("\\|");
+        String[] rrdcmd = this.strArgument.split("\\|");
 
-        queryId         = rrdcmd[0];
+        this.queryId    = rrdcmd[0];
         String cmdType  = rrdcmd[1];
-        cmdArgs         = rrdcmd[2];
+        this.cmdArgs    = rrdcmd[2];
         //int intDebugVal = 0;
         //String debugVal = null;
         switch (cmdType)
@@ -51,21 +51,21 @@ class Rrd4QtRunnable implements Runnable
                 handleConfig();
                 break;
             default:
-                Rrd4Qt.rrdReply(queryId + "|ERROR" + cmdType);
+                Rrd4Qt.rrdReply(this.queryId + "|ERROR" + cmdType);
         }
     }
 
 
     private void handleConfig()
     {
-        String colorCfg[] = cmdArgs.split(";");
+        String colorCfg[] = this.cmdArgs.split(";");
         CustomRrdGraphDef.setDefaultColors(colorCfg);
-        Rrd4Qt.rrdReply(queryId + "|OK" + cmdArgs);
+        Rrd4Qt.rrdReply(this.queryId + "|OK" + this.cmdArgs);
     }
 
     private void handleUpdate()
     {
-        String updateCfg[] = cmdArgs.split(";");
+        String updateCfg[]  = this.cmdArgs.split(";");
         String rrdFile      = updateCfg[0];
         String timestamp    = updateCfg[1];
         String updates      = updateCfg[2];
@@ -84,14 +84,14 @@ class Rrd4QtRunnable implements Runnable
             }
             sample.update();
         } catch (Exception e) {
-            Rrd4Qt.rrdReply(queryId + "|ERROR" + e);
+            Rrd4Qt.rrdReply(this.queryId + "|ERROR" + e);
         }
-        Rrd4Qt.rrdReply(queryId + "|OK");
+        Rrd4Qt.rrdReply(this.queryId + "|OK");
     }
 
     private void handleGraph()
     {
-        String graphCfg[] = cmdArgs.split(";");
+        String graphCfg[] = this.cmdArgs.split(";");
         String title    = graphCfg[0];
         String name     = graphCfg[1];
         String vlabel   = graphCfg[2];
@@ -171,16 +171,16 @@ class Rrd4QtRunnable implements Runnable
             BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
             graph.render(bi.getGraphics());
         } catch (Exception|Error e) {
-            Rrd4Qt.rrdReply(queryId + "|" + "ERROR" + e);
+            Rrd4Qt.rrdReply(this.queryId + "|" + "ERROR" + e);
             return;
         }
-        Rrd4Qt.rrdReply(queryId + "|OK");
+        Rrd4Qt.rrdReply(this.queryId + "|OK");
     }
 
 
     public String getQueryId()
     {
-        return queryId;
+        return this.queryId;
     }
 
 }

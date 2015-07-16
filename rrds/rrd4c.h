@@ -21,6 +21,9 @@
 #include <QIODevice>
 #include <QDataStream>
 #include <QJsonDocument>
+#include <QApplication>
+#include <QPalette>
+#include <QColor>
 
 #include <QDebug>
 

@@ -103,13 +103,13 @@ void Rrd4c::procStdoutReadyRead()
      * Read and decode the payload.
      */
     QByteArray    payload  = this->proc->read(this->block_size);
-    //QJsonDocument json_doc = QJsonDocument::fromJson(payload);
-    //QJsonObject   json_obj = json_doc.object();
+    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
+    QJsonObject   json_obj = json_doc.object();
 
     /*
      * Deliver the message
      */
-    qDebug() << "palyoad: " << QString(payload);
+    qDebug() << "json_obj: " << json_obj;
 
     /*
      * Reinitialize block size to 0
@@ -156,12 +156,6 @@ QByteArray Rrd4c::int32ToArray(qint32 source)
     return temp;
 }
 
-void Rrd4c::procStarted()
-{
-    qDebug() << "proc started";
-    Rrd4c::callRrd("hello from qtttt");
-}
-
 void Rrd4c::procStopped(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "proc stoped " << exitCode << " " << exitStatus;
@@ -172,3 +166,77 @@ void Rrd4c::procStderrReadyRead()
     qDebug() << "stderr " << this->proc->readAllStandardError();
 }
 
+
+
+void Rrd4c::procStarted()
+{
+
+    /*
+     * Set default applicatio palette
+     */
+    QPalette palette = qApp->palette();
+
+    QColor color_window = palette.color(QPalette::Window);
+    QJsonObject cwindow {
+        {"red",   color_window.red()},
+        {"blue",  color_window.blue()},
+        {"green", color_window.green()},
+        {"alpha", color_window.alpha()}
+    };
+
+    QColor color_base   = palette.color(QPalette::Base);
+    QJsonObject cbase {
+        {"red",   color_base.red()},
+        {"blue",  color_base.blue()},
+        {"green", color_base.green()},
+        {"alpha", color_base.alpha()}
+    };
+
+    QColor color_dark   = palette.color(QPalette::Dark);
+    QJsonObject cdark {
+        {"red",   color_dark.red()},
+        {"blue",  color_dark.blue()},
+        {"green", color_dark.green()},
+        {"alpha", color_dark.alpha()}
+    };
+
+    QColor color_shadow = palette.color(QPalette::Shadow);
+    QJsonObject cshadow {
+        {"red",   color_shadow.red()},
+        {"blue",  color_shadow.blue()},
+        {"green", color_shadow.green()},
+        {"alpha", color_shadow.alpha()}
+    };
+
+    QColor color_font   = palette.color(QPalette::WindowText);
+    QJsonObject cfont {
+        {"red",   color_font.red()},
+        {"blue",  color_font.blue()},
+        {"green", color_font.green()},
+        {"alpha", color_font.alpha()}
+    };
+
+    QJsonObject ctransparent {
+        {"red",   0},
+        {"blue",  0},
+        {"green", 0},
+        {"alpha", 0}
+    };
+
+    QJsonObject msg {
+        {"type",    "color_config"},
+        {"queryId", 0},
+        {"BACK",    ctransparent},
+        {"CANVAS",  cbase},
+        {"SHADEA",  cwindow},
+        {"SHADEB",  cwindow},
+        {"GRID",    cdark},
+        {"MGRID",   cshadow},
+        {"FONT",    cfont},
+        {"FRAME",   cwindow},
+        {"ARROW",   cshadow},
+        {"XAXIS",   cdark}
+    };
+
+    Rrd4c::callRrd(msg);
+}

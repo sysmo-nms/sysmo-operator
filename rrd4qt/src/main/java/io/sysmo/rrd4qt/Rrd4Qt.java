@@ -12,7 +12,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -21,11 +21,11 @@
 
 package io.sysmo.rrd4qt;
 
+import java.io.CharArrayReader;
 import java.io.OutputStreamWriter;
-import java.nio.ByteBuffer;
 import java.io.InputStreamReader;
 import java.io.IOException;
-
+import java.nio.ByteBuffer;
 
 
 import java.nio.charset.Charset;
@@ -35,14 +35,21 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 
 import org.rrd4j.core.RrdDbPool;
+import org.rrd4j.graph.RrdGraphConstants;
+import org.rrd4j.graph.RrdGraphDef;
+
 import java.awt.Color;
 
+import javax.json.Json;
+import javax.json.JsonReaderFactory;
+import javax.json.JsonReader;
+import javax.json.JsonObject;
 
 public class Rrd4Qt
 {
-    public  static RrdDbPool          rrdDbPool    = null;
-    private static ThreadPoolExecutor threadPool   = null;
-    private static OutputStreamWriter outputStream = null;
+    public  static RrdDbPool          rrdDbPool  = null;
+    private static ThreadPoolExecutor threadPool = null;
+    private static OutputStreamWriter out        = null;
 
     public static void main(String[] args) throws Exception
     {
@@ -53,7 +60,7 @@ public class Rrd4Qt
         Runtime.getRuntime().addShutdownHook(
             new Thread() {
                 @Override
-                public void run() {}
+                public void run() { System.exit(0); }
             }
         );
 
@@ -67,9 +74,12 @@ public class Rrd4Qt
             new RrdReject()
         );
 
-        Rrd4Qt.outputStream = new OutputStreamWriter(System.out, Charset.forName("US-ASCII"));
+        Rrd4Qt.out = new OutputStreamWriter(
+                System.out, Charset.forName("US-ASCII"));
         try {
-            InputStreamReader in = new InputStreamReader(System.in, Charset.forName("US-ASCII"));
+            JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+            InputStreamReader in = new InputStreamReader(
+                    System.in, Charset.forName("US-ASCII"));
             byte[] header = new byte[4];
             char[] buffer = new char[1024];
             int size;
@@ -83,9 +93,17 @@ public class Rrd4Qt
 
                 size = ByteBuffer.wrap(header).getInt();
                 read = 0;
-                while (read != size) read += in.read(buffer, read, size - read);
 
-                Rrd4Qt.rrdReply("hello, you send me: " + new String(buffer, 0, size));
+                while (read != size)
+                {
+                    read += in.read(buffer, read, size - read);
+                }
+
+                CharArrayReader reader = new CharArrayReader(buffer,0,size);
+                JsonReader  jsonReader = readerFactory.createReader(reader);
+                JsonObject  jsonObject = jsonReader.readObject();
+                Rrd4QtJob       worker = new Rrd4QtJob(jsonObject);
+                Rrd4Qt.threadPool.execute(worker);
             }
         }
         catch (Exception|Error e)
@@ -96,36 +114,21 @@ public class Rrd4Qt
         System.exit(0);
     }
 
-    public static synchronized void rrdReply(String reply)
+    public static synchronized void rrdReply(JsonObject object)
     {
         try {
             ByteBuffer b = ByteBuffer.allocate(4);
+            String reply = object.toString();
             b.putInt(reply.length());
 
-            Rrd4Qt.outputStream.write(new String(b.array()) , 0, 4);
-            Rrd4Qt.outputStream.write(reply, 0, reply.length());
-            Rrd4Qt.outputStream.flush();
+            Rrd4Qt.out.write(new String(b.array()) , 0, 4);
+            Rrd4Qt.out.write(reply, 0, reply.length());
+            Rrd4Qt.out.flush();
         }
         catch (Exception e)
         {
             System.err.println(e.toString());
         }
-    }
-
-    private static void startWorker(String arg)
-    {
-        Rrd4QtRunnable worker = new Rrd4QtRunnable(arg);
-        Rrd4Qt.threadPool.execute(worker);
-    }
-
-    public static Color decodeRGBA(String hexString)
-    {
-        return new Color(
-            Integer.valueOf(hexString.substring(1,3), 16),
-            Integer.valueOf(hexString.substring(3,5), 16),
-            Integer.valueOf(hexString.substring(5,7), 16),
-            Integer.valueOf(hexString.substring(7,9), 16)
-        );
     }
 }
 
@@ -134,8 +137,133 @@ class RrdReject implements RejectedExecutionHandler
 {
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
     {
-        Rrd4QtRunnable failRunner = (Rrd4QtRunnable) r;
-        String queryId = failRunner.getQueryId();
-        Rrd4Qt.rrdReply(queryId + "|ERROR|Max thread queue reached");
+        Rrd4QtJob failRunner = (Rrd4QtJob) r;
+        int          queryId = failRunner.getQueryId();
+        JsonObject reply = Json.createObjectBuilder()
+                .add("queryId", queryId)
+                .add("reply", "Error thread queue full!")
+                .build();
+        Rrd4Qt.rrdReply(reply);
+    }
+}
+
+class Rrd4QtGraphDef extends RrdGraphDef
+{
+    private static Color BACK_C;
+    private static Color CANVAS_C;
+    private static Color SHADEA_C;
+    private static Color SHADEB_C;
+    private static Color GRID_C;
+    private static Color MGRID_C;
+    private static Color FONT_C;
+    private static Color FRAME_C;
+    private static Color ARROW_C;
+    private static Color XAXIS_C;
+
+    public Rrd4QtGraphDef()
+    {
+        super();
+        this.setColor(RrdGraphConstants.COLOR_BACK,   BACK_C);
+        this.setColor(RrdGraphConstants.COLOR_CANVAS, CANVAS_C);
+        this.setColor(RrdGraphConstants.COLOR_SHADEA, SHADEA_C);
+        this.setColor(RrdGraphConstants.COLOR_SHADEB, SHADEB_C);
+        this.setColor(RrdGraphConstants.COLOR_GRID,   GRID_C);
+        this.setColor(RrdGraphConstants.COLOR_MGRID,  MGRID_C);
+        this.setColor(RrdGraphConstants.COLOR_FONT,   FONT_C);
+        this.setColor(RrdGraphConstants.COLOR_FRAME,  FRAME_C);
+        this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
+        this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
+        this.setImageFormat("png");
+        this.setShowSignature(false);
+    }
+
+    public static void setDefaultColors(JsonObject colorCfg)
+    {
+        JsonObject col;
+        col = colorCfg.getJsonObject("BACK");
+        Rrd4QtGraphDef.BACK_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("CANVAS");
+        Rrd4QtGraphDef.CANVAS_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("SHADEA");
+        Rrd4QtGraphDef.SHADEA_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("SHADEB");
+        Rrd4QtGraphDef.SHADEB_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("GRID");
+        Rrd4QtGraphDef.GRID_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("MGRID");
+        Rrd4QtGraphDef.MGRID_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("FONT");
+        Rrd4QtGraphDef.FONT_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("FRAME");
+        Rrd4QtGraphDef.FRAME_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("ARROW");
+        Rrd4QtGraphDef.ARROW_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+
+        col = colorCfg.getJsonObject("XAXIS");
+        Rrd4QtGraphDef.XAXIS_C =
+                new Color(col.getInt("red"), col.getInt("green"),
+                        col.getInt("blue"), col.getInt("alpha"));
+    }
+
+}
+
+
+class Rrd4QtJob implements Runnable
+{
+    private JsonObject command;
+    private int        queryId;
+
+    public Rrd4QtJob(JsonObject job)
+    {
+        this.command = job;
+        this.queryId = job.getInt("queryId");
+    }
+
+    public int getQueryId() { return this.queryId; }
+
+    @Override
+    public void run()
+    {
+        System.err.println(this.command.getString("type"));
+
+        String cmdType = this.command.getString("type");
+        if (cmdType.equals("color_config")) {
+            Rrd4QtGraphDef.setDefaultColors(this.command);
+            System.err.println("ok with no errors");
+            return;
+        }
+
+        JsonObject reply = Json.createObjectBuilder()
+                .add("reply",  "Success!")
+                .add("queryId", this.queryId)
+                .build();
+
+        Rrd4Qt.rrdReply(reply);
     }
 }
