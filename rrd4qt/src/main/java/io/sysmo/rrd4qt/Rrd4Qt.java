@@ -92,7 +92,6 @@ public class Rrd4Qt
             byte[] buffer = new byte[65535];
             int    size;
             int    read;
-            int    read_h;
             int    status;
             while (true) {
                 // Get the first byte (as int 0 255 or -1 if EOF)
@@ -101,9 +100,9 @@ public class Rrd4Qt
 
                 // Then complete the header[4]
                 header[0] = (byte)status;
-                read_h    = 1; // we already have one byte of data
-                while (read_h != 4)
-                    read_h += in.read(header, read_h, 4 - read_h);
+                header[1] = (byte)in.read();
+                header[2] = (byte)in.read();
+                header[3] = (byte)in.read();
 
                 // compute the size of the message
                 size = ByteBuffer.wrap(header, 0, 4).getInt();
@@ -154,7 +153,7 @@ class RrdReject implements RejectedExecutionHandler
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
     {
         Rrd4QtJob failRunner = (Rrd4QtJob) r;
-        int          queryId = failRunner.getQueryId();
+        int      queryId = failRunner.getQueryId();
         JsonObject reply = Json.createObjectBuilder()
                 .add("queryId", queryId)
                 .add("reply", "Error thread queue full!")
@@ -253,15 +252,10 @@ class Rrd4QtGraphDef extends RrdGraphDef
 class Rrd4QtJob implements Runnable
 {
     private JsonObject command;
-    private int        queryId;
 
-    public Rrd4QtJob(JsonObject job)
-    {
-        this.command = job;
-        this.queryId = job.getInt("queryId");
-    }
+    public Rrd4QtJob(JsonObject job) { this.command = job; }
 
-    public int getQueryId() { return this.queryId; }
+    public int getQueryId() { return this.command.getInt("queryId"); }
 
     @Override
     public void run()
@@ -291,6 +285,7 @@ class Rrd4QtJob implements Runnable
         long    timestamp = (long)this.command.getInt("timestamp");
         JsonObject update = this.command.getJsonObject("updates");
         String     opaque = this.command.getString("opaque");
+        int       queryId = this.command.getInt("queryId");
 
         String replyStatus;
 
@@ -301,15 +296,14 @@ class Rrd4QtJob implements Runnable
             sample.setTime(timestamp);
 
             Set<String> updateKeys = update.keySet();
-            for (String key : updateKeys) {
+            for (String key : updateKeys)
                 sample.setValue(key, (long) update.getInt(key));
-            }
 
             sample.update();
             Rrd4Qt.rrdDbPool.release(rrdDb);
             replyStatus = "success";
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Rrd4Qt.logger.log(Level.SEVERE, e.toString());
             replyStatus = "failure";
         }
@@ -317,7 +311,7 @@ class Rrd4QtJob implements Runnable
         JsonObject reply = Json.createObjectBuilder()
                 .add("reply",   replyStatus)
                 .add("opaque",  opaque)
-                .add("queryId", this.queryId)
+                .add("queryId", queryId)
                 .build();
         Rrd4Qt.rrdReply(reply);
     }
