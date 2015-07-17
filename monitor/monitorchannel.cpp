@@ -4,7 +4,7 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent) : QObject(par
 {
     this->channel = chan_name;
     qDebug() << "should register to channel: " << channel;
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleServerEvent(QJsonObject)));
@@ -26,21 +26,25 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         this->simple_file.open();
         this->simple_file.close();
         QString file_name = this->simple_file.fileName();
-        QString dump_dir  = event.value("value").toObject().value("httpDumpDir").toString();
-        QString dump_file = event.value("value").toObject().value("rrdFile").toString();
+        QString dump_dir  = event.value("value").toObject()
+                                 .value("httpDumpDir").toString();
+        QString dump_file = event.value("value").toObject()
+                                 .value("rrdFile").toString();
         QString http_tmp = "/%1/%2";
         QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
-        SupercastSignal* sig = new SupercastSignal(this);
+        SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
                     sig,  SIGNAL(serverMessage(QString)),
-                    this, SLOT(stepHttpReply(QString)));
+                    this, SLOT(handleHttpReply(QString)));
         Supercast::httpGet(http_url, file_name, sig);
         return;
     }
     if (event.value("type").toString() == "nchecksTableDumpMessage") {
         this->simple_type = false;
-        QString dump_dir = event.value("value").toObject().value("httpDumpDir").toString();
-        QJsonObject elements_to_files = event.value("value").toObject().value("elementToFile").toObject();
+        QString dump_dir = event.value("value").toObject()
+                                .value("httpDumpDir").toString();
+        QJsonObject elements_to_files = event.value("value").toObject()
+                                             .value("elementToFile").toObject();
         QStringList elements = elements_to_files.keys();
         QStringListIterator i(elements);
         while (i.hasNext()) {
@@ -54,10 +58,10 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
 
             QString http_tmp = "/%1/%2";
             QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
-            SupercastSignal* sig = new SupercastSignal(this);
+            SupercastSignal* sig = new SupercastSignal();
             QObject::connect(
                   sig,  SIGNAL(serverMessage(QString)),
-                  this, SLOT(stepHttpReply(QString)));
+                  this, SLOT(handleHttpReply(QString)));
             Supercast::httpGet(http_url, file_name, sig);
         }
         return;
@@ -67,11 +71,33 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         return;
     }
     if (event.value("type").toString() == "nchecksSimpleUpdateMessage") {
-        qDebug() << "table update event" << event;
+        QString file_name = this->simple_file.fileName();
+        QJsonObject     val = event.value("value").toObject();
+        QJsonObject updates = val.value("rrdupdates").toObject();
+        int       timestamp = val.value("timestamp").toInt();
+        QJsonObject update_query {
+            {"type",      "update"},
+            {"updates",   updates},
+            {"file",      file_name},
+            {"timestamp", timestamp},
+            {"opaque",    "undefined"}
+        };
+
+        Rrd4cSignal* sig = new Rrd4cSignal(this);
+        QObject::connect(
+                    sig, SIGNAL(serverMessage(QJsonObject)),
+                    this, SLOT(handleRrdEvent(QJsonObject)));
+        Rrd4c::callRrd(update_query, sig);
+        //qDebug() << "call rrd: " << update_query;
         return;
     }
 }
 
-void MonitorChannel::stepHttpReply(QString rep) {
+void MonitorChannel::handleRrdEvent(QJsonObject event)
+{
+    qDebug() << "rrd event reply" << event;
+}
+
+void MonitorChannel::handleHttpReply(QString rep) {
     qDebug() << "reply is: " << rep;
 }

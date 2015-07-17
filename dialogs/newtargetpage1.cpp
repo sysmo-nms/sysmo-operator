@@ -406,7 +406,7 @@ bool NewTargetPage1::validatePage()
                         {"host", this->target_host->text()},
                         {"name", this->target_name->text()}}},
                 {"sysProperties", sysProperties}}}};
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(createTargetReply(QJsonObject)));

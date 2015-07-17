@@ -36,7 +36,7 @@ public:
     explicit Rrd4c(QObject* parent = 0);
     ~Rrd4c();
     static Rrd4c* getInstance();
-    static void callRrd(QString msg);
+    static void callRrd(QJsonObject msg, Rrd4cSignal* sig);
     static void callRrd(QJsonObject msg);
 
 public slots:
@@ -47,13 +47,13 @@ public slots:
 
 private:
     static Rrd4c*             singleton;
-    static const qint32 HEADER_LEN = 4;
-    qint32 block_size;
-    static qint32     arrayToInt32(QByteArray source);
-    static QByteArray int32ToArray(qint32 source);
+    static const qint32       HEADER_LEN = 4;
+    qint32                    block_size;
     QTemporaryDir             temporary_dir;
     QProcess*                 proc = NULL;
     QHash<int, Rrd4cSignal*>* queries = NULL;
+    static qint32     arrayToInt32(QByteArray source);
+    static QByteArray int32ToArray(qint32 source);
 
 };
 

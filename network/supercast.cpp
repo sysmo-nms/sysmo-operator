@@ -14,7 +14,7 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     this->queries       = new QHash<int, SupercastSignal*>();
     this->http_requests = new QHash<int, SupercastSignal*>();
 
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     this->channels->insert("supercast", sig);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
@@ -176,6 +176,9 @@ void Supercast::handleSupercastMessage(QJsonObject message)
         QString channel = message.value("value").toObject().value("channel").toString();
         SupercastSignal* sig = this->channels->value(channel);
         emit sig->serverMessage(message);
+    } else if (type == "unsubscribeOk" || type == "unsubscribeErr") {
+        qDebug() << "unsubseribe what? " << type;
+        return;
     } else {
         qDebug() << "should handle this message?";
     }
@@ -193,6 +196,17 @@ void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
     emit Supercast::singleton->clientMessage(subscribeMsg);
 }
 
+void Supercast::unsubscribe(QString channel)
+{
+    QJsonObject unsubscribeMsg {
+        {"from", "supercast"},
+        {"type", "unsubscribe"},
+        {"value", QJsonObject {
+                {"queryId", 0},
+                {"channel", channel}}}};
+    Supercast::singleton->channels->remove(channel);
+    emit Supercast::singleton->clientMessage(unsubscribeMsg);
+}
 
 void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
 {

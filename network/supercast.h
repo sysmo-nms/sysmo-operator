@@ -38,7 +38,8 @@ public:
     static const int AuthenticationError = 101;
 
     // API
-    static void subscribe(QString     channel, SupercastSignal* subscriber);
+    static void subscribe(QString channel, SupercastSignal* subscriber);
+    static void unsubscribe(QString channel);
     static void sendQuery(QJsonObject query,   SupercastSignal* reply);
     static void httpGet(QString path, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply);

@@ -213,7 +213,7 @@ void HelperExec::execHelper()
     this->dial->setMinimum(0);
     this->dial->setMaximum(0);
     this->dial->open();
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(helperReply(QJsonObject)));

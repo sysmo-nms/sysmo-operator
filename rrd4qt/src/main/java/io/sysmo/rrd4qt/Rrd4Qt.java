@@ -21,14 +21,9 @@
 
 package io.sysmo.rrd4qt;
 
-import java.io.CharArrayReader;
-import java.io.OutputStreamWriter;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 
-
-import java.nio.charset.Charset;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -49,7 +44,7 @@ public class Rrd4Qt
 {
     public  static RrdDbPool          rrdDbPool  = null;
     private static ThreadPoolExecutor threadPool = null;
-    private static OutputStreamWriter out        = null;
+    private static OutputStream       out        = null;
 
     public static void main(String[] args) throws Exception
     {
@@ -74,32 +69,37 @@ public class Rrd4Qt
             new RrdReject()
         );
 
-        Rrd4Qt.out = new OutputStreamWriter(
-                System.out, Charset.forName("US-ASCII"));
+        //Rrd4Qt.out = new OutputStreamWriter(System.out);
+        Rrd4Qt.out = System.out;
         try {
             JsonReaderFactory readerFactory = Json.createReaderFactory(null);
-            InputStreamReader in = new InputStreamReader(
-                    System.in, Charset.forName("US-ASCII"));
+            InputStream in = System.in;
             byte[] header = new byte[4];
-            char[] buffer = new char[1024];
+            byte[] buffer = new byte[65535];
             int size;
             int read;
+            int read_header;
             while (true) {
-                header[0] = (byte)in.read();
-                if (header[0] == -1) throw new IOException("End of stream");
-                header[1] = (byte)in.read();
-                header[2] = (byte)in.read();
-                header[3] = (byte)in.read();
 
-                size = ByteBuffer.wrap(header).getInt();
+                // Read the header
+                read_header = 0;
+                while (read_header != 4) {
+                    read_header += in.read(header,
+                                            read_header, 4 - read_header);
+                }
+
+                // compute the size of the message
+                size = ByteBuffer.wrap(header, 0, 4).getInt();
+
+                // read message
                 read = 0;
-
                 while (read != size)
                 {
                     read += in.read(buffer, read, size - read);
                 }
 
-                CharArrayReader reader = new CharArrayReader(buffer,0,size);
+                ByteArrayInputStream reader =
+                        new ByteArrayInputStream(buffer, 0, size);
                 JsonReader  jsonReader = readerFactory.createReader(reader);
                 JsonObject  jsonObject = jsonReader.readObject();
                 Rrd4QtJob       worker = new Rrd4QtJob(jsonObject);
@@ -118,11 +118,11 @@ public class Rrd4Qt
     {
         try {
             ByteBuffer b = ByteBuffer.allocate(4);
-            String reply = object.toString();
-            b.putInt(reply.length());
+            byte[] reply = object.toString().getBytes();
+            b.putInt(reply.length);
 
-            Rrd4Qt.out.write(new String(b.array()) , 0, 4);
-            Rrd4Qt.out.write(reply, 0, reply.length());
+            Rrd4Qt.out.write(b.array(), 0, 4);
+            Rrd4Qt.out.write(reply,     0, reply.length);
             Rrd4Qt.out.flush();
         }
         catch (Exception e)

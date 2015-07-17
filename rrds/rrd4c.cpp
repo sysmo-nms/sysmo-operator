@@ -109,7 +109,10 @@ void Rrd4c::procStdoutReadyRead()
     /*
      * Deliver the message
      */
-    qDebug() << "json_obj: " << json_obj;
+    int queryId = json_obj.value("queryId").toInt();
+    Rrd4cSignal* sig = this->queries->take(queryId);
+    emit sig->serverMessage(json_obj);
+    sig->deleteLater();
 
     /*
      * Reinitialize block size to 0
@@ -124,12 +127,18 @@ void Rrd4c::procStdoutReadyRead()
         emit this->proc->readyRead();
 }
 
-void Rrd4c::callRrd(QString msg)
+void Rrd4c::callRrd(QJsonObject msg, Rrd4cSignal* sig)
 {
-    QByteArray  msg_array = msg.toLocal8Bit();
-    qint32      msg_size(msg.size());
-    Rrd4c::singleton->proc->write(Rrd4c::int32ToArray(msg_size));
-    Rrd4c::singleton->proc->write(msg_array.data(), msg_size);
+    int queryId = 0;
+    while (Rrd4c::singleton->queries->contains(queryId)) queryId += 1;
+    Rrd4c::singleton->queries->insert(queryId, sig);
+
+    msg.insert("queryId", queryId);
+
+    QByteArray json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
+    qint32     json_size = json_array.size();
+    Rrd4c::singleton->proc->write(Rrd4c::int32ToArray(json_size));
+    Rrd4c::singleton->proc->write(json_array.data(), json_size);
 }
 
 void Rrd4c::callRrd(QJsonObject msg)

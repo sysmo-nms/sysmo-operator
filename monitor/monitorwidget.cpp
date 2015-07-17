@@ -109,7 +109,7 @@ void MonitorWidget::connectionStatus(int status)
 {
 
     if (status == Supercast::ConnectionSuccess) {
-        SupercastSignal* sig = new SupercastSignal(this);
+        SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
                 sig, SIGNAL(serverMessage(QJsonObject)),
                 this->mon, SLOT(handleServerMessage(QJsonObject)));

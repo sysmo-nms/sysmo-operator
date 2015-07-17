@@ -3,6 +3,8 @@
 
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
+#include "rrds/rrd4c.h"
+#include "rrds/rrd4csignal.h"
 
 #include <QObject>
 #include <QDebug>
@@ -35,7 +37,8 @@ signals:
 
 public slots:
     void handleServerEvent(QJsonObject event);
-    void stepHttpReply(QString rep);
+    void handleRrdEvent(QJsonObject    event);
+    void handleHttpReply(QString       rep);
 
 };
 
