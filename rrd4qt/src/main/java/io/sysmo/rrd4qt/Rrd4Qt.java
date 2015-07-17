@@ -43,7 +43,6 @@ import java.awt.Color;
 
 import javax.json.Json;
 import javax.json.JsonReaderFactory;
-import javax.json.JsonReader;
 import javax.json.JsonObject;
 
 /**
@@ -79,12 +78,16 @@ public class Rrd4Qt
         );
 
         /*
-         * Begin listen System.in loop;
+         * initialize in, out and json reader
          */
-        Rrd4Qt.out = System.out;
+        InputStream in = System.in;
+        Rrd4Qt.out     = System.out;
+        JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+
+        /*
+         * Begin listen "in" loop;
+         */
         try {
-            JsonReaderFactory readerFactory = Json.createReaderFactory(null);
-            InputStream in = System.in;
             byte[] header = new byte[4];
             byte[] buffer = new byte[65535];
             int    size;
@@ -117,7 +120,7 @@ public class Rrd4Qt
                         readerFactory.createReader(reader).readObject();
 
                 // Start Rrd4QtJob
-                Rrd4QtJob       worker = new Rrd4QtJob(jsonObject);
+                Rrd4QtJob worker = new Rrd4QtJob(jsonObject);
                 Rrd4Qt.threadPool.execute(worker);
             }
         }
@@ -303,6 +306,7 @@ class Rrd4QtJob implements Runnable
             }
 
             sample.update();
+            Rrd4Qt.rrdDbPool.release(rrdDb);
             replyStatus = "success";
 
         } catch (Exception e){
