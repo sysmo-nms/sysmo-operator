@@ -102,15 +102,16 @@ void Rrd4c::procStdoutReadyRead()
     /*
      * Read and decode the payload.
      */
-    QByteArray    payload  = this->proc->read(this->block_size);
+    QByteArray     payload = this->proc->read(this->block_size);
     QJsonDocument json_doc = QJsonDocument::fromJson(payload);
     QJsonObject   json_obj = json_doc.object();
 
     /*
      * Deliver the message
      */
-    int queryId = json_obj.value("queryId").toInt();
+    int      queryId = json_obj.value("queryId").toInt();
     Rrd4cSignal* sig = this->queries->take(queryId);
+
     emit sig->serverMessage(json_obj);
     sig->deleteLater();
 

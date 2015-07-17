@@ -24,12 +24,18 @@ package io.sysmo.rrd4qt;
 import java.io.*;
 import java.nio.ByteBuffer;
 
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDbPool;
+import org.rrd4j.core.Sample;
 import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 
@@ -40,25 +46,28 @@ import javax.json.JsonReaderFactory;
 import javax.json.JsonReader;
 import javax.json.JsonObject;
 
+/**
+ * Created by Sebastien Serre on 09/07/15
+ */
+
 public class Rrd4Qt
 {
-    public  static RrdDbPool          rrdDbPool  = null;
     private static ThreadPoolExecutor threadPool = null;
     private static OutputStream       out        = null;
+    public  static RrdDbPool          rrdDbPool  = null;
+    public  static Logger             logger     = null;
 
     public static void main(String[] args) throws Exception
     {
+        /*
+         * Init logger (default ConsoleLogger to System.err).
+         */
+        Rrd4Qt.logger = Logger.getLogger("rrd4qt");
+        Rrd4Qt.logger.setLevel(Level.ALL);
 
         /*
-         * Catch kill
+         * init thread pool and rrdDbPool
          */
-        Runtime.getRuntime().addShutdownHook(
-            new Thread() {
-                @Override
-                public void run() { System.exit(0); }
-            }
-        );
-
         Rrd4Qt.rrdDbPool  = RrdDbPool.getInstance();
         Rrd4Qt.threadPool = new ThreadPoolExecutor(
             12, //thread Core Pool Size
@@ -69,49 +78,53 @@ public class Rrd4Qt
             new RrdReject()
         );
 
-        //Rrd4Qt.out = new OutputStreamWriter(System.out);
+        /*
+         * Begin listen System.in loop;
+         */
         Rrd4Qt.out = System.out;
         try {
             JsonReaderFactory readerFactory = Json.createReaderFactory(null);
             InputStream in = System.in;
             byte[] header = new byte[4];
             byte[] buffer = new byte[65535];
-            int size;
-            int read;
-            int read_header;
+            int    size;
+            int    read;
+            int    read_h;
+            int    status;
             while (true) {
+                // Get the first byte (as int 0 255 or -1 if EOF)
+                status = in.read();
+                if (status == -1) throw new IOException("STDIN broken");
 
-                // Read the header
-                read_header = 0;
-                while (read_header != 4) {
-                    read_header += in.read(header,
-                                            read_header, 4 - read_header);
-                }
+                // Then complete the header[4]
+                header[0] = (byte)status;
+                read_h    = 1; // we already have one byte of data
+                while (read_h != 4)
+                    read_h += in.read(header, read_h, 4 - read_h);
 
                 // compute the size of the message
                 size = ByteBuffer.wrap(header, 0, 4).getInt();
 
-                // read message
+                // Now we can read the message
                 read = 0;
                 while (read != size)
-                {
                     read += in.read(buffer, read, size - read);
-                }
 
+                // Create a json object from the buffer
                 ByteArrayInputStream reader =
                         new ByteArrayInputStream(buffer, 0, size);
-                JsonReader  jsonReader = readerFactory.createReader(reader);
-                JsonObject  jsonObject = jsonReader.readObject();
+                JsonObject jsonObject =
+                        readerFactory.createReader(reader).readObject();
+
+                // Start Rrd4QtJob
                 Rrd4QtJob       worker = new Rrd4QtJob(jsonObject);
                 Rrd4Qt.threadPool.execute(worker);
             }
         }
-        catch (Exception|Error e)
+        catch (Exception e)
         {
-            System.err.println(e);
             System.exit(1);
         }
-        System.exit(0);
     }
 
     public static synchronized void rrdReply(JsonObject object)
@@ -127,7 +140,7 @@ public class Rrd4Qt
         }
         catch (Exception e)
         {
-            System.err.println(e.toString());
+            Rrd4Qt.logger.log(Level.SEVERE, e.toString());
         }
     }
 }
@@ -250,20 +263,68 @@ class Rrd4QtJob implements Runnable
     @Override
     public void run()
     {
-        System.err.println(this.command.getString("type"));
+        Rrd4Qt.logger.log(Level.INFO, this.command.toString());
 
         String cmdType = this.command.getString("type");
-        if (cmdType.equals("color_config")) {
-            Rrd4QtGraphDef.setDefaultColors(this.command);
-            System.err.println("ok with no errors");
-            return;
+        switch (cmdType) {
+            case "graph":
+                this.handleGraph();
+                break;
+            case "update":
+                this.handleUpdate();
+                break;
+            case "color_config":
+                this.handleConfig();
+                break;
+            default:
+                Rrd4Qt.logger.log(Level.SEVERE, "Unknown command: " + cmdType);
+        }
+    }
+
+    private void handleUpdate()
+    {
+        // get arguments
+        String    rrdFile = this.command.getString("file");
+        long    timestamp = (long)this.command.getInt("timestamp");
+        JsonObject update = this.command.getJsonObject("updates");
+        String     opaque = this.command.getString("opaque");
+
+        String replyStatus;
+
+        // open and write rrd db
+        try {
+            RrdDb   rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
+            Sample sample = rrdDb.createSample();
+            sample.setTime(timestamp);
+
+            Set<String> updateKeys = update.keySet();
+            for (String key : updateKeys) {
+                sample.setValue(key, (long) update.getInt(key));
+            }
+
+            sample.update();
+            replyStatus = "success";
+
+        } catch (Exception e){
+            Rrd4Qt.logger.log(Level.SEVERE, e.toString());
+            replyStatus = "failure";
         }
 
         JsonObject reply = Json.createObjectBuilder()
-                .add("reply",  "Success!")
+                .add("reply",   replyStatus)
+                .add("opaque",  opaque)
                 .add("queryId", this.queryId)
                 .build();
-
         Rrd4Qt.rrdReply(reply);
+    }
+
+    private void handleGraph()
+    {
+
+    }
+
+    private void handleConfig()
+    {
+        Rrd4QtGraphDef.setDefaultColors(this.command);
     }
 }

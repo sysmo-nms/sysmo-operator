@@ -88,7 +88,6 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
                     sig, SIGNAL(serverMessage(QJsonObject)),
                     this, SLOT(handleRrdEvent(QJsonObject)));
         Rrd4c::callRrd(update_query, sig);
-        //qDebug() << "call rrd: " << update_query;
         return;
     }
 }
