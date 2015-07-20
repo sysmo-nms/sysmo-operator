@@ -3,9 +3,8 @@
 QHash<QString,ProbeWindow*> ProbeWindow::windows = QHash<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
-                        : MonitorProxyWidget()
+                        : MonitorProxyWidget(probeName)
 {
-    this->connectChan(probeName);
     this->setWindowFlags(this->windowFlags() | Qt::Window);
     this->setWindowModality(Qt::NonModal);
     this->name = probeName;
@@ -72,7 +71,7 @@ ProbeWindow::~ProbeWindow()
 }
 
 void ProbeWindow::handleEvent(QJsonObject event) {
-    Q_UNUSED(event);
+    qDebug() << "handle event event event:.........................." << event;
 }
 
 void ProbeWindow::closeEvent(QCloseEvent* event)

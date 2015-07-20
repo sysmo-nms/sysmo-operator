@@ -5,6 +5,7 @@
 #include "monitor/monitorchannel.h"
 
 #include <QObject>
+#include <QWidget>
 #include <QHash>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -13,6 +14,27 @@
 
 #include <QDebug>
 
+
+class MonitorProxyWidget : public QWidget
+{
+    Q_OBJECT
+protected:
+    QString my_channel;
+
+public:
+    explicit MonitorProxyWidget(QString channel, QWidget *parent = 0);
+    ~MonitorProxyWidget();
+
+public slots:
+    virtual void handleEvent(QJsonObject) = 0;
+    void connectToChannel();
+
+signals:
+    void connectMe();
+
+};
+
+
 class Monitor : public QObject
 {
     Q_OBJECT
@@ -20,10 +42,11 @@ public:
     explicit Monitor(QObject *parent = 0);
     ~Monitor();
     static Monitor* getInstance();
-    QHash<QString, QJsonObject>*    targets  = NULL;
-    QHash<QString, QJsonObject>*    probes   = NULL;
+    QHash<QString, QJsonObject>*     targets  = NULL;
+    QHash<QString, QJsonObject>*     probes   = NULL;
     QHash<QString, MonitorChannel*>* channels = NULL;
-    static MonitorChannel* getChannel(QString channel);
+    static void subscribeToChannel(QString channel, MonitorProxyWidget* subscriber);
+    static void unsubscribeToChannel(QString channel);
 
 private:
     static Monitor* singleton;

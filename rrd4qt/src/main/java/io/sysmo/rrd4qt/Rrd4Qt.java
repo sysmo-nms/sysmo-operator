@@ -78,10 +78,9 @@ public class Rrd4Qt
         );
 
         /*
-         * initialize in, out and json reader
+         * initialize out and json reader
          */
-        InputStream in = System.in;
-        Rrd4Qt.out     = System.out;
+        Rrd4Qt.out = System.out;
         JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
         /*
@@ -93,6 +92,7 @@ public class Rrd4Qt
             int    size;
             int    read;
             int    status;
+            InputStream in = System.in;
             while (true) {
                 // Get the first byte (as int 0 255 or -1 if EOF)
                 status = in.read();

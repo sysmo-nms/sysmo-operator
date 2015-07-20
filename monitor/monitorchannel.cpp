@@ -3,6 +3,7 @@
 MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
     : QObject(parent)
 {
+    qDebug() << "new channel?????";
     this->channel = chan_name;
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
@@ -13,6 +14,8 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
 
 MonitorChannel::~MonitorChannel()
 {
+    qDebug() << "deleted??? ";
+    Supercast::unsubscribe(this->channel);
     emit this->channelDeleted(this->channel);
 }
 
@@ -197,5 +200,19 @@ void MonitorChannel::handleHttpReplyTable(QString element) {
         while (!this->pending_updates.isEmpty())
                 this->handleServerEvent(this->pending_updates.dequeue());
         qDebug() << "should emit update table graph";
+    }
+}
+
+void MonitorChannel::increaseSubscriberCount()
+{
+    this->subscriber_count += 1;
+}
+
+void MonitorChannel::decreaseSubscriberCount()
+{
+    this->subscriber_count -= 1;
+    if (this->subscriber_count == 0) {
+        qDebug() << "decrease and close";
+        this->deleteLater();
     }
 }

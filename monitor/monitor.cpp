@@ -75,20 +75,67 @@ void Monitor::handleServerMessage(QJsonObject message)
 
 void Monitor::channelDeleted(QString chan_name)
 {
+    qDebug() << "remove chan Monitor";
     this->channels->remove(chan_name);
 }
 
-MonitorChannel* Monitor::getChannel(QString channel)
+void Monitor::unsubscribeToChannel(QString channel)
 {
     Monitor* mon = Monitor::getInstance();
     if (mon->channels->contains(channel)) {
-        return mon->channels->value(channel);
+        MonitorChannel* chan = mon->channels->value(channel);
+        chan->decreaseSubscriberCount();
+    }
+}
+
+void Monitor::subscribeToChannel(
+        QString channel,
+        MonitorProxyWidget* subscriber)
+{
+    // TEST BEGIN
+    QJsonObject ex {
+        {"from", "jojojojoj"}
+    };
+    subscriber->handleEvent(ex);
+    // TEST END
+
+    Monitor* mon = Monitor::getInstance();
+    if (mon->channels->contains(channel)) {
+        MonitorChannel* chan = mon->channels->value(channel);
+        chan->increaseSubscriberCount();
     } else {
         MonitorChannel* chan = new MonitorChannel(channel, mon);
         QObject::connect(
                     chan, SIGNAL(channelDeleted(QString)),
                     mon,  SLOT(channelDeleted(QString)));
+        chan->increaseSubscriberCount();
         mon->channels->insert(channel, chan);
-        return chan;
     }
 }
+
+
+
+
+MonitorProxyWidget::MonitorProxyWidget(
+        QString channel,
+        QWidget *parent) : QWidget(parent)
+{
+    this->my_channel = channel;
+    QObject::connect(
+                this, SIGNAL(connectMe()),
+                this, SLOT(connectToChannel()),
+                Qt::QueuedConnection);
+    emit this->connectMe();
+}
+
+void MonitorProxyWidget::connectToChannel()
+{
+    Monitor::subscribeToChannel(this->my_channel, this);
+}
+
+MonitorProxyWidget::~MonitorProxyWidget()
+{
+    qDebug() << "close chann proxy";
+    Monitor::unsubscribeToChannel(this->my_channel);
+}
+

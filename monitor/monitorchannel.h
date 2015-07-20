@@ -37,6 +37,12 @@ private:
 
     QQueue<QJsonObject> waiting_msgs;
 
+
+public:
+    void increaseSubscriberCount();
+    void decreaseSubscriberCount();
+    QJsonObject getDumpInfo();
+
 signals:
     void channelDeleted(QString channel_name);
 

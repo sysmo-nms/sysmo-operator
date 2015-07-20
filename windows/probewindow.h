@@ -6,7 +6,6 @@
 #include "ngrid.h"
 #include "nframe.h"
 #include "monitor/monitor.h"
-#include "monitor/monitorproxywidget.h"
 
 #include <QObject>
 #include <QWidget>
