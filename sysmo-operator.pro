@@ -56,7 +56,6 @@ SOURCES += main.cpp\
     monitor/xml/parsecheckmakeform.cpp \
     dialogs/newprobepage3.cpp \
     dialogs/newprobeprogressdialog.cpp \
-    monitor/channels/abstractchannel.cpp \
     windows/probewindow.cpp \
     monitor/monitorchannel.cpp
 
@@ -103,7 +102,6 @@ HEADERS  += mainwindow.h \
     monitor/xml/parsecheckmakeform.h \
     dialogs/newprobepage3.h \
     dialogs/newprobeprogressdialog.h \
-    monitor/channels/abstractchannel.h \
     windows/probewindow.h \
     monitor/monitorchannel.h
 
