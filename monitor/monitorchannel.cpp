@@ -81,7 +81,8 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
     if (event.value("type").toString() == "nchecksSimpleUpdateMessage") {
         /*
          * Do not accept events while not synchronized or another
-         * event is not yet completely processed
+         * event is not yet completely processed.
+         * Equeue it for later processing.
          */
         if (!this->synchronized || this->locked) {
             this->pending_updates.enqueue(event);
@@ -205,7 +206,8 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
     if (event.value("type").toString() == "nchecksTableUpdateMessage") {
         /*
          * Do not accept events while not synchronized or another
-         * event is not yet completely processed
+         * event is not yet completely processed.
+         * Equeue it for later processing.
          */
         if (!this->synchronized || this->locked) {
             this->pending_updates.enqueue(event);
