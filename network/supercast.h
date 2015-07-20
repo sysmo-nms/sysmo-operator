@@ -43,6 +43,7 @@ public:
     static void sendQuery(QJsonObject query,   SupercastSignal* reply);
     static void httpGet(QString path, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply);
+    static void httpGet(QString path, QString dst_file, SupercastSignal* reply, QString opaque);
 
     // get
     static Supercast* getInstance();

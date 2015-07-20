@@ -239,6 +239,22 @@ void Supercast::httpGet(QString path, QString dst_file, SupercastSignal *reply)
 
 }
 
+void Supercast::httpGet(
+        QString          path,
+        QString          dst_file,
+        SupercastSignal* reply,
+        QString          opaque)
+{
+    int queryId = 0;
+    QUrl url(Supercast::singleton->data_base_url);
+    url.setPath(path);
+    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
+    Supercast::singleton->http_requests->insert(queryId, reply);
+    SupercastHttpRequest request(queryId, dst_file, url, opaque);
+    emit Supercast::singleton->clientHttpRequest(request);
+
+}
+
 void Supercast::handleHttpReply(SupercastHttpReply reply)
 {
     int queryId = reply.id;

@@ -1,9 +1,9 @@
 #include "monitorchannel.h"
 
-MonitorChannel::MonitorChannel(QString chan_name, QObject *parent) : QObject(parent)
+MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
+    : QObject(parent)
 {
     this->channel = chan_name;
-    qDebug() << "should register to channel: " << channel;
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
@@ -14,15 +14,17 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent) : QObject(par
 MonitorChannel::~MonitorChannel()
 {
     emit this->channelDeleted(this->channel);
-    qDebug() << "should unregister channel: " << channel;
 }
 
 void MonitorChannel::handleServerEvent(QJsonObject event)
 {
     if (event.value("type").toString() == "subscribeOk")  return;
     if (event.value("type").toString() == "subscribeErr") return;
+
+    /*
+     * Simple dump and messages
+     */
     if (event.value("type").toString() == "nchecksSimpleDumpMessage") {
-        this->simple_type = true;
         this->simple_file.open();
         this->simple_file.close();
         QString file_name = this->simple_file.fileName();
@@ -35,42 +37,16 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
                     sig,  SIGNAL(serverMessage(QString)),
-                    this, SLOT(handleHttpReply(QString)));
+                    this, SLOT(handleHttpReplySimple(QString)));
         Supercast::httpGet(http_url, file_name, sig);
         return;
     }
-    if (event.value("type").toString() == "nchecksTableDumpMessage") {
-        this->simple_type = false;
-        QString dump_dir = event.value("value").toObject()
-                                .value("httpDumpDir").toString();
-        QJsonObject elements_to_files = event.value("value").toObject()
-                                             .value("elementToFile").toObject();
-        QStringList elements = elements_to_files.keys();
-        QStringListIterator i(elements);
-        while (i.hasNext()) {
-            QString element = i.next();
-            QString dump_file = elements_to_files.value(element).toString();
-            QTemporaryFile* file = new QTemporaryFile(this);
-            file->open();
-            file->close();
-            QString file_name = file->fileName();
-            this->table_files.insert(element, file);
 
-            QString http_tmp = "/%1/%2";
-            QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
-            SupercastSignal* sig = new SupercastSignal();
-            QObject::connect(
-                  sig,  SIGNAL(serverMessage(QString)),
-                  this, SLOT(handleHttpReply(QString)));
-            Supercast::httpGet(http_url, file_name, sig);
-        }
-        return;
-    }
-    if (event.value("type").toString() == "nchecksTableUpdateMessage") {
-        qDebug() << "table update event" << event;
-        return;
-    }
     if (event.value("type").toString() == "nchecksSimpleUpdateMessage") {
+        if (!this->synchronized) {
+            this->pending_updates.enqueue(event);
+            return;
+        }
         QString file_name = this->simple_file.fileName();
         QJsonObject     val = event.value("value").toObject();
         QJsonObject updates = val.value("rrdupdates").toObject();
@@ -90,6 +66,48 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         Rrd4c::callRrd(update_query, sig);
         return;
     }
+
+    /*
+     * Table dump and messages
+     */
+    if (event.value("type").toString() == "nchecksTableDumpMessage") {
+        qDebug() << "event table dump: " << event;
+        QString dump_dir = event.value("value").toObject()
+                                .value("httpDumpDir").toString();
+        QJsonObject elements_to_files = event.value("value").toObject()
+                                             .value("elementToFile").toObject();
+        QStringList elements = elements_to_files.keys();
+        QStringListIterator i(elements);
+        while (i.hasNext()) {
+            QString element = i.next();
+            QString dump_file = elements_to_files.value(element).toString();
+            QTemporaryFile* file = new QTemporaryFile(this);
+            file->open();
+            file->close();
+            QString file_name = file->fileName();
+
+            QString http_tmp = "/%1/%2";
+            QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
+            SupercastSignal* sig = new SupercastSignal();
+            QObject::connect(
+                  sig,  SIGNAL(serverMessage(QString)),
+                  this, SLOT(handleHttpReplyTable(QString)));
+            Supercast::httpGet(http_url, file_name, sig, element);
+            this->table_files.insert(element, file_name);
+            this->table_files_update_status.insert(file_name, false);
+
+        }
+        return;
+    }
+    if (event.value("type").toString() == "nchecksTableUpdateMessage") {
+        if (!this->synchronized) {
+            this->pending_updates.enqueue(event);
+            return;
+        }
+
+        qDebug() << "table update event" << event;
+        return;
+    }
 }
 
 void MonitorChannel::handleRrdEvent(QJsonObject event)
@@ -97,6 +115,13 @@ void MonitorChannel::handleRrdEvent(QJsonObject event)
     qDebug() << "rrd event reply" << event;
 }
 
-void MonitorChannel::handleHttpReply(QString rep) {
+void MonitorChannel::handleHttpReplySimple(QString rep) {
+    qDebug() << "reply is: " << rep;
+    this->synchronized = true;
+    while (!this->pending_updates.isEmpty())
+        this->handleServerEvent(this->pending_updates.dequeue());
+}
+
+void MonitorChannel::handleHttpReplyTable(QString rep) {
     qDebug() << "reply is: " << rep;
 }

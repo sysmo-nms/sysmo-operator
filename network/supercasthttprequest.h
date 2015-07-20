@@ -12,9 +12,11 @@ public:
     SupercastHttpRequest();
     SupercastHttpRequest(int request_id, QUrl request_url);
     SupercastHttpRequest(int request_id, QString dst_file, QUrl request_url);
+    SupercastHttpRequest(int request_id, QString dst_file, QUrl request_url, QString opaque);
     QString dst_file = "none";
-    int  id;
-    QUrl url;
+    int     id;
+    QUrl    url;
+    QString opaque = "undefined";
 };
 
 #endif // SUPERCASTHTTPREQUEST_H

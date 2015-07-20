@@ -278,6 +278,8 @@ class Rrd4QtJob implements Runnable
         }
     }
 
+    private void handleConfig() {Rrd4QtGraphDef.setDefaultColors(this.command);}
+
     private void handleUpdate()
     {
         // get arguments
@@ -321,8 +323,4 @@ class Rrd4QtJob implements Runnable
 
     }
 
-    private void handleConfig()
-    {
-        Rrd4QtGraphDef.setDefaultColors(this.command);
-    }
 }

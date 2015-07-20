@@ -14,6 +14,7 @@
 #include <QTemporaryFile>
 #include <QStringList>
 #include <QStringListIterator>
+#include <QQueue>
 
 class MonitorChannel : public QObject
 {
@@ -26,8 +27,10 @@ private:
     QString channel;
     int  subscriber_count = 0;
     bool synchronized     = false;
-    bool simple_type      = false;
-    QHash<QString, QTemporaryFile*> table_files;
+    QHash<QString, QString> table_files;
+    QHash<QString, bool>    table_files_update_status;
+    QQueue<QJsonObject>     pending_updates;
+
     QTemporaryFile simple_file;
 
     QQueue<QJsonObject> waiting_msgs;
@@ -38,7 +41,8 @@ signals:
 public slots:
     void handleServerEvent(QJsonObject event);
     void handleRrdEvent(QJsonObject    event);
-    void handleHttpReply(QString       rep);
+    void handleHttpReplySimple(QString rep);
+    void handleHttpReplyTable(QString  rep);
 
 };
 

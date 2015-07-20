@@ -14,6 +14,7 @@
 #include <QVariant>
 #include <QHash>
 #include <QFile>
+#include <QMetaType>
 
 #include <QDebug>
 
@@ -31,6 +32,10 @@ public slots:
 private slots:
     void handleNetworkReply(QNetworkReply* reply);
 
+private:
+    static QNetworkRequest::Attribute att_request;
+    static QNetworkRequest::Attribute att_opaque;
+    static QNetworkRequest::Attribute att_dstfile;
 signals:
     void serverReply(SupercastHttpReply reply);
 };
