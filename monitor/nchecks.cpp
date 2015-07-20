@@ -53,7 +53,7 @@ void NChecks::handleAllChecksReply(QString body)
          it != result->end();
          ++it)
     {
-        SupercastSignal* sig = new SupercastSignal();
+        SupercastSignal* sig = new SupercastSignal(this);
         QObject::connect(
                     sig, SIGNAL(serverMessage(QString)),
                     this, SLOT(handleCheckDefDeply(QString)));
