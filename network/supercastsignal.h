@@ -9,7 +9,7 @@ class SupercastSignal : public QObject
     Q_OBJECT
 
 public:
-    explicit SupercastSignal();
+    explicit SupercastSignal(QObject* parent = 0);
 
 signals:
     void serverMessage(QJsonObject json);

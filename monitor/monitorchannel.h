@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QQueue>
 #include <QHash>
 #include <QHashIterator>
@@ -26,8 +27,10 @@ public:
 
 private:
     QString channel;
+    QString chan_type = "none";
     int  subscriber_count = 0;
     bool synchronized     = false;
+    bool locked           = false;
     QHash<QString, QString> table_files;
     QHash<QString, bool>    table_files_update_status;
     QHash<QString, bool>    table_file_rrd_pending;
@@ -37,17 +40,21 @@ private:
 
     QQueue<QJsonObject> waiting_msgs;
 
+    QJsonObject buildDump();
+
 
 public:
     void increaseSubscriberCount();
     void decreaseSubscriberCount();
     QJsonObject getDumpInfo();
+    bool hasDumpInfo();
 
 signals:
     void channelDeleted(QString channel_name);
+    void channelEvent(QJsonObject event);
 
 public slots:
-    void handleServerEvent(QJsonObject event);
+    void handleServerEvent(QJsonObject    event);
     void handleRrdEventSimple(QJsonObject event);
     void handleRrdEventTable(QJsonObject  event);
     void handleHttpReplySimple(QString rep);

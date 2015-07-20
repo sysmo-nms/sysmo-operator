@@ -78,7 +78,7 @@ void MenuTarget::deleteTarget()
             }
         }
     };
-    SupercastSignal* sig = new SupercastSignal();
+    SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(deleteTargetReply(QJsonObject)));

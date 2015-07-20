@@ -82,6 +82,13 @@ void ProbeWindow::closeEvent(QCloseEvent* event)
 
 void ProbeWindow::openWindow(QString name)
 {
+    /*
+    //MULTIPLE SUBSCRIBE BEGIN
+    ProbeWindow* win = new ProbeWindow(name);
+    win->showNormal();
+    //TEST CASE END
+    */
+
     ProbeWindow* win = NULL;
     if (ProbeWindow::windows.contains(name)) {
         win = ProbeWindow::windows.value(name);

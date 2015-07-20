@@ -5,17 +5,21 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
 {
     qDebug() << "new channel?????";
     this->channel = chan_name;
-    SupercastSignal* sig = new SupercastSignal();
+    SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleServerEvent(QJsonObject)));
+    /*
+    QObject::connect(
+                qApp, SIGNAL(aboutToQuit()),
+                this, SLOT(deleteLater()));
+                */
     Supercast::subscribe(chan_name, sig);
 }
 
 MonitorChannel::~MonitorChannel()
 {
     qDebug() << "deleted??? ";
-    Supercast::unsubscribe(this->channel);
     emit this->channelDeleted(this->channel);
 }
 
@@ -28,6 +32,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
      * Simple dump and messages
      */
     if (event.value("type").toString() == "nchecksSimpleDumpMessage") {
+        this->chan_type = "simple";
         this->simple_file.open();
         this->simple_file.close();
         QString file_name = this->simple_file.fileName();
@@ -37,7 +42,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
                                  .value("rrdFile").toString();
         QString http_tmp = "/%1/%2";
         QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
-        SupercastSignal* sig = new SupercastSignal();
+        SupercastSignal* sig = new SupercastSignal(this);
         QObject::connect(
                     sig,  SIGNAL(serverMessage(QString)),
                     this, SLOT(handleHttpReplySimple(QString)));
@@ -46,10 +51,11 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
     }
 
     if (event.value("type").toString() == "nchecksSimpleUpdateMessage") {
-        if (!this->synchronized) {
+        if (!this->synchronized || this->locked) {
             this->pending_updates.enqueue(event);
             return;
         }
+        this->locked = true;
         QString file_name = this->simple_file.fileName();
         QJsonObject     val = event.value("value").toObject();
         QJsonObject updates = val.value("rrdupdates").toObject();
@@ -74,7 +80,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
      * Table dump and messages
      */
     if (event.value("type").toString() == "nchecksTableDumpMessage") {
-        qDebug() << "event table dump: " << event;
+        this->chan_type = "table";
         QString dump_dir = event.value("value").toObject()
                                 .value("httpDumpDir").toString();
         QJsonObject elements_to_files = event.value("value").toObject()
@@ -92,7 +98,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             qDebug() << "table fname: " << file_name;
             QString http_tmp = "/%1/%2";
             QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
-            SupercastSignal* sig = new SupercastSignal();
+            SupercastSignal* sig = new SupercastSignal(this);
             QObject::connect(
                   sig,  SIGNAL(serverMessage(QString)),
                   this, SLOT(handleHttpReplyTable(QString)));
@@ -104,10 +110,11 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         return;
     }
     if (event.value("type").toString() == "nchecksTableUpdateMessage") {
-        if (!this->synchronized) {
+        if (!this->synchronized || this->locked) {
             this->pending_updates.enqueue(event);
             return;
         }
+        this->locked = true;
 
         QJsonObject val       = event.value("value").toObject();
         QJsonObject updates   = val.value("rrdupdates").toObject();
@@ -157,25 +164,29 @@ void MonitorChannel::handleRrdEventTable(QJsonObject event)
         }
     }
     if (!pending_rrds) {
-        qDebug() << "updating rrds ended!!!!!!!!!!!!!!";
-        qDebug() << "should emit update table graph";
+        emit this->channelEvent(QJsonObject {{"type", "update"}});
+        this->locked = false;
+        if (!this->pending_updates.isEmpty())
+            this->handleServerEvent(this->pending_updates.dequeue());
     }
 }
 
 void MonitorChannel::handleRrdEventSimple(QJsonObject event)
 {
-    qDebug() << "rrd simple event reply" << event;
-    qDebug() << "should emit update simple graph";
+    Q_UNUSED(event);
+    emit this->channelEvent(QJsonObject {{"type", "update"}});
+    this->locked = false;
+    if (!this->pending_updates.isEmpty())
+        this->handleServerEvent(this->pending_updates.dequeue());
 }
 
 void MonitorChannel::handleHttpReplySimple(QString rep) {
-    qDebug() << "reply is: " << rep;
+    Q_UNUSED(rep);
     this->synchronized = true;
-    while (!this->pending_updates.isEmpty())
+    this->locked = false;
+    emit this->channelEvent(this->buildDump());
+    if (!this->pending_updates.isEmpty())
         this->handleServerEvent(this->pending_updates.dequeue());
-
-    qDebug() << "should emit update simple graph";
-
 }
 
 void MonitorChannel::handleHttpReplyTable(QString element) {
@@ -195,11 +206,11 @@ void MonitorChannel::handleHttpReplyTable(QString element) {
     }
 
     if (all_files_ready) {
-        qDebug() << "all files ready!!!!!!!!!!!!";
         this->synchronized = true;
-        while (!this->pending_updates.isEmpty())
-                this->handleServerEvent(this->pending_updates.dequeue());
-        qDebug() << "should emit update table graph";
+        this->locked = false;
+        emit this->channelEvent(this->buildDump());
+        if (!this->pending_updates.isEmpty())
+            this->handleServerEvent(this->pending_updates.dequeue());
     }
 }
 
@@ -213,6 +224,40 @@ void MonitorChannel::decreaseSubscriberCount()
     this->subscriber_count -= 1;
     if (this->subscriber_count == 0) {
         qDebug() << "decrease and close";
+        Supercast::unsubscribe(this->channel);
         this->deleteLater();
+    }
+}
+
+bool MonitorChannel::hasDumpInfo() {return this->synchronized;}
+QJsonObject MonitorChannel::getDumpInfo()
+{
+    return this->buildDump();
+}
+
+QJsonObject MonitorChannel::buildDump()
+{
+    if (this->chan_type == "simple") {
+        return QJsonObject {
+            {"type", "simple"},
+            {"file", this->simple_file.fileName()}
+        };
+    } else if (this->chan_type == "table") {
+        QJsonObject id_to_files;
+        QHash<QString,QString>::iterator i;
+        for (
+             i  = this->table_files.begin();
+             i != this->table_files.end();
+             ++i)
+        {
+            id_to_files.insert(i.key(), QJsonValue(i.value()));
+        }
+
+        return QJsonObject {
+            {"type",        "table"},
+            {"id_to_files", id_to_files}
+        };
+    } else {
+        return QJsonObject();
     }
 }

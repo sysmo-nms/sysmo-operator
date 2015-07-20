@@ -10,11 +10,11 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     this->data_base_url = QUrl();
 
     Supercast::singleton = this;
-    this->channels = new QHash<QString, SupercastSignal*>();
+    this->channels      = new QHash<QString, SupercastSignal*>();
     this->queries       = new QHash<int, SupercastSignal*>();
     this->http_requests = new QHash<int, SupercastSignal*>();
 
-    SupercastSignal* sig = new SupercastSignal();
+    SupercastSignal* sig = new SupercastSignal(this);
     this->channels->insert("supercast", sig);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
@@ -92,7 +92,11 @@ Supercast::~Supercast()
     this->socket_thread.quit();
 
     this->http_thread.wait();
+    this->http_thread.deleteLater();
+
     this->socket_thread.wait();
+    this->socket_thread.deleteLater();
+
 
     delete this->channels;
     delete this->queries;
@@ -204,7 +208,8 @@ void Supercast::unsubscribe(QString channel)
         {"value", QJsonObject {
                 {"queryId", 0},
                 {"channel", channel}}}};
-    Supercast::singleton->channels->remove(channel);
+    SupercastSignal* sig = Supercast::singleton->channels->take(channel);
+    sig->deleteLater();
     emit Supercast::singleton->clientMessage(unsubscribeMsg);
 }
 

@@ -45,8 +45,10 @@ public:
     QHash<QString, QJsonObject>*     targets  = NULL;
     QHash<QString, QJsonObject>*     probes   = NULL;
     QHash<QString, MonitorChannel*>* channels = NULL;
-    static void subscribeToChannel(QString channel, MonitorProxyWidget* subscriber);
-    static void unsubscribeToChannel(QString channel);
+    static void subscribeToChannel(
+            QString channel, MonitorProxyWidget* subscriber);
+    static void unsubscribeToChannel(
+            QString channel, MonitorProxyWidget* subscriber);
 
 private:
     static Monitor* singleton;

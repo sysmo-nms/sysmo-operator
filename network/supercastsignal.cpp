@@ -1,3 +1,3 @@
 #include "supercastsignal.h"
 
-SupercastSignal::SupercastSignal() : QObject() {}
+SupercastSignal::SupercastSignal(QObject* parent) : QObject(parent) {}

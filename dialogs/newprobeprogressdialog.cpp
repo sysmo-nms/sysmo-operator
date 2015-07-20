@@ -29,7 +29,7 @@ NewProbeProgressDialog::NewProbeProgressDialog(
                 {"class",      probe_class},
                 {"properties", props}}}};
 
-    SupercastSignal* sig = new SupercastSignal();
+    SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
                 sig, SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(createProbeReply(QJsonObject)));

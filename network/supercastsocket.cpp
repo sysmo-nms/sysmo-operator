@@ -48,7 +48,7 @@ void SupercastSocket::socketReadyRead()
     /*
      * Read and decode the payload.
      */
-    QByteArray    payload  = this->socket->read(this->block_size);
+    QByteArray     payload = this->socket->read(this->block_size);
     QJsonDocument json_doc = QJsonDocument::fromJson(payload);
     QJsonObject   json_obj = json_doc.object();
 
