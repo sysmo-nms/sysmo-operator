@@ -11,6 +11,7 @@
 #include <QJsonObject>
 #include <QQueue>
 #include <QHash>
+#include <QHashIterator>
 #include <QTemporaryFile>
 #include <QStringList>
 #include <QStringListIterator>
@@ -29,6 +30,7 @@ private:
     bool synchronized     = false;
     QHash<QString, QString> table_files;
     QHash<QString, bool>    table_files_update_status;
+    QHash<QString, bool>    table_file_rrd_pending;
     QQueue<QJsonObject>     pending_updates;
 
     QTemporaryFile simple_file;
@@ -40,7 +42,8 @@ signals:
 
 public slots:
     void handleServerEvent(QJsonObject event);
-    void handleRrdEvent(QJsonObject    event);
+    void handleRrdEventSimple(QJsonObject event);
+    void handleRrdEventTable(QJsonObject  event);
     void handleHttpReplySimple(QString rep);
     void handleHttpReplyTable(QString  rep);
 

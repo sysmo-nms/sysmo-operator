@@ -47,12 +47,9 @@ void SupercastHTTP::handleNetworkReply(QNetworkReply* net_reply)
                                         .attribute(SupercastHTTP::att_dstfile)
                                         .toString();
 
-    if (dst_file == "none" && opaque == "undefined") {
+    if (dst_file == "none") {
         QString            reply_body(net_reply->readAll());
         SupercastHttpReply reply(request_id, reply_body);
-        emit this->serverReply(reply);
-    } else if (opaque != "undefined") {
-        SupercastHttpReply reply(request_id, opaque);
         emit this->serverReply(reply);
     } else {
         QFile file(dst_file);
@@ -60,8 +57,13 @@ void SupercastHTTP::handleNetworkReply(QNetworkReply* net_reply)
         file.write(net_reply->readAll());
         file.close();
 
-        SupercastHttpReply reply(request_id, dst_file);
-        emit this->serverReply(reply);
+        if (opaque == "undefined") {
+            SupercastHttpReply reply(request_id, dst_file);
+            emit this->serverReply(reply);
+        } else {
+            SupercastHttpReply reply(request_id, opaque);
+            emit this->serverReply(reply);
+        }
     }
     net_reply->deleteLater();
 }

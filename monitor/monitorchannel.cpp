@@ -59,10 +59,10 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             {"opaque",    "undefined"}
         };
 
-        Rrd4cSignal* sig = new Rrd4cSignal(this);
+        Rrd4cSignal* sig = new Rrd4cSignal();
         QObject::connect(
                     sig, SIGNAL(serverMessage(QJsonObject)),
-                    this, SLOT(handleRrdEvent(QJsonObject)));
+                    this, SLOT(handleRrdEventSimple(QJsonObject)));
         Rrd4c::callRrd(update_query, sig);
         return;
     }
@@ -86,6 +86,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             file->close();
             QString file_name = file->fileName();
 
+            qDebug() << "table fname: " << file_name;
             QString http_tmp = "/%1/%2";
             QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
             SupercastSignal* sig = new SupercastSignal();
@@ -94,7 +95,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
                   this, SLOT(handleHttpReplyTable(QString)));
             Supercast::httpGet(http_url, file_name, sig, element);
             this->table_files.insert(element, file_name);
-            this->table_files_update_status.insert(file_name, false);
+            this->table_files_update_status.insert(element, false);
 
         }
         return;
@@ -105,14 +106,63 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             return;
         }
 
-        qDebug() << "table update event" << event;
+        QJsonObject val       = event.value("value").toObject();
+        QJsonObject updates   = val.value("rrdupdates").toObject();
+        int         timestamp = val.value("timestamp").toInt();
+        QStringList updates_indexes = updates.keys();
+        QStringListIterator i(updates_indexes);
+        this->table_file_rrd_pending.clear();
+        while (i.hasNext()) {
+            QString id       = i.next();
+            QString tRrdFile = this->table_files.value(id);
+            QJsonObject up = updates.value(id).toObject();
+            QJsonObject update_query {
+                {"type",      "update"},
+                {"updates",   up},
+                {"file",      tRrdFile},
+                {"timestamp", timestamp},
+                {"opaque",    id}
+            };
+            this->table_file_rrd_pending.insert(id, true);
+
+            Rrd4cSignal* sig = new Rrd4cSignal();
+            QObject::connect(
+                        sig,  SIGNAL(serverMessage(QJsonObject)),
+                        this, SLOT(handleRrdEventTable(QJsonObject)));
+            Rrd4c::callRrd(update_query, sig);
+        }
+        qDebug() << "table update event" << updates;
         return;
     }
 }
 
-void MonitorChannel::handleRrdEvent(QJsonObject event)
+void MonitorChannel::handleRrdEventTable(QJsonObject event)
 {
-    qDebug() << "rrd event reply" << event;
+    QString id = event.value("opaque").toString();
+    this->table_file_rrd_pending.insert(id, false);
+
+    QHash<QString, bool>::iterator i;
+    bool pending_rrds = false;
+    for (
+         i  = this->table_file_rrd_pending.begin();
+         i != this->table_file_rrd_pending.end();
+         ++i)
+    {
+        if (i.value()) {
+            pending_rrds = true;
+            break;
+        }
+    }
+    if (!pending_rrds) {
+        qDebug() << "updating rrds ended!!!!!!!!!!!!!!";
+        qDebug() << "should emit update table graph";
+    }
+}
+
+void MonitorChannel::handleRrdEventSimple(QJsonObject event)
+{
+    qDebug() << "rrd simple event reply" << event;
+    qDebug() << "should emit update simple graph";
 }
 
 void MonitorChannel::handleHttpReplySimple(QString rep) {
@@ -120,8 +170,32 @@ void MonitorChannel::handleHttpReplySimple(QString rep) {
     this->synchronized = true;
     while (!this->pending_updates.isEmpty())
         this->handleServerEvent(this->pending_updates.dequeue());
+
+    qDebug() << "should emit update simple graph";
+
 }
 
-void MonitorChannel::handleHttpReplyTable(QString rep) {
-    qDebug() << "reply is: " << rep;
+void MonitorChannel::handleHttpReplyTable(QString element) {
+    this->table_files_update_status.insert(element, true);
+
+    bool all_files_ready = true;
+    QHash<QString, bool>::iterator i;
+    for (
+         i  = this->table_files_update_status.begin();
+         i != this->table_files_update_status.end();
+         ++i)
+    {
+        if (!i.value()) {
+            all_files_ready = false;
+            break;
+        }
+    }
+
+    if (all_files_ready) {
+        qDebug() << "all files ready!!!!!!!!!!!!";
+        this->synchronized = true;
+        while (!this->pending_updates.isEmpty())
+                this->handleServerEvent(this->pending_updates.dequeue());
+        qDebug() << "should emit update table graph";
+    }
 }
