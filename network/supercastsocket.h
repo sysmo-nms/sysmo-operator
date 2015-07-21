@@ -27,6 +27,7 @@ public slots:
 private:
     qint32 block_size;
     static const qint32 HEADER_LEN = 4;
+
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32 source);
 

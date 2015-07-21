@@ -145,7 +145,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
          * Extract dump informations
          */
         QJsonObject    content =   event.value("value").toObject();
-        QString       dump_dir = content.value("httoDumpDir").toString();
+        QString       dump_dir = content.value("httpDumpDir").toString();
         QJsonObject id_to_file = content.value("elementToFile").toObject();
 
 
@@ -182,6 +182,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
              */
             QString http_tmp = "/%1/%2";
             QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
+            qDebug() << "http dump dir is: " << http_url;
 
 
             /*

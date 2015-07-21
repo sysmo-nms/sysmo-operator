@@ -30,21 +30,20 @@ ProbeWindow::ProbeWindow(QString probeName)
     QXmlSimpleReader        reader;
     QXmlInputSource*         input = new QXmlInputSource();
     ParseCheckMakeGraphCMD* parser = new ParseCheckMakeGraphCMD();
+
     input->setData(NChecks::getCheck(probe_id));
     reader.setContentHandler(parser);
     reader.setErrorHandler(parser);
+
     reader.parse(input);
-    QJsonObject config = parser->config;
-    qDebug() << "parser return: " << config.keys();
-    QJsonObject graphs = config.take("graphs").toObject();
-    qDebug() << "parser return: " << config;
-    qDebug() << "parser return: " << graphs;
+
+    this->rrd_config = parser->config;
     delete parser;
     delete input;
 
 
-    /*
-     * begin layout
+    /**
+     * begin generic layout
      */
     // top log area controls
     NFrame* log_controls = new NFrame(this);
@@ -65,11 +64,11 @@ ProbeWindow::ProbeWindow(QString probeName)
     lc_grid->setColumnStretch(4,1);
 
     // bottom log area graphs
-    QScrollArea* log_scroll = new QScrollArea(this);
-    log_scroll->setAutoFillBackground(true);
-    log_scroll->setBackgroundRole(QPalette::Window);
-    log_scroll->setFrameShape(QFrame::Panel);
-    log_scroll->setFrameShadow(QFrame::Sunken);
+    this->scroll_area = new QScrollArea(this);
+    this->scroll_area->setAutoFillBackground(true);
+    this->scroll_area->setBackgroundRole(QPalette::Window);
+    this->scroll_area->setFrameShape(QFrame::Panel);
+    this->scroll_area->setFrameShadow(QFrame::Sunken);
 
     // log area container
     NFrameContainer* log_area = new NFrameContainer(this);
@@ -83,7 +82,7 @@ ProbeWindow::ProbeWindow(QString probeName)
     log_area->setLayout(log_area_grid);
 
     log_area_grid->addWidget(log_controls, 0,0);
-    log_area_grid->addWidget(log_scroll, 1,0);
+    log_area_grid->addWidget(this->scroll_area, 1,0);
 
     // status bar
     this->status_bar = new QStatusBar(this);
@@ -95,10 +94,13 @@ ProbeWindow::ProbeWindow(QString probeName)
     grid->setRowStretch(0,1);
     grid->setRowStretch(1,0);
     this->setLayout(grid);
+
     /*
-     * end layout
+     * end generic layout
      */
+
 }
+
 
 ProbeWindow::~ProbeWindow()
 {
@@ -108,9 +110,39 @@ ProbeWindow::~ProbeWindow()
      */
 }
 
+
 void ProbeWindow::handleEvent(QJsonObject event) {
-    qDebug() << "handle event event event:.........................." << event;
+    /*
+     * graph_content will be the child of the scrollarea (scroll.setWidget())
+    NFrame* graph_content = new NFrame();
+     */
+
+    /*
+     * Test if type is "simple" or "table".
+     */
+    /*
+    if (this->rrd_config.value("type").toString() == "simple")
+    {
+        NGrid* simple_grid = new NGrid();
+        graph_content->setLayout(simple_grid);
+        QJsonObject js_graphs = this->rrd_config.value("graphs").toObject();
+        QStringListIterator i(js_graphs.keys());
+        int row = 0;
+        while (i.hasNext())
+        {
+            QString key = i.next();
+            QLabel* lab = new QLabel(key, graph_content);
+            lab->setFixedHeight(300);
+            simple_grid->addWidget(lab, row, 0);
+            row = row + 1;
+        }
+    }
+
+    */
+
+    qDebug() << "handle event:.........................." << event;
 }
+
 
 void ProbeWindow::closeEvent(QCloseEvent* event)
 {
@@ -118,15 +150,12 @@ void ProbeWindow::closeEvent(QCloseEvent* event)
     this->deleteLater();
 }
 
+
+/*
+ * STATIC
+ */
 void ProbeWindow::openWindow(QString name)
 {
-    /*
-    //MULTIPLE SUBSCRIBE BEGIN
-    ProbeWindow* win = new ProbeWindow(name);
-    win->showNormal();
-    //TEST CASE END
-    */
-
     ProbeWindow* win = NULL;
 
     /*

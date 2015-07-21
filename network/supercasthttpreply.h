@@ -7,12 +7,10 @@ class SupercastHttpReply
 {
 public:
     /*
-     * Default constructor for qRegisterMetaType
+     * Default constructor for qRegisterMetaType?
      */
     SupercastHttpReply();
     SupercastHttpReply(int request_id, QString reply_body);
-    //SupercastHttpReply(const SupercastHttpReply &obj);
-    //~SupercastHttpReply();
     int     id;
     QString body;
 };

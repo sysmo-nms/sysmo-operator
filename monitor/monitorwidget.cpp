@@ -108,7 +108,7 @@ MonitorWidget::~MonitorWidget()
 void MonitorWidget::connectionStatus(int status)
 {
 
-    if (status == Supercast::ConnectionSuccess) {
+    if (status == Supercast::CONNECTION_SUCCESS) {
         SupercastSignal* sig = new SupercastSignal(this);
         QObject::connect(
                 sig, SIGNAL(serverMessage(QJsonObject)),

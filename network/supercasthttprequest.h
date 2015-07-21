@@ -7,16 +7,26 @@ class SupercastHttpRequest
 {
 public:
     /*
-     * Default constructor for qRegisterMetaType
+     * Default constructor for qRegisterMetaType?
      */
     SupercastHttpRequest();
-    SupercastHttpRequest(int request_id, QUrl request_url);
-    SupercastHttpRequest(int request_id, QString dst_file, QUrl request_url);
-    SupercastHttpRequest(int request_id, QString dst_file, QUrl request_url, QString opaque);
-    QString dst_file = "none";
+    SupercastHttpRequest(
+            int  request_id,
+            QUrl request_url);
+    SupercastHttpRequest(
+            int     request_id,
+            QString dst_file,
+            QUrl    request_url);
+    SupercastHttpRequest(
+            int     request_id,
+            QString dst_file,
+            QUrl    request_url,
+            QString opaque);
+
     int     id;
     QUrl    url;
-    QString opaque = "undefined";
+    QString dst_file = "none";
+    QString   opaque = "undefined";
 };
 
 #endif // SUPERCASTHTTPREQUEST_H

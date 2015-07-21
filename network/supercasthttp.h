@@ -36,6 +36,7 @@ private:
     static QNetworkRequest::Attribute att_request;
     static QNetworkRequest::Attribute att_opaque;
     static QNetworkRequest::Attribute att_dstfile;
+
 signals:
     void serverReply(SupercastHttpReply reply);
 };

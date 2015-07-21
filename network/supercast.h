@@ -34,8 +34,8 @@ public:
             qint16       port,
             QString      user_name,
             QString      user_pass);
-    static const int ConnectionSuccess   = 100;
-    static const int AuthenticationError = 101;
+    static const int CONNECTION_SUCCESS   = 100;
+    static const int AUTHENTICATION_ERROR = 101;
 
     // API
     static void subscribe(QString channel, SupercastSignal* subscriber);
@@ -45,7 +45,7 @@ public:
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply, QString opaque);
 
-    // get
+    // singleton
     static Supercast* getInstance();
 
 public slots:

@@ -46,14 +46,17 @@ public slots:
     void procStderrReadyRead();
 
 private:
-    static Rrd4c*             singleton;
-    static const qint32       HEADER_LEN = 4;
-    qint32                    block_size;
-    QTemporaryDir             temporary_dir;
-    QProcess*                 proc = NULL;
+    static Rrd4c* singleton;
+    static const qint32 HEADER_LEN = 4;
+
+    qint32        block_size;
+    QTemporaryDir temporary_dir;
+
+    QProcess*                 proc    = NULL;
     QHash<int, Rrd4cSignal*>* queries = NULL;
+
     static qint32     arrayToInt32(QByteArray source);
-    static QByteArray int32ToArray(qint32 source);
+    static QByteArray int32ToArray(qint32     source);
 
 };
 

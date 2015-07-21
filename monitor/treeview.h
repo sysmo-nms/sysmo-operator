@@ -22,7 +22,6 @@
 #include <QFile>
 #include <QIODevice>
 #include <QPoint>
-#include <QStandardItemModel>
 #include <QStandardItem>
 #include <QModelIndex>
 
@@ -36,10 +35,11 @@ public:
     explicit TreeView(QWidget* parent = 0);
     ~TreeView();
     void stopTimer();
+
     QSortFilterProxyModel* filter_model   = NULL;
-    QStandardItemModel*    original_model = NULL;
-    MenuTarget* target_menu = NULL;
-    MenuProbe*  probe_menu  = NULL;
+    TreeModel*             original_model = NULL;
+    MenuTarget*            target_menu    = NULL;
+    MenuProbe*             probe_menu     = NULL;
 
 public slots:
     void expandIndex(QModelIndex index);

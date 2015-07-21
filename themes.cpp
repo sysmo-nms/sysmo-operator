@@ -8,6 +8,10 @@ QPalette Themes::native   = Themes::initNative();
 
 QPalette Themes::initNative()
 {
+    /*
+     * Start a fake QApplication to hava an initialized
+     * system QPalette.
+     */
     int   fake_argc = 0;
     char* fake_argv[0];
     QApplication fake_app(fake_argc, fake_argv);

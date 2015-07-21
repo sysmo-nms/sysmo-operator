@@ -3,11 +3,9 @@
 
 #include <QWidget>
 #include <QFrame>
-#include <QObject>
 
 class NFrame: public QFrame
 {
-    Q_OBJECT
 
 public:
     explicit NFrame(QWidget* parent = 0);

@@ -135,6 +135,7 @@ void Supercast::routeServerMessage(QJsonObject msg)
     QString from = msg.value("from").toString("undefined");
     if (this->channels->contains(from)) {
         SupercastSignal* sig = this->channels->value(from);
+
         emit sig->serverMessage(msg);
         return;
     }
@@ -142,7 +143,7 @@ void Supercast::routeServerMessage(QJsonObject msg)
 
     QString msg_type = msg.value("type").toString("undefined");
     /*
-     * Then it must be a reply message or subscribe reply
+     * Then it should be a reply message or subscribe reply
      */
     if(msg_type == "reply") {
 
@@ -151,40 +152,54 @@ void Supercast::routeServerMessage(QJsonObject msg)
         if (queryId == QUERYID_UNDEF) return;
 
         SupercastSignal* sig = this->queries->value(queryId);
+
         emit sig->serverMessage(msg);
 
         if (lastPdu) {
             this->queries->remove(queryId);
             sig->deleteLater();
         }
-
         return;
     }
 
-    qDebug() << "unknown msg type: " << msg;
+    qCritical() << "unknown msg type: " << msg;
 }
 
 
 void Supercast::handleSupercastMessage(QJsonObject message)
 {
     QString type = message.value("type").toString("undefined");
-    if (type == "authAck") {
-        emit this->connectionStatus(Supercast::ConnectionSuccess);
-    } else if (type == "authErr") {
-        emit this->connectionStatus(Supercast::AuthenticationError);
-    } else if (type == "serverInfo") {
+    if (type == "authAck")
+    {
+        emit this->connectionStatus(Supercast::CONNECTION_SUCCESS);
+    }
+    else if (type == "authErr")
+    {
+        emit this->connectionStatus(Supercast::AUTHENTICATION_ERROR);
+    }
+    else if (type == "serverInfo")
+    {
         QJsonObject val = message.value("value").toObject();
         this->data_base_url.setPort(val.value("dataPort").toInt());
         this->data_base_url.setScheme(val.value("dataProto").toString());
-    } else if (type == "subscribeOk" || type == "subscribeErr") {
-        QString channel = message.value("value").toObject().value("channel").toString();
+    }
+    else if (type == "subscribeOk" || type == "subscribeErr")
+    {
+        QString channel = message.value("value")
+                                 .toObject()
+                                 .value("channel")
+                                 .toString();
         SupercastSignal* sig = this->channels->value(channel);
+
         emit sig->serverMessage(message);
-    } else if (type == "unsubscribeOk" || type == "unsubscribeErr") {
-        qDebug() << "unsubseribe what? " << type;
-        return;
-    } else {
-        qDebug() << "should handle this message?";
+    }
+    else if (type == "unsubscribeOk" || type == "unsubscribeErr")
+    {
+        qDebug() << "unsubscribe channel: " << type;
+    }
+    else
+    {
+        qWarning() << "should handle this message?: " << message;
     }
 }
 
@@ -196,7 +211,9 @@ void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
         {"value", QJsonObject {
                 {"queryId", 0},
                 {"channel", channel}}}};
+
     Supercast::singleton->channels->insert(channel, subscriber);
+
     emit Supercast::singleton->clientMessage(subscribeMsg);
 }
 
@@ -210,6 +227,7 @@ void Supercast::unsubscribe(QString channel)
                 {"channel", channel}}}};
     SupercastSignal* sig = Supercast::singleton->channels->take(channel);
     sig->deleteLater();
+
     emit Supercast::singleton->clientMessage(unsubscribeMsg);
 }
 
@@ -220,27 +238,38 @@ void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
 
     Supercast::singleton->queries->insert(queryId, reply);
     query.insert("queryId", queryId);
+
     emit Supercast::singleton->clientMessage(query);
 }
 
 void Supercast::httpGet(QString path, SupercastSignal *reply)
 {
-    int queryId = 0;
+
+
+    int  queryId = 0;
+    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
+
+    Supercast::singleton->http_requests->insert(queryId, reply);
+
     QUrl url(Supercast::singleton->data_base_url);
     url.setPath(path);
-    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
-    Supercast::singleton->http_requests->insert(queryId, reply);
-    emit Supercast::singleton->clientHttpRequest(SupercastHttpRequest(queryId, url));
+
+    emit Supercast::singleton->clientHttpRequest(
+                                        SupercastHttpRequest(queryId, url));
 }
 
 void Supercast::httpGet(QString path, QString dst_file, SupercastSignal *reply)
 {
     int queryId = 0;
+    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
+
+    Supercast::singleton->http_requests->insert(queryId, reply);
+
     QUrl url(Supercast::singleton->data_base_url);
     url.setPath(path);
-    while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
-    Supercast::singleton->http_requests->insert(queryId, reply);
-    emit Supercast::singleton->clientHttpRequest(SupercastHttpRequest(queryId, dst_file, url));
+
+    emit Supercast::singleton->clientHttpRequest(
+                                SupercastHttpRequest(queryId, dst_file, url));
 
 }
 
@@ -251,19 +280,22 @@ void Supercast::httpGet(
         QString          opaque)
 {
     int queryId = 0;
-    QUrl url(Supercast::singleton->data_base_url);
-    url.setPath(path);
     while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
     Supercast::singleton->http_requests->insert(queryId, reply);
-    SupercastHttpRequest request(queryId, dst_file, url, opaque);
-    emit Supercast::singleton->clientHttpRequest(request);
 
+    QUrl url(Supercast::singleton->data_base_url);
+    url.setPath(path);
+
+    emit Supercast::singleton->clientHttpRequest(
+                        SupercastHttpRequest(queryId, dst_file, url, opaque));
 }
 
 void Supercast::handleHttpReply(SupercastHttpReply reply)
 {
     int queryId = reply.id;
     SupercastSignal* sig = Supercast::singleton->http_requests->take(queryId);
+
     emit sig->serverMessage(reply.body);
+
     sig->deleteLater();
 }

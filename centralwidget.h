@@ -3,7 +3,6 @@
 
 #include "ngrid.h"
 #include "ngridcontainer.h"
-#include "nframe.h"
 #include "nframecontainer.h"
 #include "sidebutton.h"
 #include "monitor/monitorwidget.h"
@@ -11,8 +10,6 @@
 
 #include <QObject>
 #include <QWidget>
-#include <QGridLayout>
-#include <QLabel>
 #include <QButtonGroup>
 #include <QStackedLayout>
 #include <QSize>
@@ -20,12 +17,13 @@
 
 class CentralWidget : public NFrameContainer
 {
-    Q_OBJECT
+
+private:
+    static const int APP_MONITOR   = 0;
+    static const int APP_DASHBOARD = 1;
 
 public:
     explicit CentralWidget(QWidget* parent = 0);
-    static const int MonitorApp   = 0;
-    static const int DashboardApp = 1;
 };
 
 #endif // CENTRALWIDGET_H

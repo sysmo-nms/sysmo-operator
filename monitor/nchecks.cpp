@@ -23,7 +23,7 @@ NChecks::NChecks(QObject *parent) : QObject(parent)
 void NChecks::connectionStatus(int status)
 {
 
-    if (status != Supercast::ConnectionSuccess) return;
+    if (status != Supercast::CONNECTION_SUCCESS) return;
 
     SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(

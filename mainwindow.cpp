@@ -4,24 +4,39 @@ QSize MainWindow::sizeHint() const {return this->default_size;}
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
+    /*
+     * Initialize supercast.
+     */
     this->supercast = new Supercast(this);
+
+
+    /*
+     * Initialize rrd4c-> Will effectively start the java rrd4qt process.
+     */
     this->rrd4c     = new Rrd4c(this);
 
+
+    /*
+     * Generic things
+     */
     this->setWindowIcon(QIcon(":/icons/logo.png"));
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
 
-    // TODO init QMessageLogger
 
+    /*
+     * Fill the menu bar
+     */
     QMenuBar* menu_bar  = this->menuBar();
     QMenu*    main_menu = menu_bar->addMenu("Sysmo");
 
-    QAction*  action_exit = new QAction("&Exit", this);
+    QAction* action_exit = new QAction("&Exit", this);
     action_exit->setIcon(QIcon(":/icons/system-log-out.png"));
     action_exit->setShortcut(QKeySequence("Ctrl+Q"));
     QObject::connect(
                 action_exit, SIGNAL(triggered(bool)),
                 this,        SLOT(close()));
+
     QAction* action_proxy_conf  = new QAction("&Proxy configuration...",  this);
     QAction* action_doc_engine  = new QAction("&Configure doc engine...", this);
     QAction* action_updates     = new QAction("&Check for updates...",    this);
@@ -31,6 +46,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     QObject::connect(
                 action_full_screen, SIGNAL(triggered(bool)),
                 this,               SLOT(toggleFullScreen()));
+
     main_menu->addAction(action_full_screen);
     QMenu* color_menu = main_menu->addMenu("Color theme");
     main_menu->addSeparator();
@@ -63,16 +79,43 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     color_menu->addAction(theme_inl);
     color_menu->addAction(theme_gre);
     color_menu->addAction(theme_ice);
-    color_menu->setIcon(
-             QIcon(":/icons/preferences-desktop-theme.png"));
+    color_menu->setIcon(QIcon(":/icons/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
+    /*
+     * Fill the menu bar END
+     */
 
-    // acceptable defaults
+
+    /*
+     * Initialize acceptable default. Will be overriden by saveState and
+     * restore state after the first app start.
+     */
     this->default_size = QSize(1040,585);
 
-    // TODO restore state
 
+    /*
+     * Be sure to not be shown before the log in dialog
+     */
     this->hide();
+
+
+    /*
+     * Set up supercast signals and slots.
+     */
+    MonitorWidget* monitor = MonitorWidget::getInstance();
+    QObject::connect(
+                this->supercast, SIGNAL(connectionStatus(int)),
+                monitor,         SLOT(connectionStatus(int)));
+
+    QObject::connect(
+                this->supercast, SIGNAL(connectionStatus(int)),
+                this,            SLOT(connectionStatus(int)));
+
+
+    /*
+     * create, connect and open the log_in_dialog
+     * Note that on log_in failure, the entire application close.
+     */
     this->log_in_dialog = new LogIn(this);
     QObject::connect(
                 this->log_in_dialog, SIGNAL(rejected()),
@@ -109,20 +152,10 @@ void MainWindow::toggleFullScreen()
 void MainWindow::tryValidate()
 {
     this->log_in_dialog->setEnabled(false);
-
-    MonitorWidget* monitor = MonitorWidget::getInstance();
-    QObject::connect(
-                this->supercast, SIGNAL(connectionStatus(int)),
-                monitor,         SLOT(connectionStatus(int)));
-
-    QObject::connect(
-                this->supercast, SIGNAL(connectionStatus(int)),
-                this,            SLOT(connectionStatus(int)));
-
-    QString user(   this->log_in_dialog->getUserName()   );
-    QString pass(   this->log_in_dialog->getPassword()   );
-    QString server( this->log_in_dialog->getServerName() );
-    qint16  port(   this->log_in_dialog->getServerPort() );
+    QString   user(this->log_in_dialog->getUserName());
+    QString   pass(this->log_in_dialog->getPassword());
+    QString server(this->log_in_dialog->getServerName());
+    qint16    port(this->log_in_dialog->getServerPort());
 
     this->supercast->tryConnect(QHostAddress(server), port, user, pass);
 }
@@ -134,7 +167,7 @@ void MainWindow::tryValidate()
  */
 void MainWindow::connectionStatus(int status)
 {
-    if (status == Supercast::ConnectionSuccess) {
+    if (status == Supercast::CONNECTION_SUCCESS) {
         this->log_in_dialog->close();
         this->show();
         return;
@@ -146,7 +179,7 @@ void MainWindow::connectionStatus(int status)
     err_box.setStandardButtons(QMessageBox::Close);
     this->setEnabled(false);
     switch(status) {
-        case Supercast::AuthenticationError: {
+        case Supercast::AUTHENTICATION_ERROR: {
             err_box.setText("Authentication failure.");
             err_box.setInformativeText("The authentication procedure has failed. Check your password or username.");
             break;

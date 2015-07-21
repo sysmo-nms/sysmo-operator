@@ -22,14 +22,14 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
      * Create gradle installDist directory tree under temporary
      * directory.
      */
-    QDir d;
     QString bin_dir =  QDir(this->temporary_dir.path()).absoluteFilePath("bin");
-    d.mkdir(bin_dir);
     QString lib_dir =  QDir(this->temporary_dir.path()).absoluteFilePath("lib");
+
+    QDir d;
+    d.mkdir(bin_dir);
     d.mkdir(lib_dir);
 
     QString proc_path;
-
 #if defined Q_OS_WIN
     QString bat_path = QDir(bin_dir).absoluteFilePath("rrd4qt.bat");
     QFile   bat(":/rrd4qt/rrd4qt.bat");
@@ -44,16 +44,19 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
     proc_path = sh_path;
 #endif
 
-    QString rrd4j_jar_path = QDir(lib_dir).absoluteFilePath("rrd4j-2.3-SNAPSHOT.jar");
     QFile   rrd4j(":/rrd4qt/rrd4j.jar");
+    QString rrd4j_jar_path =
+            QDir(lib_dir).absoluteFilePath("rrd4j-2.3-SNAPSHOT.jar");
     rrd4j.copy(rrd4j_jar_path);
 
-    QString rrd4qt_jar_path = QDir(lib_dir).absoluteFilePath("rrd4qt-1.0-SNAPSHOT.jar");
     QFile   rrd4qt(":/rrd4qt/rrd4qt.jar");
+    QString rrd4qt_jar_path =
+            QDir(lib_dir).absoluteFilePath("rrd4qt-1.0-SNAPSHOT.jar");
     rrd4qt.copy(rrd4qt_jar_path);
 
-    QString json_jar_path = QDir(lib_dir).absoluteFilePath("javax.json-1.0.4.jar");
     QFile   json(":/rrd4qt/json.jar");
+    QString json_jar_path =
+            QDir(lib_dir).absoluteFilePath("javax.json-1.0.4.jar");
     json.copy(json_jar_path);
 
     /*
@@ -182,7 +185,7 @@ void Rrd4c::procStarted()
 {
 
     /*
-     * Set default applicatio palette
+     * Set default application palette
      */
     QPalette palette = qApp->palette();
 

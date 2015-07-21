@@ -24,6 +24,7 @@
 #include <QJsonObject>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
+#include <QStringListIterator>
 
 #include <QDebug>
 
@@ -33,15 +34,18 @@ class ProbeWindow : public MonitorProxyWidget
 private:
     ProbeWindow(QString probeName);
     ~ProbeWindow();
-    QString name = "";
+
+    QString     name;
+    QJsonObject rrd_config;
+
+    QStatusBar*   status_bar = NULL;
+    QScrollArea* scroll_area = NULL;
+
     static QHash<QString, ProbeWindow*> windows;
-    QStatusBar* status_bar = NULL;
 
 public:
     static void openWindow(QString name);
     void handleEvent(QJsonObject event);
-
-signals:
 
 public slots:
     void closeEvent(QCloseEvent* event);

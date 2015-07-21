@@ -15,8 +15,8 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent)
     dashboard_button->setIcon(QIcon(":/images/dashboard-black.png"));
 
     QButtonGroup* selector_group = new QButtonGroup(this);
-    selector_group->addButton(monitor_button,   CentralWidget::MonitorApp);
-    selector_group->addButton(dashboard_button, CentralWidget::DashboardApp);
+    selector_group->addButton(monitor_button,   CentralWidget::APP_MONITOR);
+    selector_group->addButton(dashboard_button, CentralWidget::APP_DASHBOARD);
     selector_group->setExclusive(true);
     monitor_button->setCheckable(true);
     dashboard_button->setCheckable(true);
@@ -30,15 +30,15 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent)
     // Right stack
     NFrameContainer* stack        = new NFrameContainer(this);
     QStackedLayout*  stack_layout = new QStackedLayout();
-    MonitorWidget*   monitor      = new MonitorWidget(this);
+    MonitorWidget*   monitor   = new MonitorWidget(this);
     DashboardWidget* dashboard = new DashboardWidget(this);
     stack_layout->setContentsMargins(0,0,0,0);
-    stack_layout->insertWidget(CentralWidget::MonitorApp,   monitor);
-    stack_layout->insertWidget(CentralWidget::DashboardApp, dashboard);
+    stack_layout->insertWidget(CentralWidget::APP_MONITOR,   monitor);
+    stack_layout->insertWidget(CentralWidget::APP_DASHBOARD, dashboard);
     stack->setLayout(stack_layout);
 
     // Connect stack and selector
-    stack_layout->setCurrentIndex(CentralWidget::MonitorApp);
+    stack_layout->setCurrentIndex(CentralWidget::APP_MONITOR);
     monitor_button->setChecked(true);
     QObject::connect(
                 selector_group, SIGNAL(buttonClicked(int)),

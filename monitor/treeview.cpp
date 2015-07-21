@@ -55,6 +55,9 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 
     this->setItemDelegateForColumn(3, progress);
 
+    /*
+     * Set stylesheet mainly for custom branch draw
+     */
     QFile file(":/tree/tree.qss");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     this->setStyleSheet(file.readAll());
@@ -94,18 +97,15 @@ void TreeView::openContextMenu(const QPoint point) {
     QModelIndex    element = index.sibling(index.row(), 0);
     QStandardItem* item    = this->original_model->itemFromIndex(element);
 
-    if (item->type() == Sysmo::TYPE_PROBE) {
-
+    if (item->type() == Sysmo::TYPE_PROBE)
+    {
         QString probe = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
-
         this->probe_menu->showMenuFor(probe, this->mapToGlobal(point));
-
-    } else if (item->type() == Sysmo::TYPE_TARGET) {
-
+    }
+    else if(item->type() == Sysmo::TYPE_TARGET)
+    {
         QString target = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
-
         this->target_menu->showMenuFor(target, this->mapToGlobal(point));
-
     }
 }
 
@@ -113,13 +113,16 @@ void TreeView::handleDoubleClicked(const QModelIndex index)
 {
     QModelIndex idx_sibling = index.sibling(index.row(), 0);
     QModelIndex idx_origin  = this->filter_model->mapToSource(idx_sibling);
-    QStandardItem* item = this->original_model->itemFromIndex(idx_origin);
+    QStandardItem*     item = this->original_model->itemFromIndex(idx_origin);
 
     QString name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
-    if (item->type() == Sysmo::TYPE_PROBE) {
+    if (item->type() == Sysmo::TYPE_PROBE)
+    {
         ProbeWindow::openWindow(name);
-    } else if (item->type() == Sysmo::TYPE_TARGET) {
-
+    }
+    else if (item->type() == Sysmo::TYPE_TARGET)
+    {
+        qDebug() << "should open something!";
     }
 
     qDebug() << "handle double clicked " << name << item->type();

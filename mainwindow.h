@@ -9,18 +9,14 @@
 
 #include <QMainWindow>
 #include <QIcon>
-#include <QLabel>
 #include <QWidget>
 #include <QAction>
 #include <QActionGroup>
 #include <QMenuBar>
 #include <QMenu>
-#include <QStatusBar>
-#include <QIcon>
 #include <QKeySequence>
 #include <QObject>
 #include <QHostAddress>
-#include <QDialog>
 #include <QMessageBox>
 #include <QAbstractSocket>
 #include <QSize>
@@ -38,10 +34,10 @@ public slots:
     void connectionStatus(int status);
 
 private:
-    LogIn*     log_in_dialog = NULL;
     Supercast* supercast     = NULL;
+    LogIn*     log_in_dialog = NULL;
     Rrd4c*     rrd4c         = NULL;
-    QSize      default_size;
+    QSize default_size;
 
 private slots:
     void toggleFullScreen();

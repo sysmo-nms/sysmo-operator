@@ -2,8 +2,10 @@
 
 QNetworkRequest::Attribute SupercastHTTP::att_request =
         static_cast<QNetworkRequest::Attribute>(QNetworkRequest::User + 1);
+
 QNetworkRequest::Attribute SupercastHTTP::att_opaque  =
         static_cast<QNetworkRequest::Attribute>(QNetworkRequest::User + 2);
+
 QNetworkRequest::Attribute SupercastHTTP::att_dstfile =
         static_cast<QNetworkRequest::Attribute>(QNetworkRequest::User + 3);
 
@@ -37,30 +39,36 @@ void SupercastHTTP::handleClientRequest(SupercastHttpRequest request)
 
 void SupercastHTTP::handleNetworkReply(QNetworkReply* net_reply)
 {
-    int request_id   = net_reply->request()
-                                        .attribute(SupercastHTTP::att_request)
-                                        .toInt();
-    QString opaque   = net_reply->request()
-                                        .attribute(SupercastHTTP::att_opaque)
-                                        .toString();
+    int request_id = net_reply->request()
+                         .attribute(SupercastHTTP::att_request)
+                         .toInt();
+    QString opaque = net_reply->request()
+                         .attribute(SupercastHTTP::att_opaque)
+                         .toString();
     QString dst_file = net_reply->request()
-                                        .attribute(SupercastHTTP::att_dstfile)
-                                        .toString();
+                         .attribute(SupercastHTTP::att_dstfile)
+                         .toString();
 
-    if (dst_file == "none") {
+    if (dst_file == "none")
+    {
         QString            reply_body(net_reply->readAll());
         SupercastHttpReply reply(request_id, reply_body);
         emit this->serverReply(reply);
-    } else {
+    }
+    else
+    {
         QFile file(dst_file);
         file.open(QIODevice::ReadWrite);
         file.write(net_reply->readAll());
         file.close();
 
-        if (opaque == "undefined") {
+        if (opaque == "undefined")
+        {
             SupercastHttpReply reply(request_id, dst_file);
             emit this->serverReply(reply);
-        } else {
+        }
+        else
+        {
             SupercastHttpReply reply(request_id, opaque);
             emit this->serverReply(reply);
         }
