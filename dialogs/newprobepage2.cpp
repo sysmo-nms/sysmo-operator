@@ -40,9 +40,6 @@ void NewProbePage2::initializePage()
     this->setTitle(str.arg(probe_name));
 
     QXmlSimpleReader reader;
-
-    // TODO maybe use QDomDocument insteed
-
     /*
      * Generate documentation
      */

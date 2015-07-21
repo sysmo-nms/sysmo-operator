@@ -85,7 +85,7 @@ void Monitor::unsubscribeToChannel(
     Monitor* mon = Monitor::getInstance();
 
     /*
-     * If channel exist
+     * If channel exist, else should not append.
      */
     if (mon->channels->contains(channel))
     {

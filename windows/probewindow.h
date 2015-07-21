@@ -6,6 +6,8 @@
 #include "ngrid.h"
 #include "nframe.h"
 #include "monitor/monitor.h"
+#include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckmakegraphcmd.h"
 
 #include <QObject>
 #include <QWidget>
@@ -20,6 +22,8 @@
 #include <QComboBox>
 #include <QScrollArea>
 #include <QJsonObject>
+#include <QXmlInputSource>
+#include <QXmlSimpleReader>
 
 #include <QDebug>
 

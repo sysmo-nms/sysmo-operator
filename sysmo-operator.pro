@@ -57,7 +57,8 @@ SOURCES += main.cpp\
     dialogs/newprobepage3.cpp \
     dialogs/newprobeprogressdialog.cpp \
     windows/probewindow.cpp \
-    monitor/monitorchannel.cpp
+    monitor/monitorchannel.cpp \
+    monitor/xml/parsecheckmakegraphcmd.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -103,7 +104,8 @@ HEADERS  += mainwindow.h \
     dialogs/newprobepage3.h \
     dialogs/newprobeprogressdialog.h \
     windows/probewindow.h \
-    monitor/monitorchannel.h
+    monitor/monitorchannel.h \
+    monitor/xml/parsecheckmakegraphcmd.h
 
 RESOURCES += \
     icons.qrc \
