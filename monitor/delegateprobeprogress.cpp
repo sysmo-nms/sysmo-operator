@@ -20,9 +20,9 @@ void DelegateProbeProgress::paint(
         const QModelIndex 			&index) const
 {
     QVariant item_type(index.data(Sysmo::ROLE_IS_PROGRESS_ITEM));
-    if (item_type.toInt() == 0) {
+
+    if (item_type.toInt() == 0)
         return QStyledItemDelegate::paint(painter, option, index);
-    }
 
     int step = index.data(Sysmo::ROLE_PROGRESS_STEP).toInt(NULL);
     int next = index.data(Sysmo::ROLE_PROGRESS_NEXT).toInt(NULL);
@@ -34,17 +34,22 @@ void DelegateProbeProgress::paint(
     opts.minimum = 0;
     opts.maximum = step;
 
-    if (in_next <= 0) {
+    if (in_next <= 0)
+    {
         opts.text = QString("Processing...");
         opts.progress = step;
         painter->setFont(this->font);
-    } else if (in_next <= step) {
+    }
+    else if (in_next <= step)
+    {
         opts.progress = step - in_next;
         opts.text = QString("Step %1/%2")
             .arg(QString::number(step - in_next))
             .arg(QString::number(step));
 
-    } else {
+    }
+    else
+    {
         opts.progress = step;
         opts.text = QString("Step %1/%2")
             .arg(QString::number(step))

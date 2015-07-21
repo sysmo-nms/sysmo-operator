@@ -13,8 +13,6 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     this->mon = new Monitor(this);
     new NChecks(this);
 
-
-
     /*
      * init layout
      */
@@ -22,7 +20,6 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     NGrid* grid = new NGrid();
     grid->setVerticalSpacing(4);
     this->setLayout(grid);
-
 
     /*
      * top controls
@@ -33,10 +30,12 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     QObject::connect(
                 create, SIGNAL(clicked(bool)),
                 this,   SLOT(showNewTargetDialog()));
-    QPushButton* clear  = new QPushButton(this);
+
+    QPushButton* clear = new QPushButton(this);
     clear->setIcon(QIcon(":/icons/edit-clear.png"));
     clear->setStatusTip("Clear filter line");
-    QLineEdit*   search = new QLineEdit(this);
+
+    QLineEdit* search = new QLineEdit(this);
     search->setFixedWidth(250);
     search->setStatusTip("Filter the target/probe view");
     QObject::connect(
@@ -108,17 +107,20 @@ MonitorWidget::~MonitorWidget()
 void MonitorWidget::connectionStatus(int status)
 {
 
-    if (status == Supercast::CONNECTION_SUCCESS) {
+    if (status == Supercast::CONNECTION_SUCCESS)
+    {
         SupercastSignal* sig = new SupercastSignal(this);
         QObject::connect(
                 sig, SIGNAL(serverMessage(QJsonObject)),
                 this->mon, SLOT(handleServerMessage(QJsonObject)));
+
         Supercast::subscribe("monitor_main", sig);
-    } else {
+    }
+    else
+    {
         // the application is in an error state.
         TreeView* tree = this->findChild<TreeView *>("MonitorTreeView");
         tree->stopTimer();
-
     }
 }
 

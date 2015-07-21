@@ -84,47 +84,60 @@ public class Rrd4Qt
         JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
         /*
-         * Begin listen "in" loop;
+         * Begin loop listen System.in
          */
         try {
-            byte[] header = new byte[4];
-            byte[] buffer = new byte[65535];
-            int    size;
-            int    read;
-            int    status;
             InputStream in = System.in;
+            byte[]  header = new byte[4];
+            byte[]  buffer = new byte[65535];
+            int     size;
+            int     read;
+            int     status;
             while (true) {
-                // Get the first byte (as int 0 255 or -1 if EOF)
+                /*
+                 * Get the first byte (as int 0 to 255 or -1 if EOF)
+                 */
                 status = in.read();
                 if (status == -1) throw new IOException("STDIN broken");
 
-                // Then complete the header[4]
+                /*
+                 * Complete the header[4]
+                 */
                 header[0] = (byte)status;
                 header[1] = (byte)in.read();
                 header[2] = (byte)in.read();
                 header[3] = (byte)in.read();
 
-                // compute the size of the message
+                /*
+                 * Compute the size of the message
+                 */
                 size = ByteBuffer.wrap(header, 0, 4).getInt();
 
-                // Now we can read the message
+                /*
+                 *Now we can read the message
+                 */
                 read = 0;
                 while (read != size)
                     read += in.read(buffer, read, size - read);
 
-                // Create a json object from the buffer
+                /*
+                 * Create a json object from the buffer
+                 */
                 ByteArrayInputStream reader =
                         new ByteArrayInputStream(buffer, 0, size);
                 JsonObject jsonObject =
                         readerFactory.createReader(reader).readObject();
 
-                // Start Rrd4QtJob
+                /*
+                 * Start Rrd4QtJob
+                 */
                 Rrd4QtJob worker = new Rrd4QtJob(jsonObject);
                 Rrd4Qt.threadPool.execute(worker);
             }
         }
         catch (Exception e)
         {
+            Rrd4Qt.logger.log(Level.SEVERE, e.toString());
             System.exit(1);
         }
     }
@@ -263,7 +276,8 @@ class Rrd4QtJob implements Runnable
         Rrd4Qt.logger.log(Level.INFO, this.command.toString());
 
         String cmdType = this.command.getString("type");
-        switch (cmdType) {
+        switch (cmdType)
+        {
             case "graph":
                 this.handleGraph();
                 break;
@@ -278,11 +292,16 @@ class Rrd4QtJob implements Runnable
         }
     }
 
-    private void handleConfig() {Rrd4QtGraphDef.setDefaultColors(this.command);}
+    private void handleConfig()
+    {
+        Rrd4QtGraphDef.setDefaultColors(this.command);
+    }
 
     private void handleUpdate()
     {
-        // get arguments
+        /*
+         * get arguments
+         */
         String    rrdFile = this.command.getString("file");
         long    timestamp = (long)this.command.getInt("timestamp");
         JsonObject update = this.command.getJsonObject("updates");
@@ -291,7 +310,9 @@ class Rrd4QtJob implements Runnable
 
         String replyStatus;
 
-        // open and write rrd db
+        /*
+         * open and write rrd db
+         */
         try {
             RrdDb   rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
             Sample sample = rrdDb.createSample();
@@ -310,6 +331,9 @@ class Rrd4QtJob implements Runnable
             replyStatus = "failure";
         }
 
+        /*
+         * Build and send reply
+         */
         JsonObject reply = Json.createObjectBuilder()
                 .add("reply",   replyStatus)
                 .add("opaque",  opaque)
@@ -322,5 +346,4 @@ class Rrd4QtJob implements Runnable
     {
 
     }
-
 }

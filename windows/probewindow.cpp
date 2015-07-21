@@ -42,7 +42,7 @@ ProbeWindow::ProbeWindow(QString probeName)
     delete input;
 
 
-    /**
+    /*
      * begin generic layout
      */
     // top log area controls

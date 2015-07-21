@@ -25,27 +25,36 @@ void ItemProbe::updateInfo(QJsonObject info_probe)
 {
     this->setData(info_probe.value("descr").toString(""), Qt::DisplayRole);
     QString status = info_probe.value("status").toString("undef");
-    if (status == "OK") {
+    if (status == "OK")
+    {
         this->setData(QPixmap(":/pixmaps/weather-clear.png"),
                                                 Qt::DecorationRole);
         this->setData(Sysmo::STATUS_OK, Sysmo::ROLE_PROBE_STATUS);
 
-    } else if (status == "WARNING") {
+    }
+    else if (status == "WARNING")
+    {
         this->setData(QPixmap(":/pixmaps/weather-showers.png"),
                                                 Qt::DecorationRole);
         this->setData(Sysmo::STATUS_WARNING, Sysmo::ROLE_PROBE_STATUS);
 
-    } else if (status == "CRITICAL") {
+    }
+    else if (status == "CRITICAL")
+    {
         this->setData(QPixmap(":/pixmaps/weather-severe-alert.png"),
                                                 Qt::DecorationRole);
         this->setData(Sysmo::STATUS_CRITICAL, Sysmo::ROLE_PROBE_STATUS);
 
-    } else if (status == "ERROR") {
+    }
+    else if (status == "ERROR")
+    {
         this->setData(QPixmap(":/pixmaps/weather-few-clouds-night.png"),
                                                 Qt::DecorationRole);
         this->setData(Sysmo::STATUS_ERROR, Sysmo::ROLE_PROBE_STATUS);
 
-    } else {
+    }
+    else
+    {
         this->setData(QPixmap(":/pixmaps/weather-clear-night.png"),
                                                 Qt::DecorationRole);
         this->setData(Sysmo::STATUS_UNKNOWN, Sysmo::ROLE_PROBE_STATUS);
@@ -53,12 +62,15 @@ void ItemProbe::updateInfo(QJsonObject info_probe)
 
     this->item_status->setData(status, Qt::DisplayRole);
 
-    if (info_probe.value("active").toBool()) {
+    if (info_probe.value("active").toBool())
+    {
         this->item_state->setData("Active", Qt::DisplayRole);
         /*this->item_state->setData(QPixmap(":/pixmaps/media-playback-start"),
                                   Qt::DecorationRole);
                                   */
-    } else {
+    }
+    else
+    {
         this->item_state->setData("Paused", Qt::DisplayRole);
         /*
         this->item_state->setData(QPixmap(":/pixmaps/media-playback-pause"),

@@ -21,15 +21,22 @@ void ItemTarget::updateInfo(QJsonObject info_target)
     QString sys_name   = this->target_properties.value("sysName").toString("undefined");
 
     QString display;
-    if (sys_name != "undefined") {
+
+    if (sys_name != "undefined")
+    {
         display.append(sys_name);
         display.append(QString("  (%1)").arg(hostname));
-    } else if ((fixed_name != "undefined") & (fixed_name != "")) {
+    }
+    else if ((fixed_name != "undefined") & (fixed_name != ""))
+    {
         display.append(fixed_name);
         display.append(QString("  (%1)").arg(hostname));
-    } else {
+    }
+    else
+    {
         display.append(hostname);
     }
+
     this->setData(display, Qt::DisplayRole);
 
     this->setData("world", Sysmo::ROLE_FILTER_STRING);
@@ -47,19 +54,25 @@ void ItemTarget::updateIconStatus()
         if (pstatus > status) {status = pstatus;}
     }
     if (status == Sysmo::STATUS_OK)
+    {
         this->setData(QPixmap(":/pixmaps/weather-clear.png"), Qt::DecorationRole);
-
+    }
     else if (status == Sysmo::STATUS_UNKNOWN)
+    {
         this->setData(QPixmap(":/pixmaps/weather-clear-night.png"), Qt::DecorationRole);
-
+    }
     else if (status == Sysmo::STATUS_ERROR)
+    {
         this->setData(QPixmap(":/pixmaps/weather-few-clouds-night.png"), Qt::DecorationRole);
-
+    }
     else if (status == Sysmo::STATUS_WARNING)
+    {
         this->setData(QPixmap(":/pixmaps/weather-showers.png"), Qt::DecorationRole);
-
+    }
     else if (status == Sysmo::STATUS_CRITICAL)
+    {
         this->setData(QPixmap(":/pixmaps/weather-severe-alert.png"), Qt::DecorationRole);
+    }
 }
 
 

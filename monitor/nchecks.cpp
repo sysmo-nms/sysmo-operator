@@ -5,18 +5,20 @@ NChecks* NChecks::singleton = NULL;
 QList<QString> NChecks::getCheckList() {
     return NChecks::singleton->checks->keys();
 }
-QString        NChecks::getCheck(QString check) {
+
+QString NChecks::getCheck(QString check) {
     return NChecks::singleton->checks->value(check);
 }
 
 NChecks::~NChecks() {delete this->checks;}
+
 NChecks::NChecks(QObject *parent) : QObject(parent)
 {
     NChecks::singleton = this;
     this->checks = new QHash<QString, QString>();
     QObject::connect(
                 Supercast::getInstance(), SIGNAL(connectionStatus(int)),
-                this, SLOT(connectionStatus(int)));
+                this,                     SLOT(connectionStatus(int)));
 }
 
 
@@ -27,8 +29,9 @@ void NChecks::connectionStatus(int status)
 
     SupercastSignal* sig = new SupercastSignal(this);
     QObject::connect(
-                sig, SIGNAL(serverMessage(QString)),
+                sig,  SIGNAL(serverMessage(QString)),
                 this, SLOT(handleAllChecksReply(QString)));
+
     Supercast::httpGet("/nchecks/AllChecks.xml", sig);
 }
 
@@ -55,8 +58,9 @@ void NChecks::handleAllChecksReply(QString body)
     {
         SupercastSignal* sig = new SupercastSignal(this);
         QObject::connect(
-                    sig, SIGNAL(serverMessage(QString)),
+                    sig,  SIGNAL(serverMessage(QString)),
                     this, SLOT(handleCheckDefDeply(QString)));
+
         QString path = "/nchecks/%1";
         Supercast::httpGet(path.arg(*it), sig);
     }
@@ -70,12 +74,15 @@ void NChecks::handleCheckDefDeply(QString body)
 {
     ParseCheckGetId* parser = new ParseCheckGetId();
     QXmlInputSource* input  = new QXmlInputSource();
-    input->setData(body);
     QXmlSimpleReader reader;
+
+    input->setData(body);
     reader.setContentHandler(parser);
     reader.setErrorHandler(parser);
     reader.parse(input);
+
     this->checks->insert(parser->getValue(), body);
+
     delete parser;
     delete input;
 }
