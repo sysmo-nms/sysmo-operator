@@ -324,7 +324,7 @@ void MonitorChannel::handleRrdEventTable(QJsonObject event)
         /*
          * Emit an update message to the connected widgets
          */
-        emit this->channelEvent(QJsonObject {{"type", "update"}});
+        emit this->channelEvent(QJsonObject {{"event", "update"}});
 
 
         /*
@@ -353,7 +353,7 @@ void MonitorChannel::handleRrdEventSimple(QJsonObject event)
     /*
      * Emit message of type update
      */
-    emit this->channelEvent(QJsonObject {{"type", "update"}});
+    emit this->channelEvent(QJsonObject {{"event", "update"}});
 
 
     /*
@@ -481,6 +481,7 @@ QJsonObject MonitorChannel::buildDump()
      */
     if (this->chan_type == "simple") {
         return QJsonObject {
+            {"event",  "dump"},
             {"type",   "simple"},
             {"rrdFile", this->simple_file.fileName()}
         };
@@ -499,6 +500,7 @@ QJsonObject MonitorChannel::buildDump()
         }
 
         return QJsonObject {
+                {"event",    "dump"},
                 {"type",    "table"},
                 {"rrdFiles", table_dump}
         };

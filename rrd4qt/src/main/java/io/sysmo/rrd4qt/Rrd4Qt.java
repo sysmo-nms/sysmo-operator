@@ -396,6 +396,7 @@ class Rrd4QtJob implements Runnable
         graphDef.setTitle(title);
         graphDef.setVerticalLabel(vlabel);
         graphDef.setFilename(pngFile);
+        graphDef.setImageFormat("png");
         graphDef.setBase(Double.parseDouble(base));
         graphDef.setUnit(unit);
         graphDef.setUnitsExponent(Integer.parseInt(unitExp));
@@ -449,9 +450,10 @@ class Rrd4QtJob implements Runnable
 
         String replyStatus;
         try {
-            RrdGraph      graph = new RrdGraph(graphDef);
-            BufferedImage image = new BufferedImage(100,100, BufferedImage.TYPE_INT_RGB);
-            graph.render(image.getGraphics());
+            new RrdGraph(graphDef);
+            //RrdGraph graph = new RrdGraph(graphDef);
+            //BufferedImage image = new BufferedImage(100,100, BufferedImage.TYPE_INT_RGB);
+            //graph.render(image.getGraphics());
             replyStatus = "success";
 
         } catch (Exception e) {

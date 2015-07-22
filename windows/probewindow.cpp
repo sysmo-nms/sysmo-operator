@@ -119,14 +119,32 @@ ProbeWindow::~ProbeWindow()
 
 void ProbeWindow::handleEvent(QJsonObject event) {
     /*
+     * If event is "update"
+     */
+    if (event.value("event").toString() == "update")
+    {
+        return;
+    }
+
+    /*
+     * If event is "dump". Occur only one time.
+     */
+    if (event.value("event").toString() != "dump")
+    {
+        qWarning() << "unknown event:" << event;
+        return;
+    }
+
+    /*
      * "frame" will be the child of "this->scroll_area"
      */
     NFrame* frame = new NFrame();
     NGrid*   grid = new NGrid();
     frame->setLayout(grid);
 
+
     /*
-     * Test if type is "simple" or "table".
+     * If type is "simple".
      */
     if (event.value("type").toString() == "simple")
     {
@@ -160,7 +178,6 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                             js_graphs.value(key).toObject(),   // graph def
                             frame);                            // parent
 
-            graph->setText(key);
             graph->setFixedHeight(300);
 
             grid->addWidget(graph, row, 0);
@@ -177,15 +194,112 @@ void ProbeWindow::handleEvent(QJsonObject event) {
          * From the "QScrollArea.setWidget(QWidget)" doc, added widget must
          * explicitely be show().
          */
+        qDebug() << "simple draw " << event;
         frame->show();
+        return;
     }
-    else if (event.value("type").toString() == "table")
+
+
+
+
+    /*
+     * Else it must be a "table"
+     */
+    if (event.value("type").toString() == "table")
     {
+        /*
+         * Get rrd file index
+         */
+        QJsonObject rrd_files = event.value("rrdFiles").toObject();
 
+        /*
+         * Get graph config (common to all rrd indexes)
+         */
+        QJsonObject js_graphs = this->rrd_config.value("graphs").toObject();
+
+        /*
+         * Get graphs key and sort them
+         */
+        QStringList keys = js_graphs.keys();
+        keys.sort();
+
+
+
+        /*
+         * Foreach rrdfiles
+         */
+        int row = 0;
+        QStringListIterator i(rrd_files.keys());
+        while (i.hasNext())
+        {
+            QString rrd_id = i.next();
+            QString rrd_db_file = rrd_files.value(rrd_id).toString();
+
+            /*
+             * Each id is made by a frame and X number of graph columns.
+             * The frame is then added to "frame" rows.
+             */
+            NFrame* fr = new NFrame(frame);
+            NGrid*  gr = new NGrid();
+            fr->setLayout(gr);
+
+
+
+            /*
+             * Set rrd_id as the QLabel for the first column
+             */
+            QLabel* desc_label = new QLabel(rrd_id, fr);
+            gr->addWidget(desc_label, 0,0);
+
+
+            /*
+             * Initialize iterator.
+             */
+            QStringListIterator j(keys);
+
+
+            /*
+             * initialize grid column
+             */
+            int col = 1; // 0 used by "desc_label"
+            while (j.hasNext())
+            {
+                    QString key = j.next();
+
+                    /*
+                     * From there, the Rrd4QtGraph() will handle himself showing
+                     * the graph defined.
+                     */
+                    Rrd4QtGraph* graph = new Rrd4QtGraph(
+                                rrd_db_file,                     // rrd db
+                                js_graphs.value(key).toObject(), // graph def
+                                fr);                             // parent
+
+                    graph->setFixedHeight(300);
+
+                    qDebug() << "add col: " << col;
+                    gr->addWidget(graph, 0, col);
+
+                    ++col;
+            }
+            grid->addWidget(fr, row, 0);
+            ++row;
+        }
+
+        /*
+         * Set the scroll area newly created widget
+         */
+        this->scroll_area->setWidget(frame);
+
+        /*
+         * From the "QScrollArea.setWidget(QWidget)" doc, added widget must
+         * explicitely be show().
+         */
+        qDebug() << "table draw " << event;
+        frame->show();
+
+        return;
     }
-
-
-    qDebug() << "handle event:.........................." << event;
 }
 
 
