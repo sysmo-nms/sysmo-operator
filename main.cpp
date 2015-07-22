@@ -51,13 +51,6 @@ int main(int argc, char* argv[])
     qInstallMessageHandler(operatorMsgOut);
 #endif
 
-    QApplication::setApplicationName("Operator");
-    QApplication::setApplicationVersion("1.0");
-    QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
-    QApplication::setOrganizationName("Sysmo NMS");
-    QApplication::setOrganizationDomain("sysmo.io");
-    QApplication::setQuitOnLastWindowClosed(true);
-
 #if   defined Q_OS_MAC
     /* put mac things here*/
 #elif defined Q_OS_WIN
@@ -70,9 +63,17 @@ int main(int argc, char* argv[])
     QApplication::setStyle("fusion");
 #endif
 
+    QApplication::setApplicationName("Operator");
+    QApplication::setApplicationVersion("1.0");
+    QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
+    QApplication::setOrganizationName("Sysmo NMS");
+    QApplication::setOrganizationDomain("sysmo.io");
+    QApplication::setQuitOnLastWindowClosed(true);
+
     QApplication app(argc, argv);
-    QApplication::setWindowIcon(QIcon(":/icons/logo.png"));
+    app.setWindowIcon(QIcon(":/icons/logo.png"));
 
     MainWindow w;
+
     return app.exec();
 }

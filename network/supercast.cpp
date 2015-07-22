@@ -3,6 +3,52 @@
 Supercast* Supercast::singleton = NULL;
 Supercast* Supercast::getInstance() {return Supercast::singleton;}
 
+Supercast::~Supercast()
+{
+    this->http_thread.quit();
+    this->socket_thread.quit();
+
+    this->http_thread.wait();
+    this->http_thread.deleteLater();
+
+    this->socket_thread.wait();
+    this->socket_thread.deleteLater();
+
+    QHash<QString, SupercastSignal*>::iterator c;
+    for (
+         c  = this->channels->begin();
+         c != this->channels->end();
+         ++c)
+    {
+        SupercastSignal* sig = c.value();
+        delete sig;
+    }
+    delete this->channels;
+
+    QHash<int, SupercastSignal*>::iterator q;
+    for (
+         q  = this->queries->begin();
+         q != this->queries->end();
+         ++q)
+    {
+        SupercastSignal* sig = q.value();
+        delete sig;
+    }
+    delete this->queries;
+
+    QHash<int, SupercastSignal*>::iterator h;
+    for (
+         h  = this->http_requests->begin();
+         h != this->http_requests->end();
+         ++h)
+    {
+        SupercastSignal* sig = h.value();
+        delete sig;
+    }
+    delete this->http_requests;
+}
+
+
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
     this->user_name = "";
@@ -14,7 +60,7 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     this->queries       = new QHash<int, SupercastSignal*>();
     this->http_requests = new QHash<int, SupercastSignal*>();
 
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     this->channels->insert("supercast", sig);
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
@@ -83,24 +129,6 @@ void Supercast::tryConnect(
                 &this->socket_thread, SIGNAL(finished()),
                 socket_t,             SLOT(deleteLater()));
     this->socket_thread.start();
-}
-
-
-Supercast::~Supercast()
-{
-    this->http_thread.quit();
-    this->socket_thread.quit();
-
-    this->http_thread.wait();
-    this->http_thread.deleteLater();
-
-    this->socket_thread.wait();
-    this->socket_thread.deleteLater();
-
-
-    delete this->channels;
-    delete this->queries;
-    delete this->http_requests;
 }
 
 

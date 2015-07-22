@@ -8,7 +8,7 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
     /*
      * Connect and subscribe to this->channel supercast channel
      */
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
                 this, SLOT(handleServerEvent(QJsonObject)));
@@ -54,7 +54,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Create and connect signal for callback
          */
-        SupercastSignal* sig = new SupercastSignal(this);
+        SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
                     sig,  SIGNAL(serverMessage(QString)),
                     this, SLOT(handleHttpReplySimple(QString)));
@@ -113,7 +113,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Connect signals for callback
          */
-        Rrd4cSignal* sig = new Rrd4cSignal();
+        Rrd4QtSignal* sig = new Rrd4QtSignal();
         QObject::connect(
                     sig, SIGNAL(serverMessage(QJsonObject)),
                     this, SLOT(handleRrdEventSimple(QJsonObject)));
@@ -121,7 +121,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Call rrd to update rrd
          */
-        Rrd4c::callRrd(update_query, sig);
+        Rrd4Qt::callRrd(update_query, sig);
 
 
         /*
@@ -188,7 +188,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             /*
              * Create and connect signal for callback
              */
-            SupercastSignal* sig = new SupercastSignal(this);
+            SupercastSignal* sig = new SupercastSignal();
             QObject::connect(
                   sig,  SIGNAL(serverMessage(QString)),
                   this, SLOT(handleHttpReplyTable(QString)));
@@ -267,7 +267,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             /*
              * Connect signals for callback
              */
-            Rrd4cSignal* sig = new Rrd4cSignal();
+            Rrd4QtSignal* sig = new Rrd4QtSignal();
             QObject::connect(
                         sig,  SIGNAL(serverMessage(QJsonObject)),
                         this, SLOT(handleRrdEventTable(QJsonObject)));
@@ -275,7 +275,7 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             /*
              * call rrd update
              */
-            Rrd4c::callRrd(update_query, sig);
+            Rrd4Qt::callRrd(update_query, sig);
         }
         /*
          * end

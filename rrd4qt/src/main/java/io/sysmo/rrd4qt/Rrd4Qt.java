@@ -38,10 +38,13 @@ import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.Sample;
 import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
+import org.rrd4j.ConsolFun;
 
 import java.awt.Color;
 
 import javax.json.Json;
+import javax.json.JsonValue;
+import javax.json.JsonArray;
 import javax.json.JsonReaderFactory;
 import javax.json.JsonObject;
 
@@ -344,6 +347,88 @@ class Rrd4QtJob implements Runnable
 
     private void handleGraph()
     {
+        /*
+         * Get logical arguments
+         */
+        String opaque = this.command.getString("opaque");
+        int   queryId = this.command.getInt("queryId");
 
+        /*
+         * Get graph arguments
+         */
+        String rrdFile = this.command.getString("rrdFile");
+        String pngFile = this.command.getString("pngFile");
+
+        String title  = this.command.getString("title");
+        String vlabel = this.command.getString("verticalLabel");
+
+        int spanBegin = this.command.getInt("spanBegin");
+        int spanEnd   = this.command.getInt("spanEnd");
+
+        int width  = this.command.getInt("width");
+        int height = this.command.getInt("height");
+
+        String minVal = this.command.getString("minimum");
+        String maxVal = this.command.getString("maximum");
+
+        String rigid   = this.command.getString("rigid");
+        String base    = this.command.getString("base");
+        String unit    = this.command.getString("unit");
+        String unitExp = this.command.getString("unitExponent");
+
+        /*
+         * Generate the graph definition.
+         */
+        Rrd4QtGraphDef graphDef = new Rrd4QtGraphDef();
+        graphDef.setTimeSpan(spanBegin, spanEnd);
+        graphDef.setTitle(title);
+        graphDef.setVerticalLabel(vlabel);
+        graphDef.setFilename(pngFile);
+        graphDef.setBase(Double.parseDouble(base));
+        graphDef.setUnit(unit);
+        graphDef.setUnitsExponent(Integer.parseInt(unitExp));
+
+        try {
+            double minValDouble = Double.parseDouble(minVal);
+            graphDef.setMinValue(minValDouble);
+        } catch (Exception e) {
+            Rrd4Qt.logger.log(Level.INFO, "min val not a double: " + e.toString());
+        }
+
+        try {
+            double maxValDouble = Double.parseDouble(maxVal);
+            graphDef.setMaxValue(maxValDouble);
+        } catch (Exception e) {
+            Rrd4Qt.logger.log(Level.INFO, "max val not a double: " + e.toString());
+        }
+
+        if (rigid.equals("true")) graphDef.setRigid(true);
+
+
+        /*
+         * Get DS Draw list
+         */
+        JsonArray dataSources = this.command.getJsonArray("draws");
+        for(JsonValue ds : dataSources)
+        {
+            JsonObject obj = (JsonObject)ds;
+            String    dsName   = obj.getString("dataSource");
+            String    dsColor  = obj.getString("color");
+            String    dsLegend = obj.getString("legend");
+            String    dsType   = obj.getString("type");
+            ConsolFun dsCons   = ConsolFun.valueOf(
+                                                obj.getString("consolidation"));
+
+            graphDef.datasource(dsName, rrdFile, dsName, dsCons);
+        }
+
+        Rrd4Qt.logger.log(Level.INFO, dataSources.toString());
+
+        JsonObject reply = Json.createObjectBuilder()
+                .add("reply",   "ok")
+                .add("opaque",  opaque)
+                .add("queryId", queryId)
+                .build();
+        Rrd4Qt.rrdReply(reply);
     }
 }

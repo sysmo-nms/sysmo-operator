@@ -1,9 +1,9 @@
-#include "rrd4c.h"
+#include "rrd4qt.h"
 
-Rrd4c* Rrd4c::singleton = NULL;
-Rrd4c* Rrd4c::getInstance() {return Rrd4c::singleton;}
+Rrd4Qt* Rrd4Qt::singleton = NULL;
+Rrd4Qt* Rrd4Qt::getInstance() {return Rrd4Qt::singleton;}
 
-Rrd4c::~Rrd4c()
+Rrd4Qt::~Rrd4Qt()
 {
     this->proc->kill();
     this->proc->waitForFinished();
@@ -11,10 +11,10 @@ Rrd4c::~Rrd4c()
     delete this->queries;
 }
 
-Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
+Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 {
-    Rrd4c::singleton = this;
-    this->queries    = new QHash<int, Rrd4cSignal*>();
+    Rrd4Qt::singleton = this;
+    this->queries    = new QHash<int, Rrd4QtSignal*>();
     this->block_size = 0;
 
     /*
@@ -82,7 +82,7 @@ Rrd4c::Rrd4c(QObject* parent) : QObject(parent)
     this->proc->start(proc_path);
 }
 
-void Rrd4c::procStdoutReadyRead()
+void Rrd4Qt::procStdoutReadyRead()
 {
     /*
      * read header to set block_size. Only read when the header is
@@ -93,7 +93,7 @@ void Rrd4c::procStdoutReadyRead()
         if (this->proc->bytesAvailable() < HEADER_LEN) return;
 
         QByteArray header = this->proc->read(HEADER_LEN);
-        this->block_size = Rrd4c::arrayToInt32(header);
+        this->block_size = Rrd4Qt::arrayToInt32(header);
     }
 
     /*
@@ -113,7 +113,7 @@ void Rrd4c::procStdoutReadyRead()
      * Deliver the message
      */
     int      queryId = json_obj.value("queryId").toInt();
-    Rrd4cSignal* sig = this->queries->take(queryId);
+    Rrd4QtSignal* sig = this->queries->take(queryId);
 
     emit sig->serverMessage(json_obj);
     sig->deleteLater();
@@ -131,29 +131,29 @@ void Rrd4c::procStdoutReadyRead()
         emit this->proc->readyRead();
 }
 
-void Rrd4c::callRrd(QJsonObject msg, Rrd4cSignal* sig)
+void Rrd4Qt::callRrd(QJsonObject msg, Rrd4QtSignal* sig)
 {
     int queryId = 0;
-    while (Rrd4c::singleton->queries->contains(queryId)) queryId += 1;
-    Rrd4c::singleton->queries->insert(queryId, sig);
+    while (Rrd4Qt::singleton->queries->contains(queryId)) queryId += 1;
+    Rrd4Qt::singleton->queries->insert(queryId, sig);
 
     msg.insert("queryId", queryId);
 
     QByteArray json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
     qint32     json_size = json_array.size();
-    Rrd4c::singleton->proc->write(Rrd4c::int32ToArray(json_size));
-    Rrd4c::singleton->proc->write(json_array.data(), json_size);
+    Rrd4Qt::singleton->proc->write(Rrd4Qt::int32ToArray(json_size));
+    Rrd4Qt::singleton->proc->write(json_array.data(), json_size);
 }
 
-void Rrd4c::callRrd(QJsonObject msg)
+void Rrd4Qt::callRrd(QJsonObject msg)
 {
     QByteArray json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
     qint32     json_size(json_array.size());
-    Rrd4c::singleton->proc->write(Rrd4c::int32ToArray(json_size));
-    Rrd4c::singleton->proc->write(json_array.data(), json_size);
+    Rrd4Qt::singleton->proc->write(Rrd4Qt::int32ToArray(json_size));
+    Rrd4Qt::singleton->proc->write(json_array.data(), json_size);
 }
 
-qint32 Rrd4c::arrayToInt32(QByteArray source)
+qint32 Rrd4Qt::arrayToInt32(QByteArray source)
 {
     qint32 temp;
     QDataStream data(&source, QIODevice::ReadWrite);
@@ -161,7 +161,7 @@ qint32 Rrd4c::arrayToInt32(QByteArray source)
     return temp;
 }
 
-QByteArray Rrd4c::int32ToArray(qint32 source)
+QByteArray Rrd4Qt::int32ToArray(qint32 source)
 {
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);
@@ -169,19 +169,19 @@ QByteArray Rrd4c::int32ToArray(qint32 source)
     return temp;
 }
 
-void Rrd4c::procStopped(int exitCode, QProcess::ExitStatus exitStatus)
+void Rrd4Qt::procStopped(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "proc stoped " << exitCode << " " << exitStatus;
 }
 
-void Rrd4c::procStderrReadyRead()
+void Rrd4Qt::procStderrReadyRead()
 {
     qDebug() << "stderr " << this->proc->readAllStandardError();
 }
 
 
 
-void Rrd4c::procStarted()
+void Rrd4Qt::procStarted()
 {
 
     /*
@@ -251,5 +251,5 @@ void Rrd4c::procStarted()
         {"XAXIS",   cdark}
     };
 
-    Rrd4c::callRrd(msg);
+    Rrd4Qt::callRrd(msg);
 }

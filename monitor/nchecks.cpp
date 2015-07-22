@@ -27,7 +27,7 @@ void NChecks::connectionStatus(int status)
 
     if (status != Supercast::CONNECTION_SUCCESS) return;
 
-    SupercastSignal* sig = new SupercastSignal(this);
+    SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QString)),
                 this, SLOT(handleAllChecksReply(QString)));
@@ -56,7 +56,7 @@ void NChecks::handleAllChecksReply(QString body)
          it != result->end();
          ++it)
     {
-        SupercastSignal* sig = new SupercastSignal(this);
+        SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
                     sig,  SIGNAL(serverMessage(QString)),
                     this, SLOT(handleCheckDefDeply(QString)));

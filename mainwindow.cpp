@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     /*
      * Initialize rrd4c-> Will effectively start the java rrd4qt process.
      */
-    this->rrd4c     = new Rrd4c(this);
+    this->rrd4c     = new Rrd4Qt(this);
 
 
     /*

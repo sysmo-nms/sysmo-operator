@@ -1,7 +1,7 @@
-#ifndef RRD4C_H
-#define RRD4C_H
+#ifndef RRD4QT_H
+#define RRD4QT_H
 
-#include "rrds/rrd4csignal.h"
+#include "rrds/rrd4qtsignal.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -28,15 +28,15 @@
 #include <QDebug>
 
 
-class Rrd4c : public QObject
+class Rrd4Qt : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Rrd4c(QObject* parent = 0);
-    ~Rrd4c();
-    static Rrd4c* getInstance();
-    static void callRrd(QJsonObject msg, Rrd4cSignal* sig);
+    explicit Rrd4Qt(QObject* parent = 0);
+    ~Rrd4Qt();
+    static Rrd4Qt* getInstance();
+    static void callRrd(QJsonObject msg, Rrd4QtSignal* sig);
     static void callRrd(QJsonObject msg);
 
 public slots:
@@ -46,18 +46,18 @@ public slots:
     void procStderrReadyRead();
 
 private:
-    static Rrd4c* singleton;
+    static Rrd4Qt* singleton;
     static const qint32 HEADER_LEN = 4;
 
     qint32        block_size;
     QTemporaryDir temporary_dir;
 
     QProcess*                 proc    = NULL;
-    QHash<int, Rrd4cSignal*>* queries = NULL;
+    QHash<int, Rrd4QtSignal*>* queries = NULL;
 
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32     source);
 
 };
 
-#endif // RRD4C_H
+#endif // RRD4QT_H

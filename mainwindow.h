@@ -4,7 +4,7 @@
 #include "centralwidget.h"
 #include "dialogs/login.h"
 #include "network/supercast.h"
-#include "rrds/rrd4c.h"
+#include "rrds/rrd4qt.h"
 #include "dialogs/messagebox.h"
 
 #include <QMainWindow>
@@ -36,7 +36,7 @@ public slots:
 private:
     Supercast* supercast     = NULL;
     LogIn*     log_in_dialog = NULL;
-    Rrd4c*     rrd4c         = NULL;
+    Rrd4Qt*     rrd4c         = NULL;
     QSize default_size;
 
 private slots:

@@ -46,17 +46,20 @@ ProbeWindow::ProbeWindow(QString probeName)
      * begin generic layout
      */
     // top log area controls
-    NFrame* log_controls = new NFrame(this);
-    NGridContainer*  lc_grid      = new NGridContainer();
+    NFrame*    log_controls = new NFrame(this);
+    NGridContainer* lc_grid = new NGridContainer();
     log_controls->setLayout(lc_grid);
+
     QLabel*    time_line_label = new QLabel("TimeLine:", this);
     QComboBox* time_line_cbox  = new QComboBox(this);
-    QLabel*    height_label = new QLabel("Graph height:", this);
-    QComboBox* height_cbox  = new QComboBox(this);
     lc_grid->addWidget(time_line_label, 0,0);
     lc_grid->addWidget(time_line_cbox, 0,1);
+
+    QLabel*    height_label = new QLabel("Graph height:", this);
+    QComboBox* height_cbox  = new QComboBox(this);
     lc_grid->addWidget(height_label, 0,2);
     lc_grid->addWidget(height_cbox, 0,3);
+
     lc_grid->setColumnStretch(0,0);
     lc_grid->setColumnStretch(1,0);
     lc_grid->setColumnStretch(2,0);
@@ -113,32 +116,67 @@ ProbeWindow::~ProbeWindow()
 
 void ProbeWindow::handleEvent(QJsonObject event) {
     /*
-     * graph_content will be the child of the scrollarea (scroll.setWidget())
-    NFrame* graph_content = new NFrame();
+     * "frame" will be the child of "this->scroll_area"
      */
+    NFrame* frame = new NFrame();
+    NGrid*   grid = new NGrid();
+    frame->setLayout(grid);
 
     /*
      * Test if type is "simple" or "table".
      */
-    /*
-    if (this->rrd_config.value("type").toString() == "simple")
+    if (event.value("type").toString() == "simple")
     {
-        NGrid* simple_grid = new NGrid();
-        graph_content->setLayout(simple_grid);
         QJsonObject js_graphs = this->rrd_config.value("graphs").toObject();
-        QStringListIterator i(js_graphs.keys());
+
+        /*
+         * initialize grid row
+         */
         int row = 0;
+
+        /*
+         * Get graphs key and sort them
+         */
+        QStringList keys = js_graphs.keys();
+        keys.sort();
+
+        /*
+         * Then iterate sorted keys
+         */
+        QStringListIterator i(keys);
         while (i.hasNext())
         {
             QString key = i.next();
-            QLabel* lab = new QLabel(key, graph_content);
-            lab->setFixedHeight(300);
-            simple_grid->addWidget(lab, row, 0);
-            row = row + 1;
+
+            Rrd4QtGraph* graph = new Rrd4QtGraph(
+                            event.value("rrdFile").toString(), // rrd db
+                            js_graphs.value(key).toObject(),   // graph def
+                            frame);                            // parent
+
+            graph->setText(key);
+            graph->setFixedHeight(300);
+
+            grid->addWidget(graph, row, 0);
+
+            ++row;
         }
+
+        /*
+         * Set the scroll area newly created widget
+         */
+        this->scroll_area->setWidget(frame);
+
+        /*
+         * From the "QScrollArea.setWidget(QWidget)" doc, added widget must
+         * explicitely be show().
+         */
+        frame->show();
+    }
+    else if (event.value("type").toString() == "table")
+    {
+
     }
 
-    */
 
     qDebug() << "handle event:.........................." << event;
 }
@@ -183,7 +221,7 @@ void ProbeWindow::openWindow(QString name)
     }
 
     /*
-     * Show normal (raize), set focus and show in first Z order.
+     * Raise, set focus and show in first Z order.
      */
     win->showNormal();
     win->setFocus();

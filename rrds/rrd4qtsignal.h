@@ -1,15 +1,15 @@
-#ifndef RRD4CSIGNAL_H
-#define RRD4CSIGNAL_H
+#ifndef RRD4QTSIGNAL_H
+#define RRD4QTSIGNAL_H
 
 #include <QObject>
 #include <QJsonObject>
 
-class Rrd4cSignal : public QObject
+class Rrd4QtSignal : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Rrd4cSignal(QObject* parent = 0);
+    explicit Rrd4QtSignal(QObject* parent = 0);
 
 signals:
     void serverMessage(QJsonObject json);
@@ -17,4 +17,4 @@ signals:
     void serverMessage(int         integer);
 };
 
-#endif // RRD4CSIGNAL_H
+#endif // RRD4QTSIGNAL_H

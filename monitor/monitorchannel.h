@@ -3,8 +3,8 @@
 
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
-#include "rrds/rrd4c.h"
-#include "rrds/rrd4csignal.h"
+#include "rrds/rrd4qt.h"
+#include "rrds/rrd4qtsignal.h"
 
 #include <QObject>
 #include <QDebug>

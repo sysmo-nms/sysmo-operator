@@ -46,9 +46,7 @@ SOURCES += main.cpp\
     dialogs/messagebox.cpp \
     network/supercasthttprequest.cpp \
     network/supercasthttpreply.cpp \
-    rrds/rrd4c.cpp \
     dialogs/newprobepage2.cpp \
-    rrds/rrd4csignal.cpp \
     monitor/xml/parseallchecks.cpp \
     monitor/xml/parsecheckgetid.cpp \
     monitor/xml/parsecheckgetinfos.cpp \
@@ -58,7 +56,10 @@ SOURCES += main.cpp\
     dialogs/newprobeprogressdialog.cpp \
     windows/probewindow.cpp \
     monitor/monitorchannel.cpp \
-    monitor/xml/parsecheckmakegraphcmd.cpp
+    monitor/xml/parsecheckmakegraphcmd.cpp \
+    rrds/rrd4qt.cpp \
+    rrds/rrd4qtsignal.cpp \
+    rrds/rrd4qtgraph.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -93,8 +94,6 @@ HEADERS  += mainwindow.h \
     dialogs/messagebox.h \
     network/supercasthttprequest.h \
     network/supercasthttpreply.h \
-    rrds/rrd4c.h \
-    rrds/rrd4csignal.h \
     dialogs/newprobepage2.h \
     monitor/xml/parseallchecks.h \
     monitor/xml/parsecheckgetid.h \
@@ -105,7 +104,10 @@ HEADERS  += mainwindow.h \
     dialogs/newprobeprogressdialog.h \
     windows/probewindow.h \
     monitor/monitorchannel.h \
-    monitor/xml/parsecheckmakegraphcmd.h
+    monitor/xml/parsecheckmakegraphcmd.h \
+    rrds/rrd4qt.h \
+    rrds/rrd4qtsignal.h \
+    rrds/rrd4qtgraph.h
 
 RESOURCES += \
     icons.qrc \

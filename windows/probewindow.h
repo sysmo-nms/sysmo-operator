@@ -8,6 +8,7 @@
 #include "monitor/monitor.h"
 #include "monitor/nchecks.h"
 #include "monitor/xml/parsecheckmakegraphcmd.h"
+#include "rrds/rrd4qtgraph.h"
 
 #include <QObject>
 #include <QWidget>
