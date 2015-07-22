@@ -21,6 +21,7 @@
 
 package io.sysmo.rrd4qt;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 
@@ -36,6 +37,7 @@ import java.util.logging.Level;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.Sample;
+import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.ConsolFun;
@@ -160,6 +162,16 @@ public class Rrd4Qt
         {
             Rrd4Qt.logger.log(Level.SEVERE, e.toString());
         }
+    }
+
+    public static Color decodeRGBA(String hexString)
+    {
+        return new Color(
+                Integer.valueOf(hexString.substring(1,3), 16),
+                Integer.valueOf(hexString.substring(3,5), 16),
+                Integer.valueOf(hexString.substring(5,7), 16),
+                Integer.valueOf(hexString.substring(7,9), 16)
+        );
     }
 }
 
@@ -406,7 +418,7 @@ class Rrd4QtJob implements Runnable
 
 
         /*
-         * Get DS Draw list
+         * Get DS Draw list and iterate.
          */
         JsonArray dataSources = this.command.getJsonArray("draws");
         for(JsonValue ds : dataSources)
@@ -420,12 +432,40 @@ class Rrd4QtJob implements Runnable
                                                 obj.getString("consolidation"));
 
             graphDef.datasource(dsName, rrdFile, dsName, dsCons);
+
+            Color color = Rrd4Qt.decodeRGBA(dsColor);
+
+            if (dsType.equals("area"))
+                graphDef.area(dsName, color, dsLegend);
+            else if (dsType.equals("stack"))
+                graphDef.stack(dsName, color, dsLegend);
+            else
+                graphDef.line(dsName, color, dsLegend);
+
         }
 
-        Rrd4Qt.logger.log(Level.INFO, dataSources.toString());
+        graphDef.setWidth(width);
+        graphDef.setHeight(height);
 
+        String replyStatus;
+        try {
+            RrdGraph      graph = new RrdGraph(graphDef);
+            BufferedImage image = new BufferedImage(100,100, BufferedImage.TYPE_INT_RGB);
+            graph.render(image.getGraphics());
+            replyStatus = "success";
+
+        } catch (Exception e) {
+            Rrd4Qt.logger.log(
+                    Level.WARNING, "fail to generate graph: " + e.toString());
+            replyStatus = "failure";
+        }
+
+        /*
+         * Build and send reply
+         */
+        Rrd4Qt.logger.log(Level.INFO, dataSources.toString());
         JsonObject reply = Json.createObjectBuilder()
-                .add("reply",   "ok")
+                .add("reply",   replyStatus)
                 .add("opaque",  opaque)
                 .add("queryId", queryId)
                 .build();

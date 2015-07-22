@@ -72,6 +72,9 @@ ProbeWindow::ProbeWindow(QString probeName)
     this->scroll_area->setBackgroundRole(QPalette::Window);
     this->scroll_area->setFrameShape(QFrame::Panel);
     this->scroll_area->setFrameShadow(QFrame::Sunken);
+    this->scroll_area->setMinimumWidth(400);
+    this->scroll_area->setMinimumHeight(200);
+    this->scroll_area->setWidgetResizable(true);
 
     // log area container
     NFrameContainer* log_area = new NFrameContainer(this);
@@ -148,6 +151,10 @@ void ProbeWindow::handleEvent(QJsonObject event) {
         {
             QString key = i.next();
 
+            /*
+             * From there, the Rrd4QtGraph() will handle himself showing
+             * the graph defined.
+             */
             Rrd4QtGraph* graph = new Rrd4QtGraph(
                             event.value("rrdFile").toString(), // rrd db
                             js_graphs.value(key).toObject(),   // graph def

@@ -10,6 +10,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QTemporaryFile>
+#include <QPixmap>
 #include <QDebug>
 
 class Rrd4QtGraph : public QLabel
@@ -24,6 +25,8 @@ public:
 private:
     QJsonObject graph_config;
     QString     graph_id;
+    QString     pixmap_file;
+    QPixmap     pixmap_obj;
 
 public slots:
     void handleRrdReply(QJsonObject reply);
