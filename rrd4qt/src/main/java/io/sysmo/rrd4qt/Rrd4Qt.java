@@ -21,7 +21,6 @@
 
 package io.sysmo.rrd4qt;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 
@@ -83,10 +82,9 @@ public class Rrd4Qt
         );
 
         /*
-         * initialize out and json reader
+         * initialize out
          */
         Rrd4Qt.out = System.out;
-        JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
         /*
          * Begin loop listen System.in
@@ -98,6 +96,11 @@ public class Rrd4Qt
             int     size;
             int     read;
             int     status;
+            JsonReaderFactory    readerFactory = Json.createReaderFactory(null);
+            JsonObject           jsonObject;
+            ByteArrayInputStream inStream;
+            Rrd4QtJob            rrdWorker;
+
             while (true) {
                 /*
                  * Get the first byte (as int 0 to 255 or -1 if EOF)
@@ -128,16 +131,14 @@ public class Rrd4Qt
                 /*
                  * Create a json object from the buffer
                  */
-                ByteArrayInputStream reader =
-                        new ByteArrayInputStream(buffer, 0, size);
-                JsonObject jsonObject =
-                        readerFactory.createReader(reader).readObject();
+                inStream   = new ByteArrayInputStream(buffer, 0, size);
+                jsonObject = readerFactory.createReader(inStream).readObject();
 
                 /*
                  * Start Rrd4QtJob
                  */
-                Rrd4QtJob worker = new Rrd4QtJob(jsonObject);
-                Rrd4Qt.threadPool.execute(worker);
+                rrdWorker = new Rrd4QtJob(jsonObject);
+                Rrd4Qt.threadPool.execute(rrdWorker);
             }
         }
         catch (Exception e)
@@ -400,23 +401,27 @@ class Rrd4QtJob implements Runnable
         graphDef.setBase(Double.parseDouble(base));
         graphDef.setUnit(unit);
         graphDef.setUnitsExponent(Integer.parseInt(unitExp));
+        graphDef.setWidth(width);
+        graphDef.setHeight(height);
+
+        if (rigid.equals("true"))
+            graphDef.setRigid(true);
 
         try {
             double minValDouble = Double.parseDouble(minVal);
             graphDef.setMinValue(minValDouble);
         } catch (Exception e) {
-            Rrd4Qt.logger.log(Level.INFO, "min val not a double: " + e.toString());
+            Rrd4Qt.logger.log(
+                        Level.INFO, "min val not a double: " + e.toString());
         }
 
         try {
             double maxValDouble = Double.parseDouble(maxVal);
             graphDef.setMaxValue(maxValDouble);
         } catch (Exception e) {
-            Rrd4Qt.logger.log(Level.INFO, "max val not a double: " + e.toString());
+            Rrd4Qt.logger.log(
+                        Level.INFO, "max val not a double: " + e.toString());
         }
-
-        if (rigid.equals("true")) graphDef.setRigid(true);
-
 
         /*
          * Get DS Draw list and iterate.
@@ -436,24 +441,25 @@ class Rrd4QtJob implements Runnable
 
             Color color = Rrd4Qt.decodeRGBA(dsColor);
 
-            if (dsType.equals("area"))
-                graphDef.area(dsName, color, dsLegend);
-            else if (dsType.equals("stack"))
-                graphDef.stack(dsName, color, dsLegend);
-            else
-                graphDef.line(dsName, color, dsLegend);
-
+            switch (dsType)
+            {
+                case "area":
+                    graphDef.area(dsName, color, dsLegend);
+                    break;
+                case "stack":
+                    graphDef.stack(dsName, color, dsLegend);
+                    break;
+                default:
+                    graphDef.line(dsName, color, dsLegend);
+            }
         }
 
-        graphDef.setWidth(width);
-        graphDef.setHeight(height);
-
+        /*
+         * Graph:
+         */
         String replyStatus;
         try {
             new RrdGraph(graphDef);
-            //RrdGraph graph = new RrdGraph(graphDef);
-            //BufferedImage image = new BufferedImage(100,100, BufferedImage.TYPE_INT_RGB);
-            //graph.render(image.getGraphics());
             replyStatus = "success";
 
         } catch (Exception e) {
