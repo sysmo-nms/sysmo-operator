@@ -45,6 +45,9 @@ public slots:
     void procStdoutReadyRead();
     void procStderrReadyRead();
 
+signals:
+    void javaStopped();
+
 private:
     static Rrd4Qt* singleton;
     static const qint32 HEADER_LEN = 4;

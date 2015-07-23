@@ -23,7 +23,7 @@ task :java_ressource do
                File.join(rrdsrc, "lib/rrd4qt-1.0-SNAPSHOT.jar"),
                File.join(rrddst))
   FileUtils.cp(
-               File.join(rrdsrc, "lib/rrd4j-2.3-SNAPSHOT.jar"),
+               File.join(rrdsrc, "lib/rrd4j-3.0-SYSMO-SNAPSHOT.jar"),
                File.join(rrddst))
   FileUtils.cp(
                File.join(rrdsrc, "lib/javax.json-1.0.4.jar"),

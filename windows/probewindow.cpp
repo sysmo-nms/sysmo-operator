@@ -250,6 +250,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
              */
             QLabel* desc_label = new QLabel(rrd_id, fr);
             gr->addWidget(desc_label, 0,0);
+            gr->setRowStretch(0,0);
 
 
             /*
@@ -321,7 +322,8 @@ void ProbeWindow::openWindow(QString name)
      * If window exist use it. Else create and insert it in
      * ProbeWindow::windows hash.
      */
-    if (ProbeWindow::windows.contains(name)) {
+    //if (ProbeWindow::windows.contains(name)) {
+    if (0 == 1) {
 
         win = ProbeWindow::windows.value(name);
 

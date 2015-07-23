@@ -43,6 +43,8 @@ import org.rrd4j.ConsolFun;
 
 import java.awt.Color;
 
+import javax.imageio.ImageIO;
+
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.JsonArray;
@@ -67,6 +69,11 @@ public class Rrd4Qt
          */
         Rrd4Qt.logger = Logger.getLogger("rrd4qt");
         Rrd4Qt.logger.setLevel(Level.ALL);
+
+        /*
+         * Disable disk caching for ImageIO
+         */
+        ImageIO.setUseCache(false);
 
         /*
          * init thread pool and rrdDbPool
@@ -403,6 +410,11 @@ class Rrd4QtJob implements Runnable
         graphDef.setUnitsExponent(Integer.parseInt(unitExp));
         graphDef.setWidth(width);
         graphDef.setHeight(height);
+
+        /*
+         * uncomment to have limited font temporary files created WTF.
+         */
+        //graphDef.setFontSet(true);
 
         if (rigid.equals("true"))
             graphDef.setRigid(true);

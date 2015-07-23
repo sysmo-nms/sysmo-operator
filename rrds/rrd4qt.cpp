@@ -8,6 +8,16 @@ Rrd4Qt::~Rrd4Qt()
     this->proc->kill();
     this->proc->waitForFinished();
     delete this->proc;
+
+    QHash<int, Rrd4QtSignal*>::iterator i;
+    for (
+         i  = this->queries->begin();
+         i != this->queries->end();
+         ++i)
+    {
+        Rrd4QtSignal* sig = i.value();
+        delete sig;
+    }
     delete this->queries;
 }
 
@@ -46,7 +56,7 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 
     QFile   rrd4j(":/rrd4qt/rrd4j.jar");
     QString rrd4j_jar_path =
-            QDir(lib_dir).absoluteFilePath("rrd4j-2.3-SNAPSHOT.jar");
+            QDir(lib_dir).absoluteFilePath("rrd4j-3.0-SYSMO-SNAPSHOT.jar");
     rrd4j.copy(rrd4j_jar_path);
 
     QFile   rrd4qt(":/rrd4qt/rrd4qt.jar");
@@ -171,6 +181,7 @@ QByteArray Rrd4Qt::int32ToArray(qint32 source)
 
 void Rrd4Qt::procStopped(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    emit this->javaStopped();
     qDebug() << "proc stoped " << exitCode << " " << exitStatus;
 }
 
