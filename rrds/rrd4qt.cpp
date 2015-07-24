@@ -77,17 +77,17 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
     this->proc->setReadChannel(QProcess::StandardOutput);
     QObject::connect(
                 this->proc, SIGNAL(started()),
-                this, SLOT(procStarted()));
+                this,       SLOT(procStarted()));
     QObject::connect(
                 this->proc, SIGNAL(finished(int,QProcess::ExitStatus)),
-                this, SLOT(procStopped(int,QProcess::ExitStatus)));
+                this,       SLOT(procStopped(int,QProcess::ExitStatus)));
     QObject::connect(
                 this->proc, SIGNAL(readyRead()),
-                this, SLOT(procStdoutReadyRead()));
+                this,       SLOT(procStdoutReadyRead()));
 
     QObject::connect(
                 this->proc, SIGNAL(readyReadStandardError()),
-                this, SLOT(procStderrReadyRead()));
+                this,       SLOT(procStderrReadyRead()));
 
     this->proc->start(proc_path);
 }
@@ -122,7 +122,7 @@ void Rrd4Qt::procStdoutReadyRead()
     /*
      * Deliver the message
      */
-    int      queryId = json_obj.value("queryId").toInt();
+    int       queryId = json_obj.value("queryId").toInt();
     Rrd4QtSignal* sig = this->queries->take(queryId);
 
     emit sig->serverMessage(json_obj);

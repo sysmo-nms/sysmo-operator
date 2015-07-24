@@ -19,9 +19,9 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QStatusBar>
+#include <QScrollArea>
 #include <QPalette>
 #include <QComboBox>
-#include <QScrollArea>
 #include <QJsonObject>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
@@ -39,8 +39,8 @@ private:
     QString     name;
     QJsonObject rrd_config;
 
-    QStatusBar*   status_bar = NULL;
-    QScrollArea* scroll_area = NULL;
+    QStatusBar*    status_bar = NULL;
+    QScrollArea*  scroll_area = NULL;
 
     static QHash<QString, ProbeWindow*> windows;
 

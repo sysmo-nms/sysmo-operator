@@ -57,9 +57,9 @@ SOURCES += main.cpp\
     windows/probewindow.cpp \
     monitor/monitorchannel.cpp \
     monitor/xml/parsecheckmakegraphcmd.cpp \
-    rrds/rrd4qt.cpp \
     rrds/rrd4qtsignal.cpp \
-    rrds/rrd4qtgraph.cpp
+    rrds/rrd4qtgraph.cpp \
+    rrds/rrd4qt.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -105,9 +105,9 @@ HEADERS  += mainwindow.h \
     windows/probewindow.h \
     monitor/monitorchannel.h \
     monitor/xml/parsecheckmakegraphcmd.h \
-    rrds/rrd4qt.h \
     rrds/rrd4qtsignal.h \
-    rrds/rrd4qtgraph.h
+    rrds/rrd4qtgraph.h \
+    rrds/rrd4qt.h
 
 RESOURCES += \
     icons.qrc \

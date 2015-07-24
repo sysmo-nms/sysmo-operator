@@ -55,7 +55,7 @@ private:
     qint32        block_size;
     QTemporaryDir temporary_dir;
 
-    QProcess*                 proc    = NULL;
+    QProcess*                  proc    = NULL;
     QHash<int, Rrd4QtSignal*>* queries = NULL;
 
     static qint32     arrayToInt32(QByteArray source);
