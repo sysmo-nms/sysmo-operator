@@ -213,7 +213,7 @@ class Rrd4QtGraphDef extends RrdGraphDef
 
     public Rrd4QtGraphDef()
     {
-        super();
+        super(); // RrdGraphDef()
         this.setColor(RrdGraphConstants.COLOR_BACK,   BACK_C);
         this.setColor(RrdGraphConstants.COLOR_CANVAS, CANVAS_C);
         this.setColor(RrdGraphConstants.COLOR_SHADEA, SHADEA_C);
@@ -226,6 +226,10 @@ class Rrd4QtGraphDef extends RrdGraphDef
         this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
         this.setImageFormat("png");
         this.setShowSignature(false);
+        this.setAntiAliasing(true);
+        this.setTextAntiAliasing(true);
+        this.setImageQuality((float) 1.0);
+        this.setLazy(false);
     }
 
     public static void setDefaultColors(JsonObject colorCfg)
@@ -281,7 +285,6 @@ class Rrd4QtGraphDef extends RrdGraphDef
                 new Color(col.getInt("red"), col.getInt("green"),
                         col.getInt("blue"), col.getInt("alpha"));
     }
-
 }
 
 
@@ -400,6 +403,8 @@ class Rrd4QtJob implements Runnable
          * Generate the graph definition.
          */
         Rrd4QtGraphDef graphDef = new Rrd4QtGraphDef();
+
+        if (height < 40) graphDef.setOnlyGraph(true);
         graphDef.setTimeSpan(spanBegin, spanEnd);
         graphDef.setTitle(title);
         graphDef.setVerticalLabel(vlabel);

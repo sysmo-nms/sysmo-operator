@@ -48,6 +48,35 @@ public:
     static void openWindow(QString name);
     void handleEvent(QJsonObject event);
 
+    static int getSpanFor(int value);
+    static const int SPAN_TWO_HOURS;
+    static const int SPAN_TWELVE_HOURS;
+    static const int SPAN_TWO_DAYS;
+    static const int SPAN_SEVEN_DAYS;
+    static const int SPAN_TWO_WEEKS;
+    static const int SPAN_ONE_MONTH;
+    static const int SPAN_SIX_MONTH;
+    static const int SPAN_ONE_YEAR;
+    static const int SPAN_THREE_YEARS;
+    static const int SPAN_TEN_YEARS;
+
+    static bool isThumbnail(int value);
+    static int getHeightFor(int value);
+    static const int HEIGHT_THUMBNAIL;
+    static const int HEIGHT_SMALL;
+    static const int HEIGHT_NORMAL;
+    static const int HEIGHT_LARGE;
+    static const int HEIGHT_HUGE;
+
+
+public slots:
+    void handleSpanChanged(int span);
+    void handleHeightChanged(int height);
+
+signals:
+    void timeSpanChanged(int span);
+    void graphHeightChanged(int height);
+
 public slots:
     void closeEvent(QCloseEvent* event);
 };

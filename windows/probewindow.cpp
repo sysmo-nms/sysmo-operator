@@ -1,5 +1,22 @@
 #include "probewindow.h"
 
+const int ProbeWindow::HEIGHT_THUMBNAIL = 0;
+const int ProbeWindow::HEIGHT_SMALL     = 1;
+const int ProbeWindow::HEIGHT_NORMAL    = 2;
+const int ProbeWindow::HEIGHT_LARGE     = 3;
+const int ProbeWindow::HEIGHT_HUGE      = 4;
+
+const int ProbeWindow::SPAN_TWO_HOURS    = 0;
+const int ProbeWindow::SPAN_TWELVE_HOURS = 1;
+const int ProbeWindow::SPAN_TWO_DAYS     = 2;
+const int ProbeWindow::SPAN_SEVEN_DAYS   = 3;
+const int ProbeWindow::SPAN_TWO_WEEKS    = 4;
+const int ProbeWindow::SPAN_ONE_MONTH    = 5;
+const int ProbeWindow::SPAN_SIX_MONTH    = 6;
+const int ProbeWindow::SPAN_ONE_YEAR     = 7;
+const int ProbeWindow::SPAN_THREE_YEARS  = 8;
+const int ProbeWindow::SPAN_TEN_YEARS    = 9;
+
 QHash<QString,ProbeWindow*> ProbeWindow::windows = QHash<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
@@ -46,17 +63,40 @@ ProbeWindow::ProbeWindow(QString probeName)
      * begin generic layout
      */
     // top log area controls
-    NFrame*    log_controls = new NFrame(this);
+    NFrame* log_controls = new NFrame(this);
     NGridContainer* lc_grid = new NGridContainer();
     log_controls->setLayout(lc_grid);
 
-    QLabel*    time_line_label = new QLabel("TimeLine:", this);
-    QComboBox* time_line_cbox  = new QComboBox(this);
+    QLabel* time_line_label = new QLabel("TimeLine:", this);
+    QComboBox* time_span_cbox  = new QComboBox(this);
+    time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_HOURS,    "2h from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_TWELVE_HOURS, "12h from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_DAYS,     "2d from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_SEVEN_DAYS,   "7d from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_WEEKS,    "2w from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_ONE_MONTH,    "1m from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_SIX_MONTH,    "6m from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_ONE_YEAR,     "1y from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_THREE_YEARS,  "3y from now");
+    time_span_cbox->insertItem(ProbeWindow::SPAN_TEN_YEARS,    "10y from now");
+    time_span_cbox->setCurrentIndex(ProbeWindow::SPAN_SEVEN_DAYS);
+    QObject::connect(
+                time_span_cbox, SIGNAL(currentIndexChanged(int)),
+                this,           SLOT(handleSpanChanged(int)));
     lc_grid->addWidget(time_line_label, 0,0);
-    lc_grid->addWidget(time_line_cbox, 0,1);
+    lc_grid->addWidget(time_span_cbox, 0,1);
 
-    QLabel*    height_label = new QLabel("Graph height:", this);
+    QLabel* height_label = new QLabel("Graph height:", this);
     QComboBox* height_cbox  = new QComboBox(this);
+    height_cbox->insertItem(ProbeWindow::HEIGHT_THUMBNAIL, "Thumbnail");
+    height_cbox->insertItem(ProbeWindow::HEIGHT_SMALL,     "Small");
+    height_cbox->insertItem(ProbeWindow::HEIGHT_NORMAL,    "Normal");
+    height_cbox->insertItem(ProbeWindow::HEIGHT_LARGE,     "Large");
+    height_cbox->insertItem(ProbeWindow::HEIGHT_HUGE,      "Huge");
+    height_cbox->setCurrentIndex(ProbeWindow::HEIGHT_NORMAL);
+    QObject::connect(
+                height_cbox, SIGNAL(currentIndexChanged(int)),
+                this,        SLOT(handleHeightChanged(int)));
     lc_grid->addWidget(height_label, 0,2);
     lc_grid->addWidget(height_cbox, 0,3);
 
@@ -178,7 +218,14 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                             js_graphs.value(key).toObject(),   // graph def
                             frame);                            // parent
 
-            graph->setFixedHeight(300);
+            QObject::connect(
+                        this,  SIGNAL(timeSpanChanged(int)),
+                        graph, SLOT(setTimeSpan(int)));
+
+            QObject::connect(
+                        this,  SIGNAL(graphHeightChanged(int)),
+                        graph, SLOT(setGraphHeight(int)));
+
 
             grid->addWidget(graph, row, 0);
 
@@ -250,7 +297,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
              */
             QLabel* desc_label = new QLabel(rrd_id, fr);
             gr->addWidget(desc_label, 0,0);
-            gr->setRowStretch(0,0);
+            gr->setColumnStretch(0,0);
 
 
             /*
@@ -276,16 +323,25 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                                 js_graphs.value(key).toObject(), // graph def
                                 fr);                             // parent
 
-                    graph->setFixedHeight(300);
+                    QObject::connect(
+                         this,  SIGNAL(timeSpanChanged(int)),
+                         graph, SLOT(setTimeSpan(int)));
+
+                    QObject::connect(
+                         this,  SIGNAL(graphHeightChanged(int)),
+                         graph, SLOT(setGraphHeight(int)));
+
 
                     qDebug() << "add col: " << col;
                     gr->addWidget(graph, 0, col);
 
                     ++col;
             }
+            grid->setRowStretch(row, 0);
             grid->addWidget(fr, row, 0);
             ++row;
         }
+        grid->setRowStretch(row, 1);
 
         /*
          * Set the scroll area newly created widget
@@ -349,4 +405,77 @@ void ProbeWindow::openWindow(QString name)
     win->showNormal();
     win->setFocus();
     qApp->setActiveWindow(win);
+}
+
+int ProbeWindow::getHeightFor(int value)
+{
+    switch (value)
+    {
+    case ProbeWindow::HEIGHT_THUMBNAIL:
+        return 30;
+    case ProbeWindow::HEIGHT_SMALL:
+        return 50;
+    case ProbeWindow::HEIGHT_NORMAL:
+        return 100;
+    case ProbeWindow::HEIGHT_LARGE:
+        return 180;
+    case ProbeWindow::HEIGHT_HUGE:
+        return 300;
+    default:
+        qWarning() << "unknown size:" << value;
+        return 100;
+    }
+}
+
+int ProbeWindow::getSpanFor(int value)
+{
+    switch(value)
+    {
+    case ProbeWindow::SPAN_TWO_HOURS:
+        return 7200;
+    case ProbeWindow::SPAN_TWELVE_HOURS:
+        return 43200;
+    case ProbeWindow::SPAN_TWO_DAYS:
+        return 172800;
+    case ProbeWindow::SPAN_SEVEN_DAYS:
+        return 604800;
+    case ProbeWindow::SPAN_TWO_WEEKS:
+        return 1209600;
+    case ProbeWindow::SPAN_ONE_MONTH:
+        return 2592000;
+    case ProbeWindow::SPAN_SIX_MONTH:
+        return 15552000;
+    case ProbeWindow::SPAN_ONE_YEAR:
+        return 31536000;
+    case ProbeWindow::SPAN_THREE_YEARS:
+        return 94608000;
+    case ProbeWindow::SPAN_TEN_YEARS:
+        return 315360000;
+    default:
+        qWarning() << "Unknown time span:" << value;
+        return 604800;
+    }
+}
+
+bool ProbeWindow::isThumbnail(int value)
+{
+    switch(value)
+    {
+    case ProbeWindow::HEIGHT_THUMBNAIL:
+        return true;
+    default:
+        return false;
+    }
+}
+
+void ProbeWindow::handleHeightChanged(int height)
+{
+    int height_val = ProbeWindow::getHeightFor(height);
+    emit this->graphHeightChanged(height_val);
+}
+
+void ProbeWindow::handleSpanChanged(int span)
+{
+    int span_val = ProbeWindow::getSpanFor(span);
+    emit this->timeSpanChanged(span_val);
 }

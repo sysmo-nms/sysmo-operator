@@ -24,16 +24,16 @@ Rrd4Qt::~Rrd4Qt()
 Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 {
     Rrd4Qt::singleton = this;
-    this->queries    = new QHash<int, Rrd4QtSignal*>();
-    this->block_size = 0;
+    this->queries     = new QHash<int, Rrd4QtSignal*>();
+    this->block_size  = 0;
 
     /*
      * Java dir setup.
      * Create gradle installDist directory tree under temporary
      * directory.
      */
-    QString bin_dir =  QDir(this->temporary_dir.path()).absoluteFilePath("bin");
-    QString lib_dir =  QDir(this->temporary_dir.path()).absoluteFilePath("lib");
+    QString bin_dir = QDir(this->temporary_dir.path()).absoluteFilePath("bin");
+    QString lib_dir = QDir(this->temporary_dir.path()).absoluteFilePath("lib");
 
     QDir d;
     d.mkdir(bin_dir);
@@ -126,7 +126,6 @@ void Rrd4Qt::procStdoutReadyRead()
     Rrd4QtSignal* sig = this->queries->take(queryId);
 
     emit sig->serverMessage(json_obj);
-    sig->deleteLater();
 
     /*
      * Reinitialize block size to 0

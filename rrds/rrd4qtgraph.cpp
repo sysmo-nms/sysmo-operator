@@ -7,6 +7,15 @@ Rrd4QtGraph::Rrd4QtGraph(
 {
 
     /*
+     * Connect signal
+     */
+    this->rrd4qt_sig = new Rrd4QtSignal(this);
+    QObject::connect(
+                this->rrd4qt_sig, SIGNAL(serverMessage(QJsonObject)),
+                this,             SLOT(handleRrdReply(QJsonObject)));
+
+
+    /*
      * Open and close temporary file to generate fileName()
      */
     QTemporaryFile* f = new QTemporaryFile(this);
@@ -38,21 +47,11 @@ Rrd4QtGraph::Rrd4QtGraph(
     this->setText(this->graph_config.value("label").toString());
 
 
-    /*
-     * Connect signal
-     * TODO keep the same signal for emiting and receiving
-     * WARNING if signal is emited when i am destroyed.
-     */
-    Rrd4QtSignal* sig = new Rrd4QtSignal();
-    QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(handleRrdReply(QJsonObject)));
-
 
     /*
      * Call rrd to graph initial pixmap;
      */
-    Rrd4Qt::callRrd(this->graph_config, sig);
+    Rrd4Qt::callRrd(this->graph_config, this->rrd4qt_sig);
 
 }
 
@@ -66,4 +65,17 @@ void Rrd4QtGraph::handleRrdReply(QJsonObject reply)
     }
 
     qWarning() << "callRrd graph returned:" << reply;
+}
+
+void Rrd4QtGraph::setTimeSpan(int time_span)
+{
+    qDebug() << "set time span";
+    this->graph_config.insert("spanBegin", QJsonValue(0 - time_span));
+    Rrd4Qt::callRrd(this->graph_config, this->rrd4qt_sig);
+}
+
+void Rrd4QtGraph::setGraphHeight(int size)
+{
+    this->graph_config.insert("height", QJsonValue(size));
+    Rrd4Qt::callRrd(this->graph_config, this->rrd4qt_sig);
 }
