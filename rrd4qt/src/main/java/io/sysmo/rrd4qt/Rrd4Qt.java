@@ -230,6 +230,7 @@ class Rrd4QtGraphDef extends RrdGraphDef
         this.setTextAntiAliasing(true);
         this.setImageQuality((float) 1.0);
         this.setLazy(false);
+        //this.setFontSet(true);
     }
 
     public static void setDefaultColors(JsonObject colorCfg)
@@ -404,22 +405,27 @@ class Rrd4QtJob implements Runnable
          */
         Rrd4QtGraphDef graphDef = new Rrd4QtGraphDef();
 
-        if (height < 40) graphDef.setOnlyGraph(true);
+        if (height < 40)
+            graphDef.setOnlyGraph(true);
         graphDef.setTimeSpan(spanBegin, spanEnd);
         graphDef.setTitle(title);
         graphDef.setVerticalLabel(vlabel);
         graphDef.setFilename(pngFile);
         graphDef.setImageFormat("png");
         graphDef.setBase(Double.parseDouble(base));
-        graphDef.setUnit(unit);
-        graphDef.setUnitsExponent(Integer.parseInt(unitExp));
         graphDef.setWidth(width);
         graphDef.setHeight(height);
+        if (!unit.equals("undefined"))
+            graphDef.setUnit(unit);
+        if (!unitExp.equals("undefined")) {
+            try {
+                graphDef.setUnitsExponent(Integer.parseInt(unitExp));
+            } catch (Exception e) {
+                Rrd4Qt.logger.log(
+                        Level.INFO, "bad unit exp: " + unitExp + e.toString());
+            }
+        }
 
-        /*
-         * uncomment to have limited font temporary files created WTF.
-         */
-        //graphDef.setFontSet(true);
 
         if (rigid.equals("true"))
             graphDef.setRigid(true);
