@@ -54,7 +54,6 @@ bool ParseCheckMakeGraphCMD::startElement(
         this->current_draw.insert("calculation",
                                   QJsonValue(atts.value("Calculation")));
         this->char_element = "draw";
-        qDebug() << "calculation: " << this->current_draw.value("calculation");
     }
     return true;
 }
