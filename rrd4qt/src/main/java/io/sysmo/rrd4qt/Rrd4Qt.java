@@ -291,18 +291,18 @@ class Rrd4QtGraphDef extends RrdGraphDef
 
 class Rrd4QtJob implements Runnable
 {
-    private JsonObject command;
+    private JsonObject job;
 
-    public Rrd4QtJob(JsonObject job) { this.command = job; }
+    public Rrd4QtJob(JsonObject job) { this.job = job; }
 
-    public int getQueryId() { return this.command.getInt("queryId"); }
+    public int getQueryId() { return this.job.getInt("queryId"); }
 
     @Override
     public void run()
     {
-        Rrd4Qt.logger.log(Level.INFO, this.command.toString());
+        Rrd4Qt.logger.log(Level.INFO, this.job.toString());
 
-        String cmdType = this.command.getString("type");
+        String cmdType = this.job.getString("type");
         switch (cmdType)
         {
             case "graph":
@@ -321,7 +321,7 @@ class Rrd4QtJob implements Runnable
 
     private void handleConfig()
     {
-        Rrd4QtGraphDef.setDefaultColors(this.command);
+        Rrd4QtGraphDef.setDefaultColors(this.job);
     }
 
     private void handleUpdate()
@@ -329,11 +329,11 @@ class Rrd4QtJob implements Runnable
         /*
          * get arguments
          */
-        String    rrdFile = this.command.getString("file");
-        long    timestamp = (long)this.command.getInt("timestamp");
-        JsonObject update = this.command.getJsonObject("updates");
-        String     opaque = this.command.getString("opaque");
-        int       queryId = this.command.getInt("queryId");
+        String    rrdFile = this.job.getString("file");
+        long    timestamp = (long)this.job.getInt("timestamp");
+        JsonObject update = this.job.getJsonObject("updates");
+        String     opaque = this.job.getString("opaque");
+        int       queryId = this.job.getInt("queryId");
 
         String replyStatus;
 
@@ -374,39 +374,36 @@ class Rrd4QtJob implements Runnable
         /*
          * Get logical arguments
          */
-        String opaque = this.command.getString("opaque");
-        int   queryId = this.command.getInt("queryId");
+        String opaque = this.job.getString("opaque");
+        int   queryId = this.job.getInt("queryId");
 
         /*
          * Get graph arguments
          */
-        String rrdFile = this.command.getString("rrdFile");
-        String pngFile = this.command.getString("pngFile");
+        String rrdFile = this.job.getString("rrdFile");
+        String pngFile = this.job.getString("pngFile");
 
-        String title  = this.command.getString("title");
-        String vlabel = this.command.getString("verticalLabel");
+        String title  = this.job.getString("title");
+        String vlabel = this.job.getString("verticalLabel");
 
-        int spanBegin = this.command.getInt("spanBegin");
-        int spanEnd   = this.command.getInt("spanEnd");
+        int spanBegin = this.job.getInt("spanBegin");
+        int spanEnd   = this.job.getInt("spanEnd");
 
-        int width  = this.command.getInt("width");
-        int height = this.command.getInt("height");
+        int width  = this.job.getInt("width");
+        int height = this.job.getInt("height");
 
-        String minVal = this.command.getString("minimum");
-        String maxVal = this.command.getString("maximum");
+        String minVal = this.job.getString("minimum");
+        String maxVal = this.job.getString("maximum");
 
-        String rigid   = this.command.getString("rigid");
-        String base    = this.command.getString("base");
-        String unit    = this.command.getString("unit");
-        String unitExp = this.command.getString("unitExponent");
+        String rigid   = this.job.getString("rigid");
+        String base    = this.job.getString("base");
+        String unit    = this.job.getString("unit");
+        String unitExp = this.job.getString("unitExponent");
 
         /*
          * Generate the graph definition.
          */
         Rrd4QtGraphDef graphDef = new Rrd4QtGraphDef();
-
-        if (height < 40)
-            graphDef.setOnlyGraph(true);
         graphDef.setTimeSpan(spanBegin, spanEnd);
         graphDef.setTitle(title);
         graphDef.setVerticalLabel(vlabel);
@@ -415,9 +412,11 @@ class Rrd4QtJob implements Runnable
         graphDef.setBase(Double.parseDouble(base));
         graphDef.setWidth(width);
         graphDef.setHeight(height);
-        if (!unit.equals("undefined"))
+        if (rigid.equals("true"))
+            graphDef.setRigid(true);
+        if (!unit.equals(""))
             graphDef.setUnit(unit);
-        if (!unitExp.equals("undefined")) {
+        if (!unitExp.equals("")) {
             try {
                 graphDef.setUnitsExponent(Integer.parseInt(unitExp));
             } catch (Exception e) {
@@ -427,8 +426,6 @@ class Rrd4QtJob implements Runnable
         }
 
 
-        if (rigid.equals("true"))
-            graphDef.setRigid(true);
 
         try {
             double minValDouble = Double.parseDouble(minVal);
@@ -449,7 +446,7 @@ class Rrd4QtJob implements Runnable
         /*
          * Get DS Draw list and iterate.
          */
-        JsonArray dataSources = this.command.getJsonArray("draws");
+        JsonArray dataSources = this.job.getJsonArray("draws");
         for(JsonValue ds : dataSources)
         {
             JsonObject obj = (JsonObject)ds;
@@ -457,23 +454,32 @@ class Rrd4QtJob implements Runnable
             String    dsColor  = obj.getString("color");
             String    dsLegend = obj.getString("legend");
             String    dsType   = obj.getString("type");
-            ConsolFun dsCons   = ConsolFun.valueOf(
-                                                obj.getString("consolidation"));
+            String    calc     = obj.getString("calculation");
+
+            Color     color = Rrd4Qt.decodeRGBA(dsColor);
+            ConsolFun dsCons = ConsolFun.valueOf(
+                    obj.getString("consolidation"));
 
             graphDef.datasource(dsName, rrdFile, dsName, dsCons);
 
-            Color color = Rrd4Qt.decodeRGBA(dsColor);
+            String drawName;
+            if (calc.equals("")) {
+                drawName = dsName;
+            } else {
+                drawName = "calculation-" + dsName;
+                graphDef.datasource(drawName, calc);
+            }
 
             switch (dsType)
             {
                 case "area":
-                    graphDef.area(dsName, color, dsLegend);
+                    graphDef.area(drawName, color, dsLegend);
                     break;
                 case "stack":
-                    graphDef.stack(dsName, color, dsLegend);
+                    graphDef.stack(drawName, color, dsLegend);
                     break;
                 default:
-                    graphDef.line(dsName, color, dsLegend);
+                    graphDef.line(drawName, color, dsLegend);
             }
         }
 

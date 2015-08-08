@@ -43,13 +43,18 @@ bool ParseCheckMakeGraphCMD::startElement(
     // Graph -> Draw
     if (qName == "Draw") {
         this->current_draw = QJsonObject();
-        this->current_draw.insert("type",  QJsonValue(atts.value("Type")));
-        this->current_draw.insert("color", QJsonValue(atts.value("Color")));
+        this->current_draw.insert("type",
+                                  QJsonValue(atts.value("Type")));
+        this->current_draw.insert("color",
+                                  QJsonValue(atts.value("Color")));
         this->current_draw.insert("dataSource",
-                                           QJsonValue(atts.value("DataSource")));
+                                  QJsonValue(atts.value("DataSource")));
         this->current_draw.insert("consolidation",
-                                           QJsonValue(atts.value("Consolidation")));
+                                  QJsonValue(atts.value("Consolidation")));
+        this->current_draw.insert("calculation",
+                                  QJsonValue(atts.value("Calculation")));
         this->char_element = "draw";
+        qDebug() << "calculation: " << this->current_draw.value("calculation");
     }
     return true;
 }
