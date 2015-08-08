@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QIcon>
 #include <QtGlobal>
+#include <QStandardPaths>
 
 void operatorMsgOut(
               QtMsgType           type,
@@ -15,6 +16,10 @@ void operatorMsgOut(
         const QString            &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
+    /*
+    QString logDir = QStandardPath::writableLocation(
+        QStandardPath::AppDataLocation)
+    */
     switch (type) {
     case QtWarningMsg:
         fprintf(stderr, "Warning: %s (%s:%u, %s)\n",

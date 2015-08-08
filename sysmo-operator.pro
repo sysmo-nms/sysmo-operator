@@ -60,7 +60,9 @@ SOURCES += main.cpp\
     rrds/rrd4qtsignal.cpp \
     rrds/rrd4qtgraph.cpp \
     rrds/rrd4qt.cpp \
-    rrds/rrd4qtproc.cpp
+    rrds/rrd4qtproc.cpp \
+    actions/monitoractions.cpp \
+    actions/monitoractionsdialog.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -109,7 +111,9 @@ HEADERS  += mainwindow.h \
     rrds/rrd4qtsignal.h \
     rrds/rrd4qtgraph.h \
     rrds/rrd4qt.h \
-    rrds/rrd4qtproc.h
+    rrds/rrd4qtproc.h \
+    actions/monitoractions.h \
+    actions/monitoractionsdialog.h
 
 RESOURCES += \
     icons.qrc \

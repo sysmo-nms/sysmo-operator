@@ -122,8 +122,6 @@ void TreeView::handleDoubleClicked(const QModelIndex index)
     }
     else if (item->type() == Sysmo::TYPE_TARGET)
     {
-        qDebug() << "should open something!";
+        MonitorActions::openActionFor(name);
     }
-
-    qDebug() << "handle double clicked " << name << item->type();
 }

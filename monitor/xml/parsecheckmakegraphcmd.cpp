@@ -53,6 +53,8 @@ bool ParseCheckMakeGraphCMD::startElement(
                                   QJsonValue(atts.value("Consolidation")));
         this->current_draw.insert("calculation",
                                   QJsonValue(atts.value("Calculation")));
+
+        this->current_draw.insert("legend", QJsonValue(""));
         this->char_element = "draw";
     }
     return true;
