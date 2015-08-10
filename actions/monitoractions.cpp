@@ -32,6 +32,7 @@ void MonitorActions::openActionFor(QString target)
      * MonitorWidget instance has parent
      */
     MonitorActionsDialog* dial =
-       new MonitorActionsDialog(MonitorWidget::getInstance());
+       new MonitorActionsDialog(
+                MonitorWidget::getInstance(), target);
     dial->open();
 }

@@ -61,10 +61,11 @@ void MenuTarget::connectNewProbeDialog() {
  */
 void MenuTarget::deleteTarget()
 {
-    MessageBox* box = new MessageBox(this);
+    MessageBox* box = new MessageBox((QWidget *) this->parent());
     box->setIconType(Sysmo::MESSAGE_WARNING);
     box->setModal(true);
-    box->setText("This action will permanently delete this target and his probes.");
+    box->setText(
+             "This action will permanently delete this target and his probes.");
     box->setInformativeText("Do you want to continue?");
     box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     box->setDefaultButton(QMessageBox::No);

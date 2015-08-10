@@ -412,35 +412,43 @@ class Rrd4QtJob implements Runnable
         graphDef.setBase(Double.parseDouble(base));
         graphDef.setWidth(width);
         graphDef.setHeight(height);
-        if (rigid.equals("true"))
+
+        if (rigid.equals("true")) {
             graphDef.setRigid(true);
-        if (!unit.equals(""))
+        }
+
+        if (!unit.equals("")) {
             graphDef.setUnit(unit);
+        }
+
         if (!unitExp.equals("")) {
             try {
-                graphDef.setUnitsExponent(Integer.parseInt(unitExp));
+                int unitExpInt = Integer.parseInt(unitExp);
+                graphDef.setUnitsExponent(unitExpInt);
             } catch (Exception e) {
                 Rrd4Qt.logger.log(
                         Level.INFO, "bad unit exp: " + unitExp + e.toString());
             }
         }
 
-
-
-        try {
-            double minValDouble = Double.parseDouble(minVal);
-            graphDef.setMinValue(minValDouble);
-        } catch (Exception e) {
-            Rrd4Qt.logger.log(
+        if (!minVal.equals("")) {
+            try {
+                double minValDouble = Double.parseDouble(minVal);
+                graphDef.setMinValue(minValDouble);
+            } catch (Exception e) {
+                Rrd4Qt.logger.log(
                         Level.INFO, "min val not a double: " + e.toString());
+            }
         }
 
-        try {
-            double maxValDouble = Double.parseDouble(maxVal);
-            graphDef.setMaxValue(maxValDouble);
-        } catch (Exception e) {
-            Rrd4Qt.logger.log(
+        if (!maxVal.equals("")) {
+            try {
+                double maxValDouble = Double.parseDouble(maxVal);
+                graphDef.setMaxValue(maxValDouble);
+            } catch (Exception e) {
+                Rrd4Qt.logger.log(
                         Level.INFO, "max val not a double: " + e.toString());
+            }
         }
 
         /*
