@@ -89,6 +89,7 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
                 this->proc, SIGNAL(readyReadStandardError()),
                 this,       SLOT(procStderrReadyRead()));
 
+    // TODO move to a thread
     this->proc->start(proc_path);
 }
 
@@ -195,7 +196,7 @@ void Rrd4Qt::procStarted()
 {
 
     /*
-     * Set default application palette
+     * Set default Rrd4Qt colors
      */
     QPalette palette = qApp->palette();
 
