@@ -58,9 +58,9 @@ import javax.json.JsonObject;
 public class Rrd4Qt
 {
     private static ThreadPoolExecutor threadPool = null;
-    private static OutputStream       out        = null;
-    public  static RrdDbPool          rrdDbPool  = null;
-    public  static Logger             logger     = null;
+    private static OutputStream out = null;
+    static RrdDbPool rrdDbPool = null;
+    static Logger logger = null;
 
     public static void main(String[] args) throws Exception
     {
@@ -159,7 +159,7 @@ public class Rrd4Qt
     {
         try {
             ByteBuffer b = ByteBuffer.allocate(4);
-            byte[] reply = object.toString().getBytes();
+            byte[] reply = object.toString().getBytes("US-ASCII");
             b.putInt(reply.length);
 
             Rrd4Qt.out.write(b.array(), 0, 4);

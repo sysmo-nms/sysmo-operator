@@ -27,7 +27,7 @@ repositories {
 dependencies {
     compile             'org.rrd4j:rrd4j:3.0-SYSMO-SNAPSHOT'
     compile             'org.glassfish:javax.json:1.0.4'
-    testCompile group:  'junit', name: 'junit', version: '4.11'
+    testCompile         'junit:junit:4.11'
 }
 
 tasks.withType(FindBugs) {
