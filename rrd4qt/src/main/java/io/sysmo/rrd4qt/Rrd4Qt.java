@@ -58,7 +58,7 @@ import javax.json.JsonObject;
 public class Rrd4Qt
 {
     private static ThreadPoolExecutor threadPool = null;
-    private static OutputStream out = null;
+    private static OutputStream output = null;
     static RrdDbPool rrdDbPool = null;
     static Logger logger = null;
 
@@ -78,7 +78,7 @@ public class Rrd4Qt
         /*
          * init thread pool and rrdDbPool
          */
-        Rrd4Qt.rrdDbPool  = RrdDbPool.getInstance();
+        Rrd4Qt.rrdDbPool = RrdDbPool.getInstance();
         Rrd4Qt.threadPool = new ThreadPoolExecutor(
             12, //thread Core Pool Size
             20, //thread Max Pool Size
@@ -89,39 +89,35 @@ public class Rrd4Qt
         );
 
         /*
-         * initialize out
+         * initialize output
          */
-        Rrd4Qt.out = System.out;
+        Rrd4Qt.output = System.out;
 
         /*
          * Begin loop listen System.in
          */
         try {
-            InputStream in = System.in;
-            byte[]  header = new byte[4];
-            byte[]  buffer = new byte[65535];
-            int     size;
-            int     read;
-            int     status;
-            JsonReaderFactory    readerFactory = Json.createReaderFactory(null);
-            JsonObject           jsonObject;
-            ByteArrayInputStream inStream;
-            Rrd4QtJob            rrdWorker;
+            InputStream input = System.in;
+            byte[] header = new byte[4];
+            byte[] buffer = new byte[65535];
+            int size, read, status;
+            JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+            JsonObject jsonObject;
 
             while (true) {
                 /*
                  * Get the first byte (as int 0 to 255 or -1 if EOF)
                  */
-                status = in.read();
+                status = input.read();
                 if (status == -1) throw new IOException("STDIN broken");
 
                 /*
                  * Complete the header[4]
                  */
                 header[0] = (byte)status;
-                header[1] = (byte)in.read();
-                header[2] = (byte)in.read();
-                header[3] = (byte)in.read();
+                header[1] = (byte)input.read();
+                header[2] = (byte)input.read();
+                header[3] = (byte)input.read();
 
                 /*
                  * Compute the size of the message
@@ -129,23 +125,24 @@ public class Rrd4Qt
                 size = ByteBuffer.wrap(header, 0, 4).getInt();
 
                 /*
-                 *Now we can read the message
+                 * Now we can read the message
                  */
                 read = 0;
-                while (read != size)
-                    read += in.read(buffer, read, size - read);
+                while (read != size) {
+                    read += input.read(buffer, read, size - read);
+                }
 
                 /*
                  * Create a json object from the buffer
                  */
-                inStream   = new ByteArrayInputStream(buffer, 0, size);
-                jsonObject = readerFactory.createReader(inStream).readObject();
+                jsonObject = readerFactory
+                        .createReader(new ByteArrayInputStream(buffer, 0, size))
+                        .readObject();
 
                 /*
-                 * Start Rrd4QtJob
+                 * Start Runnable Job
                  */
-                rrdWorker = new Rrd4QtJob(jsonObject);
-                Rrd4Qt.threadPool.execute(rrdWorker);
+                Rrd4Qt.threadPool.execute(new Rrd4QtJob(jsonObject));
             }
         }
         catch (Exception e)
@@ -162,9 +159,9 @@ public class Rrd4Qt
             byte[] reply = object.toString().getBytes("US-ASCII");
             b.putInt(reply.length);
 
-            Rrd4Qt.out.write(b.array(), 0, 4);
-            Rrd4Qt.out.write(reply,     0, reply.length);
-            Rrd4Qt.out.flush();
+            Rrd4Qt.output.write(b.array(), 0, 4);
+            Rrd4Qt.output.write(reply,     0, reply.length);
+            Rrd4Qt.output.flush();
         }
         catch (Exception e)
         {
@@ -189,7 +186,7 @@ class RrdReject implements RejectedExecutionHandler
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
     {
         Rrd4QtJob failRunner = (Rrd4QtJob) r;
-        int      queryId = failRunner.getQueryId();
+        int queryId = failRunner.getQueryId();
         JsonObject reply = Json.createObjectBuilder()
                 .add("queryId", queryId)
                 .add("reply", "Error thread queue full!")
@@ -329,11 +326,11 @@ class Rrd4QtJob implements Runnable
         /*
          * get arguments
          */
-        String    rrdFile = this.job.getString("file");
-        long    timestamp = (long)this.job.getInt("timestamp");
+        String rrdFile    = this.job.getString("file");
+        long timestamp    = (long)this.job.getInt("timestamp");
         JsonObject update = this.job.getJsonObject("updates");
-        String     opaque = this.job.getString("opaque");
-        int       queryId = this.job.getInt("queryId");
+        String opaque     = this.job.getString("opaque");
+        int queryId       = this.job.getInt("queryId");
 
         String replyStatus;
 
@@ -341,7 +338,7 @@ class Rrd4QtJob implements Runnable
          * open and write rrd db
          */
         try {
-            RrdDb   rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
+            RrdDb rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
             Sample sample = rrdDb.createSample();
             sample.setTime(timestamp);
 
@@ -375,7 +372,7 @@ class Rrd4QtJob implements Runnable
          * Get logical arguments
          */
         String opaque = this.job.getString("opaque");
-        int   queryId = this.job.getInt("queryId");
+        int queryId = this.job.getInt("queryId");
 
         /*
          * Get graph arguments
@@ -458,13 +455,13 @@ class Rrd4QtJob implements Runnable
         for(JsonValue ds : dataSources)
         {
             JsonObject obj = (JsonObject)ds;
-            String    dsName   = obj.getString("dataSource");
-            String    dsColor  = obj.getString("color");
-            String    dsLegend = obj.getString("legend");
-            String    dsType   = obj.getString("type");
-            String    calc     = obj.getString("calculation");
+            String dsName   = obj.getString("dataSource");
+            String dsColor  = obj.getString("color");
+            String dsLegend = obj.getString("legend");
+            String dsType   = obj.getString("type");
+            String calc     = obj.getString("calculation");
 
-            Color     color = Rrd4Qt.decodeRGBA(dsColor);
+            Color color = Rrd4Qt.decodeRGBA(dsColor);
             ConsolFun dsCons = ConsolFun.valueOf(
                     obj.getString("consolidation"));
 
