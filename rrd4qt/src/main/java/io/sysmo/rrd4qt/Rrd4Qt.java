@@ -405,7 +405,6 @@ class Rrd4QtJob implements Runnable
         graphDef.setTitle(title);
         graphDef.setVerticalLabel(vlabel);
         graphDef.setFilename(pngFile);
-        graphDef.setImageFormat("png");
         graphDef.setBase(Double.parseDouble(base));
         graphDef.setWidth(width);
         graphDef.setHeight(height);
