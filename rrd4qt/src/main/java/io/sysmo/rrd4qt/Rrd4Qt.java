@@ -65,7 +65,7 @@ public class Rrd4Qt
     static RrdDbPool rrdDbPool = null;
     static Logger logger = null;
 
-    public static void main(String[] args) throws Exception
+    public static void main(final String[] args) throws Exception
     {
         /*
          * Init logger (default ConsoleLogger to System.err).
@@ -87,7 +87,7 @@ public class Rrd4Qt
             20, //thread Max Pool Size
             10,
             TimeUnit.MINUTES,
-            new ArrayBlockingQueue<>(3000), // 3000 = queue capacity
+            new ArrayBlockingQueue<Runnable>(3000), // 3000 = queue capacity
             new RrdReject()
         );
 
@@ -155,7 +155,7 @@ public class Rrd4Qt
         }
     }
 
-    public static synchronized void rrdReply(JsonObject object)
+    public static synchronized void rrdReply(final JsonObject object)
     {
         try {
             ByteBuffer b = ByteBuffer.allocate(4);
@@ -172,7 +172,7 @@ public class Rrd4Qt
         }
     }
 
-    public static Color decodeRGBA(String hexString)
+    public static Color decodeRGBA(final String hexString)
     {
         return new Color(
                 Integer.valueOf(hexString.substring(1,3), 16),
@@ -186,7 +186,8 @@ public class Rrd4Qt
 
 class RrdReject implements RejectedExecutionHandler
 {
-    public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
+    public void rejectedExecution(
+            final Runnable r, final ThreadPoolExecutor executor)
     {
         Rrd4QtJob failRunner = (Rrd4QtJob) r;
         int queryId = failRunner.getQueryId();
@@ -233,7 +234,7 @@ class Rrd4QtGraphDef extends RrdGraphDef
         //this.setFontSet(true);
     }
 
-    public static void setDefaultColors(JsonObject colorCfg)
+    public static void setDefaultColors(final JsonObject colorCfg)
     {
         JsonObject col;
         col = colorCfg.getJsonObject("BACK");
@@ -293,9 +294,11 @@ class Rrd4QtJob implements Runnable
 {
     private JsonObject job;
 
-    public Rrd4QtJob(JsonObject job) { this.job = job; }
+    public Rrd4QtJob(final JsonObject job) { this.job = job; }
 
-    public int getQueryId() { return this.job.getInt("queryId"); }
+    public int getQueryId() {
+        return this.job.getInt("queryId");
+    }
 
     @Override
     public void run()

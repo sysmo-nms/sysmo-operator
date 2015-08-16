@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     QApplication::setStyle("fusion");
 #else
     /* other OS/X11 things here */
-    QApplication::setPalette(Themes::native);
+    QApplication::setPalette(Themes::midnight);
     QApplication::setStyle("fusion");
 #endif
 

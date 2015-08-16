@@ -7,7 +7,7 @@ apply plugin: 'pmd'
 apply plugin: 'findbugs'
 apply plugin: 'jdepend'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 
 applicationDefaultJvmArgs = [
         "-client", "-Duser.language=en",
