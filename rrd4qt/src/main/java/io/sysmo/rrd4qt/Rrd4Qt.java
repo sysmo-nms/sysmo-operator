@@ -60,10 +60,11 @@ import javax.json.JsonObject;
 
 public class Rrd4Qt
 {
-    private static ThreadPoolExecutor threadPool = null;
-    private static OutputStream output = null;
-    static RrdDbPool rrdDbPool = null;
-    static Logger logger = null;
+    private static ThreadPoolExecutor threadPool;
+    private static OutputStream output;
+    static RrdDbPool rrdDbPool;
+    static Logger logger;
+    static boolean active = true;
 
     public static void main(final String[] args) throws Exception
     {
@@ -72,6 +73,18 @@ public class Rrd4Qt
          */
         Rrd4Qt.logger = Logger.getLogger("rrd4qt");
         Rrd4Qt.logger.setLevel(Level.ALL);
+
+        /*
+         * Handle kill
+         */
+        Runtime.getRuntime().addShutdownHook(
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Rrd4Qt.active = false;
+                    }
+                }
+        );
 
         /*
          * Disable disk caching for ImageIO
@@ -107,7 +120,7 @@ public class Rrd4Qt
             JsonReaderFactory readerFactory = Json.createReaderFactory(null);
             JsonObject jsonObject;
 
-            while (true) {
+            while (Rrd4Qt.active) {
                 /*
                  * Get the first byte (as int 0 to 255 or -1 if EOF)
                  */
@@ -139,7 +152,7 @@ public class Rrd4Qt
                  * Create a json object from the buffer
                  */
                 jsonObject = readerFactory
-                        .createReader(new ByteArrayInputStream(buffer, 0, size))
+                        .createReader(new ByteArrayInputStream(buffer,0,size))
                         .readObject();
 
                 /*
@@ -147,12 +160,12 @@ public class Rrd4Qt
                  */
                 Rrd4Qt.threadPool.execute(new Rrd4QtJob(jsonObject));
             }
-        }
-        catch (Exception e)
-        {
+
+        } catch (Exception e) {
             Rrd4Qt.logger.log(Level.SEVERE, e.toString());
-            System.exit(1);
         }
+
+        System.exit(1);
     }
 
     public static synchronized void rrdReply(final JsonObject object)
