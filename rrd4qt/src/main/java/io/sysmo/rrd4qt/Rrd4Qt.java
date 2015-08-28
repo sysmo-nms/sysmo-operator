@@ -69,6 +69,7 @@ public class Rrd4Qt
 
     public static void main(final String[] args) throws Exception
     {
+        Rrd4Qt.logger.setLevel(Level.WARNING);
         /*
          * Handle kill
          */
