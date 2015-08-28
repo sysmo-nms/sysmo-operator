@@ -26,7 +26,7 @@ void MonitorActions::openActionFor(QString target)
     }
 
     /*
-     * Else no suitable action to launch.
+     * No suitable action to launch.
      *
      * For the dial to be shown on the center of the application rect, use
      * MonitorWidget instance has parent

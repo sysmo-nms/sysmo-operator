@@ -5,16 +5,6 @@ Rrd4QtGraph::Rrd4QtGraph(
         QJsonObject rrd_graph_config,
         QWidget*    parent) : QLabel(parent)
 {
-
-    /*
-     * Connect signal
-     */
-    this->rrd4qt_sig = new Rrd4QtSignal(this);
-    QObject::connect(
-                this->rrd4qt_sig, SIGNAL(serverMessage(QJsonObject)),
-                this,             SLOT(handleRrdReply(QJsonObject)));
-
-
     /*
      * Open and close temporary file to generate fileName()
      */
@@ -51,7 +41,12 @@ Rrd4QtGraph::Rrd4QtGraph(
     /*
      * Call rrd to graph initial pixmap;
      */
-    Rrd4Qt::callRrd(this->graph_config, this->rrd4qt_sig);
+    Rrd4QtSignal* sig = new Rrd4QtSignal();
+    QObject::connect(
+                sig,   SIGNAL(serverMessage(QJsonObject)),
+                this,  SLOT(handleRrdReply(QJsonObject)));
+
+    Rrd4Qt::callRrd(this->graph_config, sig);
 
 }
 
@@ -71,11 +66,21 @@ void Rrd4QtGraph::setTimeSpan(int time_span)
 {
     qDebug() << "set time span";
     this->graph_config.insert("spanBegin", QJsonValue(0 - time_span));
-    Rrd4Qt::callRrd(this->graph_config, this->rrd4qt_sig);
+    Rrd4QtSignal* sig = new Rrd4QtSignal();
+    QObject::connect(
+                sig,   SIGNAL(serverMessage(QJsonObject)),
+                this,  SLOT(handleRrdReply(QJsonObject)));
+
+    Rrd4Qt::callRrd(this->graph_config, sig);
 }
 
 void Rrd4QtGraph::setGraphHeight(int size)
 {
     this->graph_config.insert("height", QJsonValue(size));
-    Rrd4Qt::callRrd(this->graph_config, this->rrd4qt_sig);
+    Rrd4QtSignal* sig = new Rrd4QtSignal();
+    QObject::connect(
+                sig,   SIGNAL(serverMessage(QJsonObject)),
+                this,  SLOT(handleRrdReply(QJsonObject)));
+
+    Rrd4Qt::callRrd(this->graph_config, sig);
 }

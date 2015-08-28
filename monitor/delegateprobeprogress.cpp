@@ -3,8 +3,6 @@
 DelegateProbeProgress::DelegateProbeProgress(QWidget* parent)
         : QStyledItemDelegate(parent)
 {
-    this->font = QFont();
-    this->font.setWeight(QFont::Bold);
 }
 
 
@@ -38,7 +36,6 @@ void DelegateProbeProgress::paint(
     {
         opts.text = QString("Processing...");
         opts.progress = step;
-        painter->setFont(this->font);
     }
     else if (in_next <= step)
     {

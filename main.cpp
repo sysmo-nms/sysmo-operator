@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 // see http://doc.qt.io/qt-5/qtglobal.html
 #if !defined QT_DEBUG
     qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
-    qInstallMessageHandler(operatorMsgOut);
+    //qInstallMessageHandler(operatorMsgOut);
 #endif
 
 #if   defined Q_OS_MAC
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     QApplication::setStyle("fusion");
 #else
     /* other OS/X11 things here */
-    QApplication::setPalette(Themes::native);
+    QApplication::setPalette(Themes::midnight);
     QApplication::setStyle("fusion");
 #endif
 

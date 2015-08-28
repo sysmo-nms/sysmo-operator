@@ -127,6 +127,7 @@ void Rrd4Qt::procStdoutReadyRead()
     Rrd4QtSignal* sig = this->queries->take(queryId);
 
     emit sig->serverMessage(json_obj);
+    sig->deleteLater();
 
     /*
      * Reinitialize block size to 0

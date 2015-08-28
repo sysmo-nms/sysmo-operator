@@ -1,4 +1,6 @@
-/* Copyright (C) 2014, Sebastien Serre <sserre.bx@gmail.com>
+/* Copyright (C) 2014, Sebastien Serre <ssbx@sysmo.io>
+ *
+ * This file is part of Sysmo NMS (http://www.sysmo.io)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +35,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.Sample;
@@ -54,6 +53,8 @@ import javax.json.JsonArray;
 import javax.json.JsonReaderFactory;
 import javax.json.JsonObject;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * Created by Sebastien Serre on 09/07/15
  */
@@ -63,17 +64,11 @@ public class Rrd4Qt
     private static ThreadPoolExecutor threadPool;
     private static OutputStream output;
     static RrdDbPool rrdDbPool;
-    static Logger logger;
+    static Logger logger = Logger.getLogger(Rrd4Qt.class.getName());
     static boolean active = true;
 
     public static void main(final String[] args) throws Exception
     {
-        /*
-         * Init logger (default ConsoleLogger to System.err).
-         */
-        Rrd4Qt.logger = Logger.getLogger("rrd4qt");
-        Rrd4Qt.logger.setLevel(Level.ALL);
-
         /*
          * Handle kill
          */
@@ -441,8 +436,8 @@ class Rrd4QtJob implements Runnable
                 int unitExpInt = Integer.parseInt(unitExp);
                 graphDef.setUnitsExponent(unitExpInt);
             } catch (Exception e) {
-                Rrd4Qt.logger.log(
-                        Level.INFO, "bad unit exp: " + unitExp + e.toString());
+                Rrd4Qt.logger.log(Level.INFO,
+                        "bad unit exp: " + unitExp + " " + e.toString());
             }
         }
 
@@ -451,8 +446,8 @@ class Rrd4QtJob implements Runnable
                 double minValDouble = Double.parseDouble(minVal);
                 graphDef.setMinValue(minValDouble);
             } catch (Exception e) {
-                Rrd4Qt.logger.log(
-                        Level.INFO, "min val not a double: " + e.toString());
+                Rrd4Qt.logger.log(Level.INFO,
+                        "min val not a double: " + e.toString());
             }
         }
 
@@ -461,8 +456,8 @@ class Rrd4QtJob implements Runnable
                 double maxValDouble = Double.parseDouble(maxVal);
                 graphDef.setMaxValue(maxValDouble);
             } catch (Exception e) {
-                Rrd4Qt.logger.log(
-                        Level.INFO, "max val not a double: " + e.toString());
+                Rrd4Qt.logger.log(Level.INFO,
+                        "max val not a double: " + e.toString());
             }
         }
 
@@ -515,15 +510,15 @@ class Rrd4QtJob implements Runnable
             replyStatus = "success";
 
         } catch (Exception e) {
-            Rrd4Qt.logger.log(
-                    Level.WARNING, "fail to generate graph: " + e.toString());
+            Rrd4Qt.logger.log(Level.WARNING,
+                    "fail to generate graph: " + e.toString());
             replyStatus = "failure";
         }
 
         /*
          * Build and send reply
          */
-        Rrd4Qt.logger.log(Level.INFO, dataSources.toString());
+        Rrd4Qt.logger.log(Level.FINE, dataSources.toString());
         JsonObject reply = Json.createObjectBuilder()
                 .add("reply",   replyStatus)
                 .add("opaque",  opaque)

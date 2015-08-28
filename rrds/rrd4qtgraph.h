@@ -27,7 +27,6 @@ private:
     QString       graph_id;
     QString       pixmap_file;
     QPixmap       pixmap_obj;
-    Rrd4QtSignal* rrd4qt_sig;
 
 public slots:
     void handleRrdReply(QJsonObject reply);

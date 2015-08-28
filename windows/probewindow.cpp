@@ -378,8 +378,7 @@ void ProbeWindow::openWindow(QString name)
      * If window exist use it. Else create and insert it in
      * ProbeWindow::windows hash.
      */
-    //if (ProbeWindow::windows.contains(name)) {
-    if (0 == 1) {
+    if (ProbeWindow::windows.contains(name)) {
 
         win = ProbeWindow::windows.value(name);
 
