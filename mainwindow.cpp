@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     /*
      * Initialize rrd4c-> Will effectively start the java rrd4qt process.
      */
-    this->rrd4c     = new Rrd4Qt(this);
+    this->rrd4c = new Rrd4Qt(this);
 
 
     /*
@@ -37,9 +37,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
                 action_exit, SIGNAL(triggered(bool)),
                 this,        SLOT(close()));
 
-    QAction* action_proxy_conf  = new QAction("&Proxy configuration...",  this);
+    //QAction* action_proxy_conf  = new QAction("&Proxy configuration...",  this);
     QAction* action_doc_engine  = new QAction("&Configure doc engine...", this);
-    QAction* action_updates     = new QAction("&Check for updates...",    this);
+    //QAction* action_updates     = new QAction("&Check for updates...",    this);
     QAction* action_full_screen = new QAction("&Full screen",             this);
     action_full_screen->setIcon(QIcon(":/icons/view-fullscreen.png"));
     action_full_screen->setShortcut(QKeySequence("Ctrl+F"));
@@ -50,9 +50,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     main_menu->addAction(action_full_screen);
     QMenu* color_menu = main_menu->addMenu("Color theme");
     main_menu->addSeparator();
-    main_menu->addAction(action_proxy_conf);
+    //main_menu->addAction(action_proxy_conf);
     main_menu->addAction(action_doc_engine);
-    main_menu->addAction(action_updates);
+    //main_menu->addAction(action_updates);
     main_menu->addSeparator();
     main_menu->addAction(action_exit);
 
@@ -176,8 +176,14 @@ void MainWindow::setThemeConfig(QAction *theme)
     s.setValue("color_theme", theme->data());
     MessageBox msgbox(this);
     msgbox.setIconType(Sysmo::MESSAGE_INFO);
-    msgbox.setText("Color theme succesfully changed. You must restart the application to make it effective");
-    msgbox.exec();
+    msgbox.setText("Color theme is succesfully modified. You must restart the application to make it effective.");
+    msgbox.setInformativeText("Do you want to restart now?");
+    msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgbox.setDefaultButton(QMessageBox::Yes);
+    int ret = msgbox.exec();
+    if (ret == QMessageBox::Yes) {
+        QCoreApplication::exit(Sysmo::APP_RESTART_CODE);
+    }
 }
 
 

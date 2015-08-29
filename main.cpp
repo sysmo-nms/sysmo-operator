@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include "themes.h"
+#include "sysmo.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -82,29 +83,33 @@ int main(int argc, char* argv[])
     QApplication::setQuitOnLastWindowClosed(true);
     QApplication::setStyle("fusion");
 
-    QSettings settings;
-    QVariant variant = settings.value("color_theme");
-    if (!variant.isValid()) {
-        QApplication::setPalette(Themes::native);
-    } else {
-        QString theme = variant.toString();
-        if (theme == "midnight") {
-            QApplication::setPalette(Themes::midnight);
-        } else if (theme == "inland") {
-            QApplication::setPalette(Themes::inland);
-        } else if (theme == "greys") {
-            QApplication::setPalette(Themes::greys);
-        } else if (theme == "iced") {
-            QApplication::setPalette(Themes::iced);
-        } else if (theme == "native") {
-            QApplication::setPalette(Themes::native);
-        }
-    }
+    int RETURN_CODE;
+    do {
+            QSettings settings;
+            QVariant variant = settings.value("color_theme");
+            if (!variant.isValid()) {
+                    QApplication::setPalette(Themes::native);
+            } else {
+                    QString theme = variant.toString();
+                    if (theme == "midnight") {
+                            QApplication::setPalette(Themes::midnight);
+                    } else if (theme == "inland") {
+                            QApplication::setPalette(Themes::inland);
+                    } else if (theme == "greys") {
+                            QApplication::setPalette(Themes::greys);
+                    } else if (theme == "iced") {
+                            QApplication::setPalette(Themes::iced);
+                    } else if (theme == "native") {
+                            QApplication::setPalette(Themes::native);
+                    }
+            }
 
-    QApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":/icons/logo.png"));
+            QApplication app(argc, argv);
+            app.setWindowIcon(QIcon(":/icons/logo.png"));
 
-    MainWindow w;
+            MainWindow w;
+            RETURN_CODE = app.exec();
+    } while(RETURN_CODE == Sysmo::APP_RESTART_CODE);
 
-    return app.exec();
+    return RETURN_CODE;
 }

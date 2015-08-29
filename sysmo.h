@@ -66,6 +66,12 @@ namespace Sysmo {
     const int SNMP_SECLEVEL_AUTH_PRIV       = 0;
     const int SNMP_SECLEVEL_AUTH_NO_PRIV    = 1;
     const int SNMP_SECLEVEL_NO_AUTH_NO_PRIV = 2;
+
+
+    /*
+     * Restart application code
+     */
+    const int APP_RESTART_CODE = 1000;
 }
 
 #endif // SYSMO

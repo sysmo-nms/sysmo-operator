@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QAbstractSocket>
 #include <QSize>
+#include <QCoreApplication>
 
 class MainWindow : public QMainWindow
 {
