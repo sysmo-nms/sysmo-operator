@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
     //QAction* action_proxy_conf  = new QAction("&Proxy configuration...",  this);
     QAction* action_doc_engine  = new QAction("&Configure doc engine...", this);
+    QObject::connect(
+                action_doc_engine, SIGNAL(triggered(bool)),
+                this, SLOT(configureDocEngine()));
     //QAction* action_updates     = new QAction("&Check for updates...",    this);
     QAction* action_full_screen = new QAction("&Full screen",             this);
     action_full_screen->setIcon(QIcon(":/icons/view-fullscreen.png"));
@@ -164,6 +167,11 @@ void MainWindow::restoreUserSettings()
 /*
  * SLOTS
  */
+void MainWindow::configureDocEngine()
+{
+
+}
+
 void MainWindow::toggleFullScreen()
 {
     if (this->isFullScreen()) this->showNormal();

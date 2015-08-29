@@ -46,6 +46,7 @@ private slots:
     void toggleFullScreen();
     void tryValidate();
     void setThemeConfig(QAction* theme);
+    void configureDocEngine();
 };
 
 #endif // MAINWINDOW_H

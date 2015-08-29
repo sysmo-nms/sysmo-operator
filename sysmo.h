@@ -36,10 +36,10 @@ namespace Sysmo {
      * Probe return status
      */
     const int STATUS_OK       = 0;
-    const int STATUS_UNKNOWN  = 10;
-    const int STATUS_ERROR    = 20;
-    const int STATUS_WARNING  = 30;
-    const int STATUS_CRITICAL = 40;
+    const int STATUS_UNKNOWN  = 1;
+    const int STATUS_ERROR    = 2;
+    const int STATUS_WARNING  = 3;
+    const int STATUS_CRITICAL = 4;
 
 
     /*
@@ -57,10 +57,10 @@ namespace Sysmo {
 
     // priv protocol
     const int SNMP_PRIV_AES128 = 0;
-    const int SNMP_PRIV_DES    = 10;
-    const int SNMP_PRIV_AES192 = 20;
-    const int SNMP_PRIV_AES256 = 30;
-    const int SNMP_PRIV_3DES   = 40;
+    const int SNMP_PRIV_DES    = 1;
+    const int SNMP_PRIV_AES192 = 2;
+    const int SNMP_PRIV_AES256 = 3;
+    const int SNMP_PRIV_3DES   = 4;
 
     // seclevel
     const int SNMP_SECLEVEL_AUTH_PRIV       = 0;

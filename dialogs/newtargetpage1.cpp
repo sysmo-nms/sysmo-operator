@@ -197,7 +197,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
                 this,                  SIGNAL(completeChanged()));
     QObject::connect(
                 this->snmp_priv_key, SIGNAL(textChanged(QString)),
-                this,                  SIGNAL(completeChanged()));
+                this,                SIGNAL(completeChanged()));
     this->snmp_widgets->append(priv_lab);
     this->snmp_widgets->append(priv_frame);
     this->snmp_v3_widgets->append(priv_lab);
@@ -344,7 +344,7 @@ bool NewTargetPage1::validatePage()
 
     } else if (this->configType() ==  SNMP_V3_NOAUTHNOPRIV) {
         sysProperties = {
-            {"snmp_port",     QString(this->snmp_port->value())},
+            {"snmp_port",     QString::number(this->snmp_port->value())},
             {"snmp_version",  "3"},
             {"snmp_seclevel", "noAuthNoPriv"},
             {"snmp_usm_user", this->snmp_usm_user->text()}};
@@ -378,7 +378,7 @@ bool NewTargetPage1::validatePage()
         if (privprotoIndex == Sysmo::SNMP_PRIV_3DES)
             privproto = "3DES";
         else if (privprotoIndex == Sysmo::SNMP_PRIV_AES128)
-            privproto = "AES128";
+            privproto = "AES";
         else if (privprotoIndex == Sysmo::SNMP_PRIV_AES192)
             privproto = "AES192";
         else if (privprotoIndex == Sysmo::SNMP_PRIV_AES256)
@@ -386,10 +386,12 @@ bool NewTargetPage1::validatePage()
         else if (privprotoIndex == Sysmo::SNMP_PRIV_DES)
             privproto = "DES";
 
+        qDebug() << "current index is: " << privprotoIndex;
+
         sysProperties = {
             {"snmp_port",      QString::number(this->snmp_port->value())},
-            {"snmp_version",   "v3"},
-            {"snmp_seclevel",  "authNoPriv"},
+            {"snmp_version",   "3"},
+            {"snmp_seclevel",  "authPriv"},
             {"snmp_usm_user",  this->snmp_usm_user->text()},
             {"snmp_authproto", authproto},
             {"snmp_authkey",   this->snmp_auth_key->text()},
