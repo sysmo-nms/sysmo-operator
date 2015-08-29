@@ -9,6 +9,8 @@
 #include <QIcon>
 #include <QtGlobal>
 #include <QStandardPaths>
+#include <QSettings>
+#include <QVariant>
 
 void operatorMsgOut(
               QtMsgType           type,
@@ -67,13 +69,10 @@ int main(int argc, char* argv[])
     /* put mac things here*/
 #elif defined Q_OS_WIN
     /* put windows things here*/
-    QApplication::setPalette(Themes::native);
-    QApplication::setStyle("fusion");
 #else
     /* other OS/X11 things here */
-    QApplication::setPalette(Themes::midnight);
-    QApplication::setStyle("fusion");
 #endif
+
 
     QApplication::setApplicationName("Operator");
     QApplication::setApplicationVersion("1.0");
@@ -81,6 +80,26 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationName("Sysmo NMS");
     QApplication::setOrganizationDomain("sysmo.io");
     QApplication::setQuitOnLastWindowClosed(true);
+    QApplication::setStyle("fusion");
+
+    QSettings settings;
+    QVariant variant = settings.value("color_theme");
+    if (!variant.isValid()) {
+        QApplication::setPalette(Themes::native);
+    } else {
+        QString theme = variant.toString();
+        if (theme == "midnight") {
+            QApplication::setPalette(Themes::midnight);
+        } else if (theme == "inland") {
+            QApplication::setPalette(Themes::inland);
+        } else if (theme == "greys") {
+            QApplication::setPalette(Themes::greys);
+        } else if (theme == "iced") {
+            QApplication::setPalette(Themes::iced);
+        } else if (theme == "native") {
+            QApplication::setPalette(Themes::native);
+        }
+    }
 
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/icons/logo.png"));

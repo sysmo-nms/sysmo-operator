@@ -57,22 +57,30 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     main_menu->addAction(action_exit);
 
     QAction* theme_nat = new QAction("Native",   this);
-    QAction* theme_mid = new QAction("Midnight", this);
-    QAction* theme_inl = new QAction("Inland",   this);
-    QAction* theme_gre = new QAction("Greys",    this);
-    QAction* theme_ice = new QAction("Iced",     this);
+    theme_nat->setData(QVariant("native"));
     theme_nat->setCheckable(true);
+    QAction* theme_mid = new QAction("Midnight", this);
+    theme_mid->setData(QVariant("midnight"));
     theme_mid->setCheckable(true);
+    QAction* theme_inl = new QAction("Inland",   this);
+    theme_inl->setData(QVariant("inland"));
     theme_inl->setCheckable(true);
+    QAction* theme_gre = new QAction("Greys",    this);
+    theme_gre->setData(QVariant("greys"));
     theme_gre->setCheckable(true);
+    QAction* theme_ice = new QAction("Iced",     this);
+    theme_ice->setData(QVariant("iced"));
     theme_ice->setCheckable(true);
-    QActionGroup* color_group = new QActionGroup(this);
-    color_group->addAction(theme_nat);
-    color_group->addAction(theme_mid);
-    color_group->addAction(theme_inl);
-    color_group->addAction(theme_gre);
-    color_group->addAction(theme_ice);
-    color_group->setExclusive(true);
+    this->color_group = new QActionGroup(this);
+    this->color_group->addAction(theme_nat);
+    this->color_group->addAction(theme_mid);
+    this->color_group->addAction(theme_inl);
+    this->color_group->addAction(theme_gre);
+    this->color_group->addAction(theme_ice);
+    this->color_group->setExclusive(true);
+    QObject::connect(
+                this->color_group, SIGNAL(triggered(QAction*)),
+                this,        SLOT(setThemeConfig(QAction*)));
     color_menu->addAction(theme_nat);
     color_menu->addSeparator();
     color_menu->addAction(theme_mid);
@@ -81,9 +89,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     color_menu->addAction(theme_ice);
     color_menu->setIcon(QIcon(":/icons/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
-    /*
-     * Fill the menu bar END
-     */
+    // Fill the menu bar END
 
 
     /*
@@ -124,8 +130,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
                 this->log_in_dialog, SIGNAL(tryValidate()),
                 this,                SLOT(tryValidate()));
     this->log_in_dialog->open();
-}
 
+    this->restoreUserSettings();
+}
 
 
 MainWindow::~MainWindow()
@@ -135,6 +142,24 @@ MainWindow::~MainWindow()
      */
 }
 
+void MainWindow::restoreUserSettings()
+{
+    /*
+     * Restaure color theme
+     */
+    QSettings s;
+    QVariant v = s.value("color_theme");
+    if (v.isValid()) {
+        QString theme = v.toString();
+        QList<QAction*> action_list = this->color_group->actions();
+        foreach (QAction* ac, action_list) {
+            if (theme == ac->data().toString()) {
+                ac->setChecked(true);
+                break;
+            }
+        }
+    }
+}
 
 /*
  * SLOTS
@@ -143,6 +168,16 @@ void MainWindow::toggleFullScreen()
 {
     if (this->isFullScreen()) this->showNormal();
     else                      this->showFullScreen();
+}
+
+void MainWindow::setThemeConfig(QAction *theme)
+{
+    QSettings s;
+    s.setValue("color_theme", theme->data());
+    MessageBox msgbox(this);
+    msgbox.setIconType(Sysmo::MESSAGE_INFO);
+    msgbox.setText("Color theme succesfully changed. You must restart the application to make it effective");
+    msgbox.exec();
 }
 
 

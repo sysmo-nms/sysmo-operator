@@ -34,14 +34,17 @@ public slots:
     void connectionStatus(int status);
 
 private:
-    Supercast* supercast     = NULL;
-    LogIn*     log_in_dialog = NULL;
-    Rrd4Qt*     rrd4c         = NULL;
+    void restoreUserSettings();
+    Supercast* supercast      = NULL;
+    LogIn* log_in_dialog      = NULL;
+    Rrd4Qt* rrd4c             = NULL;
+    QActionGroup* color_group = NULL;
     QSize default_size;
 
 private slots:
     void toggleFullScreen();
     void tryValidate();
+    void setThemeConfig(QAction* theme);
 };
 
 #endif // MAINWINDOW_H
