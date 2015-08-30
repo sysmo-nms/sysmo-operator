@@ -1,7 +1,20 @@
 #include "newprobepage1.h"
 
-NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
+NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
+    : QWizardPage(parent)
 {
+
+    QJsonObject target = Monitor::getTarget(forTarget);
+
+    QJsonObject properties = target.value("properties").toObject();
+    QString snmpAwareStr = properties.value("isSnmpAware").toString("false");
+
+    bool snmpAware;
+    if (snmpAwareStr == "false") snmpAware = false;
+    else snmpAware = true;
+
+    qDebug() << "target is snmpAware" << snmpAware;
+
     this->setTitle("Select a probe");
     this->setSubTitle("User this form to add a probe to the target");
 
@@ -109,6 +122,14 @@ NewProbePage1::NewProbePage1(QWizard* parent) : QWizardPage(parent)
         row.append(item_req);
         row.append(item_desc);
         model->appendRow(row);
+        if (parser->require == "snmp" && !snmpAware) {
+            item_name->setEnabled(false);
+            item_name->setSelectable(false);
+            item_req->setEnabled(false);
+            item_req->setSelectable(false);
+            item_desc->setEnabled(false);
+            item_desc->setSelectable(false);
+        }
         delete parser;
     }
     delete input;

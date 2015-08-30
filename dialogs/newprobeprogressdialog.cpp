@@ -5,6 +5,7 @@ NewProbeProgressDialog::NewProbeProgressDialog(
         QString target,
         QString probe_name,
         QString probe_class,
+        QString display_name,
         QWidget* parent)
         : QProgressDialog(parent)
 {
@@ -25,6 +26,7 @@ NewProbeProgressDialog::NewProbeProgressDialog(
         {"type", "createNchecksQuery"},
         {"value", QJsonObject {
                 {"target",     target},
+                {"display",    display_name},
                 {"identifier", probe_name},
                 {"class",      probe_class},
                 {"properties", props}}}};

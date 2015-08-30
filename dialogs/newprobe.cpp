@@ -10,7 +10,7 @@ NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent)
     this->setMinimumWidth(800);
     this->setMinimumHeight(600);
 
-    NewProbePage1* page1 = new NewProbePage1(this);
+    NewProbePage1* page1 = new NewProbePage1(forTarget, this);
     NewProbePage2* page2 = new NewProbePage2(forTarget, this);
     // TODO Simulate check
     //NewProbePage3* page3 = new NewProbePage3(this);

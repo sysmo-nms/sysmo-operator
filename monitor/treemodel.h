@@ -15,6 +15,7 @@
 #include <QList>
 #include <QTimer>
 #include <QModelIndex>
+#include <QTreeView>
 
 #include <QDebug>
 
@@ -39,6 +40,7 @@ private:
 
 signals:
     void expandIndex(QModelIndex index);
+    void selectIndex(QModelIndex index);
 };
 
 #endif // TREEMODEL_H

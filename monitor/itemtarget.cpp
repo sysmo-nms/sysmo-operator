@@ -8,6 +8,28 @@ ItemTarget::ItemTarget(QJsonObject info_target) : QStandardItem()
     this->updateIconStatus();
 }
 
+void ItemTarget::updateProbeFilter(QString probe_name, QJsonObject obj)
+{
+    this->filter_hash.insert(probe_name,
+          QJsonDocument(obj).toJson(QJsonDocument::Compact));
+    this->updateFilter();
+}
+
+void ItemTarget::deleteProbeFilter(QString probe_name)
+{
+    this->filter_hash.remove(probe_name);
+    this->updateFilter();
+}
+
+void ItemTarget::updateFilter() {
+    QString str = this->orig_filter;
+    QHashIterator<QString, QString> i(this->filter_hash);
+    while(i.hasNext()) {
+        i.next();
+        str = str + i.value();
+    }
+    this->setData(str, Sysmo::ROLE_FILTER_STRING);
+}
 
 void ItemTarget::updateInfo(QJsonObject info_target)
 {
@@ -39,7 +61,9 @@ void ItemTarget::updateInfo(QJsonObject info_target)
 
     this->setData(display, Qt::DisplayRole);
 
-    this->setData("world", Sysmo::ROLE_FILTER_STRING);
+    this->orig_filter = QJsonDocument(info_target).toJson(QJsonDocument::Compact);
+    this->setData(this->orig_filter, Sysmo::ROLE_FILTER_ORIG);
+    this->updateFilter();
 }
 
 

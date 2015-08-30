@@ -23,6 +23,7 @@ public:
             QString target,
             QString probe_name,
             QString probe_class,
+            QString display_name,
             QWidget* parent = 0);
 
 public slots:

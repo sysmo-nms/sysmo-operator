@@ -66,8 +66,17 @@ void NewProbePage2::initializePage()
 
     this->probe_class = form_parser->probe_class;
 
+
+    this->name_line = new QLineEdit(this);
+    this->name_line->setText(probe_name);
+
     QFormLayout* form = new QFormLayout();
     this->form_frame->setLayout(form);
+
+    NFrame* separator0 = new NFrame(this->form_frame);
+    separator0->setFixedHeight(30);
+    form->addRow("Display name", this->name_line);
+    form->addRow(separator0);
 
     QList<FormConfig>* mandat = form_parser->mandatory;
     QList<FormConfig>::iterator i;
@@ -101,7 +110,7 @@ void NewProbePage2::initializePage()
     }
 
     NFrame* separator = new NFrame(this->form_frame);
-    separator->setFixedHeight(30);
+    separator->setFixedHeight(20);
     form->addRow(separator);
 
     QList<FormConfig>* options = form_parser->options;
@@ -143,7 +152,7 @@ void NewProbePage2::initializePage()
     if (host_edit == NULL) return;
 
     QJsonObject val  = Monitor::getInstance()->targets->value(this->target);
-    QString     host = val.value("properties").toObject().value("host").toString("");
+    QString host = val.value("properties").toObject().value("host").toString("");
     host_edit->setText(host);
 }
 
@@ -155,6 +164,7 @@ bool NewProbePage2::validatePage()
                 this->target,
                 probe_name,
                 this->probe_class,
+                this->name_line->text(),
                 this);
     QObject::connect(
                 dial, SIGNAL(accepted()),

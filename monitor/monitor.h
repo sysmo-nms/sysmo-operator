@@ -49,6 +49,8 @@ public:
             QString channel, MonitorProxyWidget* subscriber);
     static void unsubscribeToChannel(
             QString channel, MonitorProxyWidget* subscriber);
+    static QJsonObject getTarget(QString targetId);
+    static QJsonObject getProbe(QString probeId);
 
 private:
     static Monitor* singleton;

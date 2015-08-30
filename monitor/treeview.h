@@ -44,9 +44,11 @@ public:
 
 public slots:
     void expandIndex(QModelIndex index);
+    void selectIndex(QModelIndex index);
 
 private:
     QTimer* timer;
+    static TreeView* singleton;
 
 private slots:
     void openContextMenu(const QPoint point);

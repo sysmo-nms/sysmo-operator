@@ -72,6 +72,16 @@ void Monitor::handleServerMessage(QJsonObject message)
 }
 
 
+QJsonObject Monitor::getTarget(QString targetId)
+{
+    return Monitor::singleton->targets->value(targetId);
+}
+
+QJsonObject Monitor::getProbe(QString probeId)
+{
+    return Monitor::singleton->probes->value(probeId);
+}
+
 void Monitor::channelDeleted(QString chan_name)
 {
     this->channels->remove(chan_name);
@@ -192,4 +202,3 @@ MonitorProxyWidget::~MonitorProxyWidget()
 {
     Monitor::unsubscribeToChannel(this->my_channel, this);
 }
-

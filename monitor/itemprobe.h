@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonDocument>
 #include <QStandardItem>
 #include <QList>
 #include <QVariant>
@@ -25,13 +26,17 @@ public:
     QStandardItem* item_state       = NULL;
     QStandardItem* item_progress    = NULL;
     QStandardItem* item_last_return = NULL;
+    QString orig_filter = "";
+    QString targ_filter = "";
     int type() const;
     void updateInfo(QJsonObject  info_probe);
     void updateReturnInfo(QJsonObject probe_return);
+    void setTargetFilter(QString filter);
 
 private:
     QPixmap icon;
     int status;
+    void updateFilter();
 };
 
 #endif // ITEMPROBE_H

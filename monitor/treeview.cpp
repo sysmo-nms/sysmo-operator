@@ -1,7 +1,9 @@
 #include "treeview.h"
+TreeView* TreeView::singleton = NULL;
 
 TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
+    TreeView::singleton = this;
     this->target_menu = new MenuTarget(this);
     this->probe_menu  = new MenuProbe(this);
     QObject::connect(
@@ -29,7 +31,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->filter_model   = new QSortFilterProxyModel(this);
     this->filter_model->setSourceModel(this->original_model);
     this->filter_model->setDynamicSortFilter(true);
-    this->filter_model->setFilterCaseSensitivity(Qt::CaseSensitive);
+    this->filter_model->setFilterCaseSensitivity(Qt::CaseInsensitive);
     this->filter_model->setFilterRole(Sysmo::ROLE_FILTER_STRING);
     this->setModel(this->filter_model);
 
@@ -42,6 +44,10 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     QObject::connect(
                 this->original_model, SIGNAL(expandIndex(QModelIndex)),
                 this,                 SLOT(expandIndex(QModelIndex)));
+
+    QObject::connect(
+                this->original_model, SIGNAL(selectIndex(QModelIndex)),
+                this,                 SLOT(selectIndex(QModelIndex)));
     /*
      * connect delegate first
      */
@@ -87,6 +93,11 @@ TreeView::~TreeView()
 void TreeView::expandIndex(QModelIndex index)
 {
     this->expand(this->filter_model->mapFromSource(index));
+}
+
+void TreeView::selectIndex(QModelIndex index)
+{
+    this->setCurrentIndex(this->filter_model->mapFromSource(index));
 }
 
 void TreeView::stopTimer() { this->timer->stop(); }

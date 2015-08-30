@@ -35,9 +35,11 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
                 this->target_name, SIGNAL(textChanged(QString)),
                 this,              SIGNAL(completeChanged()));
 
+    /* TODO
     this->include_icmp_probe = new QCheckBox("Create ICMP echo presence probe", this);
     this->include_icmp_probe->setChecked(true);
     form->addRow("", this->include_icmp_probe);
+    */
 
     QObject::connect(
                 this->include_icmp_probe, SIGNAL(stateChanged(int)),
@@ -54,15 +56,6 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     QObject::connect(
                 this->snmp_enable, SIGNAL(stateChanged(int)),
                 this,              SIGNAL(completeChanged()));
-
-    this->include_snmp_probe = new QCheckBox("Create SNMP echo presence probe", this);
-    this->include_snmp_probe->setChecked(true);
-    this->snmp_widgets->append(this->include_snmp_probe);
-    form->addRow("", this->include_snmp_probe);
-
-    QObject::connect(
-                this->include_snmp_probe, SIGNAL(stateChanged(int)),
-                this,                     SIGNAL(completeChanged()));
 
     QLabel* version_lab = new QLabel("Version:", this);
     this->snmp_version = new QComboBox(this);
@@ -419,5 +412,30 @@ bool NewTargetPage1::validatePage()
 void NewTargetPage1::createTargetReply(QJsonObject reply)
 {
     qDebug() << "received qt reply: " << reply;
+    QJsonObject val = reply.value("value").toObject();
+    bool status = val.value("status").toBool();
 
+   MessageBox msgbox(this);
+   if (status) {
+
+       msgbox.setIconType(Sysmo::MESSAGE_INFO);
+       msgbox.setText("Target successfuly created");
+       msgbox.setInformativeText("Do you want to create another target?");
+       msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+       msgbox.setDefaultButton(QMessageBox::No);
+       int ret = msgbox.exec();
+       if (ret == QMessageBox::No) {
+           this->wizard()->button(QWizard::CancelButton)->click();
+       } else {
+           this->target_name->clear();
+           this->target_host->clear();
+           this->target_host->setFocus();
+       }
+   } else {
+       QString error = val.value("reply").toString();
+       msgbox.setIconType(Sysmo::MESSAGE_ERROR);
+       msgbox.setText(error);
+       msgbox.setStandardButtons(QMessageBox::Ok);
+       msgbox.exec();
+   }
 }

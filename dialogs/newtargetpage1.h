@@ -6,9 +6,13 @@
 #include "ngridcontainer.h"
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
+#include "monitor/treeview.h"
+#include "dialogs/messagebox.h"
 
 #include <QObject>
 #include <QWidget>
+#include <QWizard>
+#include <QDialog>
 #include <QList>
 #include <QListIterator>
 #include <QWizardPage>
@@ -22,6 +26,8 @@
 #include <QLabel>
 #include <QJsonObject>
 #include <QString>
+#include <QAbstractButton>
+#include <QMessageBox>
 
 #include <QDebug>
 

@@ -30,6 +30,7 @@ namespace Sysmo {
     const int ROLE_FILTER_STRING    = Qt::UserRole + 5;
     const int ROLE_ELEMENT_NAME     = Qt::UserRole + 6;
     const int ROLE_TYPE             = Qt::UserRole + 7;
+    const int ROLE_FILTER_ORIG      = Qt::UserRole + 8;
 
 
     /*

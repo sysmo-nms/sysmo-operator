@@ -7,7 +7,11 @@ ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
     int step        = info_probe.value("step").toInt(0);
+    this->orig_filter =
+            QJsonDocument(info_probe).toJson(QJsonDocument::Compact);
+    this->updateFilter();
 
+    this->setData(this->orig_filter, Sysmo::ROLE_FILTER_STRING);
     this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
     this->item_progress    = new QStandardItem();
     this->item_progress->setData(1,    Sysmo::ROLE_IS_PROGRESS_ITEM);
@@ -20,6 +24,17 @@ ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
     this->updateInfo(info_probe);
 }
 
+void ItemProbe::setTargetFilter(QString filter)
+{
+    this->targ_filter = filter;
+    this->updateFilter();
+}
+
+void ItemProbe::updateFilter()
+{
+    this->setData(this->orig_filter + this->targ_filter,
+                        Sysmo::ROLE_FILTER_STRING);
+}
 
 void ItemProbe::updateInfo(QJsonObject info_probe)
 {
@@ -92,5 +107,3 @@ void ItemProbe::updateReturnInfo(QJsonObject info)
     this->item_progress->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);
     this->emitDataChanged();
 }
-
-

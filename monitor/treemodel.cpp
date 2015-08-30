@@ -38,34 +38,36 @@ TreeModel::~TreeModel()
     delete this->probes;
 }
 
-
 void TreeModel::handleInfoProbe(QJsonObject message)
 {
     QString info_type = message.value("infoType").toString("undefined");
 
-    if (info_type == "create")
-    {
+    if (info_type == "create") {
+
         ItemProbe*  probe = new ItemProbe(message);
         this->probes->insert(probe->name, probe);
-
 
         QList<QStandardItem*> row;
         row << probe << probe->item_status << probe->item_state
             << probe->item_progress << probe->item_last_return;
 
         ItemTarget* target = this->targets->value(probe->belong_to);
+        QString filter = target->data(Sysmo::ROLE_FILTER_ORIG).toString();
+        probe->setTargetFilter(filter);
+
         target->appendRow(row);
         target->updateIconStatus();
+        target->updateProbeFilter(probe->name, message);
+        emit this->selectIndex(probe->index());
 
-    }
-    else if (info_type == "update")
-    {
+    } else if (info_type == "update") {
         QString probe_name = message.value("name").toString("undefined");
 
         ItemProbe*  probe  = this->probes->value(probe_name);
         ItemTarget* target = this->targets->value(probe->belong_to);
 
         probe->updateInfo(message);
+        target->updateProbeFilter(probe->name, message);
         target->updateIconStatus();
     }
 }
@@ -74,16 +76,15 @@ void TreeModel::handleInfoProbe(QJsonObject message)
 void TreeModel::handleInfoTarget(QJsonObject message)
 {
     QString info_type = message.value("infoType").toString("undefined");
-    if (info_type == "create")
-    {
+    if (info_type == "create") {
         ItemTarget* target = new ItemTarget(message);
         this->targets->insert(target->name, target);
         this->appendRow(target);
 
+        emit this->selectIndex(target->index());
         emit this->expandIndex(target->index());
-    }
-    else if (info_type == "update")
-    {
+
+    } else if (info_type == "update") {
         QString     target_name = message.value("name").toString("undefined");
         ItemTarget* target      = this->targets->value(target_name);
         target->updateInfo(message);
@@ -97,6 +98,7 @@ void TreeModel::handleDeleteProbe(QJsonObject message)
     ItemProbe*  probe      = this->probes->take(probe_name);
     ItemTarget* target     = this->targets->value(probe->belong_to);
     target->removeRow(probe->row());
+    target->deleteProbeFilter(probe->name);
     target->updateIconStatus();
 }
 

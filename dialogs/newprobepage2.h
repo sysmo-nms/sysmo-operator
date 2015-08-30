@@ -61,6 +61,7 @@ private:
     QTextEdit*  docs       = NULL;
     NFrame*     form_frame = NULL;
     NGrid*      grid       = NULL;
+    QLineEdit *name_line = NULL;
 };
 
 

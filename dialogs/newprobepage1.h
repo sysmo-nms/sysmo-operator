@@ -4,6 +4,7 @@
 #include "ngrid.h"
 #include "monitor/nchecks.h"
 #include "monitor/xml/parsecheckgetinfos.h"
+#include "monitor/monitor.h"
 
 #include <Qt>
 #include <QObject>
@@ -23,6 +24,7 @@
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include <QVariant>
+#include <QJsonObject>
 
 #include <QDebug>
 
@@ -33,7 +35,7 @@ public:
     /*
      * QWizard parent for connecting to QWizard::next()
      */
-    NewProbePage1(QWizard* parent = 0);
+    NewProbePage1(QString forTarget, QWizard* parent = 0);
     bool isComplete() const;
     int  nextId()     const;
 
