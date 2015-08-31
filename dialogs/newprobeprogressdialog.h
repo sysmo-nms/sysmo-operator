@@ -1,6 +1,7 @@
 #ifndef NEWPROBEPROGRESSDIALOG_H
 #define NEWPROBEPROGRESSDIALOG_H
 
+#include "dialogs/messagebox.h"
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
 

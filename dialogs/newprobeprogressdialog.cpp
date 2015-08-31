@@ -42,4 +42,12 @@ NewProbeProgressDialog::NewProbeProgressDialog(
 void NewProbeProgressDialog::createProbeReply(QJsonObject reply)
 {
     qDebug() << "reply: " << reply;
+    bool status = reply.value("value").toObject().value("status").toBool();
+    if (status) {
+        MessageBox msgbox(qobject_cast<QWidget*>(this->parent()));
+        msgbox.setText("Probe successfuly created");
+        this->hide();
+        msgbox.exec();
+        this->accept();
+    }
 }

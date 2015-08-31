@@ -21,13 +21,17 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 
     this->addSeparator();
 
+    /*
     QAction* dash = new QAction("Dashboard", this);
     dash->setIcon(QIcon(":/icons/utilities-system-monitor.png"));
     this->addAction(dash);
+    */
 
+    /*
     QAction* doc = new QAction("Documentation", this);
     doc->setIcon(QIcon(":/icons/folder-saved-search.png"));
     this->addAction(doc);
+    */
 
     this->addSeparator();
 

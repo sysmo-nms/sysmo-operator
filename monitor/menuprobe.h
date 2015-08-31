@@ -3,6 +3,8 @@
 
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
+#include "windows/probewindow.h"
+#include "dialogs/messagebox.h"
 
 #include <QMenu>
 #include <QWidget>
@@ -30,6 +32,8 @@ private slots:
     void handleForceProbeReply(QJsonObject reply);
     void handlePauseProbe();
     void handleDeleteProbe();
+    void handleDeleteProbeReply(QJsonObject reply);
+    void handleShowPerf();
 
 };
 

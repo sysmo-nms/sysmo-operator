@@ -15,7 +15,8 @@ void MonitorActions::openActionFor(QString target)
 
         // if tval is valid hence have at least one action execute it
         if (tval.isValid()) {
-            return;
+            //return;
+            qDebug() << "should execute action and exit?";
         }
     } else {
         /*

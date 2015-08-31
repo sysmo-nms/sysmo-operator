@@ -427,8 +427,6 @@ void NewTargetPage1::createTargetReply(QJsonObject reply)
        if (ret == QMessageBox::No) {
            this->wizard()->button(QWizard::CancelButton)->click();
        } else {
-           this->target_name->clear();
-           this->target_host->clear();
            this->target_host->setFocus();
        }
    } else {

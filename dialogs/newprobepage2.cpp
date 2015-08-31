@@ -166,18 +166,12 @@ bool NewProbePage2::validatePage()
                 this->probe_class,
                 this->name_line->text(),
                 this);
-    QObject::connect(
-                dial, SIGNAL(accepted()),
-                this, SLOT(close()));
-    QObject::connect(
-                dial, SIGNAL(canceled()),
-                this, SLOT(close()));
-    QObject::connect(
-                dial, SIGNAL(rejected()),
-                this, SLOT(close()));
-
-    dial->open();
-    return false;
+    int ret = dial->exec();
+    if (ret == QMessageBox::Accepted) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool NewProbePage2::isComplete() const
