@@ -16,7 +16,7 @@ private:
 
 private slots:
     void handleErrorMsg();
-    void handleError(int ret);
+    void handleStartError(QProcess::ProcessError);
 };
 
 #endif // ACTIONPROCESS_H
