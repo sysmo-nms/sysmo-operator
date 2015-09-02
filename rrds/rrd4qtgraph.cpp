@@ -74,9 +74,26 @@ void Rrd4QtGraph::setTimeSpan(int time_span)
     Rrd4Qt::callRrd(this->graph_config, sig);
 }
 
-void Rrd4QtGraph::setGraphHeight(int size)
+void Rrd4QtGraph::setGraphHeight(int height)
 {
-    this->graph_config.insert("height", QJsonValue(size));
+    this->graph_config.insert("height", QJsonValue(height));
+    Rrd4QtSignal* sig = new Rrd4QtSignal();
+    QObject::connect(
+                sig,   SIGNAL(serverMessage(QJsonObject)),
+                this,  SLOT(handleRrdReply(QJsonObject)));
+
+    Rrd4Qt::callRrd(this->graph_config, sig);
+}
+
+void Rrd4QtGraph::setGraphWidth(int width)
+{
+    if (width < 250) {
+        qDebug() << "is min than 250";
+        width = 250;
+    }
+
+    qDebug() << "change width to: " << width;
+    this->graph_config.insert("width", QJsonValue(width));
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
                 sig,   SIGNAL(serverMessage(QJsonObject)),

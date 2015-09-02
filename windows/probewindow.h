@@ -9,6 +9,7 @@
 #include "monitor/nchecks.h"
 #include "monitor/xml/parsecheckmakegraphcmd.h"
 #include "rrds/rrd4qtgraph.h"
+#include "nowheelcombobox.h"
 
 #include <QObject>
 #include <QWidget>
@@ -21,11 +22,11 @@
 #include <QStatusBar>
 #include <QScrollArea>
 #include <QPalette>
-#include <QComboBox>
 #include <QJsonObject>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include <QStringListIterator>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -41,6 +42,10 @@ private:
 
     QStatusBar*    status_bar = NULL;
     QScrollArea*  scroll_area = NULL;
+    QTimer* timer = NULL;
+    int divider = 1;
+    int margin = 150;
+    void resizeEvent(QResizeEvent *event);
 
     static QHash<QString, ProbeWindow*> windows;
 
@@ -72,10 +77,12 @@ public:
 public slots:
     void handleSpanChanged(int span);
     void handleHeightChanged(int height);
+    void handleTimerTimeout();
 
 signals:
     void timeSpanChanged(int span);
     void graphHeightChanged(int height);
+    void graphWidthChanged(int size);
 
 public slots:
     void closeEvent(QCloseEvent* event);

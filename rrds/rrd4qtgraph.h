@@ -31,7 +31,8 @@ private:
 public slots:
     void handleRrdReply(QJsonObject reply);
     void setTimeSpan(int time_span);
-    void setGraphHeight(int size);
+    void setGraphHeight(int height);
+    void setGraphWidth(int width);
 };
 
 #endif // RRD4QTGRAPH_H

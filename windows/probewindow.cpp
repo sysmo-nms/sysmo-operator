@@ -58,6 +58,15 @@ ProbeWindow::ProbeWindow(QString probeName)
     delete parser;
     delete input;
 
+    /*
+     * Init QTimer for graph width
+     */
+    this->timer = new QTimer(this);
+    this->timer->setSingleShot(true);
+    this->timer->setInterval(500);
+    QObject::connect(
+                this->timer, SIGNAL(timeout()),
+                this, SLOT(handleTimerTimeout()));
 
     /*
      * begin generic layout
@@ -68,7 +77,7 @@ ProbeWindow::ProbeWindow(QString probeName)
     log_controls->setLayout(lc_grid);
 
     QLabel* time_line_label = new QLabel("TimeLine:", this);
-    QComboBox* time_span_cbox  = new QComboBox(this);
+    NoWheelComboBox* time_span_cbox  = new NoWheelComboBox(this);
     time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_HOURS,    "2h from now");
     time_span_cbox->insertItem(ProbeWindow::SPAN_TWELVE_HOURS, "12h from now");
     time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_DAYS,     "2d from now");
@@ -87,7 +96,7 @@ ProbeWindow::ProbeWindow(QString probeName)
     lc_grid->addWidget(time_span_cbox, 0,1);
 
     QLabel* height_label = new QLabel("Graph height:", this);
-    QComboBox* height_cbox  = new QComboBox(this);
+    NoWheelComboBox* height_cbox  = new NoWheelComboBox(this);
     height_cbox->insertItem(ProbeWindow::HEIGHT_THUMBNAIL, "Thumbnail");
     height_cbox->insertItem(ProbeWindow::HEIGHT_SMALL,     "Small");
     height_cbox->insertItem(ProbeWindow::HEIGHT_NORMAL,    "Normal");
@@ -156,6 +165,18 @@ ProbeWindow::~ProbeWindow()
      */
 }
 
+void ProbeWindow::handleTimerTimeout()
+{
+    int margins = this->margin * this->divider;
+    int size = (this->size().width() - margins) / this->divider;
+    emit this->graphWidthChanged(size);
+}
+
+void ProbeWindow::resizeEvent(QResizeEvent *event)
+{
+    this->timer->start();
+    MonitorProxyWidget::resizeEvent(event);
+}
 
 void ProbeWindow::handleEvent(QJsonObject event) {
     /*
@@ -219,6 +240,10 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                             frame);                            // parent
 
             QObject::connect(
+                         this,  SIGNAL(graphWidthChanged(int)),
+                         graph, SLOT(setGraphWidth(int)));
+
+            QObject::connect(
                         this,  SIGNAL(timeSpanChanged(int)),
                         graph, SLOT(setTimeSpan(int)));
 
@@ -228,9 +253,11 @@ void ProbeWindow::handleEvent(QJsonObject event) {
 
 
             grid->addWidget(graph, row, 0);
+            grid->setRowStretch(row,0);
 
             ++row;
         }
+        grid->setRowStretch(row,1);
 
         /*
          * Set the scroll area newly created widget
@@ -269,6 +296,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
          */
         QStringList keys = js_graphs.keys();
         keys.sort();
+        this->divider = keys.size();
 
 
 
@@ -322,6 +350,11 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                                 rrd_db_file,                     // rrd db
                                 js_graphs.value(key).toObject(), // graph def
                                 fr);                             // parent
+
+                    QObject::connect(
+                         this,  SIGNAL(graphWidthChanged(int)),
+                         graph, SLOT(setGraphWidth(int)));
+
 
                     QObject::connect(
                          this,  SIGNAL(timeSpanChanged(int)),

@@ -65,7 +65,8 @@ SOURCES += main.cpp\
     actions/monitoractionsdialog.cpp \
     actions/monitoractioncreate.cpp \
     actions/actionprocess.cpp \
-    systemtray.cpp
+    systemtray.cpp \
+    nowheelcombobox.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -119,7 +120,8 @@ HEADERS  += mainwindow.h \
     actions/monitoractionsdialog.h \
     actions/monitoractioncreate.h \
     actions/actionprocess.h \
-    systemtray.h
+    systemtray.h \
+    nowheelcombobox.h
 
 RESOURCES += \
     icons.qrc \
