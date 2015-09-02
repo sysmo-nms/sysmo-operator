@@ -6,6 +6,7 @@
 #include "network/supercast.h"
 #include "rrds/rrd4qt.h"
 #include "dialogs/messagebox.h"
+#include "systemtray.h"
 
 #include <QMainWindow>
 #include <QIcon>
@@ -40,6 +41,7 @@ private:
     LogIn* log_in_dialog      = NULL;
     Rrd4Qt* rrd4c             = NULL;
     QActionGroup* color_group = NULL;
+    SystemTray* system_tray   = NULL;
     QSize default_size;
 
 private slots:

@@ -4,6 +4,7 @@
 #include "dialogs/messagebox.h"
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
+#include "systemtray.h"
 
 #include <QObject>
 #include <QWidget>
@@ -12,6 +13,7 @@
 #include <QHash>
 #include <QHashIterator>
 #include <QLineEdit>
+#include <QPushButton>
 
 #include <QDebug>
 

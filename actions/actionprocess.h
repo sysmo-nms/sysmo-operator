@@ -1,9 +1,12 @@
 #ifndef ACTIONPROCESS_H
 #define ACTIONPROCESS_H
 
+#include "systemtray.h"
+
 #include <QObject>
 #include <QProcess>
 #include <QDebug>
+#include <QSystemTrayIcon>
 
 class ActionProcess : public QProcess
 {

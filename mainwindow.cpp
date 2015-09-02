@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
      */
     this->rrd4c = new Rrd4Qt(this);
 
+    /*
+     * Init SystemTray
+     */
+    this->system_tray = new SystemTray(this);
 
     /*
      * Generic things

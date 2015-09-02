@@ -14,6 +14,11 @@ NewProbeProgressDialog::NewProbeProgressDialog(
     this->setMinimum(0);
     this->setMaximum(0);
 
+    QPushButton *cancel = new QPushButton(this);
+    cancel->setDisabled(true);
+    cancel->setText("Cancel");
+    this->setCancelButton(cancel);
+
     QJsonObject props;
     QHashIterator<QString, QLineEdit*> i(*args);
     while (i.hasNext()) {
@@ -44,10 +49,18 @@ void NewProbeProgressDialog::createProbeReply(QJsonObject reply)
     qDebug() << "reply: " << reply;
     bool status = reply.value("value").toObject().value("status").toBool();
     if (status) {
-        MessageBox msgbox(qobject_cast<QWidget*>(this->parent()));
-        msgbox.setText("Probe successfuly created");
-        this->hide();
-        msgbox.exec();
+        SystemTray::singleton->showMessage(
+                    "Create probe reply:",
+                    "Probe successfuly created",
+                    QSystemTrayIcon::Information,
+                    2000);
         this->accept();
+    } else {
+        SystemTray::singleton->showMessage(
+                    "Create probe reply:",
+                    "Probe failed: " + reply.value("value").toObject().value("reply").toString(),
+                    QSystemTrayIcon::Critical,
+                    10000);
+        this->reject();
     }
 }

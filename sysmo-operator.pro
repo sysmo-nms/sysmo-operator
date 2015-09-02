@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     actions/monitoractions.cpp \
     actions/monitoractionsdialog.cpp \
     actions/monitoractioncreate.cpp \
-    actions/actionprocess.cpp
+    actions/actionprocess.cpp \
+    systemtray.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -117,7 +118,8 @@ HEADERS  += mainwindow.h \
     actions/monitoractions.h \
     actions/monitoractionsdialog.h \
     actions/monitoractioncreate.h \
-    actions/actionprocess.h
+    actions/actionprocess.h \
+    systemtray.h
 
 RESOURCES += \
     icons.qrc \
