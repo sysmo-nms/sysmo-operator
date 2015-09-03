@@ -18,6 +18,9 @@
 #include <QRect>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QSettings>
+#include <QVariant>
+#include <QHash>
 
 class LogIn : public QDialog
 {
@@ -29,6 +32,7 @@ public:
     QString getPassword();
     QString getServerName();
     qint16  getServerPort();
+    void saveLoginState();
 
 private:
     QLineEdit*	 user_name    = NULL;

@@ -108,11 +108,32 @@ qint16 LogIn::getServerPort()
 
 void LogIn::restoreForm()
 {
-    // TODO read setting
-    this->user_name->setText("admin");
-    this->user_pass->setText("password");
-    this->server_name->setText("192.168.0.11");
-    this->server_port->setValue(8888);
+    QSettings s;
+
+    QVariant var = s.value("login/login_state");
+    if (!var.isValid()) {
+        QHash<QString, QVariant> login_state;
+        login_state.insert("server", QVariant(""));
+        login_state.insert("port", QVariant(8888));
+        login_state.insert("password", QVariant(""));
+        s.setValue("login/login_state", QVariant(login_state));
+    } else {
+        QHash<QString, QVariant> login_state = var.toHash();
+        this->user_name->setText("admin");
+        this->user_pass->setText(login_state.value("password").toString());
+        this->server_name->setText(login_state.value("server").toString());
+        this->server_port->setValue(login_state.value("port").toInt());
+    }
+}
+
+void LogIn::saveLoginState()
+{
+    QSettings s;
+    QHash<QString, QVariant> lstate = s.value("login/login_state").toHash();
+    lstate.insert("server", QVariant(this->server_name->text()));
+    lstate.insert("password", QVariant(this->user_pass->text()));
+    lstate.insert("server_port", QVariant(this->server_port->value()));
+    s.setValue("login/login_state", QVariant(lstate));
 }
 
 /*

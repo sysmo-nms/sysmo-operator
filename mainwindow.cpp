@@ -245,6 +245,7 @@ void MainWindow::tryValidate()
 void MainWindow::connectionStatus(int status)
 {
     if (status == Supercast::CONNECTION_SUCCESS) {
+        this->log_in_dialog->saveLoginState();
         this->log_in_dialog->close();
         this->show();
         return;
