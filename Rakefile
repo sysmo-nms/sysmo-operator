@@ -4,10 +4,39 @@ ROOT     = Dir.pwd
 JAVA_DIR = File.join(ROOT, "rrd4qt")
 GRADLE   = File.join(JAVA_DIR, "gradlew")
 
+RELEASE_VER = "1.0"
+RELEASE_DIR = "sysmo-operator-${RELEASE_VER}/"
+
 task :default => :java_ressource
 
+
+desc "Build good sized pixmap for tree and side icons"
 task :graphics => [:side_icons, :tree_pixmaps]
 
+
+desc "Only under linux, build a deployable release"
+task :linux_release do
+  cd ROOT
+  FileUtils.rm_rf(RELEASE_DIR)
+  sh "make clean"
+  sh "qmake -config release"
+  sh "make"
+  FileUtils.mkdir(RELEASE_DIR)
+  FileUtils.mkdir(RELEASE_DIR + "platforms"))
+  FileUtils.cp("sysmo-operator", RELEASE_DIR)
+  FileUtils.cp("release_utils/sysmo-operator.sh", "output/")
+  FileUtils.cp("/home/seb/Qt/5.4/gcc_64/lib/libQt5Core.so.5", RELEASE_DIR)
+  FileUtils.cp("/home/seb/Qt/5.4/gcc_64/lib/libQt5Gui.so.5", RELEASE_DIR)
+  FileUtils.cp("/home/seb/Qt/5.4/gcc_64/lib/libQt5Widgets.so.5", RELEASE_DIR)
+  FileUtils.cp("/home/seb/Qt/5.4/gcc_64/lib/libQt5Xml.so.5", RELEASE_DIR)
+  FileUtils.cp("/home/seb/Qt/5.4/gcc_64/lib/libQt5Network.so.5", RELEASE_DIR)
+  FileUtils.cp("/home/seb/Qt/5.4/gcc_64/plugins/platforms/libqxcb.so",
+               RELEASE_DIR + "platforms/")
+  sh "tar czvf ${RELEASE_DIR}.tar.gz ${RELEASE_DIR}"
+end
+
+
+desc "Build and move java libs and binaries to the ressources directory"
 task :java_ressource do
   rrddst = File.join(ROOT, "ressources/rrd4qt")
   rrdsrc = File.join(ROOT, "rrd4qt/build/install/rrd4qt")
@@ -30,31 +59,23 @@ task :java_ressource do
                File.join(rrddst))
 end
 
+
+desc "TODO why does this not work under win32?"
 task :rrd4qt do
-  # TODO why does this not work under win32?
   cd JAVA_DIR; sh "#{GRADLE} installDist"
 end
 
-task :clean do
-  sh "make clean; rm Makefile"
-end
-
-task :build do
-  sh "qmake -config release"
-  sh "make"
-  # TODO find and deplace dependencies, write startup script
-end
-
-task :linked do
-  sh "ldd ./sysmo-operator"
-end
 
 
+desc "Build side icons from SVG src"
 task :side_icons do
   sh "inkscape -z --export-png=ressources/images/dashboard-black.png -w 30 ressources/src/dashboard-black.svg"
   sh "inkscape -z --export-png=ressources/images/monitor-black.png   -w 30 ressources/src/monitor-black.svg"
 end
 
+
+
+desc "Build tree pixmaps from SVG src"
 task :tree_pixmaps do
   pix_size = 26
   pixs = ["hub", "router", "server-generic",
@@ -69,6 +90,8 @@ task :tree_pixmaps do
   }
 end
 
+
+desc "Build box icons from SVG src"
 task :box_icons do
   pix_size = 48
   pixs = ["dialog-warning", "dialog-information", "dialog-error"]
@@ -77,6 +100,8 @@ task :box_icons do
   }
 end
 
+
+desc "Build std icons from SVG src"
 task :std_icons do
   icon_size = 32
   sh "inkscape -z --export-png=ressources/icons/hub.png -w #{pix_size} -h #{pix_size} ressources/src/hub.svg"
