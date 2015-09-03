@@ -31,7 +31,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     /*
      * Fill the menu bar
      */
+
     QMenuBar* menu_bar  = this->menuBar();
+    // Sysmo menu
     QMenu*    main_menu = menu_bar->addMenu("Sysmo");
 
     QAction* action_exit = new QAction("&Exit", this);
@@ -58,7 +60,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     QMenu* color_menu = main_menu->addMenu("Color theme");
     main_menu->addSeparator();
     //main_menu->addAction(action_proxy_conf);
-    main_menu->addAction(action_doc_engine);
+    //main_menu->addAction(action_doc_engine);
     //main_menu->addAction(action_updates);
     main_menu->addSeparator();
     main_menu->addAction(action_exit);
@@ -96,8 +98,30 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     color_menu->addAction(theme_ice);
     color_menu->setIcon(QIcon(":/icons/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
-    // Fill the menu bar END
+    // Fill sysmo menu bar END
 
+    QMenu* help_menu = menu_bar->addMenu("Help");
+
+    QAction* help = new QAction("Get help...", this);
+    help->setIcon(QIcon(":/icons/help-browser.png"));
+    QObject::connect(
+                help, SIGNAL(triggered(bool)),
+                this, SLOT(handleHelpAction()));
+
+    QAction* sysmo_io = new QAction("Sysmo main website...", this);
+    QObject::connect(
+                sysmo_io, SIGNAL(triggered(bool)),
+                this, SLOT(handleMainWebsiteAction()));
+
+    QAction* about = new QAction("About Sysmo...", this);
+    QObject::connect(
+                about, SIGNAL(triggered(bool)),
+                this, SLOT(handleAboutAction()));
+
+    help_menu->addAction(help);
+    help_menu->addAction(sysmo_io);
+    help_menu->addSeparator();
+    help_menu->addAction(about);
 
     /*
      * Initialize acceptable default. Will be overriden by saveState and
@@ -269,4 +293,26 @@ void MainWindow::connectionStatus(int status)
 
     err_box.exec();
     this->close();
+}
+
+void MainWindow::handleAboutAction()
+{
+    QString msg;
+    msg += "Copyright (c) 2012-2015 Sebastien Serre <ssbx@sysmo.io>\n\n";
+    msg += "Sysmo NMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n";
+    msg += "Sysmo NMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n";
+    msg += "You should have received a copy of the GNU General Public License along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.";
+
+
+    QMessageBox::about(this, "Sysmo NMS (www.sysmo.io)", msg);
+}
+
+void MainWindow::handleMainWebsiteAction()
+{
+    QDesktopServices::openUrl(QUrl("http://www.sysmo.io"));
+}
+
+void MainWindow::handleHelpAction()
+{
+    QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community"));
 }

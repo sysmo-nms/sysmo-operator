@@ -22,6 +22,8 @@
 #include <QAbstractSocket>
 #include <QSize>
 #include <QCoreApplication>
+#include <QDesktopServices>
+#include <QUrl>
 
 class MainWindow : public QMainWindow
 {
@@ -49,6 +51,9 @@ private slots:
     void tryValidate();
     void setThemeConfig(QAction* theme);
     void configureDocEngine();
+    void handleHelpAction();
+    void handleMainWebsiteAction();
+    void handleAboutAction();
 };
 
 #endif // MAINWINDOW_H

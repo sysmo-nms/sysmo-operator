@@ -25,12 +25,17 @@
 #include <QXmlSimpleReader>
 #include <QVariant>
 #include <QJsonObject>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include <QDebug>
 
 
 class NewProbePage1 : public QWizardPage
 {
+
+    Q_OBJECT
+
 public:
     /*
      * QWizard parent for connecting to QWizard::next()
@@ -42,6 +47,9 @@ public:
 private:
     QTreeView* treeview  = NULL;
     QLineEdit* selection = NULL;
+
+private slots:
+    void handleHelpTriggered();
 };
 
 #endif // NEWPROBEPAGE1_H

@@ -81,12 +81,22 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
 
     this->treeview->setModel(proxy);
 
+    QPushButton * nchecks_help = new QPushButton(this);
+    nchecks_help->setText("Developping a new extension...");
+    nchecks_help->setIcon(QIcon(":/icons/help-browser.png"));
+    nchecks_help->setFlat(true);
+    QObject::connect(
+                nchecks_help, SIGNAL(clicked(bool)),
+                this,         SLOT(handleHelpTriggered()));
+
     grid->addWidget(clear, 0,0);
     grid->addWidget(search, 0,1);
-    grid->addWidget(this->treeview, 1,0,1,3);
+    grid->addWidget(nchecks_help, 0,3);
+    grid->addWidget(this->treeview, 1,0,1,5);
     grid->setColumnStretch(0,0);
     grid->setColumnStretch(1,1);
     grid->setColumnStretch(2,1);
+    grid->setColumnStretch(3,0);
     grid->setRowStretch(0,0);
     grid->setRowStretch(1,1);
 
@@ -154,6 +164,7 @@ bool NewProbePage1::isComplete() const
 
 int NewProbePage1::nextId() const {return 2;}
 
-
-
-
+void NewProbePage1::handleHelpTriggered()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/sysmo-nms/sysmo-core/wiki/DeveloppingChecks"));
+}

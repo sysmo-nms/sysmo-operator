@@ -15,5 +15,6 @@
         <file alias="document-save.png">ressources/icons/document-save.png</file>
         <file alias="edit-undo.png">ressources/icons/edit-undo.png</file>
         <file alias="system-search.png">ressources/icons/system-search.png</file>
+        <file alias="help-browser.png">ressources/icons/help-browser.png</file>
     </qresource>
 </RCC>
