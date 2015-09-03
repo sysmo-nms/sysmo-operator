@@ -14,6 +14,8 @@
 #include <QString>
 #include <QHash>
 #include <QHashIterator>
+#include <QStringList>
+#include <QStringListIterator>
 
 #include <QDebug>
 
@@ -34,6 +36,7 @@ public:
 private:
     QJsonObject target_properties;
     void updateFilter();
+    void updateTooltip();
 };
 
 #endif // ITEMTARGET_H

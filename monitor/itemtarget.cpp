@@ -64,12 +64,27 @@ void ItemTarget::updateInfo(QJsonObject info_target)
     this->orig_filter = QJsonDocument(info_target).toJson(QJsonDocument::Compact);
     this->setData(this->orig_filter, Sysmo::ROLE_FILTER_ORIG);
     this->updateFilter();
+    this->updateTooltip();
 }
 
+void ItemTarget::updateTooltip()
+{
+    QString tooltip;
+    QStringList keys = this->target_properties.keys();
+    keys.sort();
+    QStringListIterator it(keys);
+    tooltip += "<table>";
+    while (it.hasNext()) {
+        QString key = it.next();
+        QString val = this->target_properties.value(key).toString();
+        tooltip += "<tr><td><b>" + key + "</b></td><td>: " + val + "</td></tr>";
+    }
+    tooltip += "</table>";
+    this->setToolTip(tooltip);
+}
 
 void ItemTarget::updateIconStatus()
 {
-
     int status = 0;
     for (int i = 0; i < this->rowCount(); i ++)
     {

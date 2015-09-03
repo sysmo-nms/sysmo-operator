@@ -2,6 +2,7 @@
 #define ITEMPROBE_H
 
 #include "sysmo.h"
+#include "systemtray.h"
 
 #include <QObject>
 #include <QJsonObject>

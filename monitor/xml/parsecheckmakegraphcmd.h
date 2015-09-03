@@ -18,6 +18,8 @@ private:
     QJsonArray  current_draws;
     QJsonObject current_draw;
     QString     char_element = "undefined";
+    QString     prop_prefix = "undefined";
+    QString     prop_suffix = "undefined";
 
 
 public:

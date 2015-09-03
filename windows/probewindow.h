@@ -27,6 +27,7 @@
 #include <QXmlSimpleReader>
 #include <QStringListIterator>
 #include <QTimer>
+#include <QPalette>
 
 #include <QDebug>
 
@@ -39,6 +40,7 @@ private:
 
     QString     name;
     QJsonObject rrd_config;
+    QJsonObject target;
 
     QStatusBar*    status_bar = NULL;
     QScrollArea*  scroll_area = NULL;

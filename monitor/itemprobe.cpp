@@ -4,6 +4,7 @@ int ItemProbe::type() const { return Sysmo::TYPE_PROBE; }
 
 ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
 {
+    // TODO include probe config from server and show it as a tooltip here
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
     int step        = info_probe.value("step").toInt(0);
@@ -63,6 +64,7 @@ void ItemProbe::updateInfo(QJsonObject info_probe)
     }
     else if (status == "ERROR")
     {
+
         this->setData(QPixmap(":/pixmaps/weather-few-clouds-night.png"),
                                                 Qt::DecorationRole);
         this->setData(Sysmo::STATUS_ERROR, Sysmo::ROLE_PROBE_STATUS);
@@ -92,8 +94,6 @@ void ItemProbe::updateInfo(QJsonObject info_probe)
                                   Qt::DecorationRole);
                                   */
     }
-
-    this->setData("hello", Sysmo::ROLE_FILTER_STRING);
 }
 
 
@@ -101,6 +101,7 @@ void ItemProbe::updateReturnInfo(QJsonObject info)
 {
     QString reply = info.value("replyString").toString("undefined");
     this->item_last_return->setData(reply, Qt::DisplayRole);
+    this->item_last_return->setToolTip(reply);
     int in_sec      = info.value("nextReturn").toInt(0) / 1000;
     int current_sec = QDateTime::currentMSecsSinceEpoch() / 1000;
     int next_in_sec = current_sec + in_sec;

@@ -15,7 +15,7 @@ MenuProbe::MenuProbe(QWidget* parent) : QMenu(parent)
     */
     //this->addSeparator();
 
-    QAction* perfs = new QAction("Performances", this);
+    QAction* perfs = new QAction("Performances...", this);
     perfs->setIcon(QIcon(":/icons/utilities-system-monitor.png"));
     this->addAction(perfs);
 

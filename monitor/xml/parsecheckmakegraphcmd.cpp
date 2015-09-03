@@ -57,6 +57,16 @@ bool ParseCheckMakeGraphCMD::startElement(
         this->current_draw.insert("legend", QJsonValue(""));
         this->char_element = "draw";
     }
+    // PropertyPrefix
+    if (qName == "PropertyPrefix") {
+        this->char_element = "propertyPrefix";
+        return true;
+    }
+    // PropertySuffix
+    if (qName == "PropertySuffix") {
+        this->char_element = "propertySuffix";
+        return true;
+    }
     return true;
 }
 
@@ -67,6 +77,14 @@ bool ParseCheckMakeGraphCMD::endElement(
 {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
+    if (qName == "PropertySuffix") {
+        this->char_element = "undefined";
+        return true;
+    }
+    if (qName == "PropertyPrefix") {
+        this->char_element = "undefined";
+        return true;
+    }
     if (qName == "Title") {
         this->char_element = "undefined";
         return true;
@@ -95,6 +113,14 @@ bool ParseCheckMakeGraphCMD::endElement(
 bool ParseCheckMakeGraphCMD::characters(const QString &ch)
 {
     if (this->char_element == "undefined") return true;
+    if (this->char_element == "propertySuffix") {
+        this->config.insert("propertySuffix", QJsonValue(ch.simplified()));
+        return true;
+    }
+    if (this->char_element == "propertyPrefix") {
+        this->config.insert("propertyPrefix", QJsonValue(ch.simplified()));
+        return true;
+    }
     if (this->char_element == "title") {
         this->current_graph.insert("title", QJsonValue(ch.simplified()));
         return true;

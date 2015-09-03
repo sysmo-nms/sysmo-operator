@@ -34,12 +34,13 @@ ProbeWindow::ProbeWindow(QString probeName)
 
 
     /*
-     * Get the check identifier
+     * Get the check identifier and target belong_to
      */
     Monitor*      mon = Monitor::getInstance();
     QJsonObject probe = mon->probes->value(this->name);
     QString  probe_id = probe.value("probeId").toString();
-    qDebug() << "probe is: " << probe_id;
+    QString belong_to = probe.value("target").toString();
+    this->target = mon->targets->value(belong_to);
 
     /*
      * Read the NChecks XML graph definition.
@@ -299,6 +300,11 @@ void ProbeWindow::handleEvent(QJsonObject event) {
         this->divider = keys.size();
 
 
+        /*
+         * Get prop suffix and prefix
+         */
+        QString prefix = this->rrd_config.value("propertyPrefix").toString();
+        QString suffix = this->rrd_config.value("propertySuffix").toString();
 
         /*
          * Foreach rrdfiles
@@ -315,24 +321,33 @@ void ProbeWindow::handleEvent(QJsonObject event) {
              * The frame is then added to "frame" rows.
              */
             NFrame* fr = new NFrame(frame);
+            fr->setFrameShape(QFrame::StyledPanel);
             NGrid*  gr = new NGrid();
             fr->setLayout(gr);
-
-
 
             /*
              * Set rrd_id as the QLabel for the first column
              */
-            QLabel* desc_label = new QLabel(rrd_id, fr);
+            QString prop_content = this->target.value("properties").toObject()
+                         .value(prefix + rrd_id + suffix).toString("undefined");
+            QString lab_text;
+            if (prop_content == "undefined") {
+                lab_text = "<h3>" + rrd_id + "</h3>";
+            } else {
+                lab_text = "<h3>" + prop_content + "</h3>";
+            }
+            QLabel* desc_label = new QLabel(lab_text, fr);
+            desc_label->setFixedWidth(100);
+            desc_label->setBackgroundRole(QPalette::Base);
+            desc_label->setAutoFillBackground(true);
+            desc_label->setAlignment(Qt::AlignCenter);
             gr->addWidget(desc_label, 0,0);
             gr->setColumnStretch(0,0);
-
 
             /*
              * Initialize iterator.
              */
             QStringListIterator j(keys);
-
 
             /*
              * initialize grid column
