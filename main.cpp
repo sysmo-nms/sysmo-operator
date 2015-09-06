@@ -60,6 +60,9 @@ void operatorMsgOut(
 int main(int argc, char* argv[])
 {
 
+    int RETURN_CODE;
+    do {
+
 // see http://doc.qt.io/qt-5/qtglobal.html
 #if !defined QT_DEBUG
     qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
@@ -73,18 +76,14 @@ int main(int argc, char* argv[])
 #else
     /* other OS/X11 things here */
 #endif
+            QApplication::setApplicationName("Operator");
+            QApplication::setApplicationVersion("1.0");
+            QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
+            QApplication::setOrganizationName("Sysmo NMS");
+            QApplication::setOrganizationDomain("sysmo.io");
+            QApplication::setQuitOnLastWindowClosed(true);
+            QApplication::setStyle("fusion");
 
-
-    QApplication::setApplicationName("Operator");
-    QApplication::setApplicationVersion("1.0");
-    QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
-    QApplication::setOrganizationName("Sysmo NMS");
-    QApplication::setOrganizationDomain("sysmo.io");
-    QApplication::setQuitOnLastWindowClosed(true);
-    QApplication::setStyle("fusion");
-
-    int RETURN_CODE;
-    do {
             QSettings settings;
             QVariant variant = settings.value("color_theme");
             if (!variant.isValid()) {
