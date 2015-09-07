@@ -48,7 +48,7 @@ void MenuProbe::handleShowPerf()
 
 void MenuProbe::showMenuFor(QString probe, QPoint at)
 {
-    qDebug() << "show menu for probe";
+    qDebug() << "show menu for probe" << probe << at;
     this->probe_name = probe;
     at.setX(at.x() + 12);
     this->popup(at);

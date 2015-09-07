@@ -6,6 +6,7 @@
 #include "dialogs/messagebox.h"
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
+#include "actions/monitoractions.h"
 
 #include <QObject>
 #include <QWidget>
@@ -35,6 +36,7 @@ private slots:
     void connectNewProbeDialog();
     void deleteTarget();
     void deleteTargetReply(QJsonObject reply);
+    void handleOperatorActionsConfig();
 
 signals:
     void openNewProbeDialog(QString target);

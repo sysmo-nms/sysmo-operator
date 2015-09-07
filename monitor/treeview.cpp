@@ -104,7 +104,10 @@ void TreeView::stopTimer() { this->timer->stop(); }
 
 void TreeView::openContextMenu(const QPoint point) {
 
+    qDebug() << "open context menu" << point;
     QModelIndex    index   = this->filter_model->mapToSource(this->indexAt(point));
+    if (!index.isValid()) return;
+
     QModelIndex    element = index.sibling(index.row(), 0);
     QStandardItem* item    = this->original_model->itemFromIndex(element);
 
@@ -122,6 +125,7 @@ void TreeView::openContextMenu(const QPoint point) {
 
 void TreeView::handleDoubleClicked(const QModelIndex index)
 {
+    qDebug() << "double clicked" << index;
     QModelIndex idx_sibling = index.sibling(index.row(), 0);
     QModelIndex idx_origin  = this->filter_model->mapToSource(idx_sibling);
     QStandardItem*     item = this->original_model->itemFromIndex(idx_origin);

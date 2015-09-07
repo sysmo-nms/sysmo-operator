@@ -39,6 +39,10 @@ void ItemProbe::updateFilter()
 
 void ItemProbe::updateInfo(QJsonObject info_probe)
 {
+    this->orig_filter =
+            QJsonDocument(info_probe).toJson(QJsonDocument::Compact);
+    this->updateFilter();
+
     this->setData(info_probe.value("descr").toString(""), Qt::DisplayRole);
     QString status = info_probe.value("status").toString("undef");
     if (status == "OK")

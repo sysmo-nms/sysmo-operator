@@ -3,11 +3,18 @@
 MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 {
     this->target_name = "undefined";
+    /* TODO double clic open actions list QMenu
     this->operation_menu = new QMenu("Operator Actions", this);
     this->operation_menu->setIcon(QIcon(":/icons/utilities-terminal.png"));
     this->addMenu(this->operation_menu);
+    */
 
-    QAction* opconf = new QAction("Configure new Action...", this);
+    //QAction* opconf = new QAction("Configure new Action...", this);
+    QAction* opconf = new QAction("Operator Actions...", this);
+    opconf->setIcon(QIcon(":/icons/utilities-terminal.png"));
+    QObject::connect(
+                opconf, SIGNAL(triggered(bool)),
+                this, SLOT(handleOperatorActionsConfig()));
     this->addAction(opconf);
 
     this->addSeparator();
@@ -46,7 +53,7 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 
 void MenuTarget::showMenuFor(QString target, QPoint at)
 {
-    qDebug() << "show menu for target";
+    qDebug() << "show menu for target" << target << at;
     at.setX(at.x() + 12);
     this->target_name = target;
     this->popup(at);
@@ -93,4 +100,9 @@ void MenuTarget::deleteTarget()
 void MenuTarget::deleteTargetReply(QJsonObject reply)
 {
     qDebug() << "delete target reply: " << reply;
+}
+
+void MenuTarget::handleOperatorActionsConfig()
+{
+    MonitorActions::openActionFor(this->target_name);
 }

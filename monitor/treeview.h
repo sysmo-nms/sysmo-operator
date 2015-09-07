@@ -2,12 +2,12 @@
 #define TREEVIEW_H
 
 #include "monitor/delegateprobeprogress.h"
+#include "actions/monitoractions.h"
 #include "monitor/treemodel.h"
 #include "monitor/menuprobe.h"
 #include "monitor/menutarget.h"
 #include "monitor/monitorwidget.h"
 #include "windows/probewindow.h"
-#include "actions/monitoractions.h"
 #include "sysmo.h"
 
 #include <QObject>

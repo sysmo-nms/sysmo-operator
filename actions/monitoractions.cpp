@@ -34,6 +34,6 @@ void MonitorActions::openActionFor(QString target)
      */
     MonitorActionsDialog* dial =
        new MonitorActionsDialog(
-                MonitorWidget::getInstance(), target);
+                Monitor::getCenterWidget(), target);
     dial->open();
 }

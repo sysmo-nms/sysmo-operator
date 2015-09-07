@@ -51,6 +51,7 @@ public:
             QString channel, MonitorProxyWidget* subscriber);
     static QJsonObject getTarget(QString targetId);
     static QJsonObject getProbe(QString probeId);
+    static QWidget* getCenterWidget();
 
 private:
     static Monitor* singleton;

@@ -54,8 +54,12 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
 
     // help button
     QPushButton* help = new QPushButton(this);
-    help->setIcon(QIcon(":/icons/dialog-information.png"));
+    help->setIcon(QIcon(":/icons/help-browser.png"));
     help->setFlat(true);
+    help->setToolTip("Get help...");
+    QObject::connect(
+                help, SIGNAL(clicked(bool)),
+                this, SLOT(handleHelpClicked()));
 
 
     /*
@@ -141,4 +145,10 @@ void MonitorWidget::showNewProbeDialog(QString forTarget)
     NewProbe* pdial = new NewProbe(forTarget, this);
     pdial->exec();
     pdial->deleteLater();
+}
+
+void MonitorWidget::handleHelpClicked()
+{
+    QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community/"));
+
 }

@@ -21,6 +21,10 @@ Monitor::~Monitor()
     delete this->channels;
 }
 
+QWidget* Monitor::getCenterWidget()
+{
+    return dynamic_cast<QWidget*>(Monitor::singleton->parent());
+}
 
 void Monitor::handleServerMessage(QJsonObject message)
 {

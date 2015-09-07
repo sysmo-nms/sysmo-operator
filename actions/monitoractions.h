@@ -3,7 +3,7 @@
 
 #include "actions/monitoractionsdialog.h"
 
-#include "monitor/monitorwidget.h"
+#include "monitor/monitor.h"
 
 #include <QDebug>
 #include <QSettings>

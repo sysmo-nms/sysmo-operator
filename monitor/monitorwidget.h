@@ -23,6 +23,8 @@
 #include <QMap>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include <QDebug>
 
@@ -40,10 +42,11 @@ public slots:
     void showNewTargetDialog();
     void showNewProbeDialog(QString forTarget);
     void connectionStatus(int status);
+    void handleHelpClicked();
 
 private:
     static MonitorWidget* singleton;
-    Monitor*        mon = NULL;
+    Monitor* mon = NULL;
 };
 
 #endif // MONITORWIDGET_H
