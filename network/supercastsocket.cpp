@@ -34,9 +34,8 @@ SupercastSocket::~SupercastSocket()
 
 void SupercastSocket::timerTimeout()
 {
-    qDebug() << "timer timeoutddddddddddddddd" << this->socket->state();
+    if (this->socket->state() == QAbstractSocket::UnconnectedState) return;
     if (this->socket->state() != QAbstractSocket::ConnectedState) {
-        qDebug() << "then close???";
         emit this->waitTimeout(QAbstractSocket::NetworkError);
         this->socket->abort();
     }
