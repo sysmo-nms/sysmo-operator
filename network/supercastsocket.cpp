@@ -5,6 +5,15 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
     this->block_size = 0;
     this->socket     = new QTcpSocket(this);
 
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(Sysmo::SUPERCAST_SOCKET_TIMEOUT);
+
+    QObject::connect(
+                timer, SIGNAL(timeout()),
+                this, SLOT(timerTimeout()),
+                Qt::QueuedConnection);
+
     /*
      * QueuedConnection because the SLOT may emit the SIGNAL he is
      * connected to.
@@ -14,15 +23,24 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
                 this,         SLOT(socketReadyRead()),
                 Qt::QueuedConnection);
 
+    timer->start();
     this->socket->connectToHost(host, port);
 }
-
 
 SupercastSocket::~SupercastSocket()
 {
     this->socket->close();
 }
 
+void SupercastSocket::timerTimeout()
+{
+    qDebug() << "timer timeoutddddddddddddddd" << this->socket->state();
+    if (this->socket->state() != QAbstractSocket::ConnectedState) {
+        qDebug() << "then close???";
+        emit this->waitTimeout(QAbstractSocket::NetworkError);
+        this->socket->abort();
+    }
+}
 
 void SupercastSocket::socketReadyRead()
 {

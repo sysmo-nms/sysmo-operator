@@ -1,6 +1,8 @@
 #ifndef SUPERCASTSOCKET_H
 #define SUPERCASTSOCKET_H
 
+#include "sysmo.h"
+
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -11,6 +13,7 @@
 #include <QHostAddress>
 #include <QIODevice>
 #include <Qt>
+#include <QTimer>
 
 class SupercastSocket : public QObject
 {
@@ -23,6 +26,7 @@ public:
 
 public slots:
     void handleClientMessage(QJsonObject msg);
+    void timerTimeout();
 
 private:
     qint32 block_size;
@@ -36,6 +40,7 @@ private slots:
 
 signals:
     void serverMessage(QJsonObject msg);
+    void waitTimeout(QAbstractSocket::SocketError err);
 };
 
 #endif // SUPERCASTSOCKET_H

@@ -73,6 +73,11 @@ namespace Sysmo {
      * Restart application code
      */
     const int APP_RESTART_CODE = 1000;
+
+    /*
+     * Socket timeout
+     */
+    const int SUPERCAST_SOCKET_TIMEOUT = 4000;
 }
 
 #endif // SYSMO
