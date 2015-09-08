@@ -55,13 +55,13 @@ public:
     int nextId() const;
 
 private:
-    QString     target     = "";
-    QString     probe_class = "";
-    QHash<QString,QLineEdit*>* args = NULL;
-    QTextEdit*  docs       = NULL;
-    NFrame*     form_frame = NULL;
-    NGrid*      grid       = NULL;
-    QLineEdit *name_line = NULL;
+    QString     target;
+    QString     probe_class;
+    QHash<QString,QLineEdit*>* args;
+    QTextEdit*  docs;
+    NFrame*     form_frame;
+    NGrid*      grid;
+    QLineEdit *name_line;
 };
 
 
@@ -70,14 +70,14 @@ class HelperExec: public QObject
     Q_OBJECT
 public:
     HelperExec(QLineEdit* line, QWidget *parent = 0);
-    QString    h_class = "";
-    QString    h_id = "";
-    QString    h_target  = "";
-    QWidget*   w_parent  = NULL;
-    QLineEdit* flag_line = NULL;
+    QString    h_class;
+    QString    h_id;
+    QString    h_target;
+    QWidget*   w_parent;
+    QLineEdit* flag_line;
 
 private:
-    QProgressDialog* dial = NULL;
+    QProgressDialog* dial;
 
 public slots:
     void execHelper();
@@ -95,8 +95,8 @@ public:
     QString getValue();
 
 private:
-    QString value = "";
-    QString list_separator = "";
+    QString value;
+    QString list_separator;
     QHash<QString, QTreeWidgetItem*> root_items;
 
 public slots:

@@ -6,10 +6,11 @@
 class ParseCheckGetInfos : public QXmlDefaultHandler
 {
 public:
-    QString name    = "";
-    QString require = "simple";
-    QString desc    = "";
-    QString parse_pos = "";
+    QString name;
+    QString require;
+    QString desc;
+    QString parse_pos;
+    bool startDocument();
     bool startElement(
             const QString &namespaceURI,
             const QString &localName,

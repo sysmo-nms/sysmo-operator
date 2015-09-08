@@ -27,10 +27,10 @@ public:
 
 private:
     QString channel;
-    QString chan_type = "none";
-    int  subscriber_count = 0;
-    bool synchronized     = false;
-    bool locked           = false;
+    QString chan_type;
+    int  subscriber_count;
+    bool synchronized;
+    bool locked;
     QHash<QString, QString> table_files;
     QHash<QString, bool>    table_files_update_status;
     QHash<QString, bool>    table_file_rrd_pending;

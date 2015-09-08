@@ -37,10 +37,10 @@ public:
     ~TreeView();
     void stopTimer();
 
-    QSortFilterProxyModel* filter_model   = NULL;
-    TreeModel*             original_model = NULL;
-    MenuTarget*            target_menu    = NULL;
-    MenuProbe*             probe_menu     = NULL;
+    QSortFilterProxyModel* filter_model;
+    TreeModel*             original_model;
+    MenuTarget*            target_menu;
+    MenuProbe*             probe_menu;
 
 public slots:
     void expandIndex(QModelIndex index);

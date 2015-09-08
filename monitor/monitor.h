@@ -42,9 +42,9 @@ public:
     explicit Monitor(QObject *parent = 0);
     ~Monitor();
     static Monitor* getInstance();
-    QHash<QString, QJsonObject>*     targets  = NULL;
-    QHash<QString, QJsonObject>*     probes   = NULL;
-    QHash<QString, MonitorChannel*>* channels = NULL;
+    QHash<QString, QJsonObject>*     targets;
+    QHash<QString, QJsonObject>*     probes;
+    QHash<QString, MonitorChannel*>* channels;
     static void subscribeToChannel(
             QString channel, MonitorProxyWidget* subscriber);
     static void unsubscribeToChannel(

@@ -29,8 +29,8 @@ public:
     void showMenuFor(QString target, QPoint at);
 
 private:
-    QString target_name = "";
-    QMenu*  operation_menu = NULL;
+    QString target_name;
+    //QMenu*  operation_menu;
 
 private slots:
     void connectNewProbeDialog();

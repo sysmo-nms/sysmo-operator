@@ -24,7 +24,7 @@ public:
     static QString        getCheck(QString check);
 
 private:
-    QHash<QString, QString>* checks = NULL;
+    QHash<QString, QString>* checks;
     static NChecks* singleton;
 
 signals:

@@ -59,9 +59,9 @@ private:
     QString user_name;
     QString user_pass;
     QUrl    data_base_url;
-    QHash<QString, SupercastSignal*>* channels      = NULL;
-    QHash<int,     SupercastSignal*>* queries       = NULL;
-    QHash<int,     SupercastSignal*>* http_requests = NULL;
+    QHash<QString, SupercastSignal*>* channels;
+    QHash<int,     SupercastSignal*>* queries;
+    QHash<int,     SupercastSignal*>* http_requests;
 
 private slots:
     void handleSupercastMessage(QJsonObject message);

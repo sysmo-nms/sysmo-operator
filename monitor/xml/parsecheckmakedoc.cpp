@@ -2,6 +2,9 @@
 
 bool ParseCheckMakeDoc::startDocument()
 {
+    this->doc = "";
+    this->flags = "";
+    this->char_type = "";
     this->doc.append("<html><body>");
     this->flags.append("<h2>Options</h2><p><ul>");
     return true;

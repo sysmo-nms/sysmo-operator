@@ -39,11 +39,11 @@ public slots:
 
 private:
     void restoreUserSettings();
-    Supercast* supercast      = NULL;
-    LogIn* log_in_dialog      = NULL;
-    Rrd4Qt* rrd4c             = NULL;
-    QActionGroup* color_group = NULL;
-    SystemTray* system_tray   = NULL;
+    Supercast* supercast;
+    LogIn* log_in_dialog;
+    Rrd4Qt* rrd4c;
+    QActionGroup* color_group;
+    SystemTray* system_tray;
     QSize default_size;
 
 private slots:

@@ -5,6 +5,7 @@ NewProbePage2::NewProbePage2(
         QWizard* parent) : QWizardPage(parent)
 {
     this->target = forTarget;
+    this->probe_class = "";
     this->setSubTitle("Complete the form to configure the new probe");
     this->setFinalPage(true);
     this->grid = new NGrid();
@@ -254,6 +255,8 @@ HelperDialog::HelperDialog(
         QJsonObject helperReply,
         QWidget*    parent) : QDialog(parent)
 {
+    this->value = "";
+    this->list_separator = "";
     this->setModal(true);
     this->setMinimumHeight(400);
     this->setMinimumWidth(600);

@@ -17,9 +17,9 @@ private:
     QString     current_graph_id;
     QJsonArray  current_draws;
     QJsonObject current_draw;
-    QString     char_element = "undefined";
-    QString     prop_prefix = "undefined";
-    QString     prop_suffix = "undefined";
+    QString     char_element;
+    QString     prop_prefix;
+    QString     prop_suffix;
 
 
 public:

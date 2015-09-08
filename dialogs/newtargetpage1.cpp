@@ -39,11 +39,11 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->include_icmp_probe = new QCheckBox("Create ICMP echo presence probe", this);
     this->include_icmp_probe->setChecked(true);
     form->addRow("", this->include_icmp_probe);
-    */
 
     QObject::connect(
                 this->include_icmp_probe, SIGNAL(stateChanged(int)),
                 this,                     SIGNAL(completeChanged()));
+    */
 
 
     QFrame* separator1 = new QFrame(this);
@@ -297,21 +297,21 @@ void NewTargetPage1::disableUnusedWidgets() const
 int NewTargetPage1::configType() const
 {
     if (!this->snmp_enable->isChecked())
-        return NO_SNMP;
+        return NewTargetPage1::NO_SNMP;
 
     if (this->snmp_version->currentIndex() == Sysmo::SNMP_VERSION_1)
-        return SNMP_V1;
+        return NewTargetPage1::SNMP_V1;
     if (this->snmp_version->currentIndex() == Sysmo::SNMP_VERSION_2)
-        return SNMP_V2;
+        return NewTargetPage1::SNMP_V2;
 
     // then it is v3
     if (this->snmp_seclevel->currentIndex() == Sysmo::SNMP_SECLEVEL_NO_AUTH_NO_PRIV)
-        return SNMP_V3_NOAUTHNOPRIV;
+        return NewTargetPage1::SNMP_V3_NOAUTHNOPRIV;
     if (this->snmp_seclevel->currentIndex() == Sysmo::SNMP_SECLEVEL_AUTH_NO_PRIV)
-        return SNMP_V3_AUTHNOPRIV;
+        return NewTargetPage1::SNMP_V3_AUTHNOPRIV;
 
     // then it is v3 authpriv
-    return SNMP_V3_AUTHPRIV;
+    return NewTargetPage1::SNMP_V3_AUTHPRIV;
 }
 
 
@@ -319,23 +319,23 @@ bool NewTargetPage1::validatePage()
 {
 
     QJsonObject sysProperties;
-    if (this->configType() == NO_SNMP) {
+    if (this->configType() == NewTargetPage1::NO_SNMP) {
         sysProperties = {};
 
 
-    } else if (this->configType() == SNMP_V1) {
+    } else if (this->configType() == NewTargetPage1::SNMP_V1) {
         sysProperties = {
             {"snmp_port",     QString::number(this->snmp_port->value())},
             {"snmp_version",  "1"},
             {"snmp_community", this->snmp_community->text()}};
 
-    } else if (this->configType() == SNMP_V2) {
+    } else if (this->configType() == NewTargetPage1::SNMP_V2) {
         sysProperties = {
             {"snmp_port",     QString::number(this->snmp_port->value())},
             {"snmp_version",  "2c"},
             {"snmp_community", this->snmp_community->text()}};
 
-    } else if (this->configType() ==  SNMP_V3_NOAUTHNOPRIV) {
+    } else if (this->configType() ==  NewTargetPage1::SNMP_V3_NOAUTHNOPRIV) {
         sysProperties = {
             {"snmp_port",     QString::number(this->snmp_port->value())},
             {"snmp_version",  "3"},
@@ -343,7 +343,7 @@ bool NewTargetPage1::validatePage()
             {"snmp_usm_user", this->snmp_usm_user->text()}};
 
 
-    } else if (this->configType() ==  SNMP_V3_AUTHNOPRIV) {
+    } else if (this->configType() ==  NewTargetPage1::SNMP_V3_AUTHNOPRIV) {
         QString authproto;
         if (this->snmp_auth_proto->currentIndex() == Sysmo::SNMP_AUTH_MD5)
             authproto = "MD5";
@@ -359,7 +359,7 @@ bool NewTargetPage1::validatePage()
             {"snmp_authkey",   this->snmp_auth_key->text()}};
 
 
-    } else if (this->configType() == SNMP_V3_AUTHPRIV) {
+    } else if (this->configType() == NewTargetPage1::SNMP_V3_AUTHPRIV) {
         QString authproto;
         QString privproto;
         if (this->snmp_auth_proto->currentIndex() == Sysmo::SNMP_AUTH_MD5)

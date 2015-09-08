@@ -1,6 +1,11 @@
 #include "parsecheckmakegraphcmd.h"
 
-bool ParseCheckMakeGraphCMD::startDocument() {return true;}
+bool ParseCheckMakeGraphCMD::startDocument() {
+    this->char_element = "undefined";
+    this->prop_prefix = "undefined";
+    this->prop_suffix = "unefined";
+    return true;
+}
 bool ParseCheckMakeGraphCMD::endDocument()   {return true;}
 
 bool ParseCheckMakeGraphCMD::startElement(

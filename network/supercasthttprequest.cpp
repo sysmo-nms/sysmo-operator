@@ -3,6 +3,8 @@
 SupercastHttpRequest::SupercastHttpRequest() {
     this->id  = 0;
     this->url = QUrl();
+    this->dst_file = "none";
+    this->opaque = "undefined";
 }
 
 SupercastHttpRequest::SupercastHttpRequest(
@@ -11,6 +13,7 @@ SupercastHttpRequest::SupercastHttpRequest(
     this->id       = request_id;
     this->url      = request_url;
     this->dst_file = dst;
+    this->opaque = "undefined";
 }
 
 
@@ -27,4 +30,6 @@ SupercastHttpRequest::SupercastHttpRequest(int request_id, QUrl request_url)
 {
     this->id  = request_id;
     this->url = request_url;
+    this->dst_file = "none";
+    this->opaque = "undefined";
 }

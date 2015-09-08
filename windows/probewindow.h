@@ -42,11 +42,11 @@ private:
     QJsonObject rrd_config;
     QJsonObject target;
 
-    QStatusBar*    status_bar = NULL;
-    QScrollArea*  scroll_area = NULL;
-    QTimer* timer = NULL;
-    int divider = 1;
-    int margin = 150;
+    QStatusBar*    status_bar;
+    QScrollArea*  scroll_area;
+    QTimer* timer;
+    int divider;
+    int margin;
     void resizeEvent(QResizeEvent *event);
 
     static QHash<QString, ProbeWindow*> windows;
@@ -56,24 +56,24 @@ public:
     void handleEvent(QJsonObject event);
 
     static int getSpanFor(int value);
-    static const int SPAN_TWO_HOURS;
-    static const int SPAN_TWELVE_HOURS;
-    static const int SPAN_TWO_DAYS;
-    static const int SPAN_SEVEN_DAYS;
-    static const int SPAN_TWO_WEEKS;
-    static const int SPAN_ONE_MONTH;
-    static const int SPAN_SIX_MONTH;
-    static const int SPAN_ONE_YEAR;
-    static const int SPAN_THREE_YEARS;
-    static const int SPAN_TEN_YEARS;
+    static const int SPAN_TWO_HOURS     = 0;
+    static const int SPAN_TWELVE_HOURS  = 1;
+    static const int SPAN_TWO_DAYS      = 2;
+    static const int SPAN_SEVEN_DAYS    = 3;
+    static const int SPAN_TWO_WEEKS     = 4;
+    static const int SPAN_ONE_MONTH     = 5;
+    static const int SPAN_SIX_MONTH     = 6;
+    static const int SPAN_ONE_YEAR      = 7;
+    static const int SPAN_THREE_YEARS   = 8;
+    static const int SPAN_TEN_YEARS     = 9;
 
     static bool isThumbnail(int value);
     static int getHeightFor(int value);
-    static const int HEIGHT_THUMBNAIL;
-    static const int HEIGHT_SMALL;
-    static const int HEIGHT_NORMAL;
-    static const int HEIGHT_LARGE;
-    static const int HEIGHT_HUGE;
+    static const int HEIGHT_THUMBNAIL   = 0;
+    static const int HEIGHT_SMALL       = 1;
+    static const int HEIGHT_NORMAL      = 2;
+    static const int HEIGHT_LARGE       = 3;
+    static const int HEIGHT_HUGE        = 4;
 
 
 public slots:

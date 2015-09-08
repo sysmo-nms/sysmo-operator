@@ -1,27 +1,12 @@
 #include "probewindow.h"
 
-const int ProbeWindow::HEIGHT_THUMBNAIL = 0;
-const int ProbeWindow::HEIGHT_SMALL     = 1;
-const int ProbeWindow::HEIGHT_NORMAL    = 2;
-const int ProbeWindow::HEIGHT_LARGE     = 3;
-const int ProbeWindow::HEIGHT_HUGE      = 4;
-
-const int ProbeWindow::SPAN_TWO_HOURS    = 0;
-const int ProbeWindow::SPAN_TWELVE_HOURS = 1;
-const int ProbeWindow::SPAN_TWO_DAYS     = 2;
-const int ProbeWindow::SPAN_SEVEN_DAYS   = 3;
-const int ProbeWindow::SPAN_TWO_WEEKS    = 4;
-const int ProbeWindow::SPAN_ONE_MONTH    = 5;
-const int ProbeWindow::SPAN_SIX_MONTH    = 6;
-const int ProbeWindow::SPAN_ONE_YEAR     = 7;
-const int ProbeWindow::SPAN_THREE_YEARS  = 8;
-const int ProbeWindow::SPAN_TEN_YEARS    = 9;
-
 QHash<QString,ProbeWindow*> ProbeWindow::windows = QHash<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
                         : MonitorProxyWidget(probeName)
 {
+    this->divider = 1;
+    this->margin = 150;
     this->name = probeName;
 
     /*
@@ -420,7 +405,7 @@ void ProbeWindow::closeEvent(QCloseEvent* event)
  */
 void ProbeWindow::openWindow(QString name)
 {
-    ProbeWindow* win = NULL;
+    ProbeWindow* win;
 
     /*
      * If window exist use it. Else create and insert it in

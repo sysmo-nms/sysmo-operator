@@ -7,6 +7,17 @@ ParseCheckMakeForm::~ParseCheckMakeForm() {
 
 bool ParseCheckMakeForm::startDocument()
 {
+    this->probe_class = "";
+    this->current_flag = "";
+    this->hint = "";
+    this->helper_id = "";
+    this->helper_class = "";
+    this->defaults = "";
+    this->has_helper = false;
+    this->is_hint = false;
+    this->is_defaults = false;
+    this->is_mandatory = true;
+
     this->mandatory = new QList<FormConfig>();
     this->options   = new QList<FormConfig>();
     return true;
@@ -98,7 +109,12 @@ bool ParseCheckMakeForm::endDocument()
 
 FormConfig::FormConfig()
 {
-
+    this->flag_name = "";
+    this->hint = "";
+    this->defaults = "";
+    this->has_helper = false;
+    this->helper_id = "";
+    this->helper_class = "";
 }
 
 FormConfig::~FormConfig()

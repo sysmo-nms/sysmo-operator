@@ -50,13 +50,13 @@ signals:
 
 private:
     static Rrd4Qt* singleton;
-    static const qint32 HEADER_LEN = 4;
+    static const int HEADER_LEN = 4;
 
     qint32        block_size;
     QTemporaryDir temporary_dir;
 
-    QProcess*                  proc    = NULL;
-    QHash<int, Rrd4QtSignal*>* queries = NULL;
+    QProcess*                  proc;
+    QHash<int, Rrd4QtSignal*>* queries;
 
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32     source);

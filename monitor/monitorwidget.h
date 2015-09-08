@@ -35,7 +35,7 @@ class MonitorWidget : public NFrame
 public:
     explicit MonitorWidget(QWidget* parent = 0);
     ~MonitorWidget();
-    NewProbe*  add_probe_dialog = NULL;
+    NewProbe*  add_probe_dialog;
     static MonitorWidget* getInstance();
 
 public slots:
@@ -46,7 +46,7 @@ public slots:
 
 private:
     static MonitorWidget* singleton;
-    Monitor* mon = NULL;
+    Monitor* mon;
 };
 
 #endif // MONITORWIDGET_H

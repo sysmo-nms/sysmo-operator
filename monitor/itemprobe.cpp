@@ -8,6 +8,7 @@ ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
     this->name      = info_probe.value("name").toString("undefined");
     this->belong_to = info_probe.value("target").toString("undefined");
     int step        = info_probe.value("step").toInt(0);
+    this->targ_filter = "";
     this->orig_filter =
             QJsonDocument(info_probe).toJson(QJsonDocument::Compact);
     this->updateFilter();

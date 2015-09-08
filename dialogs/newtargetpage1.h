@@ -45,39 +45,39 @@ public slots:
     void createTargetReply(QJsonObject reply);
 
 private:
-    QLineEdit* target_host     = NULL;
-    QLineEdit* target_name     = NULL;
-    QSpinBox*  snmp_port       = NULL;
-    QSpinBox*  snmp_timeout    = NULL;
-    QComboBox* snmp_version    = NULL;
-    QLineEdit* snmp_community  = NULL;
-    QComboBox* snmp_seclevel   = NULL;
-    QLineEdit* snmp_usm_user   = NULL;
-    QComboBox* snmp_auth_proto = NULL;
-    QComboBox* snmp_priv_proto = NULL;
-    QLineEdit* snmp_auth_key   = NULL;
-    QLineEdit* snmp_priv_key   = NULL;
-    QCheckBox* snmp_enable     = NULL;
-    QCheckBox* include_icmp_probe = NULL;
-    QCheckBox* include_snmp_probe = NULL;
+    QLineEdit* target_host;
+    QLineEdit* target_name;
+    QSpinBox*  snmp_port;
+    QSpinBox*  snmp_timeout;
+    QComboBox* snmp_version;
+    QLineEdit* snmp_community;
+    QComboBox* snmp_seclevel;
+    QLineEdit* snmp_usm_user;
+    QComboBox* snmp_auth_proto;
+    QComboBox* snmp_priv_proto;
+    QLineEdit* snmp_auth_key;
+    QLineEdit* snmp_priv_key;
+    QCheckBox* snmp_enable;
 
-    QDoubleSpinBox* longitude  = NULL;
-    QDoubleSpinBox* latitude   = NULL;
+    //QCheckBox* include_icmp_probe;
 
-    QList<QWidget*>* snmp_widgets         = NULL;
-    QList<QWidget*>* snmp_v2_widgets      = NULL;
-    QList<QWidget*>* snmp_v3_widgets      = NULL;
-    QList<QWidget*>* snmp_v3_auth_widgets = NULL;
-    QList<QWidget*>* snmp_v3_priv_widgets = NULL;
+    //QDoubleSpinBox* longitude  = NULL;
+    //QDoubleSpinBox* latitude   = NULL;
+
+    QList<QWidget*>* snmp_widgets;
+    QList<QWidget*>* snmp_v2_widgets;
+    QList<QWidget*>* snmp_v3_widgets;
+    QList<QWidget*>* snmp_v3_auth_widgets;
+    QList<QWidget*>* snmp_v3_priv_widgets;
 
     void disableUnusedWidgets() const;
     int  configType() const;
-    int const NO_SNMP              = 0;
-    int const SNMP_V1              = 1;
-    int const SNMP_V2              = 2;
-    int const SNMP_V3_AUTHPRIV     = 3;
-    int const SNMP_V3_AUTHNOPRIV   = 4;
-    int const SNMP_V3_NOAUTHNOPRIV = 5;
+    static int const NO_SNMP              = 0;
+    static int const SNMP_V1              = 1;
+    static int const SNMP_V2              = 2;
+    static int const SNMP_V3_AUTHPRIV     = 3;
+    static int const SNMP_V3_AUTHNOPRIV   = 4;
+    static int const SNMP_V3_NOAUTHNOPRIV = 5;
 };
 
 #endif // NEWTARGETPAGE1_H

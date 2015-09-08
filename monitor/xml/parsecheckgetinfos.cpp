@@ -1,5 +1,14 @@
 #include "parsecheckgetinfos.h"
 
+bool ParseCheckGetInfos::startDocument()
+{
+    this->name = "";
+    this->require = "simple";
+    this->desc = "";
+    this->parse_pos = "";
+    return true;
+}
+
 bool ParseCheckGetInfos::startElement(
         const QString &namespaceURI,
         const QString &localName,
@@ -8,8 +17,7 @@ bool ParseCheckGetInfos::startElement(
 {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
-    if (qName == "Check")
-    {
+    if (qName == "Check") {
         this->name = atts.value("Id");
     } else if (qName == "Require") {
         this->require = atts.value("Ressource");

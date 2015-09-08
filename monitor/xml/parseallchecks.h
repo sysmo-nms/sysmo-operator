@@ -16,7 +16,7 @@ public:
     QList<QString>* getValue();
 
 private:
-    QList<QString>* values = NULL;
+    QList<QString>* values;
 
 };
 

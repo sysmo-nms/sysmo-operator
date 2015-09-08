@@ -25,8 +25,8 @@ public:
 
     int     id;
     QUrl    url;
-    QString dst_file = "none";
-    QString   opaque = "undefined";
+    QString dst_file;
+    QString   opaque;
 };
 
 #endif // SUPERCASTHTTPREQUEST_H

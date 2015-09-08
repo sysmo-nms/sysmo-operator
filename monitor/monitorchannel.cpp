@@ -4,6 +4,10 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
     : QObject(parent)
 {
     this->channel = chan_name;
+    this->chan_type = "none";
+    this->subscriber_count = 0;
+    this->synchronized = false;
+    this->locked = false;
 
     /*
      * Connect and subscribe to this->channel supercast channel

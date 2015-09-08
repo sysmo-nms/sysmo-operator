@@ -22,7 +22,7 @@ class SupercastSocket : public QObject
 public:
     explicit SupercastSocket(QHostAddress host, qint16 port);
     ~SupercastSocket();
-    QTcpSocket* socket = NULL;
+    QTcpSocket* socket;
 
 public slots:
     void handleClientMessage(QJsonObject msg);
@@ -30,7 +30,7 @@ public slots:
 
 private:
     qint32 block_size;
-    static const qint32 HEADER_LEN = 4;
+    static const int HEADER_LEN = 4;
 
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32 source);

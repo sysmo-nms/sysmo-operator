@@ -78,12 +78,7 @@ int main(int argc, char* argv[])
 #endif
 
                 qInstallMessageHandler(operatorMsgOut);
-                // don't load any plugins?
-                QApplication::setLibraryPaths(QStringList());
 
-               /*
-                * QLibraryInfo::location(QLibraryInfo::PluginsPath);
-                */
                 QApplication::setApplicationName("Operator");
                 QApplication::setApplicationVersion("1.0");
                 QApplication::setApplicationDisplayName("Sysmo Operator 1.0");
@@ -112,6 +107,12 @@ int main(int argc, char* argv[])
                 }
 
                 QApplication app(argc, argv);
+               /*
+                * QLibraryInfo::location(QLibraryInfo::PluginsPath);
+                */
+                // don't load any plugins?
+                QApplication::setLibraryPaths(QStringList());
+
                 app.setWindowIcon(QIcon(":/icons/logo.png"));
 
                 MainWindow w;

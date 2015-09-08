@@ -45,8 +45,8 @@ public:
     int  nextId()     const;
 
 private:
-    QTreeView* treeview  = NULL;
-    QLineEdit* selection = NULL;
+    QTreeView* treeview;
+    QLineEdit* selection;
 
 private slots:
     void handleHelpTriggered();

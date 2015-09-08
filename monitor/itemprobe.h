@@ -23,14 +23,14 @@ public:
     ItemProbe(QJsonObject info_probe);
     QString name;
     QString belong_to;
-    QStandardItem* item_status      = NULL;
-    QStandardItem* item_state       = NULL;
-    QStandardItem* item_progress    = NULL;
-    QStandardItem* item_last_return = NULL;
-    QString orig_filter = "";
-    QString targ_filter = "";
+    QStandardItem* item_status;
+    QStandardItem* item_state;
+    QStandardItem* item_progress;
+    QStandardItem* item_last_return;
+    QString orig_filter;
+    QString targ_filter;
     int type() const;
-    void updateInfo(QJsonObject  info_probe);
+    void updateInfo(QJsonObject info_probe);
     void updateReturnInfo(QJsonObject probe_return);
     void setTargetFilter(QString filter);
 

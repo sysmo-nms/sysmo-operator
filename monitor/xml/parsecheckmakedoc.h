@@ -8,9 +8,9 @@
 class ParseCheckMakeDoc : public QXmlDefaultHandler
 {
 public:
-    QString  doc       = "";
-    QString  flags     = "";
-    QString  char_type = "";
+    QString  doc;
+    QString  flags;
+    QString  char_type;
     bool startDocument();
     bool startElement(
             const QString &namespaceURI,

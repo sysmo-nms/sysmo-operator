@@ -35,8 +35,8 @@ public slots:
     void handleProbeReturn(QJsonObject  message);
 
 private:
-    QHash<QString, ItemTarget*>* targets = NULL;
-    QHash<QString, ItemProbe*>*  probes  = NULL;
+    QHash<QString, ItemTarget*>* targets;
+    QHash<QString, ItemProbe*>*  probes;
 
 signals:
     void expandIndex(QModelIndex index);

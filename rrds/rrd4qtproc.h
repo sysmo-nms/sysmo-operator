@@ -50,7 +50,7 @@ private:
 
     qint32        block_size;
     QTemporaryDir temporary_dir;
-    QProcess*     proc    = NULL;
+    QProcess*     proc;
 
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32     source);
