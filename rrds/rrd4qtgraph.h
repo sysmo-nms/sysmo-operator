@@ -20,6 +20,7 @@ public:
     explicit Rrd4QtGraph(
             QString     rrd_db_file,
             QJsonObject rrd_graph_config,
+            int         initial_height,
             QWidget*    parent = 0);
 
 private:

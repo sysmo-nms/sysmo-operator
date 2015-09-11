@@ -162,18 +162,17 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
                 this,                SLOT(tryValidate()));
     this->log_in_dialog->open();
 
-    this->restoreUserSettings();
+    this->restoreStateFromSettings();
 }
 
 
 MainWindow::~MainWindow()
 {
-    /*
-     * Save state
-     */
+    QSettings s;
+    s.setValue("main/geometry", this->saveGeometry());
 }
 
-void MainWindow::restoreUserSettings()
+void MainWindow::restoreStateFromSettings()
 {
     /*
      * Restaure color theme
@@ -189,6 +188,11 @@ void MainWindow::restoreUserSettings()
                 break;
             }
         }
+    }
+
+    QVariant geom = s.value("main/geometry");
+    if (geom.isValid()) {
+        this->restoreGeometry(geom.toByteArray());
     }
 }
 
@@ -294,7 +298,7 @@ void MainWindow::connectionStatus(int status)
     }
 
     err_box.exec();
-    this->close();
+    QCoreApplication::exit(Sysmo::APP_RESTART_CODE);
 }
 
 void MainWindow::handleAboutAction()

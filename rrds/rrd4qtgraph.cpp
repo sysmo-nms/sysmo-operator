@@ -3,6 +3,7 @@
 Rrd4QtGraph::Rrd4QtGraph(
         QString     rrd_db_file,
         QJsonObject rrd_graph_config,
+        int         initial_height,
         QWidget*    parent) : QLabel(parent)
 {
     /*
@@ -22,7 +23,7 @@ Rrd4QtGraph::Rrd4QtGraph(
 
     this->graph_config.insert("rrdFile",   QJsonValue(rrd_db_file));
     this->graph_config.insert("pngFile",   QJsonValue(this->pixmap_file));
-    this->graph_config.insert("height",    QJsonValue(200));
+    this->graph_config.insert("height",    QJsonValue(initial_height));
     this->graph_config.insert("width",     QJsonValue(400));
     this->graph_config.insert("type",      QJsonValue("graph"));
     this->graph_config.insert("opaque",    QJsonValue(""));

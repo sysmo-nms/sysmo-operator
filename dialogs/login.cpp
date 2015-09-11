@@ -2,6 +2,10 @@
 
 LogIn::LogIn(QWidget* parent) : QDialog(parent)
 {
+    this->default_name = "admin";
+    this->default_port = 9758;
+    this->default_server = "127.0.0.1";
+
     this->setModal(true);
     this->setFixedWidth(470);
     this->setWindowTitle("Log in");
@@ -111,19 +115,20 @@ void LogIn::restoreForm()
     QSettings s;
 
     QVariant var = s.value("login/login_state");
+    QHash<QString, QVariant> login_state;
     if (!var.isValid()) {
-        QHash<QString, QVariant> login_state;
-        login_state.insert("server", QVariant(""));
-        login_state.insert("port", QVariant(8888));
+        login_state.insert("name", this->default_name);
+        login_state.insert("server", this->default_server);
+        login_state.insert("port", this->default_port);
         login_state.insert("password", QVariant(""));
         s.setValue("login/login_state", QVariant(login_state));
     } else {
-        QHash<QString, QVariant> login_state = var.toHash();
-        this->user_name->setText("admin");
-        this->user_pass->setText(login_state.value("password").toString());
-        this->server_name->setText(login_state.value("server").toString());
-        this->server_port->setValue(login_state.value("port").toInt());
+        login_state = var.toHash();
     }
+    this->user_name->setText(login_state.value("name").toString());
+    this->user_pass->setText(login_state.value("password").toString());
+    this->server_name->setText(login_state.value("server").toString());
+    this->server_port->setValue(login_state.value("port").toInt());
 }
 
 void LogIn::saveLoginState()

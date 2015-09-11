@@ -78,16 +78,35 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setColumnWidth(3, 100);
 
     // TODO restore state
+    this->restoreStateFromSettings();
 }
 
 
 TreeView::~TreeView()
 {
-    /*
-     * TODO save state
-     */
+    QSettings s;
+    s.setValue("treeview/header_state", this->header()->saveState());
+    s.setValue("treeview/header_geometry", this->header()->saveGeometry());
+    s.setValue("treeview/tview_geometry", this->saveGeometry());
 }
 
+void TreeView::restoreStateFromSettings()
+{
+    QSettings s;
+    QVariant hs = s.value("treeview/header_state");
+    if (hs.isValid()) {
+        this->header()->restoreState(hs.toByteArray());
+    }
+    QVariant hg = s.value("treeview/header_geometry");
+    if (hg.isValid()) {
+        this->header()->restoreGeometry(hg.toByteArray());
+    }
+    QVariant tg = s.value("treeview/tview_geometry");
+    if (tg.isValid()) {
+        this->restoreGeometry(tg.toByteArray());
+    }
+
+}
 
 // SLOTS
 void TreeView::expandIndex(QModelIndex index)

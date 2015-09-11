@@ -38,7 +38,7 @@ public slots:
     void connectionStatus(int status);
 
 private:
-    void restoreUserSettings();
+    void restoreStateFromSettings();
     Supercast* supercast;
     LogIn* log_in_dialog;
     Rrd4Qt* rrd4c;

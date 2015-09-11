@@ -42,6 +42,10 @@ private:
     QPushButton* ok_but;
     void restoreForm();
 
+    QString default_name;
+    QString default_server;
+    int default_port;
+
 private slots:
     void isValid();
 

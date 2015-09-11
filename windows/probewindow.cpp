@@ -82,18 +82,16 @@ ProbeWindow::ProbeWindow(QString probeName)
     lc_grid->addWidget(time_span_cbox, 0,1);
 
     QLabel* height_label = new QLabel("Graph height:", this);
-    NoWheelComboBox* height_cbox  = new NoWheelComboBox(this);
-    height_cbox->insertItem(ProbeWindow::HEIGHT_THUMBNAIL, "Thumbnail");
-    height_cbox->insertItem(ProbeWindow::HEIGHT_SMALL,     "Small");
-    height_cbox->insertItem(ProbeWindow::HEIGHT_NORMAL,    "Normal");
-    height_cbox->insertItem(ProbeWindow::HEIGHT_LARGE,     "Large");
-    height_cbox->insertItem(ProbeWindow::HEIGHT_HUGE,      "Huge");
-    height_cbox->setCurrentIndex(ProbeWindow::HEIGHT_NORMAL);
+    this->height_cbox  = new NoWheelComboBox(this);
+    this->height_cbox->insertItem(ProbeWindow::HEIGHT_SMALL,     "Small");
+    this->height_cbox->insertItem(ProbeWindow::HEIGHT_NORMAL,    "Normal");
+    this->height_cbox->insertItem(ProbeWindow::HEIGHT_LARGE,     "Large");
+    this->height_cbox->setCurrentIndex(ProbeWindow::HEIGHT_NORMAL);
     QObject::connect(
-                height_cbox, SIGNAL(currentIndexChanged(int)),
-                this,        SLOT(handleHeightChanged(int)));
+                this->height_cbox, SIGNAL(currentIndexChanged(int)),
+                this,              SLOT(handleHeightChanged(int)));
     lc_grid->addWidget(height_label, 0,2);
-    lc_grid->addWidget(height_cbox, 0,3);
+    lc_grid->addWidget(this->height_cbox, 0,3);
 
     lc_grid->setColumnStretch(0,0);
     lc_grid->setColumnStretch(1,0);
@@ -139,16 +137,37 @@ ProbeWindow::ProbeWindow(QString probeName)
     /*
      * end generic layout
      */
-
+    this->restoreStateFromSettings();
 }
-
 
 ProbeWindow::~ProbeWindow()
 {
     ProbeWindow::windows.remove(this->name);
-    /*
-     * TODO save state
-     */
+
+    QString geom_str  = "win_geometry/" + this->name;
+    QSettings s;
+    s.setValue(geom_str, this->saveGeometry());
+
+    QString size_str = "graph_size/" + this->name;
+    s.setValue(size_str, QVariant(this->height_cbox->currentIndex()));
+}
+
+void ProbeWindow::restoreStateFromSettings()
+{
+    QString geom_str  = "win_geometry/" + this->name;
+    QSettings s;
+    QVariant geom_var = s.value(geom_str);
+    if (geom_var.isValid()) {
+        this->restoreGeometry(geom_var.toByteArray());
+    } else {
+        this->setGeometry(0,0,900,500);
+    }
+
+    QString size_str = "graph_size/" + this->name;
+    QVariant size_var = s.value(size_str);
+    if(size_var.isValid()) {
+        this->height_cbox->setCurrentIndex(size_var.toInt());
+    }
 }
 
 void ProbeWindow::handleTimerTimeout()
@@ -191,6 +210,11 @@ void ProbeWindow::handleEvent(QJsonObject event) {
 
 
     /*
+     * get initial height
+     */
+    int initial_height = this->getHeightFor(this->height_cbox->currentIndex());
+
+    /*
      * If type is "simple".
      */
     if (event.value("type").toString() == "simple")
@@ -223,6 +247,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
             Rrd4QtGraph* graph = new Rrd4QtGraph(
                             event.value("rrdFile").toString(), // rrd db
                             js_graphs.value(key).toObject(),   // graph def
+                            initial_height,
                             frame);                            // parent
 
             QObject::connect(
@@ -349,6 +374,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                     Rrd4QtGraph* graph = new Rrd4QtGraph(
                                 rrd_db_file,                     // rrd db
                                 js_graphs.value(key).toObject(), // graph def
+                                initial_height,                  //initial height
                                 fr);                             // parent
 
                     QObject::connect(
@@ -443,16 +469,12 @@ int ProbeWindow::getHeightFor(int value)
 {
     switch (value)
     {
-    case ProbeWindow::HEIGHT_THUMBNAIL:
-        return 30;
     case ProbeWindow::HEIGHT_SMALL:
-        return 50;
+        return 30;
     case ProbeWindow::HEIGHT_NORMAL:
-        return 100;
+        return 50;
     case ProbeWindow::HEIGHT_LARGE:
-        return 180;
-    case ProbeWindow::HEIGHT_HUGE:
-        return 300;
+        return 100;
     default:
         qWarning() << "unknown size:" << value;
         return 100;
@@ -491,6 +513,7 @@ int ProbeWindow::getSpanFor(int value)
 
 bool ProbeWindow::isThumbnail(int value)
 {
+    /*
     switch(value)
     {
     case ProbeWindow::HEIGHT_THUMBNAIL:
@@ -498,6 +521,8 @@ bool ProbeWindow::isThumbnail(int value)
     default:
         return false;
     }
+    */
+    return false;
 }
 
 void ProbeWindow::handleHeightChanged(int height)

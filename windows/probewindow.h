@@ -28,6 +28,8 @@
 #include <QStringListIterator>
 #include <QTimer>
 #include <QPalette>
+#include <QSettings>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -44,12 +46,14 @@ private:
 
     QStatusBar*    status_bar;
     QScrollArea*  scroll_area;
+    NoWheelComboBox* height_cbox;
     QTimer* timer;
     int divider;
     int margin;
     void resizeEvent(QResizeEvent *event);
 
     static QHash<QString, ProbeWindow*> windows;
+    void restoreStateFromSettings();
 
 public:
     static void openWindow(QString name);
@@ -69,11 +73,9 @@ public:
 
     static bool isThumbnail(int value);
     static int getHeightFor(int value);
-    static const int HEIGHT_THUMBNAIL   = 0;
-    static const int HEIGHT_SMALL       = 1;
-    static const int HEIGHT_NORMAL      = 2;
-    static const int HEIGHT_LARGE       = 3;
-    static const int HEIGHT_HUGE        = 4;
+    static const int HEIGHT_SMALL       = 0;
+    static const int HEIGHT_NORMAL      = 1;
+    static const int HEIGHT_LARGE       = 2;
 
 
 public slots:

@@ -25,6 +25,7 @@
 #include <QPoint>
 #include <QStandardItem>
 #include <QModelIndex>
+#include <QSettings>
 
 #include <QDebug>
 
@@ -49,6 +50,7 @@ public slots:
 private:
     QTimer* timer;
     static TreeView* singleton;
+    void restoreStateFromSettings();
 
 private slots:
     void openContextMenu(const QPoint point);
