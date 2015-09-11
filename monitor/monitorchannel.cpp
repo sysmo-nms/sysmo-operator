@@ -3,6 +3,7 @@
 MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
     : QObject(parent)
 {
+    this->sync_dir = "sync";
     this->channel = chan_name;
     this->chan_type = "none";
     this->subscriber_count = 0;
@@ -51,8 +52,8 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * build url
          */
-        QString http_tmp = "/%1/%2";
-        QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
+        QString http_tmp = "/%1/%2/%3";
+        QString http_url = http_tmp.arg(this->sync_dir).arg(dump_dir).arg(dump_file);
 
 
         /*
@@ -184,8 +185,8 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             /*
              * Generate url
              */
-            QString http_tmp = "/%1/%2";
-            QString http_url = http_tmp.arg(dump_dir).arg(dump_file);
+            QString http_tmp = "/%1/%2/%3";
+            QString http_url = http_tmp.arg(this->sync_dir).arg(dump_dir).arg(dump_file);
             qDebug() << "http dump dir is: " << http_url;
 
 

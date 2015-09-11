@@ -298,7 +298,7 @@ void MainWindow::connectionStatus(int status)
     }
 
     err_box.exec();
-    QCoreApplication::exit(Sysmo::APP_RESTART_CODE);
+    QCoreApplication::exit(1);
 }
 
 void MainWindow::handleAboutAction()

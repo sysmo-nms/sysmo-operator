@@ -26,6 +26,7 @@ public:
     ~MonitorChannel();
 
 private:
+    QString sync_dir;
     QString channel;
     QString chan_type;
     int  subscriber_count;

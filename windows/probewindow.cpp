@@ -472,12 +472,12 @@ int ProbeWindow::getHeightFor(int value)
     case ProbeWindow::HEIGHT_SMALL:
         return 30;
     case ProbeWindow::HEIGHT_NORMAL:
-        return 50;
+        return 90;
     case ProbeWindow::HEIGHT_LARGE:
-        return 100;
+        return 180;
     default:
         qWarning() << "unknown size:" << value;
-        return 100;
+        return 150;
     }
 }
 
