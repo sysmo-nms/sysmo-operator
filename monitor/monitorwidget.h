@@ -12,6 +12,7 @@
 #include "monitor/treeview.h"
 #include "monitor/nchecks.h"
 #include "monitor/monitor.h"
+#include "monitor/monitorlogs.h"
 
 #include <QObject>
 #include <QWidget>

@@ -86,6 +86,11 @@ void ItemTarget::updateTooltip()
 void ItemTarget::updateIconStatus()
 {
     int status = 0;
+    if (this->rowCount() == 0) {
+        this->setData(QPixmap(":/pixmaps/weather-clear-night.png"), Qt::DecorationRole);
+        return;
+    }
+
     for (int i = 0; i < this->rowCount(); i ++)
     {
         int pstatus = this->child(i, 0)->data(Sysmo::ROLE_PROBE_STATUS)

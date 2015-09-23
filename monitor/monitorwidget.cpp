@@ -84,16 +84,25 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
 
 
     /*
+    MonitorLogs* monlog = new MonitorLogs(this);
+
+    QObject::connect(
+                this->mon, SIGNAL(probeReturn(QJsonObject)),
+                monlog, SLOT(probeReturn(QJsonObject)));
+                */
+
+    /*
      * layout
      */
     grid->addWidget(create, 0,0);
     grid->addWidget(search_clear,  0,1);
     grid->addWidget(help, 0,3);
     grid->addWidget(tree,   1,0,1,4);
+    //grid->addWidget(monlog, 2,0,1,4);
     grid->setColumnStretch(0,0);
     grid->setColumnStretch(1,0);
-    grid->setColumnStretch(2,1);
-    grid->setColumnStretch(3,0);
+    grid->setColumnStretch(2,3);
+    //grid->setColumnStretch(3,1);
     grid->setRowStretch(0,0);
     grid->setRowStretch(1,1);
 
