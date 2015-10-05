@@ -16,7 +16,6 @@ There is some java in this project. Build it as is:
 ```sh
 cd sysmo-operator/rrd4qt/
 ./gradlew installDist
-...
 ```
 
 ### C++ Part
