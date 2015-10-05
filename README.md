@@ -18,14 +18,6 @@ cd sysmo-operator/rrd4qt/
 ./gradlew installDist
 ...
 ```
-Will build the java executable,
-
-```sh
-...
-cd ..
-rake java_ressource
-```
-Will place it where Qt can find it as ressource.
 
 ### C++ Part
 Open the sysmo-operator.pro file with QtCreator, and build the project.
