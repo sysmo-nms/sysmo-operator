@@ -36,29 +36,6 @@ task :linux_release do
 end
 
 
-desc "Build and move java libs and binaries to the ressources directory"
-task :java_ressource do
-  rrddst = File.join(ROOT, "ressources/rrd4qt")
-  rrdsrc = File.join(ROOT, "rrd4qt/build/install/rrd4qt")
-  FileUtils.rm_rf(rrddst)
-  Dir.mkdir(rrddst)
-  FileUtils.cp(
-               File.join(rrdsrc, "bin/rrd4qt"),
-               File.join(rrddst))
-  FileUtils.cp(
-               File.join(rrdsrc, "bin/rrd4qt.bat"),
-               File.join(rrddst))
-  FileUtils.cp(
-               File.join(rrdsrc, "lib/rrd4qt-1.0-SNAPSHOT.jar"),
-               File.join(rrddst))
-  FileUtils.cp(
-               File.join(rrdsrc, "lib/rrd4j-3.0-SYSMO-SNAPSHOT.jar"),
-               File.join(rrddst))
-  FileUtils.cp(
-               File.join(rrdsrc, "lib/javax.json-1.0.4.jar"),
-               File.join(rrddst))
-end
-
 
 desc "TODO why does this not work under win32?"
 task :rrd4qt do

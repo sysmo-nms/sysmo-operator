@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/rrd4qt">
-        <file alias="rrd4qt.sh">ressources/rrd4qt/rrd4qt</file>
-        <file alias="rrd4qt.bat">ressources/rrd4qt/rrd4qt.bat</file>
-        <file alias="rrd4qt.jar">ressources/rrd4qt/rrd4qt-1.0-SNAPSHOT.jar</file>
-        <file alias="rrd4j.jar">ressources/rrd4qt/rrd4j-3.0-SYSMO-SNAPSHOT.jar</file>
-        <file alias="json.jar">ressources/rrd4qt/javax.json-1.0.4.jar</file>
+        <file alias="rrd4qt.sh">rrd4qt/build/install/rrd4qt/bin/rrd4qt</file>
+        <file alias="rrd4qt.bat">rrd4qt/build/install/rrd4qt/bin/rrd4qt.bat</file>
+        <file alias="rrd4qt.jar">rrd4qt/build/install/rrd4qt/lib/rrd4qt-1.0-SNAPSHOT.jar</file>
+        <file alias="rrd4j.jar">rrd4qt/build/install/rrd4qt/lib/rrd4j-3.0-SYSMO-SNAPSHOT.jar</file>
+        <file alias="json.jar">rrd4qt/build/install/rrd4qt/lib/javax.json-1.0.4.jar</file>
     </qresource>
 </RCC>
