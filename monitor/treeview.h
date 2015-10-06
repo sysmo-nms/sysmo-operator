@@ -42,6 +42,8 @@ public:
     TreeModel*             original_model;
     MenuTarget*            target_menu;
     MenuProbe*             probe_menu;
+    QAction*               add_target_action;
+    QMenu*                 add_target_menu;
 
 public slots:
     void expandIndex(QModelIndex index);

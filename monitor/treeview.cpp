@@ -3,6 +3,12 @@ TreeView* TreeView::singleton = NULL;
 
 TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
+    // empty treeview right clic
+    this->add_target_action = new QAction("Add a new target...", this);
+    this->add_target_action->setIcon(QIcon(":/icons/list-add.png"));
+    this->add_target_menu = new QMenu(this);
+    this->add_target_menu->addAction(this->add_target_action);
+
     TreeView::singleton = this;
     this->target_menu = new MenuTarget(this);
     this->probe_menu  = new MenuProbe(this);
@@ -125,7 +131,12 @@ void TreeView::openContextMenu(const QPoint point) {
 
     qDebug() << "open context menu" << point;
     QModelIndex    index   = this->filter_model->mapToSource(this->indexAt(point));
-    if (!index.isValid()) return;
+    if (!index.isValid()) {
+        QPoint at = this->mapToGlobal(point);
+        at.setX(at.x() + 12);
+        this->add_target_menu->popup(at);
+        return;
+    }
 
     QModelIndex    element = index.sibling(index.row(), 0);
     QStandardItem* item    = this->original_model->itemFromIndex(element);

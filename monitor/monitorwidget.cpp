@@ -76,6 +76,9 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     QObject::connect(
                 search, SIGNAL(textChanged(QString)),
                 tree,   SLOT(expandAll()));
+    QObject::connect(
+                tree->add_target_action, SIGNAL(triggered(bool)),
+                this, SLOT(showNewTargetDialog()));
 
     // new probe dialog connect
     QObject::connect(
