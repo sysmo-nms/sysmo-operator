@@ -92,6 +92,8 @@ void NewProbePage2::initializePage()
             NFrameContainer* fr   = new NFrameContainer(this->form_frame);
             NGridContainer*  gr   = new NGridContainer(fr);
             QPushButton*     hbut = new QPushButton(this->form_frame);
+            hbut->setIcon(QIcon(":/icons/help-browser.png"));
+            hbut->setToolTip(i->helper_id + " helper");
             HelperExec*      ex   = new HelperExec(edit, this->form_frame);
             ex->h_class  = i->helper_class;
             ex->h_id     = i->helper_id;
