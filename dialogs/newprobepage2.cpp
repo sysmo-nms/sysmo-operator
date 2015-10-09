@@ -28,6 +28,7 @@ void NewProbePage2::cleanupPage()
     this->grid->removeWidget(this->form_frame);
     this->form_frame->deleteLater();
     delete this->args;
+    delete this->mandatory_args;
 }
 
 void NewProbePage2::initializePage()
@@ -35,6 +36,7 @@ void NewProbePage2::initializePage()
     this->form_frame = new NFrame(this);
     this->grid->addWidget(this->form_frame, 0, 0);
     this->args = new QHash<QString, QLineEdit*>();
+    this->mandatory_args = new QList<QLineEdit*>();
 
     QString str("Configure probe %1");
     QString probe_name(this->field("selection").toString());
@@ -86,6 +88,10 @@ void NewProbePage2::initializePage()
         qDebug() << "iterate" << i->flag_name;
         QLineEdit* edit = new QLineEdit(this->form_frame);
         this->args->insert(i->flag_name, edit);
+        this->mandatory_args->append(edit);
+        QObject::connect(
+                    edit, SIGNAL(textChanged(QString)),
+                    this, SIGNAL(completeChanged()));
         edit->setPlaceholderText(i->hint);
         edit->setToolTip(i->hint);
         if (i->has_helper) {
@@ -179,6 +185,10 @@ bool NewProbePage2::validatePage()
 
 bool NewProbePage2::isComplete() const
 {
+    for (int i = 0; i < this->mandatory_args->size(); ++i) {
+        QLineEdit *edit = this->mandatory_args->at(i);
+        if (edit->text() == "") return false;
+    }
     return true;
 }
 

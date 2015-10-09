@@ -38,6 +38,7 @@
 #include <QHeaderView>
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <QList>
 
 #include <QDebug>
 
@@ -62,6 +63,7 @@ private:
     NFrame*     form_frame;
     NGrid*      grid;
     QLineEdit *name_line;
+    QList<QLineEdit*>* mandatory_args;
 };
 
 
