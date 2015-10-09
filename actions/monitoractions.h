@@ -2,6 +2,7 @@
 #define MONITORACTIONS_H
 
 #include "actions/monitoractionsdialog.h"
+#include "actions/monitoractionconfig.h"
 
 #include "monitor/monitor.h"
 

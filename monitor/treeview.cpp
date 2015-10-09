@@ -4,7 +4,7 @@ TreeView* TreeView::singleton = NULL;
 TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
     // empty treeview right clic
-    this->add_target_action = new QAction("Add a new target...", this);
+    this->add_target_action = new QAction("Create a new target...", this);
     this->add_target_action->setIcon(QIcon(":/icons/list-add.png"));
     this->add_target_menu = new QMenu(this);
     this->add_target_menu->addAction(this->add_target_action);
