@@ -3,7 +3,7 @@
 MonitorWidget* MonitorWidget::singleton  = NULL;
 MonitorWidget* MonitorWidget::getInstance() {return MonitorWidget::singleton;}
 
-MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
+MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
 {
     MonitorWidget::singleton = this;
 
@@ -13,14 +13,51 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
     this->mon = new Monitor(this);
     new NChecks(this);
 
+
     /*
      * init layout
      */
-    this->setFrameShape(QFrame::StyledPanel);
-    NGrid* grid = new NGrid();
-    grid->setVerticalSpacing(4);
-    this->setLayout(grid);
+    NGridContainer* container = new NGridContainer();
+    container->setHorizontalSpacing(2);
+    this->setLayout(container);
 
+    // left panel
+    NFrame* leftFrame = new NFrame(this);
+    NGrid* lgrid = new NGrid();
+    leftFrame->setLayout(lgrid);
+    leftFrame->setFrameShape(QFrame::StyledPanel);
+    leftFrame->setFixedWidth(300);
+    lgrid->setRowStretch(0,0);
+    lgrid->setRowStretch(1,1);
+
+    StatusButton* okButton   = new StatusButton(this, "OK",
+                                              QPixmap(":/icons/weather-clear"));
+    StatusButton* errButton  = new StatusButton(this, "ERROR",
+                                   QPixmap(":/icons/weather-few-clouds-night"));
+    StatusButton* warnButton = new StatusButton(this, "WARNING",
+                                            QPixmap(":/icons/weather-showers"));
+    StatusButton* critButton = new StatusButton(this, "CRITICAL",
+                                       QPixmap(":/icons/weather-severe-alert"));
+    lgrid->addWidget(critButton, 0,0);
+    lgrid->addWidget(errButton,  0,1);
+    lgrid->addWidget(warnButton, 1,0);
+    lgrid->addWidget(okButton,   1,1);
+
+    NFrame* timeline = new NFrame(this);
+    timeline->setBackgroundRole(QPalette::AlternateBase);
+    timeline->setAutoFillBackground(true);
+
+    lgrid->addWidget(timeline, 2,0,1,2);
+    container->addWidget(leftFrame,0,0);
+
+    // right frame
+    NFrame* rightFrame = new NFrame(this);
+    rightFrame->setFrameShape(QFrame::StyledPanel);
+    NGrid* rgrid = new NGrid();
+    rgrid->setVerticalSpacing(4);
+    rightFrame->setLayout(rgrid);
+
+    container->addWidget(rightFrame, 0,1);
     /*
      * top controls
      */
@@ -95,19 +132,19 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrame(parent)
                 */
 
     /*
-     * layout
+     * right layout
      */
-    grid->addWidget(create, 0,0);
-    grid->addWidget(search_clear,  0,1);
-    grid->addWidget(help, 0,3);
-    grid->addWidget(tree,   1,0,1,4);
-    //grid->addWidget(monlog, 2,0,1,4);
-    grid->setColumnStretch(0,0);
-    grid->setColumnStretch(1,0);
-    grid->setColumnStretch(2,3);
+    rgrid->addWidget(create, 0,0);
+    rgrid->addWidget(search_clear,  0,1);
+    rgrid->addWidget(help, 0,3);
+    rgrid->addWidget(tree,   1,0,1,4);
+    //rgrid->addWidget(monlog, 2,0,1,4);
+    rgrid->setColumnStretch(0,0);
+    rgrid->setColumnStretch(1,0);
+    rgrid->setColumnStretch(2,3);
     //grid->setColumnStretch(3,1);
-    grid->setRowStretch(0,0);
-    grid->setRowStretch(1,1);
+    rgrid->setRowStretch(0,0);
+    rgrid->setRowStretch(1,1);
 
 }
 

@@ -13,6 +13,7 @@
 #include "monitor/nchecks.h"
 #include "monitor/monitor.h"
 #include "monitor/monitorlogs.h"
+#include "statusbutton.h"
 
 #include <QObject>
 #include <QWidget>
@@ -26,10 +27,12 @@
 #include <QJsonDocument>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QPalette>
+#include <QPixmap>
 
 #include <QDebug>
 
-class MonitorWidget : public NFrame
+class MonitorWidget : public NFrameContainer
 {
     Q_OBJECT
 

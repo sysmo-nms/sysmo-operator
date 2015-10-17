@@ -15,10 +15,11 @@ ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
 
     this->setData(this->orig_filter, Sysmo::ROLE_FILTER_STRING);
     this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
-    this->item_progress    = new QStandardItem();
-    this->item_progress->setData(1,    Sysmo::ROLE_IS_PROGRESS_ITEM);
+
+    this->item_progress = new QStandardItem();
+    this->item_progress->setData(1, Sysmo::ROLE_IS_PROGRESS_ITEM);
     this->item_progress->setData(step, Sysmo::ROLE_PROGRESS_STEP);
-    this->item_progress->setData(0,    Sysmo::ROLE_PROGRESS_NEXT);
+    this->item_progress->setData(0, Sysmo::ROLE_PROGRESS_NEXT);
     this->item_status      = new QStandardItem();
     this->item_state       = new QStandardItem();
     this->item_last_return = new QStandardItem();

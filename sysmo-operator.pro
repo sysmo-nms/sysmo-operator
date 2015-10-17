@@ -71,7 +71,8 @@ SOURCES += main.cpp\
     systemtray.cpp \
     nowheelcombobox.cpp \
     monitor/monitorlogs.cpp \
-    actions/monitoractionconfig.cpp
+    actions/monitoractionconfig.cpp \
+    statusbutton.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -128,7 +129,8 @@ HEADERS  += mainwindow.h \
     systemtray.h \
     nowheelcombobox.h \
     monitor/monitorlogs.h \
-    actions/monitoractionconfig.h
+    actions/monitoractionconfig.h \
+    statusbutton.h
 
 RESOURCES += \
     icons.qrc \

@@ -16,5 +16,10 @@
         <file alias="edit-undo.png">ressources/icons/edit-undo.png</file>
         <file alias="system-search.png">ressources/icons/system-search.png</file>
         <file alias="help-browser.png">ressources/icons/help-browser.png</file>
+        <file alias="weather-clear-night.png">ressources/icons/weather-clear-night.png</file>
+        <file alias="weather-clear.png">ressources/icons/weather-clear.png</file>
+        <file alias="weather-few-clouds-night.png">ressources/icons/weather-few-clouds-night.png</file>
+        <file alias="weather-severe-alert.png">ressources/icons/weather-severe-alert.png</file>
+        <file alias="weather-showers.png">ressources/icons/weather-showers.png</file>
     </qresource>
 </RCC>
