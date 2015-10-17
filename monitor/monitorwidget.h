@@ -13,7 +13,7 @@
 #include "monitor/nchecks.h"
 #include "monitor/monitor.h"
 #include "monitor/monitorlogs.h"
-#include "statusbutton.h"
+#include "statusbuttonwidget.h"
 
 #include <QObject>
 #include <QWidget>

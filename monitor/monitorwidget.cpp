@@ -18,46 +18,57 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
      * init layout
      */
     NGridContainer* container = new NGridContainer();
-    container->setHorizontalSpacing(2);
+    container->setVerticalSpacing(2);
     this->setLayout(container);
 
     // left panel
-    NFrame* leftFrame = new NFrame(this);
+    NFrame* bottomFrame = new NFrame(this);
     NGrid* lgrid = new NGrid();
-    leftFrame->setLayout(lgrid);
-    leftFrame->setFrameShape(QFrame::StyledPanel);
-    leftFrame->setFixedWidth(300);
-    lgrid->setRowStretch(0,0);
-    lgrid->setRowStretch(1,1);
-
-    StatusButton* okButton   = new StatusButton(this, "OK",
-                                              QPixmap(":/icons/weather-clear"));
-    StatusButton* errButton  = new StatusButton(this, "ERROR",
-                                   QPixmap(":/icons/weather-few-clouds-night"));
-    StatusButton* warnButton = new StatusButton(this, "WARNING",
-                                            QPixmap(":/icons/weather-showers"));
-    StatusButton* critButton = new StatusButton(this, "CRITICAL",
-                                       QPixmap(":/icons/weather-severe-alert"));
-    lgrid->addWidget(critButton, 0,0);
-    lgrid->addWidget(errButton,  0,1);
-    lgrid->addWidget(warnButton, 1,0);
-    lgrid->addWidget(okButton,   1,1);
+    bottomFrame->setLayout(lgrid);
+    bottomFrame->setFrameShape(QFrame::StyledPanel);
+    StatusButtonWidget* statusBox = new StatusButtonWidget(this);
 
     NFrame* timeline = new NFrame(this);
     timeline->setBackgroundRole(QPalette::AlternateBase);
     timeline->setAutoFillBackground(true);
 
-    lgrid->addWidget(timeline, 2,0,1,2);
-    container->addWidget(leftFrame,0,0);
+
+    /*
+    //timeline to left
+    lgrid->setRowStretch(1,1);
+    lgrid->setRowStretch(0,0);
+    lgrid->addWidget(statusBox, 0,0);
+    lgrid->addWidget(timeline, 1,0);
+    */
+
+    // timeline to bottom
+    lgrid->setColumnStretch(0,0);
+    lgrid->setColumnStretch(1,1);
+    lgrid->addWidget(statusBox, 0,0);
+    lgrid->addWidget(timeline, 0,1);
+
 
     // right frame
-    NFrame* rightFrame = new NFrame(this);
-    rightFrame->setFrameShape(QFrame::StyledPanel);
+    NFrame* topFrame = new NFrame(this);
+    topFrame->setFrameShape(QFrame::StyledPanel);
     NGrid* rgrid = new NGrid();
     rgrid->setVerticalSpacing(4);
-    rightFrame->setLayout(rgrid);
+    topFrame->setLayout(rgrid);
 
-    container->addWidget(rightFrame, 0,1);
+    //timeline to bottom
+    container->setRowStretch(0,1);
+    container->setRowStretch(1,0);
+    container->addWidget(topFrame, 0,0);
+    container->addWidget(bottomFrame,1,0);
+
+    /*
+    //timeline to left
+    container->setColumnStretch(0,0);
+    container->setColumnStretch(1,1);
+    container->addWidget(bottomFrame,0,0);
+    container->addWidget(topFrame,0,1);
+    */
+
     /*
      * top controls
      */
