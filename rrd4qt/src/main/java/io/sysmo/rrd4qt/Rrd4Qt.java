@@ -23,10 +23,10 @@
 
 package io.sysmo.rrd4qt;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import java.util.Set;
@@ -55,6 +55,7 @@ import javax.json.JsonObject;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  * Created by Sebastien Serre on 09/07/15
  */
@@ -62,7 +63,7 @@ import java.util.logging.Logger;
 public class Rrd4Qt
 {
     private static ThreadPoolExecutor threadPool;
-    private static OutputStream output;
+    private static BufferedOutputStream output;
     static RrdDbPool rrdDbPool;
     static Logger logger = Logger.getLogger(Rrd4Qt.class.getName());
     static boolean active = true;
@@ -83,7 +84,7 @@ public class Rrd4Qt
         );
 
         /*
-         * Disable disk caching for ImageIO
+         * Disable disk caching for ImageIO (fastest)
          */
         ImageIO.setUseCache(false);
 
@@ -101,9 +102,10 @@ public class Rrd4Qt
         );
 
         /*
-         * initialize output
+         * initialize output buffer.
          */
-        Rrd4Qt.output = System.out;
+        int buffSize = 1000000;
+        Rrd4Qt.output = new BufferedOutputStream(System.out, buffSize);
 
         /*
          * Begin loop listen System.in
@@ -352,8 +354,9 @@ class Rrd4QtJob implements Runnable
         /*
          * open and write rrd db
          */
+        RrdDb rrdDb = null;
         try {
-            RrdDb rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
+            rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
             Sample sample = rrdDb.createSample();
             sample.setTime(timestamp);
 
@@ -362,12 +365,19 @@ class Rrd4QtJob implements Runnable
                 sample.setValue(key, (long) update.getInt(key));
 
             sample.update();
-            Rrd4Qt.rrdDbPool.release(rrdDb);
             replyStatus = "success";
 
         } catch (Exception e) {
             Rrd4Qt.logger.log(Level.SEVERE, e.toString());
             replyStatus = "failure";
+        } finally {
+            if (rrdDb != null) {
+                try {
+                    Rrd4Qt.rrdDbPool.release(rrdDb);
+                } catch (IOException inner) {
+                    // ignore
+                }
+            }
         }
 
         /*
@@ -510,7 +520,7 @@ class Rrd4QtJob implements Runnable
             new RrdGraph(graphDef);
             replyStatus = "success";
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             Rrd4Qt.logger.log(Level.WARNING,
                     "fail to generate graph: " + e.toString());
             replyStatus = "failure";
