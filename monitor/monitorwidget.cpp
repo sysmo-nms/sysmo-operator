@@ -17,39 +17,56 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     /*
      * init layout
      */
-    NGridContainer* container = new NGridContainer();
-    container->setVerticalSpacing(2);
-    this->setLayout(container);
 
     // timeline panel
     NFrame* timelineFrame = new NFrame(this);
     NGrid* tgrid = new NGrid();
     timelineFrame->setLayout(tgrid);
     timelineFrame->setFrameShape(QFrame::StyledPanel);
-    StatusButtonWidget* statusBox = new StatusButtonWidget(this);
 
     NFrame* timeline = new NFrame(this);
+    timeline->setMinimumHeight(150);
     timeline->setBackgroundRole(QPalette::AlternateBase);
     timeline->setAutoFillBackground(true);
+    tgrid->addWidget(timeline, 0,0);
 
-    tgrid->setColumnStretch(0,0);
-    tgrid->setColumnStretch(1,1);
-    tgrid->addWidget(statusBox, 0,0);
-    tgrid->addWidget(timeline, 0,1);
+
+    // control panel
+    NFrame* controlFrame = new NFrame(this);
+    controlFrame->setFrameShape(QFrame::StyledPanel);
+    NGrid* cgrid = new NGrid();
+    controlFrame->setLayout(cgrid);
+    StatusButtonWidget* statusBox = new StatusButtonWidget(this);
+    cgrid->addWidget(statusBox, 0,0);
+    cgrid->setRowStretch(0,0);
+    cgrid->setRowStretch(1,1);
 
 
     // tree frame
     NFrame* treeFrame = new NFrame(this);
     treeFrame->setFrameShape(QFrame::StyledPanel);
-    NGrid* rgrid = new NGrid();
-    rgrid->setVerticalSpacing(4);
-    treeFrame->setLayout(rgrid);
+    NGrid* treegrid = new NGrid();
+    treegrid->setVerticalSpacing(4);
+    treeFrame->setLayout(treegrid);
 
+    NGridContainer* container = new NGridContainer();
+    container->setVerticalSpacing(2);
+    container->setHorizontalSpacing(2);
+    container->addWidget(controlFrame, 0,0);
+    container->addWidget(treeFrame, 0,1);
+    container->addWidget(timelineFrame, 1,0,1,2);
+    container->setRowStretch(0,1);
+    container->setRowStretch(1,0);
+    container->setColumnStretch(0,0);
+    container->setColumnStretch(1,1);
+    this->setLayout(container);
 
-    container->setRowStretch(0,0);
-    container->setRowStretch(1,1);
-    container->addWidget(timelineFrame,0,0);
-    container->addWidget(treeFrame,1,0);
+    /*
+    container->setRowStretch(0,1);
+    container->setRowStretch(1,0);
+    container->addWidget(treeFrame,0,0);
+    container->addWidget(timelineFrame,1,0);
+    */
 
     /*
      * top controls
@@ -127,17 +144,15 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     /*
      * right layout
      */
-    rgrid->addWidget(create, 0,0);
-    rgrid->addWidget(search_clear,  0,1);
-    rgrid->addWidget(help, 0,3);
-    rgrid->addWidget(tree,   1,0,1,4);
-    //rgrid->addWidget(monlog, 2,0,1,4);
-    rgrid->setColumnStretch(0,0);
-    rgrid->setColumnStretch(1,0);
-    rgrid->setColumnStretch(2,3);
-    //grid->setColumnStretch(3,1);
-    rgrid->setRowStretch(0,0);
-    rgrid->setRowStretch(1,1);
+    treegrid->addWidget(create, 0,0);
+    treegrid->addWidget(search_clear,  0,1);
+    treegrid->addWidget(help, 0,3);
+    treegrid->addWidget(tree,   1,0,1,4);
+    treegrid->setColumnStretch(0,0);
+    treegrid->setColumnStretch(1,0);
+    treegrid->setColumnStretch(2,3);
+    treegrid->setRowStretch(0,0);
+    treegrid->setRowStretch(1,1);
 
 }
 
