@@ -21,53 +21,35 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     container->setVerticalSpacing(2);
     this->setLayout(container);
 
-    // left panel
-    NFrame* bottomFrame = new NFrame(this);
-    NGrid* lgrid = new NGrid();
-    bottomFrame->setLayout(lgrid);
-    bottomFrame->setFrameShape(QFrame::StyledPanel);
+    // timeline panel
+    NFrame* timelineFrame = new NFrame(this);
+    NGrid* tgrid = new NGrid();
+    timelineFrame->setLayout(tgrid);
+    timelineFrame->setFrameShape(QFrame::StyledPanel);
     StatusButtonWidget* statusBox = new StatusButtonWidget(this);
 
     NFrame* timeline = new NFrame(this);
     timeline->setBackgroundRole(QPalette::AlternateBase);
     timeline->setAutoFillBackground(true);
 
-
-    /*
-    //timeline to left
-    lgrid->setRowStretch(1,1);
-    lgrid->setRowStretch(0,0);
-    lgrid->addWidget(statusBox, 0,0);
-    lgrid->addWidget(timeline, 1,0);
-    */
-
-    // timeline to bottom
-    lgrid->setColumnStretch(0,0);
-    lgrid->setColumnStretch(1,1);
-    lgrid->addWidget(statusBox, 0,0);
-    lgrid->addWidget(timeline, 0,1);
+    tgrid->setColumnStretch(0,0);
+    tgrid->setColumnStretch(1,1);
+    tgrid->addWidget(statusBox, 0,0);
+    tgrid->addWidget(timeline, 0,1);
 
 
-    // right frame
-    NFrame* topFrame = new NFrame(this);
-    topFrame->setFrameShape(QFrame::StyledPanel);
+    // tree frame
+    NFrame* treeFrame = new NFrame(this);
+    treeFrame->setFrameShape(QFrame::StyledPanel);
     NGrid* rgrid = new NGrid();
     rgrid->setVerticalSpacing(4);
-    topFrame->setLayout(rgrid);
+    treeFrame->setLayout(rgrid);
 
-    //timeline to bottom
-    container->setRowStretch(0,1);
-    container->setRowStretch(1,0);
-    container->addWidget(topFrame, 0,0);
-    container->addWidget(bottomFrame,1,0);
 
-    /*
-    //timeline to left
-    container->setColumnStretch(0,0);
-    container->setColumnStretch(1,1);
-    container->addWidget(bottomFrame,0,0);
-    container->addWidget(topFrame,0,1);
-    */
+    container->setRowStretch(0,0);
+    container->setRowStretch(1,1);
+    container->addWidget(timelineFrame,0,0);
+    container->addWidget(treeFrame,1,0);
 
     /*
      * top controls

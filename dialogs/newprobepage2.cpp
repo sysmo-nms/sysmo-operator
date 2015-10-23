@@ -99,10 +99,9 @@ void NewProbePage2::initializePage()
             NGridContainer*  gr   = new NGridContainer(fr);
             QPushButton*     hbut = new QPushButton(this->form_frame);
             hbut->setIcon(QIcon(":/icons/help-browser.png"));
-            hbut->setToolTip(i->helper_id + " helper");
+            hbut->setToolTip(i->helper_descr);
             HelperExec*      ex   = new HelperExec(edit, this->form_frame);
             ex->h_class  = i->helper_class;
-            ex->h_id     = i->helper_id;
             ex->h_target = this->target;
             QObject::connect(
                hbut, SIGNAL(clicked(bool)),
@@ -139,7 +138,6 @@ void NewProbePage2::initializePage()
             QPushButton* hbut = new QPushButton(this->form_frame);
             HelperExec*  ex   = new HelperExec(edit, this->form_frame);
             ex->h_class  = j->helper_class;
-            ex->h_id     = j->helper_id;
             ex->h_target = this->target;
             QObject::connect(
                hbut, SIGNAL(clicked(bool)),
@@ -197,7 +195,6 @@ bool NewProbePage2::isComplete() const
 HelperExec::HelperExec(QLineEdit* line, QWidget* parent) : QObject(parent)
 {
     this->h_class   = "";
-    this->h_id      = "";
     this->h_target  = "";
     this->w_parent  = parent;
     this->flag_line = line;
@@ -211,8 +208,7 @@ void HelperExec::execHelper()
         {"value",
             QJsonObject {
                 {"target", this->h_target},
-                {"class",  this->h_class},
-                {"id",     this->h_id}
+                {"class",  this->h_class}
             }
         }
     };
@@ -220,7 +216,7 @@ void HelperExec::execHelper()
     qDebug() << "exec helper " << helperQuery;
 
 
-    QString msg = QString("Executing helper: %1").arg(this->h_id);
+    QString msg = QString("Executing helper %1").arg(this->h_class);
     this->dial = new QProgressDialog(this->w_parent);
     this->dial->setLabelText(msg);
     this->dial->setModal(true);

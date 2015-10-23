@@ -73,7 +73,6 @@ class HelperExec: public QObject
 public:
     HelperExec(QLineEdit* line, QWidget *parent = 0);
     QString    h_class;
-    QString    h_id;
     QString    h_target;
     QWidget*   w_parent;
     QLineEdit* flag_line;

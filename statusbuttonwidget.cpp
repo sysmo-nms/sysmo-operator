@@ -14,10 +14,10 @@ StatusButtonWidget::StatusButtonWidget(QWidget* parent) :
                                             QPixmap(":/icons/weather-showers"));
     StatusButton* critButton = new StatusButton(this, "CRITICAL",
                                        QPixmap(":/icons/weather-severe-alert"));
-    grid->addWidget(okButton,   0,0);
-    grid->addWidget(errButton,  1,0);
-    grid->addWidget(warnButton, 2,0);
-    grid->addWidget(critButton, 3,0);
-    this->setFixedWidth(100);
+    grid->addWidget(critButton, 0,0);
+    grid->addWidget(warnButton, 1,0);
+    grid->addWidget(errButton,  0,1);
+    grid->addWidget(okButton,   1,1);
+    this->setFixedWidth(220);
 }
 

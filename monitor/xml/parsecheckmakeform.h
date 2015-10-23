@@ -19,7 +19,7 @@ public:
     QString hint;
     QString defaults;
     bool    has_helper;
-    QString helper_id;
+    QString helper_descr;
     QString helper_class;
 };
 
@@ -48,7 +48,7 @@ private:
 
     QString current_flag;
     QString hint;
-    QString helper_id;
+    QString helper_descr;
     QString helper_class;
     QString defaults;
 
