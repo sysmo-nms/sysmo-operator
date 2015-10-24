@@ -59,7 +59,7 @@ bool ParseCheckMakeGraphCMD::startElement(
         this->current_draw.insert("calculation",
                                   QJsonValue(atts.value("Calculation")));
 
-        this->current_draw.insert("legend", QJsonValue(""));
+        this->current_draw.insert("legend", QJsonValue("none"));
         this->char_element = "draw";
     }
     // PropertyPrefix

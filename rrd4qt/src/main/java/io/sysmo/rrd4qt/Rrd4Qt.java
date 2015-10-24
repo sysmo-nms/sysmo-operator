@@ -93,12 +93,12 @@ public class Rrd4Qt
          */
         Rrd4Qt.rrdDbPool = RrdDbPool.getInstance();
         Rrd4Qt.threadPool = new ThreadPoolExecutor(
-            12, //thread Core Pool Size
-            20, //thread Max Pool Size
-            10,
-            TimeUnit.MINUTES,
-            new ArrayBlockingQueue<Runnable>(3000), // 3000 = queue capacity
-            new RrdReject()
+                12, //thread Core Pool Size
+                20, //thread Max Pool Size
+                10,
+                TimeUnit.MINUTES,
+                new ArrayBlockingQueue<Runnable>(3000), // 3000 = queue capacity
+                new RrdReject()
         );
 
         /*
@@ -192,349 +192,364 @@ public class Rrd4Qt
                 Integer.valueOf(hexString.substring(7,9), 16)
         );
     }
-}
 
 
-class RrdReject implements RejectedExecutionHandler
-{
-    public void rejectedExecution(
-            final Runnable r, final ThreadPoolExecutor executor)
+    static class RrdReject implements RejectedExecutionHandler
     {
-        Rrd4QtJob failRunner = (Rrd4QtJob) r;
-        int queryId = failRunner.getQueryId();
-        JsonObject reply = Json.createObjectBuilder()
-                .add("queryId", queryId)
-                .add("reply", "Error thread queue full!")
-                .build();
-        Rrd4Qt.rrdReply(reply);
-    }
-}
-
-class Rrd4QtGraphDef extends RrdGraphDef
-{
-    private static Color BACK_C;
-    private static Color CANVAS_C;
-    private static Color SHADEA_C;
-    private static Color SHADEB_C;
-    private static Color GRID_C;
-    private static Color MGRID_C;
-    private static Color FONT_C;
-    private static Color FRAME_C;
-    private static Color ARROW_C;
-    private static Color XAXIS_C;
-
-    public Rrd4QtGraphDef()
-    {
-        super(); // RrdGraphDef()
-        this.setColor(RrdGraphConstants.COLOR_BACK,   BACK_C);
-        this.setColor(RrdGraphConstants.COLOR_CANVAS, CANVAS_C);
-        this.setColor(RrdGraphConstants.COLOR_SHADEA, SHADEA_C);
-        this.setColor(RrdGraphConstants.COLOR_SHADEB, SHADEB_C);
-        this.setColor(RrdGraphConstants.COLOR_GRID,   GRID_C);
-        this.setColor(RrdGraphConstants.COLOR_MGRID,  MGRID_C);
-        this.setColor(RrdGraphConstants.COLOR_FONT,   FONT_C);
-        this.setColor(RrdGraphConstants.COLOR_FRAME,  FRAME_C);
-        this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
-        this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
-        this.setImageFormat("png");
-        this.setShowSignature(false);
-        this.setAntiAliasing(true);
-        this.setTextAntiAliasing(true);
-        this.setImageQuality((float) 1.0);
-        this.setLazy(false);
-        //this.setFontSet(true);
-    }
-
-    public static void setDefaultColors(final JsonObject colorCfg)
-    {
-        JsonObject col;
-        col = colorCfg.getJsonObject("BACK");
-        Rrd4QtGraphDef.BACK_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("CANVAS");
-        Rrd4QtGraphDef.CANVAS_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("SHADEA");
-        Rrd4QtGraphDef.SHADEA_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("SHADEB");
-        Rrd4QtGraphDef.SHADEB_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("GRID");
-        Rrd4QtGraphDef.GRID_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("MGRID");
-        Rrd4QtGraphDef.MGRID_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("FONT");
-        Rrd4QtGraphDef.FONT_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("FRAME");
-        Rrd4QtGraphDef.FRAME_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("ARROW");
-        Rrd4QtGraphDef.ARROW_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-
-        col = colorCfg.getJsonObject("XAXIS");
-        Rrd4QtGraphDef.XAXIS_C =
-                new Color(col.getInt("red"), col.getInt("green"),
-                        col.getInt("blue"), col.getInt("alpha"));
-    }
-}
-
-
-class Rrd4QtJob implements Runnable
-{
-    private JsonObject job;
-
-    public Rrd4QtJob(final JsonObject job) { this.job = job; }
-
-    public int getQueryId() {
-        return this.job.getInt("queryId");
-    }
-
-    @Override
-    public void run()
-    {
-        Rrd4Qt.logger.log(Level.INFO, this.job.toString());
-
-        String cmdType = this.job.getString("type");
-        switch (cmdType)
+        public void rejectedExecution(
+                final Runnable r, final ThreadPoolExecutor executor)
         {
-            case "graph":
-                this.handleGraph();
-                break;
-            case "update":
-                this.handleUpdate();
-                break;
-            case "color_config":
-                this.handleConfig();
-                break;
-            default:
-                Rrd4Qt.logger.log(Level.SEVERE, "Unknown command: " + cmdType);
+            Rrd4QtJob failRunner = (Rrd4QtJob) r;
+            int queryId = failRunner.getQueryId();
+            JsonObject reply = Json.createObjectBuilder()
+                    .add("queryId", queryId)
+                    .add("reply", "Error thread queue full!")
+                    .build();
+            Rrd4Qt.rrdReply(reply);
         }
     }
 
-    private void handleConfig()
+    static class Rrd4QtGraphDef extends RrdGraphDef
     {
-        Rrd4QtGraphDef.setDefaultColors(this.job);
+        private static Color BACK_C;
+        private static Color CANVAS_C;
+        private static Color SHADEA_C;
+        private static Color SHADEB_C;
+        private static Color GRID_C;
+        private static Color MGRID_C;
+        private static Color FONT_C;
+        private static Color FRAME_C;
+        private static Color ARROW_C;
+        private static Color XAXIS_C;
+
+        public Rrd4QtGraphDef()
+        {
+            super(); // RrdGraphDef()
+            this.setColor(RrdGraphConstants.COLOR_BACK,   BACK_C);
+            this.setColor(RrdGraphConstants.COLOR_CANVAS, CANVAS_C);
+            this.setColor(RrdGraphConstants.COLOR_SHADEA, SHADEA_C);
+            this.setColor(RrdGraphConstants.COLOR_SHADEB, SHADEB_C);
+            this.setColor(RrdGraphConstants.COLOR_GRID,   GRID_C);
+            this.setColor(RrdGraphConstants.COLOR_MGRID,  MGRID_C);
+            this.setColor(RrdGraphConstants.COLOR_FONT,   FONT_C);
+            this.setColor(RrdGraphConstants.COLOR_FRAME,  FRAME_C);
+            this.setColor(RrdGraphConstants.COLOR_ARROW,  ARROW_C);
+            this.setColor(RrdGraphConstants.COLOR_XAXIS,  XAXIS_C);
+            this.setImageFormat("png");
+            this.setShowSignature(false);
+            this.setAntiAliasing(true);
+            this.setTextAntiAliasing(true);
+            this.setImageQuality((float) 1.0);
+            this.setLazy(false);
+            //this.setFontSet(true);
+        }
+
+        public static void setDefaultColors(final JsonObject colorCfg)
+        {
+            JsonObject col;
+            col = colorCfg.getJsonObject("BACK");
+            Rrd4QtGraphDef.BACK_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("CANVAS");
+            Rrd4QtGraphDef.CANVAS_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("SHADEA");
+            Rrd4QtGraphDef.SHADEA_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("SHADEB");
+            Rrd4QtGraphDef.SHADEB_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("GRID");
+            Rrd4QtGraphDef.GRID_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("MGRID");
+            Rrd4QtGraphDef.MGRID_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("FONT");
+            Rrd4QtGraphDef.FONT_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("FRAME");
+            Rrd4QtGraphDef.FRAME_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("ARROW");
+            Rrd4QtGraphDef.ARROW_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+
+            col = colorCfg.getJsonObject("XAXIS");
+            Rrd4QtGraphDef.XAXIS_C =
+                    new Color(col.getInt("red"), col.getInt("green"),
+                            col.getInt("blue"), col.getInt("alpha"));
+        }
     }
 
-    private void handleUpdate()
+
+    static class Rrd4QtJob implements Runnable
     {
+        private JsonObject job;
+
+        public Rrd4QtJob(final JsonObject job) { this.job = job; }
+
+        public int getQueryId() {
+            return this.job.getInt("queryId");
+        }
+
+        @Override
+        public void run()
+        {
+            Rrd4Qt.logger.log(Level.INFO, this.job.toString());
+
+            String cmdType = this.job.getString("type");
+            switch (cmdType)
+            {
+                case "graph":
+                    this.handleGraph();
+                    break;
+                case "update":
+                    this.handleUpdate();
+                    break;
+                case "color_config":
+                    this.handleConfig();
+                    break;
+                default:
+                    Rrd4Qt.logger.log(Level.SEVERE, "Unknown command: " + cmdType);
+            }
+        }
+
+        private void handleConfig()
+        {
+            Rrd4QtGraphDef.setDefaultColors(this.job);
+        }
+
+        private void handleUpdate()
+        {
         /*
          * get arguments
          */
-        String rrdFile    = this.job.getString("file");
-        long timestamp    = (long)this.job.getInt("timestamp");
-        JsonObject update = this.job.getJsonObject("updates");
-        String opaque     = this.job.getString("opaque");
-        int queryId       = this.job.getInt("queryId");
+            String rrdFile    = this.job.getString("file");
+            long timestamp    = (long)this.job.getInt("timestamp");
+            JsonObject update = this.job.getJsonObject("updates");
+            String opaque     = this.job.getString("opaque");
+            int queryId       = this.job.getInt("queryId");
 
-        String replyStatus;
+            String replyStatus;
 
         /*
          * open and write rrd db
          */
-        RrdDb rrdDb = null;
-        try {
-            rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
-            Sample sample = rrdDb.createSample();
-            sample.setTime(timestamp);
+            RrdDb rrdDb = null;
+            try {
+                rrdDb = Rrd4Qt.rrdDbPool.requestRrdDb(rrdFile);
+                Sample sample = rrdDb.createSample();
+                sample.setTime(timestamp);
 
-            Set<String> updateKeys = update.keySet();
-            for (String key : updateKeys)
-                sample.setValue(key, (long) update.getInt(key));
+                Set<String> updateKeys = update.keySet();
+                for (String key : updateKeys)
+                    sample.setValue(key, (long) update.getInt(key));
 
-            sample.update();
-            replyStatus = "success";
+                sample.update();
+                replyStatus = "success";
 
-        } catch (Exception e) {
-            Rrd4Qt.logger.log(Level.SEVERE, e.toString());
-            replyStatus = "failure";
-        } finally {
-            if (rrdDb != null) {
-                try {
-                    Rrd4Qt.rrdDbPool.release(rrdDb);
-                } catch (IOException inner) {
-                    // ignore
+            } catch (Exception e) {
+                Rrd4Qt.logger.log(Level.SEVERE, e.toString());
+                replyStatus = "failure";
+            } finally {
+                if (rrdDb != null) {
+                    try {
+                        Rrd4Qt.rrdDbPool.release(rrdDb);
+                    } catch (IOException inner) {
+                        // ignore
+                    }
                 }
             }
-        }
 
         /*
          * Build and send reply
          */
-        JsonObject reply = Json.createObjectBuilder()
-                .add("reply",   replyStatus)
-                .add("opaque",  opaque)
-                .add("queryId", queryId)
-                .build();
-        Rrd4Qt.rrdReply(reply);
-    }
+            JsonObject reply = Json.createObjectBuilder()
+                    .add("reply",   replyStatus)
+                    .add("opaque",  opaque)
+                    .add("queryId", queryId)
+                    .build();
+            Rrd4Qt.rrdReply(reply);
+        }
 
-    private void handleGraph()
-    {
+        private void handleGraph()
+        {
         /*
          * Get logical arguments
          */
-        String opaque = this.job.getString("opaque");
-        int queryId = this.job.getInt("queryId");
+            String opaque = this.job.getString("opaque");
+            int queryId = this.job.getInt("queryId");
 
         /*
          * Get graph arguments
          */
-        String rrdFile = this.job.getString("rrdFile");
-        String pngFile = this.job.getString("pngFile");
+            String rrdFile = this.job.getString("rrdFile");
+            String pngFile = this.job.getString("pngFile");
 
-        String title  = this.job.getString("title");
-        String vlabel = this.job.getString("verticalLabel");
+            String title  = this.job.getString("title");
+            String vlabel = this.job.getString("verticalLabel");
 
-        int spanBegin = this.job.getInt("spanBegin");
-        int spanEnd   = this.job.getInt("spanEnd");
+            int spanBegin = this.job.getInt("spanBegin");
+            int spanEnd   = this.job.getInt("spanEnd");
 
-        int width  = this.job.getInt("width");
-        int height = this.job.getInt("height");
+            int width  = this.job.getInt("width");
+            int height = this.job.getInt("height");
 
-        String minVal = this.job.getString("minimum");
-        String maxVal = this.job.getString("maximum");
+            String minVal = this.job.getString("minimum");
+            String maxVal = this.job.getString("maximum");
 
-        String rigid   = this.job.getString("rigid");
-        String base    = this.job.getString("base");
-        String unit    = this.job.getString("unit");
-        String unitExp = this.job.getString("unitExponent");
+            String rigid   = this.job.getString("rigid");
+            String base    = this.job.getString("base");
+            String unit    = this.job.getString("unit");
+            String unitExp = this.job.getString("unitExponent");
 
         /*
          * Generate the graph definition.
          */
-        Rrd4QtGraphDef graphDef = new Rrd4QtGraphDef();
-        graphDef.setTimeSpan(spanBegin, spanEnd);
-        graphDef.setTitle(title);
-        graphDef.setVerticalLabel(vlabel);
-        graphDef.setFilename(pngFile);
-        graphDef.setBase(Double.parseDouble(base));
-        graphDef.setWidth(width);
-        graphDef.setHeight(height);
+            Rrd4QtGraphDef graphDef = new Rrd4QtGraphDef();
+            graphDef.setTimeSpan(spanBegin, spanEnd);
+            graphDef.setTitle(title);
+            graphDef.setVerticalLabel(vlabel);
+            graphDef.setFilename(pngFile);
+            graphDef.setBase(Double.parseDouble(base));
+            graphDef.setWidth(width);
+            graphDef.setHeight(height);
 
-        if (rigid.equals("true")) {
-            graphDef.setRigid(true);
-        }
-
-        if (!unit.equals("")) {
-            graphDef.setUnit(unit);
-        }
-
-        if (!unitExp.equals("")) {
-            try {
-                int unitExpInt = Integer.parseInt(unitExp);
-                graphDef.setUnitsExponent(unitExpInt);
-            } catch (Exception e) {
-                Rrd4Qt.logger.log(Level.INFO,
-                        "bad unit exp: " + unitExp + " " + e.toString());
+            if (rigid.equals("true")) {
+                graphDef.setRigid(true);
             }
-        }
 
-        if (!minVal.equals("")) {
-            try {
-                double minValDouble = Double.parseDouble(minVal);
-                graphDef.setMinValue(minValDouble);
-            } catch (Exception e) {
-                Rrd4Qt.logger.log(Level.INFO,
-                        "min val not a double: " + e.toString());
+            if (!unit.equals("")) {
+                graphDef.setUnit(unit);
             }
-        }
 
-        if (!maxVal.equals("")) {
-            try {
-                double maxValDouble = Double.parseDouble(maxVal);
-                graphDef.setMaxValue(maxValDouble);
-            } catch (Exception e) {
-                Rrd4Qt.logger.log(Level.INFO,
-                        "max val not a double: " + e.toString());
+            if (!unitExp.equals("")) {
+                try {
+                    int unitExpInt = Integer.parseInt(unitExp);
+                    graphDef.setUnitsExponent(unitExpInt);
+                } catch (Exception e) {
+                    Rrd4Qt.logger.log(Level.INFO,
+                            "bad unit exp: " + unitExp + " " + e.toString());
+                }
             }
-        }
+
+            if (!minVal.equals("")) {
+                try {
+                    double minValDouble = Double.parseDouble(minVal);
+                    graphDef.setMinValue(minValDouble);
+                } catch (Exception e) {
+                    Rrd4Qt.logger.log(Level.INFO,
+                            "min val not a double: " + e.toString());
+                }
+            }
+
+            if (!maxVal.equals("")) {
+                try {
+                    double maxValDouble = Double.parseDouble(maxVal);
+                    graphDef.setMaxValue(maxValDouble);
+                } catch (Exception e) {
+                    Rrd4Qt.logger.log(Level.INFO,
+                            "max val not a double: " + e.toString());
+                }
+            }
 
         /*
          * Get DS Draw list and iterate.
          */
-        JsonArray dataSources = this.job.getJsonArray("draws");
-        for(JsonValue ds : dataSources)
-        {
-            JsonObject obj = (JsonObject)ds;
-            String dsName   = obj.getString("dataSource");
-            String dsColor  = obj.getString("color");
-            String dsLegend = obj.getString("legend");
-            String dsType   = obj.getString("type");
-            String calc     = obj.getString("calculation");
-
-            Color color = Rrd4Qt.decodeRGBA(dsColor);
-            ConsolFun dsCons = ConsolFun.valueOf(
-                    obj.getString("consolidation"));
-
-            graphDef.datasource(dsName, rrdFile, dsName, dsCons);
-
-            String drawName;
-            if (calc.equals("")) {
-                drawName = dsName;
-            } else {
-                drawName = "calculation-" + dsName;
-                graphDef.datasource(drawName, calc);
-            }
-
-            switch (dsType)
+            JsonArray dataSources = this.job.getJsonArray("draws");
+            for(JsonValue ds : dataSources)
             {
-                case "area":
-                    graphDef.area(drawName, color, dsLegend);
-                    break;
-                case "stack":
-                    graphDef.stack(drawName, color, dsLegend);
-                    break;
-                default:
-                    graphDef.line(drawName, color, dsLegend);
+                JsonObject obj = (JsonObject)ds;
+                String dsName   = obj.getString("dataSource");
+                String dsColor  = obj.getString("color");
+                String dsLegend = obj.getString("legend");
+                String dsType   = obj.getString("type");
+                String calc     = obj.getString("calculation");
+
+                Color color = Rrd4Qt.decodeRGBA(dsColor);
+                ConsolFun dsCons = ConsolFun.valueOf(
+                        obj.getString("consolidation"));
+
+                graphDef.datasource(dsName, rrdFile, dsName, dsCons);
+
+                String drawName;
+                if (calc.equals("")) {
+                    drawName = dsName;
+                } else {
+                    drawName = "calculation-" + dsName;
+                    graphDef.datasource(drawName, calc);
+                }
+
+                boolean forgetLegend = dsLegend.equals("none");
+
+                switch (dsType)
+                {
+                    case "area":
+                        if (forgetLegend) {
+                            graphDef.area(drawName, color);
+                        } else {
+                            graphDef.area(drawName, color, dsLegend);
+                        }
+                        break;
+                    case "stack":
+                        if (forgetLegend) {
+                            graphDef.stack(drawName, color);
+                        } else {
+                            graphDef.stack(drawName, color, dsLegend);
+                        }
+                        break;
+                    default:
+                        if (forgetLegend) {
+                            graphDef.line(drawName, color);
+                        } else {
+                            graphDef.line(drawName, color, dsLegend);
+
+                        }
+                }
             }
-        }
 
         /*
          * Graph:
          */
-        String replyStatus;
-        try {
-            new RrdGraph(graphDef);
-            replyStatus = "success";
+            String replyStatus;
+            try {
+                new RrdGraph(graphDef);
+                replyStatus = "success";
 
-        } catch (IOException e) {
-            Rrd4Qt.logger.log(Level.WARNING,
-                    "fail to generate graph: " + e.toString());
-            replyStatus = "failure";
-        }
+            } catch (IOException e) {
+                Rrd4Qt.logger.log(Level.WARNING,
+                        "fail to generate graph: " + e.toString());
+                replyStatus = "failure";
+            }
 
         /*
          * Build and send reply
          */
-        Rrd4Qt.logger.log(Level.FINE, dataSources.toString());
-        JsonObject reply = Json.createObjectBuilder()
-                .add("reply",   replyStatus)
-                .add("opaque",  opaque)
-                .add("queryId", queryId)
-                .build();
-        Rrd4Qt.rrdReply(reply);
+            Rrd4Qt.logger.log(Level.FINE, dataSources.toString());
+            JsonObject reply = Json.createObjectBuilder()
+                    .add("reply",   replyStatus)
+                    .add("opaque",  opaque)
+                    .add("queryId", queryId)
+                    .build();
+            Rrd4Qt.rrdReply(reply);
+        }
     }
 }

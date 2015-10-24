@@ -200,6 +200,7 @@ void Rrd4Qt::procStarted()
      * Set default Rrd4Qt colors
      */
     QPalette palette = qApp->palette();
+    int gridAlpha = 60;
 
     QColor color_window = palette.color(QPalette::Window);
     QJsonObject cwindow {
@@ -224,6 +225,12 @@ void Rrd4Qt::procStarted()
         {"green", color_dark.green()},
         {"alpha", color_dark.alpha()}
     };
+    QJsonObject cgrid {
+        {"red",   color_dark.red()},
+        {"blue",  color_dark.blue()},
+        {"green", color_dark.green()},
+        {"alpha", gridAlpha}
+    };
 
     QColor color_shadow = palette.color(QPalette::Shadow);
     QJsonObject cshadow {
@@ -231,6 +238,13 @@ void Rrd4Qt::procStarted()
         {"blue",  color_shadow.blue()},
         {"green", color_shadow.green()},
         {"alpha", color_shadow.alpha()}
+    };
+
+    QJsonObject cmgrid {
+        {"red",   color_shadow.red()},
+        {"blue",  color_shadow.blue()},
+        {"green", color_shadow.green()},
+        {"alpha", gridAlpha}
     };
 
     QColor color_font   = palette.color(QPalette::WindowText);
@@ -255,8 +269,8 @@ void Rrd4Qt::procStarted()
         {"CANVAS",  cbase},
         {"SHADEA",  cwindow},
         {"SHADEB",  cwindow},
-        {"GRID",    cdark},
-        {"MGRID",   cshadow},
+        {"GRID",    cgrid},
+        {"MGRID",   cmgrid},
         {"FONT",    cfont},
         {"FRAME",   cwindow},
         {"ARROW",   cshadow},
