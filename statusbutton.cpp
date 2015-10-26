@@ -59,10 +59,5 @@ void StatusButton::toggleRed()
             this->lcd->setStyleSheet("QFrame {border: 2px solid #ef2929;}");
             this->red = true;
         }
-    } else {
-        if (this->red) {
-            this->lcd->setStyleSheet("QFrame {border: 2px solid #00000000;}");
-            this->red = false;
-        }
     }
 }

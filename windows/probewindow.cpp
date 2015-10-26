@@ -513,6 +513,7 @@ int ProbeWindow::getSpanFor(int value)
 
 bool ProbeWindow::isThumbnail(int value)
 {
+    Q_UNUSED(value);
     /*
     switch(value)
     {

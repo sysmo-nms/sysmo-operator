@@ -39,7 +39,6 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->filter_model->setDynamicSortFilter(true);
     this->filter_model->setFilterCaseSensitivity(Qt::CaseInsensitive);
     this->filter_model->setFilterRole(Sysmo::ROLE_FILTER_STRING);
-    this->setModel(this->filter_model);
 
     this->timer = new QTimer(this);
     this->timer->setInterval(1000);
@@ -83,7 +82,16 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setColumnWidth(2, 65);
     this->setColumnWidth(3, 100);
 
-    // TODO restore state
+    /*
+     * Then wait for initialSyncEnd() slot to be triggered and
+     * finalize the initialisation.
+     */
+}
+
+void TreeView::initialSyncEnd()
+{
+    this->setModel(this->filter_model);
+    this->expandAll();
     this->restoreStateFromSettings();
 }
 
@@ -93,7 +101,6 @@ TreeView::~TreeView()
     QSettings s;
     s.setValue("treeview/header_state", this->header()->saveState());
     s.setValue("treeview/header_geometry", this->header()->saveGeometry());
-    s.setValue("treeview/tview_geometry", this->saveGeometry());
 }
 
 void TreeView::restoreStateFromSettings()
@@ -107,11 +114,6 @@ void TreeView::restoreStateFromSettings()
     if (hg.isValid()) {
         this->header()->restoreGeometry(hg.toByteArray());
     }
-    QVariant tg = s.value("treeview/tview_geometry");
-    if (tg.isValid()) {
-        this->restoreGeometry(tg.toByteArray());
-    }
-
 }
 
 // SLOTS

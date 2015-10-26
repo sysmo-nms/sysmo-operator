@@ -48,6 +48,7 @@ public:
 public slots:
     void expandIndex(QModelIndex index);
     void selectIndex(QModelIndex index);
+    void initialSyncEnd();
 
 private:
     QTimer* timer;

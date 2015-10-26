@@ -144,6 +144,9 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     QObject::connect(
                 tree->add_target_action, SIGNAL(triggered(bool)),
                 this, SLOT(showNewTargetDialog()));
+    QObject::connect(
+                this->mon, SIGNAL(initialSyncEnd()),
+                tree, SLOT(initialSyncEnd()));
 
     // new probe dialog connect
     QObject::connect(
