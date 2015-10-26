@@ -65,7 +65,7 @@ void MenuProbe::handleForceProbe()
                 {"name", this->probe_name}
             }
         }
-    };
+    } ;
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
@@ -92,7 +92,7 @@ void MenuProbe::handleDeleteProbe()
     int ret = box->exec();
     if (ret == QMessageBox::No) return;
 
-    QJsonObject delete_msg {
+    QJsonObject delete_msg = QJsonObject {
         {"from", "monitor"},
         {"type", "deleteProbeQuery"},
         {"value", QJsonObject {

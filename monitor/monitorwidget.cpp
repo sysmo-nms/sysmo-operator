@@ -25,22 +25,26 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     timelineFrame->setFrameShape(QFrame::StyledPanel);
 
     NFrame* timeline = new NFrame(this);
+    StatusButtonWidget* statusBox = new StatusButtonWidget(this);
     timeline->setMinimumHeight(150);
     timeline->setBackgroundRole(QPalette::AlternateBase);
     timeline->setAutoFillBackground(true);
-    tgrid->addWidget(timeline, 0,0);
-
+    tgrid->addWidget(timeline, 0,1);
+    tgrid->addWidget(statusBox, 0,0);
+    tgrid->setColumnStretch(0,0);
+    tgrid->setColumnStretch(1,1);
 
     // control panel
+    /*
     NFrame* controlFrame = new NFrame(this);
     controlFrame->setFrameShape(QFrame::StyledPanel);
     NGrid* cgrid = new NGrid();
-    controlFrame->setLayout(cgrid);
     StatusButtonWidget* statusBox = new StatusButtonWidget(this);
+    controlFrame->setLayout(cgrid);
     cgrid->addWidget(statusBox, 0,0);
     cgrid->setRowStretch(0,0);
     cgrid->setRowStretch(1,1);
-
+    */
 
     // tree frame
     NFrame* treeFrame = new NFrame(this);
@@ -52,13 +56,13 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     NGridContainer* container = new NGridContainer();
     container->setVerticalSpacing(2);
     container->setHorizontalSpacing(2);
-    container->addWidget(controlFrame, 0,0);
-    container->addWidget(treeFrame, 0,1);
-    container->addWidget(timelineFrame, 1,0,1,2);
+    //container->addWidget(controlFrame, 0,0);
+    container->addWidget(treeFrame, 0,0);
+    container->addWidget(timelineFrame, 1,0);
     container->setRowStretch(0,1);
     container->setRowStretch(1,0);
-    container->setColumnStretch(0,0);
-    container->setColumnStretch(1,1);
+    //container->setColumnStretch(0,0);
+    //container->setColumnStretch(1,1);
     this->setLayout(container);
 
     /*
@@ -88,6 +92,20 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     QObject::connect(
                 clear, SIGNAL(pressed()),
                 search, SLOT(clear()));
+    QObject::connect(
+                statusBox->ok, SIGNAL(setText(QString)),
+                search, SLOT(setText(QString)));
+    QObject::connect(
+                statusBox->err, SIGNAL(setText(QString)),
+                search, SLOT(setText(QString)));
+    QObject::connect(
+                statusBox->crit, SIGNAL(setText(QString)),
+                search, SLOT(setText(QString)));
+    QObject::connect(
+                statusBox->warn, SIGNAL(setText(QString)),
+                search, SLOT(setText(QString)));
+
+
 
     // clear/search layout
     NFrameContainer* search_clear      = new NFrameContainer(this);

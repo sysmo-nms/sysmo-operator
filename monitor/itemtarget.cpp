@@ -28,7 +28,7 @@ void ItemTarget::updateFilter() {
         i.next();
         str = str + i.value();
     }
-    this->setData(str, Sysmo::ROLE_FILTER_STRING);
+    this->setData(str.remove("\""), Sysmo::ROLE_FILTER_STRING);
 }
 
 void ItemTarget::updateInfo(QJsonObject info_target)

@@ -35,8 +35,8 @@ void ItemProbe::setTargetFilter(QString filter)
 
 void ItemProbe::updateFilter()
 {
-    this->setData(this->orig_filter + this->targ_filter,
-                        Sysmo::ROLE_FILTER_STRING);
+    QString filter = this->orig_filter + this->targ_filter;
+    this->setData(filter.remove("\""), Sysmo::ROLE_FILTER_STRING);
 }
 
 void ItemProbe::updateInfo(QJsonObject info_probe)

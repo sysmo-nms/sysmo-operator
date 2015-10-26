@@ -61,7 +61,7 @@ public slots:
     void channelDeleted(QString chan_name);
 
 signals:
-    void infoProbe(    QJsonObject message);
+    void infoProbe(   QJsonObject message);
     void infoTarget(   QJsonObject message);
     void deleteTarget( QJsonObject message);
     void deleteProbe(  QJsonObject message);
