@@ -20,31 +20,19 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
 
     // timeline panel
     NFrame* timelineFrame = new NFrame(this);
+    timelineFrame->setFixedHeight(173);
     NGrid* tgrid = new NGrid();
     timelineFrame->setLayout(tgrid);
     timelineFrame->setFrameShape(QFrame::StyledPanel);
 
-    NFrame* timeline = new NFrame(this);
+    MonitorLogs* timeline = new MonitorLogs(this);
     StatusButtonWidget* statusBox = new StatusButtonWidget(this);
-    timeline->setMinimumHeight(150);
-    timeline->setBackgroundRole(QPalette::AlternateBase);
-    timeline->setAutoFillBackground(true);
+    //timeline->setBackgroundRole(QPalette::AlternateBase);
+    //timeline->setAutoFillBackground(true);
     tgrid->addWidget(timeline, 0,1);
     tgrid->addWidget(statusBox, 0,0);
     tgrid->setColumnStretch(0,0);
     tgrid->setColumnStretch(1,1);
-
-    // control panel
-    /*
-    NFrame* controlFrame = new NFrame(this);
-    controlFrame->setFrameShape(QFrame::StyledPanel);
-    NGrid* cgrid = new NGrid();
-    StatusButtonWidget* statusBox = new StatusButtonWidget(this);
-    controlFrame->setLayout(cgrid);
-    cgrid->addWidget(statusBox, 0,0);
-    cgrid->setRowStretch(0,0);
-    cgrid->setRowStretch(1,1);
-    */
 
     // tree frame
     NFrame* treeFrame = new NFrame(this);
@@ -61,16 +49,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     container->addWidget(timelineFrame, 1,0);
     container->setRowStretch(0,1);
     container->setRowStretch(1,0);
-    //container->setColumnStretch(0,0);
-    //container->setColumnStretch(1,1);
     this->setLayout(container);
-
-    /*
-    container->setRowStretch(0,1);
-    container->setRowStretch(1,0);
-    container->addWidget(treeFrame,0,0);
-    container->addWidget(timelineFrame,1,0);
-    */
 
     /*
      * top controls

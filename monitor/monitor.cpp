@@ -62,6 +62,10 @@ void Monitor::handleServerMessage(QJsonObject message)
     } else if (type == "probeReturn") {
         emit this->probeReturn(mcontent);
 
+
+    } else if (type == "syncBegin") {
+        emit this->initialSyncBegin(mcontent);
+
     } else if (type == "syncEnd") {
         emit this->initialSyncEnd();
 

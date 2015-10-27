@@ -66,6 +66,7 @@ signals:
     void deleteTarget(QJsonObject message);
     void deleteProbe(QJsonObject message);
     void probeReturn(QJsonObject message);
+    void initialSyncBegin(QJsonObject message);
     void initialSyncEnd();
 
 };

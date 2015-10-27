@@ -21,5 +21,7 @@
         <file alias="weather-few-clouds-night.png">ressources/icons/weather-few-clouds-night.png</file>
         <file alias="weather-severe-alert.png">ressources/icons/weather-severe-alert.png</file>
         <file alias="weather-showers.png">ressources/icons/weather-showers.png</file>
+        <file alias="appointment-new.png">ressources/icons/appointment-new.png</file>
+        <file alias="edit-paste.png">ressources/icons/edit-paste.png</file>
     </qresource>
 </RCC>
