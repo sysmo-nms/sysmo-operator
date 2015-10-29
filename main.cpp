@@ -78,10 +78,11 @@ int main(int argc, char* argv[])
 #endif
 
                 qInstallMessageHandler(operatorMsgOut);
+                QString version = "2.0";
 
                 QApplication::setApplicationName("Operator");
-                QApplication::setApplicationVersion("1.2");
-                QApplication::setApplicationDisplayName("Sysmo Operator 1.2");
+                QApplication::setApplicationVersion(version);
+                QApplication::setApplicationDisplayName("Sysmo Operator");
                 QApplication::setOrganizationName("Sysmo NMS");
                 QApplication::setOrganizationDomain("sysmo.io");
                 QApplication::setQuitOnLastWindowClosed(true);
