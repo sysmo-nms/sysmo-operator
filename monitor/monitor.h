@@ -68,6 +68,7 @@ signals:
     void probeReturn(QJsonObject message);
     void initialSyncBegin(QJsonObject message);
     void initialSyncEnd();
+    void dbNotification(QJsonObject message);
 
 };
 

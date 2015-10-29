@@ -23,8 +23,29 @@
 #include <QHeaderView>
 #include <QTableWidgetItem>
 #include <QDateTime>
+#include <QColor>
+#include <QBrush>
 
 #include <QDebug>
+
+class CustomTableItem : public QTableWidgetItem
+{
+public:
+    explicit CustomTableItem(QString text);
+};
+
+class StatusTableItem : public CustomTableItem
+{
+public:
+    explicit StatusTableItem(QString text);
+
+private:
+    static QColor red;
+    static QColor yellow;
+    static QColor green;
+    static QColor white;
+    static QColor dark;
+};
 
 class MonitorTableLogs : public QTableWidget
 {
@@ -43,6 +64,7 @@ public:
 public slots:
     void handleInitialSyncBegin(QJsonObject message);
     void handleHttpReply(QString body);
+    void handleDbNotif(QJsonObject obj);
 
 private:
     MonitorTableLogs* table;

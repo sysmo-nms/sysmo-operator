@@ -69,6 +69,8 @@ void Monitor::handleServerMessage(QJsonObject message)
     } else if (type == "syncEnd") {
         emit this->initialSyncEnd();
 
+    } else if (type == "dbNotif") {
+        emit this->dbNotification(mcontent);
     } else if (type == "nchecksSimpleDumpMessage") {
     } else if (type == "nchecksSimpleUpdateMessage") {
     } else if (type == "nchecksTableDumpMessage") {
