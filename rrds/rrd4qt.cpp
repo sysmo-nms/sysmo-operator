@@ -203,79 +203,71 @@ void Rrd4Qt::procStarted()
     int gridAlpha = 60;
 
     QColor color_window = palette.color(QPalette::Window);
-    QJsonObject cwindow {
-        {"red",   color_window.red()},
-        {"blue",  color_window.blue()},
-        {"green", color_window.green()},
-        {"alpha", color_window.alpha()}
-    };
+    QJsonObject cwindow;
+    cwindow.insert("red", QJsonValue(color_window.red()));
+    cwindow.insert("blue", QJsonValue(color_window.blue()));
+    cwindow.insert("green", QJsonValue(color_window.green()));
+    cwindow.insert("alpha", QJsonValue(color_window.alpha()));
 
     QColor color_base   = palette.color(QPalette::Base);
-    QJsonObject cbase {
-        {"red",   color_base.red()},
-        {"blue",  color_base.blue()},
-        {"green", color_base.green()},
-        {"alpha", color_base.alpha()}
-    };
+    QJsonObject cbase;
+    cbase.insert("red", QJsonValue(color_base.red()));
+    cbase.insert("blue", QJsonValue(color_base.blue()));
+    cbase.insert("green", QJsonValue(color_base.green()));
+    cbase.insert("alpha", QJsonValue(color_base.alpha()));
 
     QColor color_dark   = palette.color(QPalette::Dark);
-    QJsonObject cdark {
-        {"red",   color_dark.red()},
-        {"blue",  color_dark.blue()},
-        {"green", color_dark.green()},
-        {"alpha", color_dark.alpha()}
-    };
-    QJsonObject cgrid {
-        {"red",   color_dark.red()},
-        {"blue",  color_dark.blue()},
-        {"green", color_dark.green()},
-        {"alpha", gridAlpha}
-    };
+    QJsonObject cdark;
+    cdark.insert("red", QJsonValue(color_dark.red()));
+    cdark.insert("blue", QJsonValue(color_dark.blue()));
+    cdark.insert("green", QJsonValue(color_dark.green()));
+    cdark.insert("alpha", QJsonValue(color_dark.alpha()));
+
+    QJsonObject cgrid;
+    cgrid.insert("red", QJsonValue(color_dark.red()));
+    cgrid.insert("blue", QJsonValue(color_dark.blue()));
+    cgrid.insert("green", QJsonValue(color_dark.green()));
+    cgrid.insert("alpha", QJsonValue(gridAlpha));
 
     QColor color_shadow = palette.color(QPalette::Shadow);
-    QJsonObject cshadow {
-        {"red",   color_shadow.red()},
-        {"blue",  color_shadow.blue()},
-        {"green", color_shadow.green()},
-        {"alpha", color_shadow.alpha()}
-    };
+    QJsonObject cshadow;
+    cshadow.insert("red", QJsonValue(color_shadow.red()));
+    cshadow.insert("blue", QJsonValue(color_shadow.blue()));
+    cshadow.insert("green", QJsonValue(color_shadow.green()));
+    cshadow.insert("alpha", QJsonValue(color_shadow.alpha()));
 
-    QJsonObject cmgrid {
-        {"red",   color_shadow.red()},
-        {"blue",  color_shadow.blue()},
-        {"green", color_shadow.green()},
-        {"alpha", gridAlpha}
-    };
+    QJsonObject cmgrid;
+    cmgrid.insert("red", QJsonValue(color_shadow.red()));
+    cmgrid.insert("blue", QJsonValue(color_shadow.blue()));
+    cmgrid.insert("green", QJsonValue(color_shadow.green()));
+    cmgrid.insert("alpha", QJsonValue(gridAlpha));
 
     QColor color_font   = palette.color(QPalette::WindowText);
-    QJsonObject cfont {
-        {"red",   color_font.red()},
-        {"blue",  color_font.blue()},
-        {"green", color_font.green()},
-        {"alpha", color_font.alpha()}
-    };
+    QJsonObject cfont;
+    cfont.insert("red", QJsonValue(color_font.red()));
+    cfont.insert("blue", QJsonValue(color_font.blue()));
+    cfont.insert("green", QJsonValue(color_font.green()));
+    cfont.insert("alpha", QJsonValue(color_font.alpha()));
 
-    QJsonObject ctransparent {
-        {"red",   0},
-        {"blue",  0},
-        {"green", 0},
-        {"alpha", 0}
-    };
+    QJsonObject ctransparent;
+    ctransparent.insert("red", QJsonValue(0));
+    ctransparent.insert("blue", QJsonValue(0));
+    ctransparent.insert("green", QJsonValue(0));
+    ctransparent.insert("alpha", QJsonValue(0));
 
-    QJsonObject msg {
-        {"type",    "color_config"},
-        {"queryId", 0},
-        {"BACK",    ctransparent},
-        {"CANVAS",  cbase},
-        {"SHADEA",  cwindow},
-        {"SHADEB",  cwindow},
-        {"GRID",    cgrid},
-        {"MGRID",   cmgrid},
-        {"FONT",    cfont},
-        {"FRAME",   cwindow},
-        {"ARROW",   cshadow},
-        {"XAXIS",   cdark}
-    };
+    QJsonObject msg;
+    msg.insert("type", QJsonValue("color_config"));
+    msg.insert("queryId", QJsonValue(0));
+    msg.insert("BACK", ctransparent);
+    msg.insert("CANVAS", cbase);
+    msg.insert("SHADEA", cwindow);
+    msg.insert("SHADEB", cwindow);
+    msg.insert("GRID", cgrid);
+    msg.insert("MGRID", cmgrid);
+    msg.insert("FONT", cfont);
+    msg.insert("FRAME", cwindow);
+    msg.insert("ARROW", cshadow);
+    msg.insert("XAXIS", cdark);
 
     Rrd4Qt::callRrd(msg);
 }

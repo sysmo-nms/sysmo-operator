@@ -27,10 +27,11 @@ public:
 class ParseCheckMakeForm : public QXmlDefaultHandler
 {
 public:
+    ParseCheckMakeForm();
     ~ParseCheckMakeForm();
     QList<FormConfig>* mandatory;
     QList<FormConfig>* options;
-    QString probe_class = "";
+    QString probe_class;
     bool startDocument();
     bool startElement(
             const QString &namespaceURI,

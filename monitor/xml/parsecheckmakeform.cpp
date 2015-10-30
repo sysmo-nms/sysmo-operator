@@ -1,5 +1,11 @@
 #include "parsecheckmakeform.h"
 
+ParseCheckMakeForm::ParseCheckMakeForm()
+        : QXmlDefaultHandler()
+{
+    this->probe_class = "";
+}
+
 ParseCheckMakeForm::~ParseCheckMakeForm() {
     delete this->mandatory;
     delete this->options;

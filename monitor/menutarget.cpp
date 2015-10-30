@@ -82,14 +82,14 @@ void MenuTarget::deleteTarget()
     box->setDefaultButton(QMessageBox::No);
     int ret = box->exec();
     if (ret == QMessageBox::No) return;
-    QJsonObject query {
-        {"from", "monitor"},
-        {"type", "deleteTargetQuery"},
-        {"value", QJsonObject {
-                {"name", this->target_name}
-            }
-        }
-    };
+
+    QJsonObject query;
+    QJsonObject value;
+    value.insert("name", QJsonValue(this->target_name));
+    query.insert("from", QJsonValue("monitor"));
+    query.insert("type", QJsonValue("deleteTargetQuery"));
+    query.insert("value", value);
+
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),

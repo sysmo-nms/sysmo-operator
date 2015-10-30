@@ -26,15 +26,16 @@ NewProbeProgressDialog::NewProbeProgressDialog(
         props.insert(i.key(), i.value()->text());
     }
 
-    QJsonObject createProbeQuery {
-        {"from", "monitor"},
-        {"type", "createNchecksQuery"},
-        {"value", QJsonObject {
-                {"target",     target},
-                {"display",    display_name},
-                {"identifier", probe_name},
-                {"class",      probe_class},
-                {"properties", props}}}};
+    QJsonObject createProbeQuery;
+    QJsonObject value;
+    value.insert("target", QJsonValue(target));
+    value.insert("display", QJsonValue(display_name));
+    value.insert("identifier", QJsonValue(probe_name));
+    value.insert("class", QJsonValue(probe_class));
+    value.insert("properties", QJsonValue(props));
+    createProbeQuery.insert("from", QJsonValue("monitor"));
+    createProbeQuery.insert("type", QJsonValue("createNchecksQuery"));
+    createProbeQuery.insert("value", value);
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(

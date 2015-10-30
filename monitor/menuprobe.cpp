@@ -57,15 +57,13 @@ void MenuProbe::showMenuFor(QString probe, QPoint at)
 void MenuProbe::handleForceProbe()
 {
     qDebug() << "force probe" << this->probe_name;
-    QJsonObject force_msg {
-        {"from", "monitor"},
-        {"type", "forceProbeQuery"},
-        {"value",
-            QJsonObject {
-                {"name", this->probe_name}
-            }
-        }
-    } ;
+    QJsonObject force_msg;
+    QJsonObject value;
+    value.insert("name", QJsonValue(this->probe_name));
+    force_msg.insert("from", QJsonValue("monitor"));
+    force_msg.insert("type", QJsonValue("forceProbeQuery"));
+    force_msg.insert("value", value);
+
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),
@@ -92,14 +90,12 @@ void MenuProbe::handleDeleteProbe()
     int ret = box->exec();
     if (ret == QMessageBox::No) return;
 
-    QJsonObject delete_msg = QJsonObject {
-        {"from", "monitor"},
-        {"type", "deleteProbeQuery"},
-        {"value", QJsonObject {
-                {"name", this->probe_name}
-            }
-        }
-    };
+    QJsonObject delete_msg;
+    QJsonObject value;
+    value.insert("name", QJsonValue(this->probe_name));
+    delete_msg.insert("from", QJsonValue("monitor"));
+    delete_msg.insert("type", QJsonValue("deleteProbeQuery"));
+    delete_msg.insert("value", value);
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(

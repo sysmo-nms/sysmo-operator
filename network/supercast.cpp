@@ -142,12 +142,15 @@ void Supercast::tryConnect(
  */
 void Supercast::socketConnected()
 {
-    QJsonObject authResp {
-        {"from", "supercast"},
-        {"type", "authResp"},
-        {"value", QJsonObject {
-            {"name",     this->user_name},
-            {"password", this->user_pass}}}};
+
+    QJsonObject authResp;
+    QJsonObject value;
+    value.insert("name", QJsonValue(this->user_name));
+    value.insert("password", QJsonValue(this->user_pass));
+    authResp.insert("from", QJsonValue("supercast"));
+    authResp.insert("type", QJsonValue("authResp"));
+    authResp.insert("value", value);
+
 
     emit this->clientMessage(authResp);
 }
@@ -239,12 +242,13 @@ void Supercast::handleSupercastMessage(QJsonObject message)
 
 void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
 {
-    QJsonObject subscribeMsg {
-        {"from", "supercast"},
-        {"type", "subscribe"},
-        {"value", QJsonObject {
-                {"queryId", 0},
-                {"channel", channel}}}};
+    QJsonObject subscribeMsg;
+    QJsonObject value;
+    value.insert("queryId", QJsonValue(0));
+    value.insert("channel", QJsonValue(channel));
+    subscribeMsg.insert("from", QJsonValue("supercast"));
+    subscribeMsg.insert("type", QJsonValue("subscribe"));
+    subscribeMsg.insert("value", value);
 
     Supercast::singleton->channels->insert(channel, subscriber);
 
@@ -253,12 +257,14 @@ void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
 
 void Supercast::unsubscribe(QString channel)
 {
-    QJsonObject unsubscribeMsg {
-        {"from", "supercast"},
-        {"type", "unsubscribe"},
-        {"value", QJsonObject {
-                {"queryId", 0},
-                {"channel", channel}}}};
+    QJsonObject unsubscribeMsg;
+    QJsonObject value;
+    value.insert("queryId", QJsonValue(0));
+    value.insert("channel", QJsonValue(channel));
+    unsubscribeMsg.insert("from", QJsonValue("supercast"));
+    unsubscribeMsg.insert("type", QJsonValue("unsubscribe"));
+    unsubscribeMsg.insert("value", value);
+
     SupercastSignal* sig = Supercast::singleton->channels->take(channel);
     sig->deleteLater();
 

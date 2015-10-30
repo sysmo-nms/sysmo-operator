@@ -6,7 +6,7 @@
 
 QT       += core gui network xml
 
-CONFIG += c++11
+#CONFIG += c++11
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 # log with line numbers and files

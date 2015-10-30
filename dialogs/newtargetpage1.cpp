@@ -320,43 +320,54 @@ bool NewTargetPage1::validatePage()
 
     QJsonObject sysProperties;
     if (this->configType() == NewTargetPage1::NO_SNMP) {
-        sysProperties = {};
-
+        // sysProperties empty
 
     } else if (this->configType() == NewTargetPage1::SNMP_V1) {
-        sysProperties = {
-            {"snmp_port",     QString::number(this->snmp_port->value())},
-            {"snmp_version",  "1"},
-            {"snmp_community", this->snmp_community->text()}};
+        sysProperties.insert("snmp_port",
+                        QJsonValue(QString::number(this->snmp_port->value())));
+        sysProperties.insert("snmp_version",
+                        QJsonValue("1"));
+        sysProperties.insert("snmp_community",
+                        QJsonValue(this->snmp_community->text()));
 
     } else if (this->configType() == NewTargetPage1::SNMP_V2) {
-        sysProperties = {
-            {"snmp_port",     QString::number(this->snmp_port->value())},
-            {"snmp_version",  "2c"},
-            {"snmp_community", this->snmp_community->text()}};
+        sysProperties.insert("snmp_port",
+                        QJsonValue(QString::number(this->snmp_port->value())));
+        sysProperties.insert("snmp_version",
+                        QJsonValue("2c"));
+        sysProperties.insert("snmp_community",
+                        QJsonValue(this->snmp_community->text()));
 
     } else if (this->configType() ==  NewTargetPage1::SNMP_V3_NOAUTHNOPRIV) {
-        sysProperties = {
-            {"snmp_port",     QString::number(this->snmp_port->value())},
-            {"snmp_version",  "3"},
-            {"snmp_seclevel", "noAuthNoPriv"},
-            {"snmp_usm_user", this->snmp_usm_user->text()}};
-
+        sysProperties.insert("snmp_port",
+                        QJsonValue(QString::number(this->snmp_port->value())));
+        sysProperties.insert("snmp_version",
+                        QJsonValue("3"));
+        sysProperties.insert("snmp_seclevel",
+                        QJsonValue("noAuthNoPriv"));
+        sysProperties.insert("snmp_usm_user",
+                             QJsonValue(this->snmp_usm_user->text()));
 
     } else if (this->configType() ==  NewTargetPage1::SNMP_V3_AUTHNOPRIV) {
         QString authproto;
-        if (this->snmp_auth_proto->currentIndex() == Sysmo::SNMP_AUTH_MD5)
+        if (this->snmp_auth_proto->currentIndex() == Sysmo::SNMP_AUTH_MD5) {
             authproto = "MD5";
-        else
+        } else {
             authproto = "SHA";
+        }
 
-        sysProperties = {
-            {"snmp_port",      QString::number(this->snmp_port->value())},
-            {"snmp_version",   "3"},
-            {"snmp_seclevel",  "authNoPriv"},
-            {"snmp_usm_user",  this->snmp_usm_user->text()},
-            {"snmp_authproto", authproto},
-            {"snmp_authkey",   this->snmp_auth_key->text()}};
+        sysProperties.insert("snmp_port",
+                        QJsonValue(QString::number(this->snmp_port->value())));
+        sysProperties.insert("snmp_version",
+                        QJsonValue("3"));
+        sysProperties.insert("snmp_seclevel",
+                        QJsonValue("authNoPriv"));
+        sysProperties.insert("snmp_usm_user",
+                        QJsonValue(this->snmp_usm_user->text()));
+        sysProperties.insert("snmp_authproto",
+                        QJsonValue(authproto));
+        sysProperties.insert("snmp_authkey",
+                        QJsonValue(this->snmp_auth_key->text()));
 
 
     } else if (this->configType() == NewTargetPage1::SNMP_V3_AUTHPRIV) {
@@ -381,26 +392,35 @@ bool NewTargetPage1::validatePage()
 
         qDebug() << "current index is: " << privprotoIndex;
 
-        sysProperties = {
-            {"snmp_port",      QString::number(this->snmp_port->value())},
-            {"snmp_version",   "3"},
-            {"snmp_seclevel",  "authPriv"},
-            {"snmp_usm_user",  this->snmp_usm_user->text()},
-            {"snmp_authproto", authproto},
-            {"snmp_authkey",   this->snmp_auth_key->text()},
-            {"snmp_privproto", privproto},
-            {"snmp_privkey",   this->snmp_priv_key->text()}};
+        sysProperties.insert("snmp_port",
+                        QJsonValue(QString::number(this->snmp_port->value())));
+        sysProperties.insert("snmp_version",
+                        QJsonValue("3"));
+        sysProperties.insert("snmp_seclevel",
+                        QJsonValue("authPriv"));
+        sysProperties.insert("snmp_usm_user",
+                        QJsonValue(this->snmp_usm_user->text()));
+        sysProperties.insert("snmp_authproto",
+                        QJsonValue(authproto));
+        sysProperties.insert("snmp_authkey",
+                        QJsonValue(this->snmp_auth_key->text()));
+        sysProperties.insert("snmp_privproto",
+                        QJsonValue(privproto));
+        sysProperties.insert("snmp_privkey",
+                        QJsonValue(this->snmp_priv_key->text()));
 
     }
 
-    QJsonObject createTargetQuery {
-        {"from", "monitor"},
-        {"type", "createTargetQuery"},
-        {"value", QJsonObject {
-                {"properties", QJsonObject {
-                        {"host", this->target_host->text()},
-                        {"name", this->target_name->text()}}},
-                {"sysProperties", sysProperties}}}};
+    QJsonObject createTargetQuery;
+    QJsonObject props;
+    props.insert("host", QJsonValue(this->target_host->text()));
+    props.insert("name", QJsonValue(this->target_name->text()));
+    QJsonObject value;
+    value.insert("properties", props);
+    value.insert("sysProperties", sysProperties);
+    createTargetQuery.insert("from", QJsonValue("monitor"));
+    createTargetQuery.insert("type", QJsonValue("createTargetQuery"));
+    createTargetQuery.insert("value", value);
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
                 sig,  SIGNAL(serverMessage(QJsonObject)),

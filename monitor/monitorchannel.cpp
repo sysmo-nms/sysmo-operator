@@ -106,14 +106,12 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Create rrd query message
          */
-        QJsonObject update_query {
-            {"type",      "update"},
-            {"updates",   updates},
-            {"file",      this->simple_file.fileName()},
-            {"timestamp", timestamp},
-            {"opaque",    "undefined"}
-        };
-
+        QJsonObject update_query;
+        update_query.insert("type", QJsonValue("update"));
+        update_query.insert("updates", updates);
+        update_query.insert("file", QJsonValue(this->simple_file.fileName()));
+        update_query.insert("timestamp", QJsonValue(timestamp));
+        update_query.insert("opaque", QJsonValue("undefined"));
 
         /*
          * Connect signals for callback
@@ -261,13 +259,12 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             /*
              * Build query
              */
-            QJsonObject update_query {
-                {"type",      "update"},
-                {"updates",   up},
-                {"file",      rrd_file},
-                {"timestamp", timestamp},
-                {"opaque",    id}
-            };
+            QJsonObject update_query;
+            update_query.insert("type", QJsonValue("update"));
+            update_query.insert("updates", up);
+            update_query.insert("file", QJsonValue(rrd_file));
+            update_query.insert("timestamp", QJsonValue(timestamp));
+            update_query.insert("opaque", QJsonValue(id));
 
             /*
              * Connect signals for callback
@@ -329,7 +326,10 @@ void MonitorChannel::handleRrdEventTable(QJsonObject event)
         /*
          * Emit an update message to the connected widgets
          */
-        emit this->channelEvent(QJsonObject {{"event", "update"}});
+        QJsonObject update_msg;
+        update_msg.insert("event", QJsonValue("update"));
+
+        emit this->channelEvent(update_msg);
 
 
         /*
@@ -358,7 +358,9 @@ void MonitorChannel::handleRrdEventSimple(QJsonObject event)
     /*
      * Emit message of type update
      */
-    emit this->channelEvent(QJsonObject {{"event", "update"}});
+    QJsonObject update_msg;
+    update_msg.insert("event", QJsonValue("update"));
+    emit this->channelEvent(update_msg);
 
 
     /*
@@ -485,11 +487,11 @@ QJsonObject MonitorChannel::buildDump()
      * If chan is "simple" the buildDump is simple
      */
     if (this->chan_type == "simple") {
-        return QJsonObject {
-            {"event",  "dump"},
-            {"type",   "simple"},
-            {"rrdFile", this->simple_file.fileName()}
-        };
+        QJsonObject dumpEvent;
+        dumpEvent.insert("event", QJsonValue("dump"));
+        dumpEvent.insert("type", QJsonValue("simple"));
+        dumpEvent.insert("rrdFile", QJsonValue(this->simple_file.fileName()));
+        return dumpEvent;
     }
     if (this->chan_type == "table") {
         QJsonObject table_dump;
@@ -504,11 +506,12 @@ QJsonObject MonitorChannel::buildDump()
             table_dump.insert(i.key(), QJsonValue(i.value()));
         }
 
-        return QJsonObject {
-                {"event",    "dump"},
-                {"type",    "table"},
-                {"rrdFiles", table_dump}
-        };
+        QJsonObject dumpEvent;
+        dumpEvent.insert("event", QJsonValue("dump"));
+        dumpEvent.insert("type", QJsonValue("table"));
+        dumpEvent.insert("rrdFiles", table_dump);
+
+        return dumpEvent;
     }
 
     /*

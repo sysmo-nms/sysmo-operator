@@ -202,16 +202,13 @@ HelperExec::HelperExec(QLineEdit* line, QWidget* parent) : QObject(parent)
 
 void HelperExec::execHelper()
 {
-    QJsonObject helperQuery {
-        {"from", "monitor"},
-        {"type", "ncheckHelperQuery"},
-        {"value",
-            QJsonObject {
-                {"target", this->h_target},
-                {"class",  this->h_class}
-            }
-        }
-    };
+    QJsonObject helperQuery;
+    QJsonObject value;
+    value.insert("target", QJsonValue(this->h_target));
+    value.insert("class", QJsonValue(this->h_class));
+    helperQuery.insert("from", QJsonValue("monitor"));
+    helperQuery.insert("type", QJsonValue("ncheckHelperQuery"));
+    helperQuery.insert("value", value);
 
     qDebug() << "exec helper " << helperQuery;
 
