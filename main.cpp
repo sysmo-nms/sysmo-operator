@@ -78,8 +78,15 @@ int main(int argc, char* argv[])
 #endif
 
                 qInstallMessageHandler(operatorMsgOut);
-                QString version = "2.0";
 
+                QString version = "1.1.0";
+
+                //QFont defaultFont = Themes::defaultFont;
+                //defaultFont.setStretch(110);
+                //defaultFont.setFamily("Helvetica");
+                //defaultFont.setFamily("Monospace");
+                //defaultFont.setPixelSize(11);
+                //QApplication::setFont(defaultFont);
                 QApplication::setApplicationName("Operator");
                 QApplication::setApplicationVersion(version);
                 QApplication::setApplicationDisplayName("Sysmo Operator");
