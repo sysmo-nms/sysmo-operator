@@ -140,3 +140,6 @@ RESOURCES += \
     pixmaps.qrc \
     tree.qrc \
     rrd4qt.qrc
+
+target.path = /opt/sysmo-operator
+INSTALLS += target
