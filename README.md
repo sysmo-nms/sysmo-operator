@@ -24,7 +24,8 @@ Sysmo require a complete Qt5 dev library installed.
 cd ..
 qmake -config release
 make
-sudo INSTALL_ROOT=/usr/local make install
+export INSTALL_ROOT=~
+make install
 ```
 
 *make install* will only install the target in $INSTALL_ROOT/bin.
