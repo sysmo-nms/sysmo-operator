@@ -12,7 +12,7 @@ $ git clone https://github.com/sysmo-nms/sysmo-operator.git
 ```
 
 ### Java Part
-There is some java in this project. Build it as is:
+There is some java in this project.
 ```sh
 cd sysmo-operator/rrd4qt/
 ./gradlew installDist
@@ -24,4 +24,7 @@ Sysmo require a complete Qt5 dev library installed.
 cd ..
 qmake -config release
 make
+sudo INSTALL_ROOT=/usr/local make install
 ```
+
+*make install* will only install the target in $INSTALL_ROOT/bin.

@@ -141,5 +141,5 @@ RESOURCES += \
     tree.qrc \
     rrd4qt.qrc
 
-target.path = /opt/sysmo-operator
+target.path = /bin
 INSTALLS += target
