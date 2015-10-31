@@ -19,11 +19,9 @@ cd sysmo-operator/rrd4qt/
 ```
 
 ### C++ Part
-Open the sysmo-operator.pro file with QtCreator, and build the project.
-
-Sysmo-operator is developed with QtCreator 3.4 and built with Qt-5.4.1-GCC under Linux Ubuntu.14.LTS.
-
-
-Build procedure using Qt libraries from major Linux distributions
------------------------------------------------------------------
-Any help is wellcome!
+Sysmo require a complete Qt5 dev library installed.
+```sh
+cd ..
+qmake -config release
+make
+```
