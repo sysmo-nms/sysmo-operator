@@ -2,6 +2,7 @@
 #define ITEMTARGET_H
 
 #include "sysmo.h"
+#include "qjson.h"
 
 #include <QStandardItem>
 #include <QVariant>
@@ -9,8 +10,8 @@
 #include <QIcon>
 #include <Qt>
 #include <QString>
-#include <QHash>
-#include <QHashIterator>
+#include <QMap>
+#include <QMapIterator>
 #include <QStringList>
 #include <QStringListIterator>
 
@@ -20,18 +21,18 @@ class ItemTarget : public QStandardItem
 {
 
 public:
-    ItemTarget(QJsonObject info_target);
+    ItemTarget(QMap<QString,QVariant> info_target);
     QString name;
     QString orig_filter;
     int type() const;
-    QHash<QString, QString> filter_hash;
-    void updateInfo(QJsonObject info_target);
+    QMap<QString, QString> filter_hash;
+    void updateInfo(QMap<QString,QVariant> info_target);
     void updateIconStatus();
-    void updateProbeFilter(QString probe_name, QJsonObject obj);
+    void updateProbeFilter(QString probe_name, QMap<QString,QVariant> obj);
     void deleteProbeFilter(QString probe_name);
 
 private:
-    QJsonObject target_properties;
+    QMap<QString,QVariant> target_properties;
     void updateFilter();
     void updateTooltip();
 };

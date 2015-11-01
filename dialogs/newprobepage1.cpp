@@ -4,14 +4,17 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     : QWizardPage(parent)
 {
 
-    QJsonObject target = Monitor::getTarget(forTarget);
+    QMap<QString,QVariant> target = Monitor::getTarget(forTarget).toMap();
 
-    QJsonObject properties = target.value("properties").toObject();
-    QString snmpAwareStr = properties.value("isSnmpAware").toString("false");
+    QMap<QString,QVariant> properties = target.value("properties").toMap();
+    QString snmpAwareStr = properties.value("isSnmpAware").toString();
 
     bool snmpAware;
-    if (snmpAwareStr == "false") snmpAware = false;
-    else snmpAware = true;
+    if (snmpAwareStr == "false") {
+        snmpAware = false;
+    } else {
+        snmpAware = true;
+    }
 
     qDebug() << "target is snmpAware" << snmpAware;
 

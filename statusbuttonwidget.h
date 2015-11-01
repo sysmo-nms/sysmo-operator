@@ -8,10 +8,10 @@
 
 #include <QWidget>
 #include <QPixmap>
-#include <QHash>
+#include <QMap>
 #include <QDebug>
-#include <QJsonObject>
 #include <QTimer>
+#include <QVariant>
 
 class StatusButtonWidget : public NFrameContainer
 {
@@ -25,13 +25,13 @@ public:
 
 
 private:
-    QHash<QString, QString>* status_map;
+    QMap<QString, QString>* status_map;
     void incrementStatus(QString status);
     void decrementStatus(QString status);
 
 public slots:
-    void handleDeleteProbe(QJsonObject obj);
-    void handleInfoProbe(QJsonObject obj);
+    void handleDeleteProbe(QVariant obj);
+    void handleInfoProbe(QVariant obj);
 
 };
 

@@ -1,7 +1,7 @@
 #include "newprobeprogressdialog.h"
 
 NewProbeProgressDialog::NewProbeProgressDialog(
-        QHash<QString,QLineEdit*>* args,
+        QMap<QString,QLineEdit*>* args,
         QString target,
         QString probe_name,
         QString probe_class,
@@ -19,36 +19,37 @@ NewProbeProgressDialog::NewProbeProgressDialog(
     cancel->setText("Cancel");
     this->setCancelButton(cancel);
 
-    QJsonObject props;
-    QHashIterator<QString, QLineEdit*> i(*args);
+    QMap<QString,QVariant> props;
+    QMapIterator<QString, QLineEdit*> i(*args);
     while (i.hasNext()) {
         i.next();
         props.insert(i.key(), i.value()->text());
     }
 
-    QJsonObject createProbeQuery;
-    QJsonObject value;
-    value.insert("target", QJsonValue(target));
-    value.insert("display", QJsonValue(display_name));
-    value.insert("identifier", QJsonValue(probe_name));
-    value.insert("class", QJsonValue(probe_class));
-    value.insert("properties", QJsonValue(props));
-    createProbeQuery.insert("from", QJsonValue("monitor"));
-    createProbeQuery.insert("type", QJsonValue("createNchecksQuery"));
+    QMap<QString,QVariant> createProbeQuery;
+    QMap<QString,QVariant> value;
+    value.insert("target", target);
+    value.insert("display", display_name);
+    value.insert("identifier", probe_name);
+    value.insert("class", probe_class);
+    value.insert("properties", props);
+    createProbeQuery.insert("from", "monitor");
+    createProbeQuery.insert("type", "createNchecksQuery");
     createProbeQuery.insert("value", value);
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig, SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(createProbeReply(QJsonObject)));
+                sig, SIGNAL(serverMessage(QVariant)),
+                this, SLOT(createProbeReply(QVariant)));
     Supercast::sendQuery(createProbeQuery, sig);
 }
 
 
-void NewProbeProgressDialog::createProbeReply(QJsonObject reply)
+void NewProbeProgressDialog::createProbeReply(QVariant replyVariant)
 {
+    QMap<QString,QVariant> reply = replyVariant.toMap();
     qDebug() << "reply: " << reply;
-    bool status = reply.value("value").toObject().value("status").toBool();
+    bool status = reply.value("value").toMap().value("status").toBool();
     if (status) {
         SystemTray::singleton->showMessage(
                     "Create probe reply:",
@@ -59,7 +60,7 @@ void NewProbeProgressDialog::createProbeReply(QJsonObject reply)
     } else {
         SystemTray::singleton->showMessage(
                     "Create probe reply:",
-                    "Probe failed: " + reply.value("value").toObject().value("reply").toString(),
+                    "Probe failed: " + reply.value("value").toMap().value("reply").toString(),
                     QSystemTrayIcon::Critical,
                     10000);
         this->reject();

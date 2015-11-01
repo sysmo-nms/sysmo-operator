@@ -15,8 +15,8 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
      */
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(handleServerEvent(QJsonObject)));
+                sig,  SIGNAL(serverMessage(QVariant)),
+                this, SLOT(handleServerEvent(QVariant)));
 
     Supercast::subscribe(this->channel, sig);
 }
@@ -26,8 +26,9 @@ MonitorChannel::~MonitorChannel()
     emit this->channelDeleted(this->channel);
 }
 
-void MonitorChannel::handleServerEvent(QJsonObject event)
+void MonitorChannel::handleServerEvent(QVariant event_variant)
 {
+    QMap<QString,QVariant> event = event_variant.toMap();
     if (event.value("type").toString() == "subscribeOk")  return;
     if (event.value("type").toString() == "subscribeErr") return;
 
@@ -44,9 +45,9 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * get http dump dir and file
          */
-        QString dump_dir  = event.value("value").toObject()
+        QString dump_dir  = event.value("value").toMap()
                                  .value("httpDumpDir").toString();
-        QString dump_file = event.value("value").toObject()
+        QString dump_file = event.value("value").toMap()
                                  .value("rrdFile").toString();
 
         /*
@@ -98,28 +99,28 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Extract update informations
          */
-        QJsonObject content =   event.value("value").toObject();
-        QJsonObject updates = content.value("rrdupdates").toObject();
-        int       timestamp = content.value("timestamp").toInt();
+        QMap<QString,QVariant> content =   event.value("value").toMap();
+        QMap<QString,QVariant> updates = content.value("rrdupdates").toMap();
+        int timestamp = content.value("timestamp").toInt();
 
 
         /*
          * Create rrd query message
          */
-        QJsonObject update_query;
-        update_query.insert("type", QJsonValue("update"));
+        QMap<QString,QVariant> update_query;
+        update_query.insert("type", "update");
         update_query.insert("updates", updates);
-        update_query.insert("file", QJsonValue(this->simple_file.fileName()));
-        update_query.insert("timestamp", QJsonValue(timestamp));
-        update_query.insert("opaque", QJsonValue("undefined"));
+        update_query.insert("file", this->simple_file.fileName());
+        update_query.insert("timestamp", timestamp);
+        update_query.insert("opaque", "undefined");
 
         /*
          * Connect signals for callback
          */
         Rrd4QtSignal* sig = new Rrd4QtSignal();
         QObject::connect(
-                    sig, SIGNAL(serverMessage(QJsonObject)),
-                    this, SLOT(handleRrdEventSimple(QJsonObject)));
+                    sig, SIGNAL(serverMessage(QVariant)),
+                    this, SLOT(handleRrdEventSimple(QVariant)));
 
         /*
          * Call rrd to update rrd
@@ -147,9 +148,9 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Extract dump informations
          */
-        QJsonObject    content =   event.value("value").toObject();
+        QMap<QString,QVariant> content = event.value("value").toMap();
         QString       dump_dir = content.value("httpDumpDir").toString();
-        QJsonObject id_to_file = content.value("elementToFile").toObject();
+        QMap<QString,QVariant> id_to_file = content.value("elementToFile").toMap();
 
 
         /*
@@ -222,9 +223,9 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
         /*
          * Extract update informations
          */
-        QJsonObject   content =   event.value("value").toObject();
-        QJsonObject   updates = content.value("rrdupdates").toObject();
-        int         timestamp = content.value("timestamp").toInt();
+        QMap<QString,QVariant> content = event.value("value").toMap();
+        QMap<QString,QVariant> updates = content.value("rrdupdates").toMap();
+        int timestamp = content.value("timestamp").toInt();
 
 
         /*
@@ -254,25 +255,25 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
             /*
              * Extract updates as is (jsonObject)
              */
-            QJsonObject up = updates.value(id).toObject();
+            QMap<QString,QVariant> up = updates.value(id).toMap();
 
             /*
              * Build query
              */
-            QJsonObject update_query;
-            update_query.insert("type", QJsonValue("update"));
+            QMap<QString,QVariant> update_query;
+            update_query.insert("type", "update");
             update_query.insert("updates", up);
-            update_query.insert("file", QJsonValue(rrd_file));
-            update_query.insert("timestamp", QJsonValue(timestamp));
-            update_query.insert("opaque", QJsonValue(id));
+            update_query.insert("file", rrd_file);
+            update_query.insert("timestamp", timestamp);
+            update_query.insert("opaque", id);
 
             /*
              * Connect signals for callback
              */
             Rrd4QtSignal* sig = new Rrd4QtSignal();
             QObject::connect(
-                        sig,  SIGNAL(serverMessage(QJsonObject)),
-                        this, SLOT(handleRrdEventTable(QJsonObject)));
+                        sig,  SIGNAL(serverMessage(QVariant)),
+                        this, SLOT(handleRrdEventTable(QVariant)));
 
             /*
              * call rrd update
@@ -288,8 +289,9 @@ void MonitorChannel::handleServerEvent(QJsonObject event)
     qWarning() << "handleServerMessage unknown message type" << event;
 }
 
-void MonitorChannel::handleRrdEventTable(QJsonObject event)
+void MonitorChannel::handleRrdEventTable(QVariant event_variant)
 {
+    QMap<QString,QVariant> event = event_variant.toMap();
     /*
      * Extract opaque set in handlerServerEvent() from event
      */
@@ -307,7 +309,7 @@ void MonitorChannel::handleRrdEventTable(QJsonObject event)
      * break. The update is not yet finished.
      */
     bool pending_rrds = false;
-    QHash<QString, bool>::iterator i;
+    QMap<QString, bool>::iterator i;
     for (
          i  = this->table_file_rrd_pending.begin();
          i != this->table_file_rrd_pending.end();
@@ -326,8 +328,8 @@ void MonitorChannel::handleRrdEventTable(QJsonObject event)
         /*
          * Emit an update message to the connected widgets
          */
-        QJsonObject update_msg;
-        update_msg.insert("event", QJsonValue("update"));
+        QMap<QString,QVariant> update_msg;
+        update_msg.insert("event", "update");
 
         emit this->channelEvent(update_msg);
 
@@ -351,15 +353,15 @@ void MonitorChannel::handleRrdEventTable(QJsonObject event)
 
 
 
-void MonitorChannel::handleRrdEventSimple(QJsonObject event)
+void MonitorChannel::handleRrdEventSimple(QVariant event_variant)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event_variant);
 
     /*
      * Emit message of type update
      */
-    QJsonObject update_msg;
-    update_msg.insert("event", QJsonValue("update"));
+    QMap<QString,QVariant> update_msg;
+    update_msg.insert("event", "update");
     emit this->channelEvent(update_msg);
 
 
@@ -420,7 +422,7 @@ void MonitorChannel::handleHttpReplyTable(QString element) {
      * if one update_status is false.
      */
     bool all_files_ready = true;
-    QHash<QString, bool>::iterator i;
+    QMap<QString, bool>::iterator i;
     for (
          i  = this->table_files_update_status.begin();
          i != this->table_files_update_status.end();
@@ -476,39 +478,39 @@ void MonitorChannel::decreaseSubscriberCount()
 }
 
 bool        MonitorChannel::hasDumpInfo() {return this->synchronized;}
-QJsonObject MonitorChannel::getDumpInfo()
+QMap<QString,QVariant> MonitorChannel::getDumpInfo()
 {
     return this->buildDump();
 }
 
-QJsonObject MonitorChannel::buildDump()
+QMap<QString,QVariant> MonitorChannel::buildDump()
 {
     /*
      * If chan is "simple" the buildDump is simple
      */
     if (this->chan_type == "simple") {
-        QJsonObject dumpEvent;
-        dumpEvent.insert("event", QJsonValue("dump"));
-        dumpEvent.insert("type", QJsonValue("simple"));
-        dumpEvent.insert("rrdFile", QJsonValue(this->simple_file.fileName()));
+        QMap<QString,QVariant> dumpEvent;
+        dumpEvent.insert("event", "dump");
+        dumpEvent.insert("type", "simple");
+        dumpEvent.insert("rrdFile", this->simple_file.fileName());
         return dumpEvent;
     }
     if (this->chan_type == "table") {
-        QJsonObject table_dump;
+        QMap<QString,QVariant> table_dump;
 
         /*
          * If chan is "table", we need to iterate over table_files
          */
-        QHash<QString,QString>::iterator i;
+        QMap<QString,QString>::iterator i;
         for (i = this->table_files.begin();
                  i != this->table_files.end(); ++i)
         {
-            table_dump.insert(i.key(), QJsonValue(i.value()));
+            table_dump.insert(i.key(), i.value());
         }
 
-        QJsonObject dumpEvent;
-        dumpEvent.insert("event", QJsonValue("dump"));
-        dumpEvent.insert("type", QJsonValue("table"));
+        QMap<QString,QVariant> dumpEvent;
+        dumpEvent.insert("event", "dump");
+        dumpEvent.insert("type", "table");
         dumpEvent.insert("rrdFiles", table_dump);
 
         return dumpEvent;
@@ -519,5 +521,5 @@ QJsonObject MonitorChannel::buildDump()
      */
     qCritical() <<
               "buildDump() called with wrong chan_type: " << this->chan_type;
-    return QJsonObject();
+    return QMap<QString,QVariant>();
 }

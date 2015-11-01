@@ -7,9 +7,9 @@ Monitor* Monitor::getInstance() {return Monitor::singleton;}
 Monitor::Monitor(QObject *parent) : QObject(parent)
 {
     Monitor::singleton = this;
-    this->targets  = new QHash<QString, QJsonObject>();
-    this->probes   = new QHash<QString, QJsonObject>();
-    this->channels = new QHash<QString, MonitorChannel*>();
+    this->targets  = new QMap<QString, QVariant>();
+    this->probes   = new QMap<QString, QVariant>();
+    this->channels = new QMap<QString, MonitorChannel*>();
 
 }
 
@@ -26,34 +26,35 @@ QWidget* Monitor::getCenterWidget()
     return dynamic_cast<QWidget*>(Monitor::singleton->parent());
 }
 
-void Monitor::handleServerMessage(QJsonObject message)
+void Monitor::handleServerMessage(QVariant messageVariant)
 {
-    QString         type = message.value("type").toString("undefined");
-    QJsonObject mcontent = message.value("value").toObject();
+    QMap<QString,QVariant> message = messageVariant.toMap();
+    QString         type = message.value("type").toString();
+    QMap<QString,QVariant> mcontent = message.value("value").toMap();
 
     if (type == "infoTarget") {
-        QString	tname(mcontent.value("name").toString(""));
+        QString	tname(mcontent.value("name").toString());
 
         this->targets->insert(tname,mcontent);
         emit this->infoTarget(mcontent);
 
 
     } else if (type == "infoProbe") {
-        QString	pname(mcontent.value("name").toString(""));
+        QString	pname(mcontent.value("name").toString());
 
         this->probes->insert(pname, mcontent);
         emit this->infoProbe(mcontent);
 
 
     } else if (type == "deleteTarget") {
-        QString	tname(mcontent.value("name").toString(""));
+        QString	tname(mcontent.value("name").toString());
 
         this->targets->remove(tname);
         emit this->deleteTarget(mcontent);
 
 
     } else if (type == "deleteProbe") {
-        QString	pname(mcontent.value("name").toString(""));
+        QString	pname(mcontent.value("name").toString());
 
         this->targets->remove(pname);
         emit this->deleteProbe(mcontent);
@@ -78,18 +79,17 @@ void Monitor::handleServerMessage(QJsonObject message)
     } else if (type == "subscribeOk") {
     } else if (type == "unSubscribeOk") {
     } else {
-        QJsonDocument doc(message);
-        qWarning() << "received message!!" << type << doc.toJson();
+        qWarning() << "received message!!" << type << QJson::encode(message);
    }
 }
 
 
-QJsonObject Monitor::getTarget(QString targetId)
+QVariant Monitor::getTarget(QString targetId)
 {
     return Monitor::singleton->targets->value(targetId);
 }
 
-QJsonObject Monitor::getProbe(QString probeId)
+QVariant Monitor::getProbe(QString probeId)
 {
     return Monitor::singleton->probes->value(probeId);
 }
@@ -141,7 +141,7 @@ void Monitor::subscribeToChannel(
          * server), get this dumpInfo and forward it to the channel.
          */
         if (chan->hasDumpInfo()) {
-            QJsonObject dump = chan->getDumpInfo();
+            QVariant dump = chan->getDumpInfo();
             subscriber->handleEvent(dump);
         }
 
@@ -149,8 +149,8 @@ void Monitor::subscribeToChannel(
          * Then connect the channel to the subscriber
          */
         QObject::connect(
-                    chan,       SIGNAL(channelEvent(QJsonObject)),
-                    subscriber, SLOT(handleEvent(QJsonObject)));
+                    chan,       SIGNAL(channelEvent(QVariant)),
+                    subscriber, SLOT(handleEvent(QVariant)));
     } else {
         /*
          * Channel do not exist, create it. And increase his subscriber
@@ -179,8 +179,8 @@ void Monitor::subscribeToChannel(
          * control return to the main loop. No need to check hasDumpInfo()
          */
         QObject::connect(
-                    chan,       SIGNAL(channelEvent(QJsonObject)),
-                    subscriber, SLOT(handleEvent(QJsonObject)));
+                    chan,       SIGNAL(channelEvent(QVariant)),
+                    subscriber, SLOT(handleEvent(QVariant)));
     }
 }
 

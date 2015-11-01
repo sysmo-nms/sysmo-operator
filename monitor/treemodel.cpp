@@ -2,8 +2,8 @@
 
 TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 {
-    this->targets = new QHash<QString, ItemTarget*>();
-    this->probes  = new QHash<QString, ItemProbe*>();
+    this->targets = new QMap<QString, ItemTarget*>();
+    this->probes  = new QMap<QString, ItemProbe*>();
 
     QStringList headers = (QStringList()
           << "Target/Probe"
@@ -15,20 +15,20 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 
     Monitor* monitor = Monitor::getInstance();
     QObject::connect(
-                monitor, SIGNAL(infoProbe(QJsonObject)),
-                this,	 SLOT(handleInfoProbe(QJsonObject)));
+                monitor, SIGNAL(infoProbe(QVariant)),
+                this,	 SLOT(handleInfoProbe(QVariant)));
     QObject::connect(
-                monitor, SIGNAL(infoTarget(QJsonObject)),
-                this,	 SLOT(handleInfoTarget(QJsonObject)));
+                monitor, SIGNAL(infoTarget(QVariant)),
+                this,	 SLOT(handleInfoTarget(QVariant)));
     QObject::connect(
-                monitor, SIGNAL(deleteProbe(QJsonObject)),
-                this,	 SLOT(handleDeleteProbe(QJsonObject)));
+                monitor, SIGNAL(deleteProbe(QVariant)),
+                this,	 SLOT(handleDeleteProbe(QVariant)));
     QObject::connect(
-                monitor, SIGNAL(deleteTarget(QJsonObject)),
-                this,	 SLOT(handleDeleteTarget(QJsonObject)));
+                monitor, SIGNAL(deleteTarget(QVariant)),
+                this,	 SLOT(handleDeleteTarget(QVariant)));
     QObject::connect(
-                monitor, SIGNAL(probeReturn(QJsonObject)),
-                this,	 SLOT(handleProbeReturn(QJsonObject)));
+                monitor, SIGNAL(probeReturn(QVariant)),
+                this,	 SLOT(handleProbeReturn(QVariant)));
 }
 
 
@@ -38,9 +38,10 @@ TreeModel::~TreeModel()
     delete this->probes;
 }
 
-void TreeModel::handleInfoProbe(QJsonObject message)
+void TreeModel::handleInfoProbe(QVariant message_var)
 {
-    QString info_type = message.value("infoType").toString("undefined");
+    QMap<QString,QVariant> message = message_var.toMap();
+    QString info_type = message.value("infoType").toString();
 
     if (info_type == "create") {
 
@@ -61,7 +62,7 @@ void TreeModel::handleInfoProbe(QJsonObject message)
         emit this->selectIndex(probe->index());
 
     } else if (info_type == "update") {
-        QString probe_name = message.value("name").toString("undefined");
+        QString probe_name = message.value("name").toString();
 
         ItemProbe*  probe  = this->probes->value(probe_name);
         ItemTarget* target = this->targets->value(probe->belong_to);
@@ -73,9 +74,10 @@ void TreeModel::handleInfoProbe(QJsonObject message)
 }
 
 
-void TreeModel::handleInfoTarget(QJsonObject message)
+void TreeModel::handleInfoTarget(QVariant message_var)
 {
-    QString info_type = message.value("infoType").toString("undefined");
+    QMap<QString,QVariant> message = message_var.toMap();
+    QString info_type = message.value("infoType").toString();
     if (info_type == "create") {
         ItemTarget* target = new ItemTarget(message);
         this->targets->insert(target->name, target);
@@ -85,16 +87,17 @@ void TreeModel::handleInfoTarget(QJsonObject message)
         emit this->expandIndex(target->index());
 
     } else if (info_type == "update") {
-        QString     target_name = message.value("name").toString("undefined");
+        QString     target_name = message.value("name").toString();
         ItemTarget* target      = this->targets->value(target_name);
         target->updateInfo(message);
     }
 }
 
 
-void TreeModel::handleDeleteProbe(QJsonObject message)
+void TreeModel::handleDeleteProbe(QVariant message_var)
 {
-    QString     probe_name = message.value("name").toString("undefined");
+    QMap<QString,QVariant> message = message_var.toMap();
+    QString     probe_name = message.value("name").toString();
     ItemProbe*  probe      = this->probes->take(probe_name);
     ItemTarget* target     = this->targets->value(probe->belong_to);
     target->removeRow(probe->row());
@@ -103,17 +106,19 @@ void TreeModel::handleDeleteProbe(QJsonObject message)
 }
 
 
-void TreeModel::handleDeleteTarget(QJsonObject message)
+void TreeModel::handleDeleteTarget(QVariant message_var)
 {
-    QString     target_name = message.value("name").toString("undefined");
+    QMap<QString,QVariant> message = message_var.toMap();
+    QString     target_name = message.value("name").toString();
     ItemTarget* target      = this->targets->take(target_name);
     this->removeRow(target->row());
 }
 
 
-void TreeModel::handleProbeReturn(QJsonObject message)
+void TreeModel::handleProbeReturn(QVariant message_var)
 {
-    QString     probe_name = message.value("name").toString("undefined");
+    QMap<QString,QVariant> message = message_var.toMap();
+    QString     probe_name = message.value("name").toString();
     ItemProbe*  probe      = this->probes->value(probe_name);
     probe->updateReturnInfo(message);
 }

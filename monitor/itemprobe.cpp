@@ -2,15 +2,14 @@
 
 int ItemProbe::type() const { return Sysmo::TYPE_PROBE; }
 
-ItemProbe::ItemProbe(QJsonObject info_probe) : QStandardItem()
+ItemProbe::ItemProbe(QMap<QString,QVariant> info_probe) : QStandardItem()
 {
     // TODO include probe config from server and show it as a tooltip here
-    this->name      = info_probe.value("name").toString("undefined");
-    this->belong_to = info_probe.value("target").toString("undefined");
+    this->name      = info_probe.value("name").toString();
+    this->belong_to = info_probe.value("target").toString();
     int step        = info_probe.value("step").toInt(0);
     this->targ_filter = "";
-    this->orig_filter =
-            QJsonDocument(info_probe).toJson(QJsonDocument::Compact);
+    this->orig_filter = QJson::encode(info_probe);
     this->updateFilter();
 
     this->setData(this->orig_filter, Sysmo::ROLE_FILTER_STRING);
@@ -39,14 +38,13 @@ void ItemProbe::updateFilter()
     this->setData(filter.remove("\""), Sysmo::ROLE_FILTER_STRING);
 }
 
-void ItemProbe::updateInfo(QJsonObject info_probe)
+void ItemProbe::updateInfo(QMap<QString,QVariant> info_probe)
 {
-    this->orig_filter =
-            QJsonDocument(info_probe).toJson(QJsonDocument::Compact);
+    this->orig_filter = QJson::encode(info_probe);
     this->updateFilter();
 
-    this->setData(info_probe.value("descr").toString(""), Qt::DisplayRole);
-    QString status = info_probe.value("status").toString("undef");
+    this->setData(info_probe.value("descr").toString(), Qt::DisplayRole);
+    QString status = info_probe.value("status").toString();
     if (status == "OK")
     {
         this->setData(QPixmap(":/pixmaps/weather-clear.png"),
@@ -103,12 +101,12 @@ void ItemProbe::updateInfo(QJsonObject info_probe)
 }
 
 
-void ItemProbe::updateReturnInfo(QJsonObject info)
+void ItemProbe::updateReturnInfo(QMap<QString,QVariant> info)
 {
-    QString reply = info.value("replyString").toString("undefined");
+    QString reply = info.value("replyString").toString();
     this->item_last_return->setData(reply, Qt::DisplayRole);
     this->item_last_return->setToolTip(reply);
-    int in_sec      = info.value("nextReturn").toInt(0) / 1000;
+    int in_sec      = info.value("nextReturn").toInt() / 1000;
     int current_sec = QDateTime::currentMSecsSinceEpoch() / 1000;
     int next_in_sec = current_sec + in_sec;
     this->item_progress->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);

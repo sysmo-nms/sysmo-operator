@@ -3,11 +3,13 @@
 
 #include "network/supercast.h"
 #include "monitor/monitorchannel.h"
+#include "qjson.h"
 
 #include <QObject>
 #include <QWidget>
-#include <QHash>
+#include <QMap>
 #include <QString>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -23,7 +25,7 @@ public:
     ~MonitorProxyWidget();
 
 public slots:
-    virtual void handleEvent(QJsonObject) = 0;
+    virtual void handleEvent(QVariant) = 0;
     void connectToChannel();
 
 signals:
@@ -39,33 +41,33 @@ public:
     explicit Monitor(QObject *parent = 0);
     ~Monitor();
     static Monitor* getInstance();
-    QHash<QString, QJsonObject>*     targets;
-    QHash<QString, QJsonObject>*     probes;
-    QHash<QString, MonitorChannel*>* channels;
+    QMap<QString, QVariant>*     targets;
+    QMap<QString, QVariant>*     probes;
+    QMap<QString, MonitorChannel*>* channels;
     static void subscribeToChannel(
             QString channel, MonitorProxyWidget* subscriber);
     static void unsubscribeToChannel(
             QString channel, MonitorProxyWidget* subscriber);
-    static QJsonObject getTarget(QString targetId);
-    static QJsonObject getProbe(QString probeId);
+    static QVariant getTarget(QString targetId);
+    static QVariant getProbe(QString probeId);
     static QWidget* getCenterWidget();
 
 private:
     static Monitor* singleton;
 
 public slots:
-    void handleServerMessage(QJsonObject message);
+    void handleServerMessage(QVariant message);
     void channelDeleted(QString chan_name);
 
 signals:
-    void infoProbe(QJsonObject message);
-    void infoTarget(QJsonObject message);
-    void deleteTarget(QJsonObject message);
-    void deleteProbe(QJsonObject message);
-    void probeReturn(QJsonObject message);
-    void initialSyncBegin(QJsonObject message);
+    void infoProbe(QVariant message);
+    void infoTarget(QVariant message);
+    void deleteTarget(QVariant message);
+    void deleteProbe(QVariant message);
+    void probeReturn(QVariant message);
+    void initialSyncBegin(QVariant message);
     void initialSyncEnd();
-    void dbNotification(QJsonObject message);
+    void dbNotification(QVariant message);
 
 };
 

@@ -2,6 +2,8 @@
 #define SUPERCASTSIGNAL_H
 
 #include <QObject>
+#include <QVariant>
+#include <QString>
 
 class SupercastSignal : public QObject
 {
@@ -11,9 +13,9 @@ public:
     explicit SupercastSignal(QObject* parent = 0);
 
 signals:
-    void serverMessage(QJsonObject json);
-    void serverMessage(QString     string);
-    void serverMessage(int         integer);
+    void serverMessage(QVariant json);
+    void serverMessage(QString  string);
+    void serverMessage(int      integer);
 };
 
 #endif // SUPERCASTSIGNAL_H

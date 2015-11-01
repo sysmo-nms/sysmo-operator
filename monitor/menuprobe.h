@@ -11,6 +11,8 @@
 #include <QString>
 #include <QPoint>
 #include <QAction>
+#include <QVariant>
+#include <QMap>
 
 #include <QDebug>
 
@@ -28,10 +30,10 @@ private:
 
 private slots:
     void handleForceProbe();
-    void handleForceProbeReply(QJsonObject reply);
+    void handleForceProbeReply(QVariant reply);
     void handlePauseProbe();
     void handleDeleteProbe();
-    void handleDeleteProbeReply(QJsonObject reply);
+    void handleDeleteProbeReply(QVariant reply);
     void handleShowPerf();
 
 };

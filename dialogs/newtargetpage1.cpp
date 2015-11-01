@@ -318,35 +318,35 @@ int NewTargetPage1::configType() const
 bool NewTargetPage1::validatePage()
 {
 
-    QJsonObject sysProperties;
+    QMap<QString,QVariant> sysProperties;
     if (this->configType() == NewTargetPage1::NO_SNMP) {
         // sysProperties empty
 
     } else if (this->configType() == NewTargetPage1::SNMP_V1) {
         sysProperties.insert("snmp_port",
-                        QJsonValue(QString::number(this->snmp_port->value())));
+                        QString::number(this->snmp_port->value()));
         sysProperties.insert("snmp_version",
-                        QJsonValue("1"));
+                        "1");
         sysProperties.insert("snmp_community",
-                        QJsonValue(this->snmp_community->text()));
+                        this->snmp_community->text());
 
     } else if (this->configType() == NewTargetPage1::SNMP_V2) {
         sysProperties.insert("snmp_port",
-                        QJsonValue(QString::number(this->snmp_port->value())));
+                        QString::number(this->snmp_port->value()));
         sysProperties.insert("snmp_version",
-                        QJsonValue("2c"));
+                        "2c");
         sysProperties.insert("snmp_community",
-                        QJsonValue(this->snmp_community->text()));
+                        this->snmp_community->text());
 
     } else if (this->configType() ==  NewTargetPage1::SNMP_V3_NOAUTHNOPRIV) {
         sysProperties.insert("snmp_port",
-                        QJsonValue(QString::number(this->snmp_port->value())));
+                        QString::number(this->snmp_port->value()));
         sysProperties.insert("snmp_version",
-                        QJsonValue("3"));
+                        "3");
         sysProperties.insert("snmp_seclevel",
-                        QJsonValue("noAuthNoPriv"));
+                        "noAuthNoPriv");
         sysProperties.insert("snmp_usm_user",
-                             QJsonValue(this->snmp_usm_user->text()));
+                             this->snmp_usm_user->text());
 
     } else if (this->configType() ==  NewTargetPage1::SNMP_V3_AUTHNOPRIV) {
         QString authproto;
@@ -357,17 +357,17 @@ bool NewTargetPage1::validatePage()
         }
 
         sysProperties.insert("snmp_port",
-                        QJsonValue(QString::number(this->snmp_port->value())));
+                        QString::number(this->snmp_port->value()));
         sysProperties.insert("snmp_version",
-                        QJsonValue("3"));
+                        "3");
         sysProperties.insert("snmp_seclevel",
-                        QJsonValue("authNoPriv"));
+                        "authNoPriv");
         sysProperties.insert("snmp_usm_user",
-                        QJsonValue(this->snmp_usm_user->text()));
+                        this->snmp_usm_user->text());
         sysProperties.insert("snmp_authproto",
-                        QJsonValue(authproto));
+                        authproto);
         sysProperties.insert("snmp_authkey",
-                        QJsonValue(this->snmp_auth_key->text()));
+                        this->snmp_auth_key->text());
 
 
     } else if (this->configType() == NewTargetPage1::SNMP_V3_AUTHPRIV) {
@@ -393,46 +393,47 @@ bool NewTargetPage1::validatePage()
         qDebug() << "current index is: " << privprotoIndex;
 
         sysProperties.insert("snmp_port",
-                        QJsonValue(QString::number(this->snmp_port->value())));
+                        QString::number(this->snmp_port->value()));
         sysProperties.insert("snmp_version",
-                        QJsonValue("3"));
+                        "3");
         sysProperties.insert("snmp_seclevel",
-                        QJsonValue("authPriv"));
+                        "authPriv");
         sysProperties.insert("snmp_usm_user",
-                        QJsonValue(this->snmp_usm_user->text()));
+                        this->snmp_usm_user->text());
         sysProperties.insert("snmp_authproto",
-                        QJsonValue(authproto));
+                        authproto);
         sysProperties.insert("snmp_authkey",
-                        QJsonValue(this->snmp_auth_key->text()));
+                        this->snmp_auth_key->text());
         sysProperties.insert("snmp_privproto",
-                        QJsonValue(privproto));
+                        privproto);
         sysProperties.insert("snmp_privkey",
-                        QJsonValue(this->snmp_priv_key->text()));
+                        this->snmp_priv_key->text());
 
     }
 
-    QJsonObject createTargetQuery;
-    QJsonObject props;
-    props.insert("host", QJsonValue(this->target_host->text()));
-    props.insert("name", QJsonValue(this->target_name->text()));
-    QJsonObject value;
+    QMap<QString,QVariant> createTargetQuery;
+    QMap<QString,QVariant> props;
+    props.insert("host", this->target_host->text());
+    props.insert("name", this->target_name->text());
+    QMap<QString,QVariant> value;
     value.insert("properties", props);
     value.insert("sysProperties", sysProperties);
-    createTargetQuery.insert("from", QJsonValue("monitor"));
-    createTargetQuery.insert("type", QJsonValue("createTargetQuery"));
+    createTargetQuery.insert("from", "monitor");
+    createTargetQuery.insert("type", "createTargetQuery");
     createTargetQuery.insert("value", value);
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(createTargetReply(QJsonObject)));
+                sig,  SIGNAL(serverMessage(QVariant)),
+                this, SLOT(createTargetReply(QVariant)));
     Supercast::sendQuery(createTargetQuery, sig);
     return false;
 }
 
-void NewTargetPage1::createTargetReply(QJsonObject reply)
+void NewTargetPage1::createTargetReply(QVariant replyVariant)
 {
+    QMap<QString,QVariant> reply = replyVariant.toMap();
     qDebug() << "received qt reply: " << reply;
-    QJsonObject val = reply.value("value").toObject();
+    QMap<QString,QVariant> val = reply.value("value").toMap();
     bool status = val.value("status").toBool();
 
    MessageBox msgbox(this);

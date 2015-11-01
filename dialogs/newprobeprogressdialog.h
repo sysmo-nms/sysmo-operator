@@ -9,10 +9,11 @@
 #include <QObject>
 #include <QWidget>
 #include <QProgressDialog>
-#include <QHash>
-#include <QHashIterator>
+#include <QMap>
+#include <QMapIterator>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -21,7 +22,7 @@ class NewProbeProgressDialog : public QProgressDialog
     Q_OBJECT
 public:
     NewProbeProgressDialog(
-            QHash<QString, QLineEdit*>* args,
+            QMap<QString, QLineEdit*>* args,
             QString target,
             QString probe_name,
             QString probe_class,
@@ -29,7 +30,7 @@ public:
             QWidget* parent = 0);
 
 public slots:
-    void createProbeReply(QJsonObject reply);
+    void createProbeReply(QVariant reply);
 };
 
 #endif // NEWPROBEPROGRESSDIALOG_H

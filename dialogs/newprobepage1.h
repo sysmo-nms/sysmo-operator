@@ -26,6 +26,7 @@
 #include <QVariant>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QMap>
 
 #include <QDebug>
 

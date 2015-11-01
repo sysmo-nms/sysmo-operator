@@ -27,6 +27,8 @@
 #include <QString>
 #include <QAbstractButton>
 #include <QMessageBox>
+#include <QVariant>
+#include <QMap>
 
 #include <QDebug>
 
@@ -41,7 +43,7 @@ public:
     bool validatePage();
 
 public slots:
-    void createTargetReply(QJsonObject reply);
+    void createTargetReply(QVariant reply);
 
 private:
     QLineEdit* target_host;

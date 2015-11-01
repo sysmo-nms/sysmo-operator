@@ -10,7 +10,7 @@ void MonitorActions::openActionFor(QString target)
     // if settings is initialized
     if (var.isValid())
     {
-        QHash<QString, QVariant> dict = var.toHash();
+        QMap<QString, QVariant> dict = var.toMap();
         QVariant tval = dict.value(target);
 
         // if tval is valid hence have at least one action execute it
@@ -20,9 +20,9 @@ void MonitorActions::openActionFor(QString target)
         }
     } else {
         /*
-         * Initialize empty QHash<QString,QJsonObject>
+         * Initialize empty QMap<QString,QVariant>
          */
-        s.setValue("actions/monitoractions", QHash<QString,QVariant>());
+        s.setValue("actions/monitoractions", QMap<QString,QVariant>());
         s.sync();
     }
 

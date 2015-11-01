@@ -35,7 +35,7 @@ void NewProbePage2::initializePage()
 {
     this->form_frame = new NFrame(this);
     this->grid->addWidget(this->form_frame, 0, 0);
-    this->args = new QHash<QString, QLineEdit*>();
+    this->args = new QMap<QString, QLineEdit*>();
     this->mandatory_args = new QList<QLineEdit*>();
 
     QString str("Configure probe %1");
@@ -158,8 +158,8 @@ void NewProbePage2::initializePage()
     QLineEdit* host_edit = this->args->value("host");
     if (host_edit == NULL) return;
 
-    QJsonObject val  = Monitor::getInstance()->targets->value(this->target);
-    QString host = val.value("properties").toObject().value("host").toString("");
+    QMap<QString,QVariant> val = Monitor::getInstance()->targets->value(this->target).toMap();
+    QString host = val.value("properties").toMap().value("host").toString();
     host_edit->setText(host);
 }
 
@@ -202,25 +202,13 @@ HelperExec::HelperExec(QLineEdit* line, QWidget* parent) : QObject(parent)
 
 void HelperExec::execHelper()
 {
-    QHash<QString,QVariant> valueHash;
-    valueHash.insert("target", this->h_target);
-    valueHash.insert("class", this->h_class);
-    QHash<QString,QVariant> helperHash;
-    helperHash.insert("from", "monitor");
-    helperHash.insert("type", "nchecksHelperQuery");
-    helperHash.insert("value", valueHash);
-
-    qDebug() << "execcccccc helper " << QJson::encode(helperHash);
-
-    QJsonObject helperQuery;
-    QJsonObject value;
-    value.insert("target", QJsonValue(this->h_target));
-    value.insert("class", QJsonValue(this->h_class));
-    helperQuery.insert("from", QJsonValue("monitor"));
-    helperQuery.insert("type", QJsonValue("ncheckHelperQuery"));
+    QMap<QString,QVariant> helperQuery;
+    QMap<QString,QVariant> value;
+    value.insert("target", this->h_target);
+    value.insert("class", this->h_class);
+    helperQuery.insert("from", "monitor");
+    helperQuery.insert("type", "ncheckHelperQuery");
     helperQuery.insert("value", value);
-
-
 
     QString msg = QString("Executing helper %1").arg(this->h_class);
     this->dial = new QProgressDialog(this->w_parent);
@@ -231,23 +219,24 @@ void HelperExec::execHelper()
     this->dial->open();
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(helperReply(QJsonObject)));
+                sig,  SIGNAL(serverMessage(QVariant)),
+                this, SLOT(helperReply(QVariant)));
     Supercast::sendQuery(helperQuery, sig);
 }
 
-void HelperExec::helperReply(QJsonObject reply)
+void HelperExec::helperReply(QVariant replyVariant)
 {
+    QMap<QString,QVariant> reply = replyVariant.toMap();
     this->dial->close();
     this->dial->deleteLater();
     qDebug() << "helper success" << reply;
 
-    QJsonObject reply_content = reply.value("value").toObject().value("reply").toObject();
-    if (reply_content.value("status").toString("undefined") == "success") {
-        if (reply_content.value("type").toString("undefined") == "simple") {
-            QString value = reply_content.value("message").toString("");
+    QMap<QString,QVariant> reply_content = reply.value("value").toMap().value("reply").toMap();
+    if (reply_content.value("status").toString() == "success") {
+        if (reply_content.value("type").toString() == "simple") {
+            QString value = reply_content.value("message").toString();
             this->flag_line->setText(value);
-        } else if (reply_content.value("type").toString("undefined") == "table") {
+        } else if (reply_content.value("type").toString() == "table") {
             HelperDialog* hdial = new HelperDialog(reply_content, this->w_parent);
             if (hdial->exec() == QDialog::Accepted) {
                 QString value = hdial->getValue();
@@ -259,27 +248,35 @@ void HelperExec::helperReply(QJsonObject reply)
         MessageBox* mbox = new MessageBox(this->w_parent);
         mbox->setIconType(Sysmo::MESSAGE_ERROR);
         mbox->setModal(true);
-        mbox->setWindowTitle(reply_content.value("id").toString("Helper reply"));
-        mbox->setText(reply_content.value("message").toString("The helper has fail with no error message"));
+        mbox->setWindowTitle(reply_content.value("id").toString());
+        QString errMsg = reply_content.value("message").toString();
+        if (errMsg.isEmpty()) {
+            mbox->setText("The helper has fail with no error message");
+        } else {
+            mbox->setText(errMsg);
+        }
+
         mbox->exec();
     }
 }
 
 HelperDialog::HelperDialog(
-        QJsonObject helperReply,
-        QWidget*    parent) : QDialog(parent)
+        QVariant helperReplyVariant,
+        QWidget* parent) : QDialog(parent)
 {
+    QMap<QString,QVariant> helperReply = helperReplyVariant.toMap();
+
     this->value = "";
     this->list_separator = "";
     this->setModal(true);
     this->setMinimumHeight(400);
     this->setMinimumWidth(600);
-    this->setWindowTitle(helperReply.value("id").toString("Helper Dialog"));
+    this->setWindowTitle(helperReply.value("id").toString());
 
     NGrid* grid = new NGrid(this);
     this->setLayout(grid);
 
-    QString label_text = helperReply.value("message").toString("");
+    QString label_text = helperReply.value("message").toString();
     QLabel* label = new QLabel(this);
     label->setText(label_text);
     grid->addWidget(label, 0,0);
@@ -311,7 +308,8 @@ HelperDialog::HelperDialog(
     grid->setRowStretch(2,0);
 
     this->list_separator = helperReply.value("listSeparator").toString();
-    QJsonArray all_rows = helperReply.value("rows").toArray();
+    QList<QVariant> all_rows = helperReply.value("rows").toList();
+
     if (helperReply.value("treeRoot").toString() != "") {
         /*
          * This is a table with tree
@@ -323,8 +321,8 @@ HelperDialog::HelperDialog(
          * get all roots types
          */
         QStringList roots = QStringList();
-        foreach (const QJsonValue row, all_rows) {
-            QJsonObject row_obj = row.toObject();
+        foreach (const QVariant row, all_rows) {
+            QMap<QString,QVariant> row_obj = row.toMap();
             QString root = row_obj.value(tree_root).toString();
             if (roots.contains(root)) continue;
             roots.append(root);
@@ -350,7 +348,7 @@ HelperDialog::HelperDialog(
         /*
          * get all column types minus tree_root and set header
          */
-        QJsonObject test_obj = all_rows.at(0).toObject();
+        QMap<QString,QVariant> test_obj = all_rows.at(0).toMap();
         QStringList cols = test_obj.keys();
         cols.removeAll(tree_root);
         tree->setColumnCount(cols.size());
@@ -362,9 +360,9 @@ HelperDialog::HelperDialog(
          * Fill childs
          */
         QString select = helperReply.value("select").toString();
-        foreach (const QJsonValue row, all_rows) {
-            QJsonObject row_obj = row.toObject();
-            QString     iroot   = row_obj.value(tree_root).toString();
+        foreach (const QVariant row, all_rows) {
+            QMap<QString,QVariant> row_obj = row.toMap();
+            QString iroot = row_obj.value(tree_root).toString();
             QTreeWidgetItem* root_item  = this->root_items.value(iroot);
             QStringList item_cols;
             foreach (const QString key, cols) {
@@ -397,7 +395,7 @@ HelperDialog::HelperDialog(
 void HelperDialog::validateSelection()
 {
     QList<QTreeWidgetItem*> selection;
-    QHash<QString, QTreeWidgetItem*>::iterator i;
+    QMap<QString, QTreeWidgetItem*>::iterator i;
     for (i  = this->root_items.begin();
          i != this->root_items.end();
          i++)
@@ -422,7 +420,7 @@ void HelperDialog::validateSelection()
 
 void HelperDialog::resetTreeCheckState()
 {
-    QHash<QString, QTreeWidgetItem*>::iterator i;
+    QMap<QString, QTreeWidgetItem*>::iterator i;
     for (i  = this->root_items.begin();
          i != this->root_items.end();
          i++)

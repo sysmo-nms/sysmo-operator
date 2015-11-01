@@ -8,13 +8,13 @@ StatusButtonWidget::StatusButtonWidget(QWidget* parent) :
     timer->setSingleShot(false);
 
     QObject::connect(
-                Monitor::getInstance(), SIGNAL(deleteProbe(QJsonObject)),
-                this, SLOT(handleDeleteProbe(QJsonObject)));
+                Monitor::getInstance(), SIGNAL(deleteProbe(QVariant)),
+                this, SLOT(handleDeleteProbe(QVariant)));
     QObject::connect(
-                Monitor::getInstance(), SIGNAL(infoProbe(QJsonObject)),
-                this, SLOT(handleInfoProbe(QJsonObject)));
+                Monitor::getInstance(), SIGNAL(infoProbe(QVariant)),
+                this, SLOT(handleInfoProbe(QVariant)));
 
-    this->status_map = new QHash<QString,QString>();
+    this->status_map = new QMap<QString,QString>();
 
     NGridContainer* grid = new NGridContainer();
     this->setLayout(grid);
@@ -46,8 +46,9 @@ StatusButtonWidget::StatusButtonWidget(QWidget* parent) :
 }
 
 
-void StatusButtonWidget::handleDeleteProbe(QJsonObject obj)
+void StatusButtonWidget::handleDeleteProbe(QVariant obj_var)
 {
+    QMap<QString,QVariant> obj = obj_var.toMap();
     QString name = obj.value("name").toString();
     if (this->status_map->contains(name)) {
         QString status = this->status_map->take(name);
@@ -55,11 +56,11 @@ void StatusButtonWidget::handleDeleteProbe(QJsonObject obj)
     }
 }
 
-void StatusButtonWidget::handleInfoProbe(QJsonObject obj)
+void StatusButtonWidget::handleInfoProbe(QVariant obj_var)
 {
+    QMap<QString,QVariant> obj = obj_var.toMap();
     QString name = obj.value("name").toString();
     QString status = obj.value("status").toString();
-    QString status_map = obj.value("status").toString();
 
     if (!this->status_map->contains(name)) {
         this->incrementStatus(status);

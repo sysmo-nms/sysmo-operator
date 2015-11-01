@@ -14,7 +14,7 @@ Supercast::~Supercast()
     this->socket_thread.wait();
     this->socket_thread.deleteLater();
 
-    QHash<QString, SupercastSignal*>::iterator c;
+    QMap<QString, SupercastSignal*>::iterator c;
     for (
          c  = this->channels->begin();
          c != this->channels->end();
@@ -25,7 +25,7 @@ Supercast::~Supercast()
     }
     delete this->channels;
 
-    QHash<int, SupercastSignal*>::iterator q;
+    QMap<int, SupercastSignal*>::iterator q;
     for (
          q  = this->queries->begin();
          q != this->queries->end();
@@ -36,7 +36,7 @@ Supercast::~Supercast()
     }
     delete this->queries;
 
-    QHash<int, SupercastSignal*>::iterator h;
+    QMap<int, SupercastSignal*>::iterator h;
     for (
          h  = this->http_requests->begin();
          h != this->http_requests->end();
@@ -56,15 +56,15 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
     this->data_base_url = QUrl();
 
     Supercast::singleton = this;
-    this->channels      = new QHash<QString, SupercastSignal*>();
-    this->queries       = new QHash<int, SupercastSignal*>();
-    this->http_requests = new QHash<int, SupercastSignal*>();
+    this->channels      = new QMap<QString, SupercastSignal*>();
+    this->queries       = new QMap<int, SupercastSignal*>();
+    this->http_requests = new QMap<int, SupercastSignal*>();
 
     SupercastSignal* sig = new SupercastSignal();
     this->channels->insert("supercast", sig);
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(handleSupercastMessage(QJsonObject)));
+                sig,  SIGNAL(serverMessage(QVariant)),
+                this, SLOT(handleSupercastMessage(QVariant)));
 
     /*
      * init SupercastHTTP
@@ -102,13 +102,13 @@ void Supercast::tryConnect(
 
     // server -> message -> client
     QObject::connect(
-                socket_t, SIGNAL(serverMessage(QJsonObject)),
-                this,     SLOT(routeServerMessage(QJsonObject)),
+                socket_t, SIGNAL(serverMessage(QVariant)),
+                this,     SLOT(routeServerMessage(QVariant)),
                 Qt::QueuedConnection);
     // client -> message -> server
     QObject::connect(
-                this,     SIGNAL(clientMessage(QJsonObject)),
-                socket_t, SLOT(handleClientMessage(QJsonObject)),
+                this,     SIGNAL(clientMessage(QVariant)),
+                socket_t, SLOT(handleClientMessage(QVariant)),
                 Qt::QueuedConnection);
 
     // socket state
@@ -143,16 +143,16 @@ void Supercast::tryConnect(
 void Supercast::socketConnected()
 {
 
-    QJsonObject authResp;
-    QJsonObject value;
-    value.insert("name", QJsonValue(this->user_name));
-    value.insert("password", QJsonValue(this->user_pass));
-    authResp.insert("from", QJsonValue("supercast"));
-    authResp.insert("type", QJsonValue("authResp"));
+    QMap<QString, QVariant> authResp;
+    QMap<QString, QVariant> value;
+    value.insert("name", this->user_name);
+    value.insert("password", this->user_pass);
+    authResp.insert("from", "supercast");
+    authResp.insert("type", "authResp");
     authResp.insert("value", value);
 
 
-    emit this->clientMessage(authResp);
+    emit this->clientMessage(QVariant(authResp));
 }
 
 
@@ -163,13 +163,15 @@ void Supercast::socketError(QAbstractSocket::SocketError error)
 }
 
 
-void Supercast::routeServerMessage(QJsonObject msg)
+void Supercast::routeServerMessage(QVariant variantMsg)
 {
 
+    QMap<QString, QVariant> msg = variantMsg.toMap();
     /*
      * Test if message is for a channel.
      */
-    QString from = msg.value("from").toString("undefined");
+    QString from = msg.value("from").toString();
+    qDebug() << "from : " << msg.keys();
     if (this->channels->contains(from)) {
         SupercastSignal* sig = this->channels->value(from);
 
@@ -178,15 +180,16 @@ void Supercast::routeServerMessage(QJsonObject msg)
     }
 
 
-    QString msg_type = msg.value("type").toString("undefined");
+    QString msg_type = msg.value("type").toString();
+    qDebug() << "type : " << msg_type;
     /*
      * Then it should be a reply message or subscribe reply
      */
     if(msg_type == "reply") {
 
-        int  queryId = msg.take("queryId").toInt(QUERYID_UNDEF);
-        bool lastPdu = msg.take("lastPdu").toBool(true);
-        if (queryId == QUERYID_UNDEF) return;
+        int  queryId = msg.take("queryId").toInt();
+        bool lastPdu = msg.take("lastPdu").toBool();
+        if (queryId == 0) return;
 
         SupercastSignal* sig = this->queries->value(queryId);
 
@@ -203,9 +206,10 @@ void Supercast::routeServerMessage(QJsonObject msg)
 }
 
 
-void Supercast::handleSupercastMessage(QJsonObject message)
+void Supercast::handleSupercastMessage(QVariant variantMsg)
 {
-    QString type = message.value("type").toString("undefined");
+    QMap<QString, QVariant> message = variantMsg.toMap();
+    QString type = message.value("type").toString();
     if (type == "authAck")
     {
         emit this->connectionStatus(Supercast::CONNECTION_SUCCESS);
@@ -216,14 +220,14 @@ void Supercast::handleSupercastMessage(QJsonObject message)
     }
     else if (type == "serverInfo")
     {
-        QJsonObject val = message.value("value").toObject();
+        QMap<QString,QVariant> val = message.value("value").toMap();
         this->data_base_url.setPort(val.value("dataPort").toInt());
         this->data_base_url.setScheme(val.value("dataProto").toString());
     }
     else if (type == "subscribeOk" || type == "subscribeErr")
     {
         QString channel = message.value("value")
-                                 .toObject()
+                                 .toMap()
                                  .value("channel")
                                  .toString();
         SupercastSignal* sig = this->channels->value(channel);
@@ -242,12 +246,12 @@ void Supercast::handleSupercastMessage(QJsonObject message)
 
 void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
 {
-    QJsonObject subscribeMsg;
-    QJsonObject value;
-    value.insert("queryId", QJsonValue(0));
-    value.insert("channel", QJsonValue(channel));
-    subscribeMsg.insert("from", QJsonValue("supercast"));
-    subscribeMsg.insert("type", QJsonValue("subscribe"));
+    QMap<QString, QVariant> subscribeMsg;
+    QMap<QString, QVariant> value;
+    value.insert("queryId", 0);
+    value.insert("channel", channel);
+    subscribeMsg.insert("from", "supercast");
+    subscribeMsg.insert("type", "subscribe");
     subscribeMsg.insert("value", value);
 
     Supercast::singleton->channels->insert(channel, subscriber);
@@ -257,12 +261,12 @@ void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
 
 void Supercast::unsubscribe(QString channel)
 {
-    QJsonObject unsubscribeMsg;
-    QJsonObject value;
-    value.insert("queryId", QJsonValue(0));
-    value.insert("channel", QJsonValue(channel));
-    unsubscribeMsg.insert("from", QJsonValue("supercast"));
-    unsubscribeMsg.insert("type", QJsonValue("unsubscribe"));
+    QMap<QString, QVariant> unsubscribeMsg;
+    QMap<QString, QVariant> value;
+    value.insert("queryId", 0);
+    value.insert("channel", channel);
+    unsubscribeMsg.insert("from", "supercast");
+    unsubscribeMsg.insert("type", "unsubscribe");
     unsubscribeMsg.insert("value", value);
 
     SupercastSignal* sig = Supercast::singleton->channels->take(channel);
@@ -271,9 +275,10 @@ void Supercast::unsubscribe(QString channel)
     emit Supercast::singleton->clientMessage(unsubscribeMsg);
 }
 
-void Supercast::sendQuery(QJsonObject query, SupercastSignal *reply)
+void Supercast::sendQuery(QVariant queryVariant, SupercastSignal *reply)
 {
-    int queryId = 0;
+    QMap<QString,QVariant> query = queryVariant.toMap();
+    int queryId = 1;
     while (Supercast::singleton->queries->contains(queryId)) queryId += 1;
 
     Supercast::singleton->queries->insert(queryId, reply);

@@ -2,7 +2,7 @@
 
 Rrd4QtGraph::Rrd4QtGraph(
         QString     rrd_db_file,
-        QJsonObject rrd_graph_config,
+        QMap<QString,QVariant> rrd_graph_config,
         int         initial_height,
         QWidget*    parent) : QLabel(parent)
 {
@@ -16,19 +16,19 @@ Rrd4QtGraph::Rrd4QtGraph(
 
 
     /*
-     * User the allready created QJsonObject but complete it
+     * User the allready created json object but complete it
      * with values needed to graph.
      */
     this->graph_config = rrd_graph_config;
 
-    this->graph_config.insert("rrdFile",   QJsonValue(rrd_db_file));
-    this->graph_config.insert("pngFile",   QJsonValue(this->pixmap_file));
-    this->graph_config.insert("height",    QJsonValue(initial_height));
-    this->graph_config.insert("width",     QJsonValue(400));
-    this->graph_config.insert("type",      QJsonValue("graph"));
-    this->graph_config.insert("opaque",    QJsonValue(""));
-    this->graph_config.insert("spanBegin", QJsonValue(-300000));
-    this->graph_config.insert("spanEnd",   QJsonValue(0));
+    this->graph_config.insert("rrdFile",   rrd_db_file);
+    this->graph_config.insert("pngFile",   this->pixmap_file);
+    this->graph_config.insert("height",    initial_height);
+    this->graph_config.insert("width",     400);
+    this->graph_config.insert("type",      "graph");
+    this->graph_config.insert("opaque",    "");
+    this->graph_config.insert("spanBegin", -300000);
+    this->graph_config.insert("spanEnd",   0);
 
 
     /*
@@ -44,15 +44,16 @@ Rrd4QtGraph::Rrd4QtGraph(
      */
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QJsonObject)),
-                this,  SLOT(handleRrdReply(QJsonObject)));
+                sig,   SIGNAL(serverMessage(QVariant)),
+                this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 
 }
 
-void Rrd4QtGraph::handleRrdReply(QJsonObject reply)
+void Rrd4QtGraph::handleRrdReply(QVariant reply_var)
 {
+    QMap<QString,QVariant> reply = reply_var.toMap();
     if (reply.value("reply") == "success")
     {
         this->pixmap_obj.load(this->pixmap_file);
@@ -66,22 +67,22 @@ void Rrd4QtGraph::handleRrdReply(QJsonObject reply)
 void Rrd4QtGraph::setTimeSpan(int time_span)
 {
     qDebug() << "set time span";
-    this->graph_config.insert("spanBegin", QJsonValue(0 - time_span));
+    this->graph_config.insert("spanBegin", 0 - time_span);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QJsonObject)),
-                this,  SLOT(handleRrdReply(QJsonObject)));
+                sig,   SIGNAL(serverMessage(QVariant)),
+                this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 }
 
 void Rrd4QtGraph::setGraphHeight(int height)
 {
-    this->graph_config.insert("height", QJsonValue(height));
+    this->graph_config.insert("height", height);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QJsonObject)),
-                this,  SLOT(handleRrdReply(QJsonObject)));
+                sig,   SIGNAL(serverMessage(QVariant)),
+                this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 }
@@ -94,11 +95,11 @@ void Rrd4QtGraph::setGraphWidth(int width)
     }
 
     qDebug() << "change width to: " << width;
-    this->graph_config.insert("width", QJsonValue(width));
+    this->graph_config.insert("width", width);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QJsonObject)),
-                this,  SLOT(handleRrdReply(QJsonObject)));
+                sig,   SIGNAL(serverMessage(QVariant)),
+                this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 }

@@ -1,6 +1,6 @@
 #include "probewindow.h"
 
-QHash<QString,ProbeWindow*> ProbeWindow::windows = QHash<QString,ProbeWindow*>();
+QMap<QString,ProbeWindow*> ProbeWindow::windows = QMap<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
                         : MonitorProxyWidget(probeName)
@@ -22,10 +22,10 @@ ProbeWindow::ProbeWindow(QString probeName)
      * Get the check identifier and target belong_to
      */
     Monitor*      mon = Monitor::getInstance();
-    QJsonObject probe = mon->probes->value(this->name);
+    QMap<QString,QVariant> probe = mon->probes->value(this->name).toMap();
     QString  probe_id = probe.value("probeId").toString();
     QString belong_to = probe.value("target").toString();
-    this->target = mon->targets->value(belong_to);
+    this->target = mon->targets->value(belong_to).toMap();
 
     /*
      * Read the NChecks XML graph definition.
@@ -183,7 +183,8 @@ void ProbeWindow::resizeEvent(QResizeEvent *event)
     MonitorProxyWidget::resizeEvent(event);
 }
 
-void ProbeWindow::handleEvent(QJsonObject event) {
+void ProbeWindow::handleEvent(QVariant event_var) {
+    QMap<QString,QVariant> event = event_var.toMap();
     /*
      * If event is "update"
      */
@@ -219,7 +220,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
      */
     if (event.value("type").toString() == "simple")
     {
-        QJsonObject js_graphs = this->rrd_config.value("graphs").toObject();
+        QMap<QString,QVariant> js_graphs = this->rrd_config.value("graphs").toMap();
 
         /*
          * initialize grid row
@@ -246,7 +247,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
              */
             Rrd4QtGraph* graph = new Rrd4QtGraph(
                             event.value("rrdFile").toString(), // rrd db
-                            js_graphs.value(key).toObject(),   // graph def
+                            js_graphs.value(key).toMap(),   // graph def
                             initial_height,
                             frame);                            // parent
 
@@ -295,12 +296,12 @@ void ProbeWindow::handleEvent(QJsonObject event) {
         /*
          * Get rrd file index
          */
-        QJsonObject rrd_files = event.value("rrdFiles").toObject();
+        QMap<QString,QVariant> rrd_files = event.value("rrdFiles").toMap();
 
         /*
          * Get graph config (common to all rrd indexes)
          */
-        QJsonObject js_graphs = this->rrd_config.value("graphs").toObject();
+        QMap<QString,QVariant> js_graphs = this->rrd_config.value("graphs").toMap();
 
         /*
          * Get graphs key and sort them
@@ -338,8 +339,8 @@ void ProbeWindow::handleEvent(QJsonObject event) {
             /*
              * Set rrd_id as the QLabel for the first column
              */
-            QString prop_content = this->target.value("properties").toObject()
-                         .value(prefix + rrd_id + suffix).toString("undefined");
+            QString prop_content = this->target.value("properties").toMap()
+                         .value(prefix + rrd_id + suffix).toString();
             QString lab_text;
             if (prop_content == "undefined") {
                 lab_text = "<h3>" + rrd_id + "</h3>";
@@ -373,7 +374,7 @@ void ProbeWindow::handleEvent(QJsonObject event) {
                      */
                     Rrd4QtGraph* graph = new Rrd4QtGraph(
                                 rrd_db_file,                     // rrd db
-                                js_graphs.value(key).toObject(), // graph def
+                                js_graphs.value(key).toMap(), // graph def
                                 initial_height,                  //initial height
                                 fr);                             // parent
 

@@ -2,16 +2,15 @@
 
 int ItemTarget::type() const { return Sysmo::TYPE_TARGET; }
 
-ItemTarget::ItemTarget(QJsonObject info_target) : QStandardItem()
+ItemTarget::ItemTarget(QMap<QString,QVariant> info_target) : QStandardItem()
 {
     this->updateInfo(info_target);
     this->updateIconStatus();
 }
 
-void ItemTarget::updateProbeFilter(QString probe_name, QJsonObject obj)
+void ItemTarget::updateProbeFilter(QString probe_name, QMap<QString,QVariant> obj)
 {
-    this->filter_hash.insert(probe_name,
-          QJsonDocument(obj).toJson(QJsonDocument::Compact));
+    this->filter_hash.insert(probe_name, QJson::encode(obj));
     this->updateFilter();
 }
 
@@ -23,7 +22,7 @@ void ItemTarget::deleteProbeFilter(QString probe_name)
 
 void ItemTarget::updateFilter() {
     QString str = this->orig_filter;
-    QHashIterator<QString, QString> i(this->filter_hash);
+    QMapIterator<QString, QString> i(this->filter_hash);
     while(i.hasNext()) {
         i.next();
         str = str + i.value();
@@ -31,25 +30,25 @@ void ItemTarget::updateFilter() {
     this->setData(str.remove("\""), Sysmo::ROLE_FILTER_STRING);
 }
 
-void ItemTarget::updateInfo(QJsonObject info_target)
+void ItemTarget::updateInfo(QMap<QString,QVariant> info_target)
 {
-    this->name              = info_target.value("name").toString("undefined");
-    this->target_properties = info_target.value("properties").toObject();
+    this->name              = info_target.value("name").toString();
+    this->target_properties = info_target.value("properties").toMap();
 
     this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
 
-    QString hostname   = this->target_properties.value("host").toString("undefined");
-    QString fixed_name = this->target_properties.value("name").toString("undefined");
-    QString sys_name   = this->target_properties.value("sysName").toString("undefined");
+    QString hostname   = this->target_properties.value("host").toString();
+    QString fixed_name = this->target_properties.value("name").toString();
+    QString sys_name   = this->target_properties.value("sysName").toString();
 
     QString display;
 
-    if (sys_name != "undefined")
+    if (!sys_name.isEmpty())
     {
         display.append(sys_name);
         display.append(QString("  (%1)").arg(hostname));
     }
-    else if ((fixed_name != "undefined") & (fixed_name != ""))
+    else if ((!fixed_name.isEmpty()) & (fixed_name != ""))
     {
         display.append(fixed_name);
         display.append(QString("  (%1)").arg(hostname));
@@ -61,7 +60,7 @@ void ItemTarget::updateInfo(QJsonObject info_target)
 
     this->setData(display, Qt::DisplayRole);
 
-    this->orig_filter = QJsonDocument(info_target).toJson(QJsonDocument::Compact);
+    this->orig_filter = QJson::encode(info_target);
     this->setData(this->orig_filter, Sysmo::ROLE_FILTER_ORIG);
     this->updateFilter();
     this->updateTooltip();

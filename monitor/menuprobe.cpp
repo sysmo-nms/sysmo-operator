@@ -57,23 +57,23 @@ void MenuProbe::showMenuFor(QString probe, QPoint at)
 void MenuProbe::handleForceProbe()
 {
     qDebug() << "force probe" << this->probe_name;
-    QJsonObject force_msg;
-    QJsonObject value;
-    value.insert("name", QJsonValue(this->probe_name));
-    force_msg.insert("from", QJsonValue("monitor"));
-    force_msg.insert("type", QJsonValue("forceProbeQuery"));
+    QMap<QString,QVariant> force_msg;
+    QMap<QString,QVariant> value;
+    value.insert("name", this->probe_name);
+    force_msg.insert("from", "monitor");
+    force_msg.insert("type", "forceProbeQuery");
     force_msg.insert("value", value);
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(handleForceProbeReply(QJsonObject)));
+                sig,  SIGNAL(serverMessage(QVariant)),
+                this, SLOT(handleForceProbeReply(QVariant)));
     Supercast::sendQuery(force_msg, sig);
 }
 
-void MenuProbe::handleForceProbeReply(QJsonObject reply)
+void MenuProbe::handleForceProbeReply(QVariant reply_variant)
 {
-    qDebug() << "force probe reply" << reply;
+    qDebug() << "force probe reply" << reply_variant;
 }
 
 void MenuProbe::handleDeleteProbe()
@@ -90,21 +90,21 @@ void MenuProbe::handleDeleteProbe()
     int ret = box->exec();
     if (ret == QMessageBox::No) return;
 
-    QJsonObject delete_msg;
-    QJsonObject value;
-    value.insert("name", QJsonValue(this->probe_name));
-    delete_msg.insert("from", QJsonValue("monitor"));
-    delete_msg.insert("type", QJsonValue("deleteProbeQuery"));
+    QMap<QString,QVariant> delete_msg;
+    QMap<QString,QVariant> value;
+    value.insert("name", this->probe_name);
+    delete_msg.insert("from", "monitor");
+    delete_msg.insert("type", "deleteProbeQuery");
     delete_msg.insert("value", value);
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig, SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(handleDeleteProbeReply(QJsonObject)));
+                sig, SIGNAL(serverMessage(QVariant)),
+                this, SLOT(handleDeleteProbeReply(QVariant)));
     Supercast::sendQuery(delete_msg, sig);
 }
 
-void MenuProbe::handleDeleteProbeReply(QJsonObject reply)
+void MenuProbe::handleDeleteProbeReply(QVariant reply)
 {
     Q_UNUSED(reply);
     qDebug() << "delete probe" << this->probe_name;

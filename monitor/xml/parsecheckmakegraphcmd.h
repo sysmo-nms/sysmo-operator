@@ -2,6 +2,8 @@
 #define PARSECHECKMAKEGRAPHCMD_H
 
 #include <QXmlDefaultHandler>
+#include <QVariant>
+#include <QMap>
 
 #include <QDebug>
 
@@ -9,11 +11,11 @@ class ParseCheckMakeGraphCMD : public QXmlDefaultHandler
 {
 
 private:
-    QJsonObject graphs;
-    QJsonObject current_graph;
+    QMap<QString,QVariant> graphs;
+    QMap<QString,QVariant> current_graph;
     QString     current_graph_id;
-    QJsonArray  current_draws;
-    QJsonObject current_draw;
+    QList<QVariant> current_draws;
+    QMap<QString,QVariant> current_draw;
     QString     char_element;
     QString     prop_prefix;
     QString     prop_suffix;
@@ -32,7 +34,7 @@ public:
             const QString &qName);
     bool endDocument();
     bool characters(const QString &ch);
-    QJsonObject config;
+    QMap<QString,QVariant> config;
 };
 
 #endif // PARSECHECKMAKEGRAPHCMD_H

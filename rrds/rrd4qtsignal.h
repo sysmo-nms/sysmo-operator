@@ -2,7 +2,8 @@
 #define RRD4QTSIGNAL_H
 
 #include <QObject>
-#include <QJsonObject>
+#include <QVariant>
+#include <QString>
 
 class Rrd4QtSignal : public QObject
 {
@@ -12,9 +13,9 @@ public:
     explicit Rrd4QtSignal(QObject* parent = 0);
 
 signals:
-    void serverMessage(QJsonObject json);
-    void serverMessage(QString     string);
-    void serverMessage(int         integer);
+    void serverMessage(QVariant json);
+    void serverMessage(QString  string);
+    void serverMessage(int      integer);
 };
 
 #endif // RRD4QTSIGNAL_H

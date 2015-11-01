@@ -3,6 +3,7 @@
 
 #include "sysmo.h"
 #include "systemtray.h"
+#include "qjson.h"
 
 #include <QObject>
 #include <QStandardItem>
@@ -12,13 +13,14 @@
 #include <Qt>
 #include <QPixmap>
 #include <QDateTime>
+#include <QMap>
 
 #include <QDebug>
 
 class ItemProbe : public QStandardItem
 {
 public:
-    ItemProbe(QJsonObject info_probe);
+    ItemProbe(QMap<QString,QVariant> info_probe);
     QString name;
     QString belong_to;
     QStandardItem* item_status;
@@ -28,8 +30,8 @@ public:
     QString orig_filter;
     QString targ_filter;
     int type() const;
-    void updateInfo(QJsonObject info_probe);
-    void updateReturnInfo(QJsonObject probe_return);
+    void updateInfo(QMap<QString,QVariant> info_probe);
+    void updateReturnInfo(QMap<QString,QVariant> probe_return);
     void setTargetFilter(QString filter);
 
 private:

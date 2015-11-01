@@ -20,15 +20,16 @@ MonitorLogs::MonitorLogs(QWidget* parent) : QTabWidget(parent)
     this->insertTab(1, f2, QIcon(":/icons/appointment-new.png"), "Timeline logs");
     this->setTabEnabled(1, false);
     QObject::connect(
-                Monitor::getInstance(), SIGNAL(initialSyncBegin(QJsonObject)),
-                this, SLOT(handleInitialSyncBegin(QJsonObject)));
+                Monitor::getInstance(), SIGNAL(initialSyncBegin(QVariant)),
+                this, SLOT(handleInitialSyncBegin(QVariant)));
     QObject::connect(
-                Monitor::getInstance(), SIGNAL(dbNotification(QJsonObject)),
-                this, SLOT(handleDbNotif(QJsonObject)));
+                Monitor::getInstance(), SIGNAL(dbNotification(QVariant)),
+                this, SLOT(handleDbNotif(QVariant)));
 }
 
-void MonitorLogs::handleInitialSyncBegin(QJsonObject message)
+void MonitorLogs::handleInitialSyncBegin(QVariant message_var)
 {
+    QMap<QString,QVariant> message = message_var.toMap();
     QString syncDir = "sync";
     QString dumpDir = message.value("dumpDir").toString();
     QString evtFile = message.value("latestEventsFile").toString();
@@ -42,13 +43,13 @@ void MonitorLogs::handleInitialSyncBegin(QJsonObject message)
 }
 
 void MonitorLogs::handleHttpReply(QString body) {
-    QJsonDocument json_doc = QJsonDocument::fromJson(body.toUtf8());
-    QJsonArray json_array = json_doc.array();
+    QVariant json_var = QJson::decode(body);
+    QList<QVariant> json_array = json_var.toList();
     this->table->setRowCount(json_array.size());
-    QJsonArray::iterator i;
+
     int j = 0;
-    for (i = json_array.begin(); i != json_array.end(); i++) {
-       QJsonObject obj = (*i).toObject();
+    for (int i = 0; i < json_array.size(); i++) {
+       QMap<QString,QVariant> obj = json_array.at(i).toMap();
        int timestamp = obj.value("DATE_CREATED").toInt();
        QDateTime date = QDateTime::fromTime_t(timestamp);
        CustomTableItem* created = new CustomTableItem(date.toString("yyyy-MM-d hh:mm:ss"));
@@ -67,8 +68,9 @@ void MonitorLogs::handleHttpReply(QString body) {
     }
 }
 
-void MonitorLogs::handleDbNotif(QJsonObject obj)
+void MonitorLogs::handleDbNotif(QVariant obj_var)
 {
+    QMap<QString,QVariant> obj = obj_var.toMap();
     int timestamp = obj.value("DATE_CREATED").toInt();
     QDateTime date = QDateTime::fromTime_t(timestamp);
     CustomTableItem* created = new CustomTableItem(date.toString("yyyy-MM-d hh:mm:ss"));

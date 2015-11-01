@@ -28,7 +28,6 @@
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include <QTextEdit>
-#include <QHash>
 #include <QProgressDialog>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -37,7 +36,6 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QList>
-#include <QHash>
 #include <QVariant>
 #include <QString>
 
@@ -59,7 +57,7 @@ public:
 private:
     QString     target;
     QString     probe_class;
-    QHash<QString,QLineEdit*>* args;
+    QMap<QString,QLineEdit*>* args;
     QTextEdit*  docs;
     NFrame*     form_frame;
     NGrid*      grid;
@@ -85,7 +83,7 @@ public slots:
     void execHelper();
 
 private slots:
-    void helperReply(QJsonObject reply);
+    void helperReply(QVariant reply);
 };
 
 
@@ -93,13 +91,13 @@ class HelperDialog : public QDialog
 {
     Q_OBJECT
 public:
-    HelperDialog(QJsonObject helperReply, QWidget* parent = 0);
+    HelperDialog(QVariant helperReply, QWidget* parent = 0);
     QString getValue();
 
 private:
     QString value;
     QString list_separator;
-    QHash<QString, QTreeWidgetItem*> root_items;
+    QMap<QString, QTreeWidgetItem*> root_items;
 
 public slots:
     void refreshTreeState(QTreeWidgetItem* item, int column);

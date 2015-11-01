@@ -16,6 +16,8 @@
 #include <QAction>
 #include <QIcon>
 #include <QMessageBox>
+#include <QVariant>
+#include <QMap>
 
 #include <QDebug>
 
@@ -34,7 +36,7 @@ private:
 private slots:
     void connectNewProbeDialog();
     void deleteTarget();
-    void deleteTargetReply(QJsonObject reply);
+    void deleteTargetReply(QVariant reply);
     void handleOperatorActionsConfig();
 
 signals:

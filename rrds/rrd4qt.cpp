@@ -9,7 +9,7 @@ Rrd4Qt::~Rrd4Qt()
     this->proc->waitForFinished();
     delete this->proc;
 
-    QHash<int, Rrd4QtSignal*>::iterator i;
+    QMap<int, Rrd4QtSignal*>::iterator i;
     for (
          i  = this->queries->begin();
          i != this->queries->end();
@@ -24,7 +24,7 @@ Rrd4Qt::~Rrd4Qt()
 Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 {
     Rrd4Qt::singleton = this;
-    this->queries     = new QHash<int, Rrd4QtSignal*>();
+    this->queries     = new QMap<int, Rrd4QtSignal*>();
     this->block_size  = 0;
 
     /*
@@ -116,9 +116,9 @@ void Rrd4Qt::procStdoutReadyRead()
     /*
      * Read and decode the payload.
      */
-    QByteArray     payload = this->proc->read(this->block_size);
-    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
-    QJsonObject   json_obj = json_doc.object();
+    QByteArray payload = this->proc->read(this->block_size);
+    QVariant json_var = QJson::decode(QString(payload));
+    QMap<QString,QVariant> json_obj = json_var.toMap();
 
     /*
      * Deliver the message
@@ -126,7 +126,7 @@ void Rrd4Qt::procStdoutReadyRead()
     int       queryId = json_obj.value("queryId").toInt();
     Rrd4QtSignal* sig = this->queries->take(queryId);
 
-    emit sig->serverMessage(json_obj);
+    emit sig->serverMessage(QVariant(json_obj));
     sig->deleteLater();
 
     /*
@@ -142,7 +142,7 @@ void Rrd4Qt::procStdoutReadyRead()
         emit this->proc->readyRead();
 }
 
-void Rrd4Qt::callRrd(QJsonObject msg, Rrd4QtSignal* sig)
+void Rrd4Qt::callRrd(QMap<QString,QVariant> msg, Rrd4QtSignal* sig)
 {
     int queryId = 0;
     while (Rrd4Qt::singleton->queries->contains(queryId)) queryId += 1;
@@ -150,15 +150,15 @@ void Rrd4Qt::callRrd(QJsonObject msg, Rrd4QtSignal* sig)
 
     msg.insert("queryId", queryId);
 
-    QByteArray json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
+    QByteArray json_array = QJson::encode(msg).toLatin1();
     qint32     json_size = json_array.size();
     Rrd4Qt::singleton->proc->write(Rrd4Qt::int32ToArray(json_size));
     Rrd4Qt::singleton->proc->write(json_array.data(), json_size);
 }
 
-void Rrd4Qt::callRrd(QJsonObject msg)
+void Rrd4Qt::callRrd(QMap<QString,QVariant> msg)
 {
-    QByteArray json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
+    QByteArray json_array = QJson::encode(msg).toLatin1();
     qint32     json_size(json_array.size());
     Rrd4Qt::singleton->proc->write(Rrd4Qt::int32ToArray(json_size));
     Rrd4Qt::singleton->proc->write(json_array.data(), json_size);
@@ -203,61 +203,61 @@ void Rrd4Qt::procStarted()
     int gridAlpha = 60;
 
     QColor color_window = palette.color(QPalette::Window);
-    QJsonObject cwindow;
-    cwindow.insert("red", QJsonValue(color_window.red()));
-    cwindow.insert("blue", QJsonValue(color_window.blue()));
-    cwindow.insert("green", QJsonValue(color_window.green()));
-    cwindow.insert("alpha", QJsonValue(color_window.alpha()));
+    QMap<QString,QVariant> cwindow;
+    cwindow.insert("red", color_window.red());
+    cwindow.insert("blue", color_window.blue());
+    cwindow.insert("green", color_window.green());
+    cwindow.insert("alpha", color_window.alpha());
 
     QColor color_base   = palette.color(QPalette::Base);
-    QJsonObject cbase;
-    cbase.insert("red", QJsonValue(color_base.red()));
-    cbase.insert("blue", QJsonValue(color_base.blue()));
-    cbase.insert("green", QJsonValue(color_base.green()));
-    cbase.insert("alpha", QJsonValue(color_base.alpha()));
+    QMap<QString,QVariant> cbase;
+    cbase.insert("red", color_base.red());
+    cbase.insert("blue", color_base.blue());
+    cbase.insert("green", color_base.green());
+    cbase.insert("alpha", color_base.alpha());
 
     QColor color_dark   = palette.color(QPalette::Dark);
-    QJsonObject cdark;
-    cdark.insert("red", QJsonValue(color_dark.red()));
-    cdark.insert("blue", QJsonValue(color_dark.blue()));
-    cdark.insert("green", QJsonValue(color_dark.green()));
-    cdark.insert("alpha", QJsonValue(color_dark.alpha()));
+    QMap<QString,QVariant> cdark;
+    cdark.insert("red", color_dark.red());
+    cdark.insert("blue", color_dark.blue());
+    cdark.insert("green", color_dark.green());
+    cdark.insert("alpha", color_dark.alpha());
 
-    QJsonObject cgrid;
-    cgrid.insert("red", QJsonValue(color_dark.red()));
-    cgrid.insert("blue", QJsonValue(color_dark.blue()));
-    cgrid.insert("green", QJsonValue(color_dark.green()));
-    cgrid.insert("alpha", QJsonValue(gridAlpha));
+    QMap<QString,QVariant> cgrid;
+    cgrid.insert("red", color_dark.red());
+    cgrid.insert("blue", color_dark.blue());
+    cgrid.insert("green", color_dark.green());
+    cgrid.insert("alpha", gridAlpha);
 
     QColor color_shadow = palette.color(QPalette::Shadow);
-    QJsonObject cshadow;
-    cshadow.insert("red", QJsonValue(color_shadow.red()));
-    cshadow.insert("blue", QJsonValue(color_shadow.blue()));
-    cshadow.insert("green", QJsonValue(color_shadow.green()));
-    cshadow.insert("alpha", QJsonValue(color_shadow.alpha()));
+    QMap<QString,QVariant> cshadow;
+    cshadow.insert("red", color_shadow.red());
+    cshadow.insert("blue", color_shadow.blue());
+    cshadow.insert("green", color_shadow.green());
+    cshadow.insert("alpha", color_shadow.alpha());
 
-    QJsonObject cmgrid;
-    cmgrid.insert("red", QJsonValue(color_shadow.red()));
-    cmgrid.insert("blue", QJsonValue(color_shadow.blue()));
-    cmgrid.insert("green", QJsonValue(color_shadow.green()));
-    cmgrid.insert("alpha", QJsonValue(gridAlpha));
+    QMap<QString,QVariant> cmgrid;
+    cmgrid.insert("red", color_shadow.red());
+    cmgrid.insert("blue", color_shadow.blue());
+    cmgrid.insert("green", color_shadow.green());
+    cmgrid.insert("alpha", gridAlpha);
 
     QColor color_font   = palette.color(QPalette::WindowText);
-    QJsonObject cfont;
-    cfont.insert("red", QJsonValue(color_font.red()));
-    cfont.insert("blue", QJsonValue(color_font.blue()));
-    cfont.insert("green", QJsonValue(color_font.green()));
-    cfont.insert("alpha", QJsonValue(color_font.alpha()));
+    QMap<QString,QVariant> cfont;
+    cfont.insert("red", color_font.red());
+    cfont.insert("blue", color_font.blue());
+    cfont.insert("green", color_font.green());
+    cfont.insert("alpha", color_font.alpha());
 
-    QJsonObject ctransparent;
-    ctransparent.insert("red", QJsonValue(0));
-    ctransparent.insert("blue", QJsonValue(0));
-    ctransparent.insert("green", QJsonValue(0));
-    ctransparent.insert("alpha", QJsonValue(0));
+    QMap<QString,QVariant> ctransparent;
+    ctransparent.insert("red", 0);
+    ctransparent.insert("blue", 0);
+    ctransparent.insert("green", 0);
+    ctransparent.insert("alpha", 0);
 
-    QJsonObject msg;
-    msg.insert("type", QJsonValue("color_config"));
-    msg.insert("queryId", QJsonValue(0));
+    QMap<QString,QVariant> msg;
+    msg.insert("type", "color_config");
+    msg.insert("queryId", 0);
     msg.insert("BACK", ctransparent);
     msg.insert("CANVAS", cbase);
     msg.insert("SHADEA", cwindow);

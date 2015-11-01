@@ -16,13 +16,12 @@
 #include <QLabel>
 #include <QFrame>
 #include <QCloseEvent>
-#include <QHash>
+#include <QMap>
 #include <QCoreApplication>
 #include <QApplication>
 #include <QStatusBar>
 #include <QScrollArea>
 #include <QPalette>
-#include <QJsonObject>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include <QStringListIterator>
@@ -41,8 +40,8 @@ private:
     ~ProbeWindow();
 
     QString     name;
-    QJsonObject rrd_config;
-    QJsonObject target;
+    QMap<QString,QVariant> rrd_config;
+    QMap<QString,QVariant> target;
 
     QStatusBar*    status_bar;
     QScrollArea*  scroll_area;
@@ -52,12 +51,12 @@ private:
     int margin;
     void resizeEvent(QResizeEvent *event);
 
-    static QHash<QString, ProbeWindow*> windows;
+    static QMap<QString, ProbeWindow*> windows;
     void restoreStateFromSettings();
 
 public:
     static void openWindow(QString name);
-    void handleEvent(QJsonObject event);
+    void handleEvent(QVariant event);
 
     static int getSpanFor(int value);
     static const int SPAN_TWO_HOURS     = 0;

@@ -7,11 +7,11 @@
 #include <QObject>
 #include <QWidget>
 #include <QLabel>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QTemporaryFile>
 #include <QPixmap>
 #include <QDebug>
+#include <QVariant>
+#include <QMap>
 
 class Rrd4QtGraph : public QLabel
 {
@@ -19,18 +19,18 @@ class Rrd4QtGraph : public QLabel
 public:
     explicit Rrd4QtGraph(
             QString     rrd_db_file,
-            QJsonObject rrd_graph_config,
+            QMap<QString,QVariant> rrd_graph_config,
             int         initial_height,
             QWidget*    parent = 0);
 
 private:
-    QJsonObject   graph_config;
+    QMap<QString,QVariant> graph_config;
     QString       graph_id;
     QString       pixmap_file;
     QPixmap       pixmap_obj;
 
 public slots:
-    void handleRrdReply(QJsonObject reply);
+    void handleRrdReply(QVariant reply);
     void setTimeSpan(int time_span);
     void setGraphHeight(int height);
     void setGraphWidth(int width);

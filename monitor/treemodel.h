@@ -10,11 +10,12 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QStringList>
-#include <QHash>
+#include <QMap>
 #include <QList>
 #include <QTimer>
 #include <QModelIndex>
 #include <QTreeView>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -27,15 +28,15 @@ public:
     ~TreeModel();
 
 public slots:
-    void handleInfoProbe(QJsonObject    message);
-    void handleInfoTarget(QJsonObject   message);
-    void handleDeleteProbe(QJsonObject  message);
-    void handleDeleteTarget(QJsonObject message);
-    void handleProbeReturn(QJsonObject  message);
+    void handleInfoProbe(QVariant message);
+    void handleInfoTarget(QVariant message);
+    void handleDeleteProbe(QVariant message);
+    void handleDeleteTarget(QVariant message);
+    void handleProbeReturn(QVariant message);
 
 private:
-    QHash<QString, ItemTarget*>* targets;
-    QHash<QString, ItemProbe*>*  probes;
+    QMap<QString, ItemTarget*>* targets;
+    QMap<QString, ItemProbe*>*  probes;
 
 signals:
     void expandIndex(QModelIndex index);

@@ -100,9 +100,8 @@ void Rrd4QtProc::procStdoutReadyRead()
     /*
      * Read and decode the payload.
      */
-    QByteArray     payload = this->proc->read(this->block_size);
-    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
-    QJsonObject   json_obj = json_doc.object();
+    QByteArray payload = this->proc->read(this->block_size);
+    QVariant json_obj = QJson::decode(QString(payload));
 
     /*
      * Deliver the message

@@ -137,8 +137,8 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     MonitorLogs* monlog = new MonitorLogs(this);
 
     QObject::connect(
-                this->mon, SIGNAL(probeReturn(QJsonObject)),
-                monlog, SLOT(probeReturn(QJsonObject)));
+                this->mon, SIGNAL(probeReturn(QVariant)),
+                monlog, SLOT(probeReturn(QVariant)));
                 */
 
     /*
@@ -172,8 +172,8 @@ void MonitorWidget::connectionStatus(int status)
     {
         SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
-                sig, SIGNAL(serverMessage(QJsonObject)),
-                this->mon, SLOT(handleServerMessage(QJsonObject)));
+                sig, SIGNAL(serverMessage(QVariant)),
+                this->mon, SLOT(handleServerMessage(QVariant)));
 
         Supercast::subscribe("monitor_main", sig);
     }

@@ -65,9 +65,8 @@ void SupercastSocket::socketReadyRead()
     /*
      * Read and decode the payload.
      */
-    QByteArray     payload = this->socket->read(this->block_size);
-    QJsonDocument json_doc = QJsonDocument::fromJson(payload);
-    QJsonObject   json_obj = json_doc.object();
+    QByteArray payload = this->socket->read(this->block_size);
+    QVariant   json_obj = QJson::decode(QString(payload));
 
 
     /*
@@ -91,12 +90,15 @@ void SupercastSocket::socketReadyRead()
 }
 
 
-void SupercastSocket::handleClientMessage(QJsonObject msg)
+void SupercastSocket::handleClientMessage(QVariant msg)
 {
-    QByteArray  json_array(QJsonDocument(msg).toJson(QJsonDocument::Compact));
-    qint32      json_size(json_array.size());
+    QByteArray json_array = QJson::encode(msg).toLatin1();
+    qDebug() << "will sed:" << json_array;
+    qint32     json_size(json_array.size());
+    qDebug() << "will send size:" << json_array.size();
     this->socket->write(SupercastSocket::int32ToArray(json_size));
     this->socket->write(json_array.data(), json_size);
+    qDebug() << "have sent size:" << json_array.data();
 }
 
 qint32 SupercastSocket::arrayToInt32(QByteArray source)

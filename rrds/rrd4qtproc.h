@@ -2,14 +2,11 @@
 #define RRD4QTPROC_H
 
 #include "rrds/rrd4qtsignal.h"
+#include "qjson.h"
 
 #include <QObject>
-#include <QJsonObject>
 #include <QThread>
 #include <QAbstractSocket>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QStringList>
 #include <QHash>
 #include <QTemporaryDir>
@@ -20,10 +17,10 @@
 #include <QByteArray>
 #include <QIODevice>
 #include <QDataStream>
-#include <QJsonDocument>
 #include <QApplication>
 #include <QPalette>
 #include <QColor>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -43,7 +40,7 @@ public slots:
 
 signals:
     void javaStopped();
-    void replyMsg(QJsonObject msg);
+    void replyMsg(QVariant msg);
 
 private:
     static const qint32 HEADER_LEN = 4;

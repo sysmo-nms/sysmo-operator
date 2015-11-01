@@ -2,6 +2,7 @@
 #define SUPERCASTSOCKET_H
 
 #include "sysmo.h"
+#include "qjson.h"
 
 #include <QObject>
 #include <QStringList>
@@ -12,6 +13,7 @@
 #include <QIODevice>
 #include <Qt>
 #include <QTimer>
+#include <QVariant>
 
 class SupercastSocket : public QObject
 {
@@ -23,7 +25,7 @@ public:
     QTcpSocket* socket;
 
 public slots:
-    void handleClientMessage(QJsonObject msg);
+    void handleClientMessage(QVariant msg);
     void timerTimeout();
 
 private:
@@ -37,7 +39,7 @@ private slots:
     void socketReadyRead();
 
 signals:
-    void serverMessage(QJsonObject msg);
+    void serverMessage(QVariant msg);
     void waitTimeout(QAbstractSocket::SocketError err);
 };
 

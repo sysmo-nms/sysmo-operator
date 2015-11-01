@@ -2,16 +2,13 @@
 #define RRD4QT_H
 
 #include "rrds/rrd4qtsignal.h"
+#include "qjson.h"
 
 #include <QObject>
-#include <QJsonObject>
 #include <QThread>
 #include <QAbstractSocket>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QStringList>
-#include <QHash>
+#include <QMap>
 #include <QTemporaryDir>
 #include <QDir>
 #include <QFile>
@@ -20,10 +17,10 @@
 #include <QByteArray>
 #include <QIODevice>
 #include <QDataStream>
-#include <QJsonDocument>
 #include <QApplication>
 #include <QPalette>
 #include <QColor>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -36,8 +33,8 @@ public:
     explicit Rrd4Qt(QObject* parent = 0);
     ~Rrd4Qt();
     static Rrd4Qt* getInstance();
-    static void callRrd(QJsonObject msg, Rrd4QtSignal* sig);
-    static void callRrd(QJsonObject msg);
+    static void callRrd(QMap<QString,QVariant> msg, Rrd4QtSignal* sig);
+    static void callRrd(QMap<QString,QVariant> msg);
 
 public slots:
     void procStarted();
@@ -56,7 +53,7 @@ private:
     QTemporaryDir temporary_dir;
 
     QProcess*                  proc;
-    QHash<int, Rrd4QtSignal*>* queries;
+    QMap<int, Rrd4QtSignal*>* queries;
 
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32     source);

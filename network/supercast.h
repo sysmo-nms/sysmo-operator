@@ -11,7 +11,8 @@
 #include <QThread>
 #include <QAbstractSocket>
 #include <QStringList>
-#include <QHash>
+#include <QMap>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -37,7 +38,7 @@ public:
     // API
     static void subscribe(QString channel, SupercastSignal* subscriber);
     static void unsubscribe(QString channel);
-    static void sendQuery(QJsonObject query,   SupercastSignal* reply);
+    static void sendQuery(QVariant query,   SupercastSignal* reply);
     static void httpGet(QString path, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply, QString opaque);
@@ -46,7 +47,7 @@ public:
     static Supercast* getInstance();
 
 public slots:
-    void routeServerMessage(QJsonObject msg);
+    void routeServerMessage(QVariant msg);
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
 
@@ -56,16 +57,16 @@ private:
     QString user_name;
     QString user_pass;
     QUrl    data_base_url;
-    QHash<QString, SupercastSignal*>* channels;
-    QHash<int,     SupercastSignal*>* queries;
-    QHash<int,     SupercastSignal*>* http_requests;
+    QMap<QString, SupercastSignal*>* channels;
+    QMap<int,     SupercastSignal*>* queries;
+    QMap<int,     SupercastSignal*>* http_requests;
 
 private slots:
-    void handleSupercastMessage(QJsonObject message);
+    void handleSupercastMessage(QVariant message);
     void handleHttpReply(SupercastHttpReply reply);
 
 signals:
-    void clientMessage(QJsonObject msg);
+    void clientMessage(QVariant msg);
     void clientHttpRequest(SupercastHttpRequest request);
     void connectionStatus(int status);
 };

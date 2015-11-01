@@ -9,12 +9,13 @@
 #include <QObject>
 #include <QDebug>
 #include <QQueue>
-#include <QHash>
-#include <QHashIterator>
+#include <QMap>
+#include <QMapIterator>
 #include <QTemporaryFile>
 #include <QStringList>
 #include <QStringListIterator>
 #include <QQueue>
+#include <QVariant>
 
 class MonitorChannel : public QObject
 {
@@ -30,32 +31,32 @@ private:
     int  subscriber_count;
     bool synchronized;
     bool locked;
-    QHash<QString, QString> table_files;
-    QHash<QString, bool>    table_files_update_status;
-    QHash<QString, bool>    table_file_rrd_pending;
-    QQueue<QJsonObject>     pending_updates;
+    QMap<QString, QString> table_files;
+    QMap<QString, bool>    table_files_update_status;
+    QMap<QString, bool>    table_file_rrd_pending;
+    QQueue<QVariant>     pending_updates;
 
     QTemporaryFile simple_file;
 
-    QQueue<QJsonObject> waiting_msgs;
+    QQueue<QVariant> waiting_msgs;
 
-    QJsonObject buildDump();
+    QMap<QString,QVariant> buildDump();
 
 
 public:
     void increaseSubscriberCount();
     void decreaseSubscriberCount();
-    QJsonObject getDumpInfo();
+    QMap<QString,QVariant> getDumpInfo();
     bool hasDumpInfo();
 
 signals:
     void channelDeleted(QString channel_name);
-    void channelEvent(QJsonObject event);
+    void channelEvent(QVariant event);
 
 public slots:
-    void handleServerEvent(QJsonObject    event);
-    void handleRrdEventSimple(QJsonObject event);
-    void handleRrdEventTable(QJsonObject  event);
+    void handleServerEvent(QVariant    event);
+    void handleRrdEventSimple(QVariant event);
+    void handleRrdEventTable(QVariant  event);
     void handleHttpReplySimple(QString rep);
     void handleHttpReplyTable(QString  rep);
 

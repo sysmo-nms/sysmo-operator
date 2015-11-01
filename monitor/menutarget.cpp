@@ -83,21 +83,21 @@ void MenuTarget::deleteTarget()
     int ret = box->exec();
     if (ret == QMessageBox::No) return;
 
-    QJsonObject query;
-    QJsonObject value;
-    value.insert("name", QJsonValue(this->target_name));
-    query.insert("from", QJsonValue("monitor"));
-    query.insert("type", QJsonValue("deleteTargetQuery"));
+    QMap<QString,QVariant> query;
+    QMap<QString,QVariant> value;
+    value.insert("name", this->target_name);
+    query.insert("from", "monitor");
+    query.insert("type", "deleteTargetQuery");
     query.insert("value", value);
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QJsonObject)),
-                this, SLOT(deleteTargetReply(QJsonObject)));
+                sig,  SIGNAL(serverMessage(QVariant)),
+                this, SLOT(deleteTargetReply(QVariant)));
     Supercast::sendQuery(query, sig);
 }
 
-void MenuTarget::deleteTargetReply(QJsonObject reply)
+void MenuTarget::deleteTargetReply(QVariant reply)
 {
     qDebug() << "delete target reply: " << reply;
 }

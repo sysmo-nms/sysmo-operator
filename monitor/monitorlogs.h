@@ -22,6 +22,8 @@
 #include <QDateTime>
 #include <QColor>
 #include <QBrush>
+#include <QVariant>
+#include <QMap>
 
 #include <QDebug>
 
@@ -59,9 +61,9 @@ public:
     explicit MonitorLogs(QWidget* parent = 0);
 
 public slots:
-    void handleInitialSyncBegin(QJsonObject message);
+    void handleInitialSyncBegin(QVariant message);
     void handleHttpReply(QString body);
-    void handleDbNotif(QJsonObject obj);
+    void handleDbNotif(QVariant obj);
 
 private:
     MonitorTableLogs* table;
