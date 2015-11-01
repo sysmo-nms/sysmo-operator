@@ -8,11 +8,8 @@
 #include "network/supercasthttpreply.h"
 
 #include <QObject>
-#include <QJsonObject>
 #include <QThread>
 #include <QAbstractSocket>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QStringList>
 #include <QHash>
 

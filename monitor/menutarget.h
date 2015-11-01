@@ -16,7 +16,6 @@
 #include <QAction>
 #include <QIcon>
 #include <QMessageBox>
-#include <QJsonObject>
 
 #include <QDebug>
 

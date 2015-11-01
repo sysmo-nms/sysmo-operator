@@ -2,9 +2,6 @@
 #define PARSECHECKMAKEGRAPHCMD_H
 
 #include <QXmlDefaultHandler>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QJsonArray>
 
 #include <QDebug>
 

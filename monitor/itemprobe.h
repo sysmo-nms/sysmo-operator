@@ -5,8 +5,6 @@
 #include "systemtray.h"
 
 #include <QObject>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QStandardItem>
 #include <QList>
 #include <QVariant>

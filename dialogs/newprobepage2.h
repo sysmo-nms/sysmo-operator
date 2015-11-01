@@ -20,9 +20,6 @@
 #include <QObject>
 #include <QFormLayout>
 #include <QPushButton>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
 #include <QStringList>
 #include <QList>
 #include <QLabel>

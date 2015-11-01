@@ -9,7 +9,6 @@
 #include <QObject>
 #include <QWidget>
 #include <QProgressDialog>
-#include <QJsonObject>
 #include <QHash>
 #include <QHashIterator>
 #include <QLineEdit>

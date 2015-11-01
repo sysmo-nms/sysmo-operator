@@ -4,9 +4,6 @@
 #include "sysmo.h"
 
 #include <QStandardItem>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QJsonDocument>
 #include <QVariant>
 #include <QPixmap>
 #include <QIcon>

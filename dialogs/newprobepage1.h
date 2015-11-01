@@ -24,7 +24,6 @@
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include <QVariant>
-#include <QJsonObject>
 #include <QDesktopServices>
 #include <QUrl>
 

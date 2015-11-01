@@ -23,8 +23,6 @@
 #include <QLineEdit>
 #include <QIcon>
 #include <QMap>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QDesktopServices>
 #include <QUrl>
 #include <QPalette>

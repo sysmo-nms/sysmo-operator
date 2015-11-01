@@ -10,7 +10,6 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QStringList>
-#include <QJsonObject>
 #include <QHash>
 #include <QList>
 #include <QTimer>

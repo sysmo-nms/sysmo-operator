@@ -9,7 +9,6 @@
 #include <QDebug>
 #include <QSettings>
 #include <QVariant>
-#include <QJsonObject>
 
 class MonitorActions
 {

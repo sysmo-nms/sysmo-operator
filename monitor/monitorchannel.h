@@ -8,8 +8,6 @@
 
 #include <QObject>
 #include <QDebug>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QQueue>
 #include <QHash>
 #include <QHashIterator>

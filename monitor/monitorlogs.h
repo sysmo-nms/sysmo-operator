@@ -13,10 +13,7 @@
 #include <QTabWidget>
 #include <QIcon>
 #include <QTextEdit>
-#include <QJsonObject>
 #include <Qt>
-#include <QJsonDocument>
-#include <QJsonArray>
 #include <QByteArray>
 #include <QList>
 #include <QTableWidget>

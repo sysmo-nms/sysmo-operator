@@ -24,7 +24,6 @@
 #include <QDoubleSpinBox>
 #include <QFrame>
 #include <QLabel>
-#include <QJsonObject>
 #include <QString>
 #include <QAbstractButton>
 #include <QMessageBox>

@@ -11,7 +11,6 @@
 #include <QString>
 #include <QPoint>
 #include <QAction>
-#include <QJsonObject>
 
 #include <QDebug>
 

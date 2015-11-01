@@ -2,7 +2,6 @@
 #define SUPERCASTSIGNAL_H
 
 #include <QObject>
-#include <QJsonObject>
 
 class SupercastSignal : public QObject
 {

@@ -4,8 +4,6 @@
 #include "sysmo.h"
 
 #include <QObject>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QStringList>
 #include <QTcpSocket>
 #include <QAbstractSocket>

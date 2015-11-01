@@ -7,9 +7,6 @@
 #include <QObject>
 #include <QWidget>
 #include <QHash>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QString>
 
 #include <QDebug>
