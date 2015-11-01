@@ -1,7 +1,7 @@
 Build dependencies
 ------------------
-. C++/Qt5 development environment including QtCore, QtGui, QtNetwork and QtXml
-. java JDK >= 7
+- C++/Qt5 development environment including QtCore, QtGui, QtNetwork and QtXml
+- java JDK >= 7
 
 Build procedure
 ---------------
