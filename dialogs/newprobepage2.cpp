@@ -202,6 +202,16 @@ HelperExec::HelperExec(QLineEdit* line, QWidget* parent) : QObject(parent)
 
 void HelperExec::execHelper()
 {
+    QHash<QString,QVariant> valueHash;
+    valueHash.insert("target", this->h_target);
+    valueHash.insert("class", this->h_class);
+    QHash<QString,QVariant> helperHash;
+    helperHash.insert("from", "monitor");
+    helperHash.insert("type", "nchecksHelperQuery");
+    helperHash.insert("value", valueHash);
+
+    qDebug() << "execcccccc helper " << QJson::encode(helperHash);
+
     QJsonObject helperQuery;
     QJsonObject value;
     value.insert("target", QJsonValue(this->h_target));
@@ -210,7 +220,6 @@ void HelperExec::execHelper()
     helperQuery.insert("type", QJsonValue("ncheckHelperQuery"));
     helperQuery.insert("value", value);
 
-    qDebug() << "exec helper " << helperQuery;
 
 
     QString msg = QString("Executing helper %1").arg(this->h_class);

@@ -14,6 +14,7 @@
 #include "dialogs/messagebox.h"
 #include "network/supercastsignal.h"
 #include "network/supercast.h"
+#include "qjson.h"
 
 #include <QWidget>
 #include <QObject>
@@ -39,6 +40,9 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QList>
+#include <QHash>
+#include <QVariant>
+#include <QString>
 
 #include <QDebug>
 

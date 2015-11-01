@@ -72,7 +72,8 @@ SOURCES += main.cpp\
     monitor/monitorlogs.cpp \
     actions/monitoractionconfig.cpp \
     statusbutton.cpp \
-    statusbuttonwidget.cpp
+    statusbuttonwidget.cpp \
+    qjson.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -131,7 +132,8 @@ HEADERS  += mainwindow.h \
     monitor/monitorlogs.h \
     actions/monitoractionconfig.h \
     statusbutton.h \
-    statusbuttonwidget.h
+    statusbuttonwidget.h \
+    qjson.h
 
 RESOURCES += \
     icons.qrc \
