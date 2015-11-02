@@ -9,7 +9,6 @@
 #include <QSettings>
 #include <QIcon>
 #include <QtGlobal>
-#include <QStandardPaths>
 #include <QSettings>
 #include <QVariant>
 #include <QStringList>
@@ -21,8 +20,8 @@ void operatorMsgOut(
 {
     QByteArray localMsg = msg.toLocal8Bit();
     /*
-    QString logDir = QStandardPath::writableLocation(
-        QStandardPath::AppDataLocation)
+    QString logDir = QDesktopServices::writableLocation(
+        QDesktopServices::AppDataLocation)
     */
     switch (type) {
     case QtDebugMsg:
