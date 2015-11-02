@@ -25,7 +25,7 @@ StatusButton::StatusButton(QWidget *parent, QString type, QPixmap pixmap)
     QObject::connect(
                 this, SIGNAL(clicked(bool)),
                 this, SLOT(updateText()));
-    this->lcd->setStyleSheet("QFrame {border: 2px solid #000000;}");
+    this->lcd->setStyleSheet("");
 }
 
 void StatusButton::increment()
@@ -39,7 +39,7 @@ void StatusButton::decrement()
     this->counter -= 1;
     this->lcd->display(this->counter);
     if (this->counter == 0) {
-        this->lcd->setStyleSheet("QFrame {border: 2px solid #000000;}");
+        this->lcd->setStyleSheet("");
     }
 }
 
@@ -53,7 +53,7 @@ void StatusButton::toggleRed()
 {
     if (this->counter > 0) {
         if (this->red) {
-            this->lcd->setStyleSheet("QFrame {border: 2px solid #000000;}");
+            this->lcd->setStyleSheet("");
             this->red = false;
         } else {
             this->lcd->setStyleSheet("QFrame {border: 2px solid #ef2929;}");
