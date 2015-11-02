@@ -62,7 +62,6 @@ SOURCES += main.cpp\
     rrds/rrd4qtsignal.cpp \
     rrds/rrd4qtgraph.cpp \
     rrds/rrd4qt.cpp \
-    rrds/rrd4qtproc.cpp \
     actions/monitoractions.cpp \
     actions/monitoractionsdialog.cpp \
     actions/monitoractioncreate.cpp \
@@ -73,7 +72,8 @@ SOURCES += main.cpp\
     actions/monitoractionconfig.cpp \
     statusbutton.cpp \
     statusbuttonwidget.cpp \
-    qjson.cpp
+    qjson.cpp \
+    temporarydir.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -122,7 +122,6 @@ HEADERS  += mainwindow.h \
     rrds/rrd4qtsignal.h \
     rrds/rrd4qtgraph.h \
     rrds/rrd4qt.h \
-    rrds/rrd4qtproc.h \
     actions/monitoractions.h \
     actions/monitoractionsdialog.h \
     actions/monitoractioncreate.h \
@@ -133,7 +132,8 @@ HEADERS  += mainwindow.h \
     actions/monitoractionconfig.h \
     statusbutton.h \
     statusbuttonwidget.h \
-    qjson.h
+    qjson.h \
+    temporarydir.h
 
 RESOURCES += \
     icons.qrc \

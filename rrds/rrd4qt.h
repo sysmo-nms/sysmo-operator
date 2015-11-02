@@ -3,13 +3,13 @@
 
 #include "rrds/rrd4qtsignal.h"
 #include "qjson.h"
+#include "temporarydir.h"
 
 #include <QObject>
 #include <QThread>
 #include <QAbstractSocket>
 #include <QStringList>
 #include <QMap>
-#include <QTemporaryDir>
 #include <QDir>
 #include <QFile>
 #include <QProcess>
@@ -50,7 +50,8 @@ private:
     static const int HEADER_LEN = 4;
 
     qint32        block_size;
-    QTemporaryDir temporary_dir;
+    TemporaryDir temporary_dir;
+    //QTemporaryDir temporary_dir; // Qt4 incompatible
 
     QProcess*                  proc;
     QMap<int, Rrd4QtSignal*>* queries;
