@@ -49,7 +49,7 @@ public:
 public slots:
     void routeServerMessage(QVariant msg);
     void socketConnected();
-    void socketError(QAbstractSocket::SocketError error);
+    void socketError(int error);
 
 private:
     static Supercast* singleton;

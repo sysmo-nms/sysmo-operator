@@ -112,16 +112,14 @@ void Supercast::tryConnect(
                 Qt::QueuedConnection);
 
     // socket state
-    qRegisterMetaType<QAbstractSocket::SocketError>();
+    //qRegisterMetaType<QAbstractSocket::SocketError>();
     QObject::connect(
-                socket_t->socket,
-                    SIGNAL(error(QAbstractSocket::SocketError)),
-                this,
-                    SLOT(socketError(QAbstractSocket::SocketError)),
+                socket_t, SIGNAL(socketError(int)),
+                this, SLOT(socketError(int)),
                 Qt::QueuedConnection);
     QObject::connect(
-                socket_t, SIGNAL(waitTimeout(QAbstractSocket::SocketError)),
-                this,     SLOT(socketError(QAbstractSocket::SocketError)),
+                socket_t, SIGNAL(waitTimeout(int)),
+                this,     SLOT(socketError(int)),
                 Qt::QueuedConnection);
 
     QObject::connect(
@@ -156,7 +154,7 @@ void Supercast::socketConnected()
 }
 
 
-void Supercast::socketError(QAbstractSocket::SocketError error)
+void Supercast::socketError(int error)
 {
     qDebug() << "conn error: " << error;
     emit this->connectionStatus(error);

@@ -13,6 +13,9 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
                 timer, SIGNAL(timeout()),
                 this, SLOT(timerTimeout()),
                 Qt::QueuedConnection);
+    QObject::connect(
+                this->socket, SIGNAL(error(QAbstractSocket::SocketError)),
+                this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
 
     /*
      * QueuedConnection because the SLOT may emit the SIGNAL he is
@@ -115,4 +118,8 @@ QByteArray SupercastSocket::int32ToArray(qint32 source)
     QDataStream data(&temp, QIODevice::ReadWrite);
     data << source;
     return temp;
+}
+
+void SupercastSocket::handleSocketError(QAbstractSocket::SocketError error) {
+    emit this->socketError((int) error);
 }

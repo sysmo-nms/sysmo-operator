@@ -27,6 +27,7 @@ public:
 public slots:
     void handleClientMessage(QVariant msg);
     void timerTimeout();
+    void handleSocketError(QAbstractSocket::SocketError error);
 
 private:
     qint32 block_size;
@@ -40,7 +41,8 @@ private slots:
 
 signals:
     void serverMessage(QVariant msg);
-    void waitTimeout(QAbstractSocket::SocketError err);
+    void waitTimeout(int error);
+    void socketError(int error);
 };
 
 #endif // SUPERCASTSOCKET_H
