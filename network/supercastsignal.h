@@ -11,6 +11,9 @@ class SupercastSignal : public QObject
 
 public:
     explicit SupercastSignal(QObject* parent = 0);
+    void emitServerMessage(QVariant json);
+    void emitServerMessage(QString string);
+    void emitServerMessage(int integer);
 
 signals:
     void serverMessage(QVariant json);

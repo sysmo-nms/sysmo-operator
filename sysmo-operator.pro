@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     statusbutton.cpp \
     statusbuttonwidget.cpp \
     qjson.cpp \
-    temporarydir.cpp
+    temporarydir.cpp \
+    rrds/rrd4qtproc.cpp
 
 HEADERS  += mainwindow.h \
     centralwidget.h \
@@ -133,7 +134,8 @@ HEADERS  += mainwindow.h \
     statusbutton.h \
     statusbuttonwidget.h \
     qjson.h \
-    temporarydir.h
+    temporarydir.h \
+    rrds/rrd4qtproc.h
 
 RESOURCES += \
     icons.qrc \

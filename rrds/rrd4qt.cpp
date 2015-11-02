@@ -72,7 +72,7 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
     /*
      * Start the server
      */
-    this->proc = new QProcess(parent);
+    this->proc = new Rrd4QtProc(parent);
     this->proc->setProcessChannelMode(QProcess::SeparateChannels);
     this->proc->setReadChannel(QProcess::StandardOutput);
     QObject::connect(
@@ -126,7 +126,7 @@ void Rrd4Qt::procStdoutReadyRead()
     int       queryId = json_obj.value("queryId").toInt();
     Rrd4QtSignal* sig = this->queries->take(queryId);
 
-    emit sig->serverMessage(QVariant(json_obj));
+    sig->emitServerMessage(QVariant(json_obj));
     sig->deleteLater();
 
     /*
@@ -139,7 +139,7 @@ void Rrd4Qt::procStdoutReadyRead()
      * without recursion (QueuedConnection).
      */
     if (this->proc->bytesAvailable() != 0)
-        emit this->proc->readyRead();
+        this->proc->emitReadyRead();
 }
 
 void Rrd4Qt::callRrd(QMap<QString,QVariant> msg, Rrd4QtSignal* sig)

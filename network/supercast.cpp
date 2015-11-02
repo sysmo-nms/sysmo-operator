@@ -232,7 +232,7 @@ void Supercast::handleSupercastMessage(QVariant variantMsg)
                                  .toString();
         SupercastSignal* sig = this->channels->value(channel);
 
-        emit sig->serverMessage(message);
+        sig->emitServerMessage(message);
     }
     else if (type == "unsubscribeOk" || type == "unsubscribeErr")
     {
@@ -340,7 +340,7 @@ void Supercast::handleHttpReply(SupercastHttpReply reply)
     int queryId = reply.id;
     SupercastSignal* sig = Supercast::singleton->http_requests->take(queryId);
 
-    emit sig->serverMessage(reply.body);
+    sig->emitServerMessage(reply.body);
 
     sig->deleteLater();
 }

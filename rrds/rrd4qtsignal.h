@@ -11,6 +11,9 @@ class Rrd4QtSignal : public QObject
 
 public:
     explicit Rrd4QtSignal(QObject* parent = 0);
+    void emitServerMessage(QVariant json);
+    void emitServerMessage(QString string);
+    void emitServerMessage(int integer);
 
 signals:
     void serverMessage(QVariant json);

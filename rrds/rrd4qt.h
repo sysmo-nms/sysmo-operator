@@ -2,6 +2,7 @@
 #define RRD4QT_H
 
 #include "rrds/rrd4qtsignal.h"
+#include "rrds/rrd4qtproc.h"
 #include "qjson.h"
 #include "temporarydir.h"
 
@@ -53,7 +54,7 @@ private:
     TemporaryDir temporary_dir;
     //QTemporaryDir temporary_dir; // Qt4 incompatible
 
-    QProcess*                  proc;
+    Rrd4QtProc* proc;
     QMap<int, Rrd4QtSignal*>* queries;
 
     static qint32     arrayToInt32(QByteArray source);
