@@ -129,7 +129,7 @@ SupercastTcpSocket::SupercastTcpSocket(QObject *parent) : QTcpSocket(parent)
 
 }
 
-void SupercastTcpSocket::emitSocketReadyRead()
+void SupercastTcpSocket::emitReadyRead()
 {
     emit this->readyRead();
 }
