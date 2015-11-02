@@ -175,7 +175,7 @@ void Supercast::routeServerMessage(QVariant variantMsg)
     if (this->channels->contains(from)) {
         SupercastSignal* sig = this->channels->value(from);
 
-        emit sig->serverMessage(msg);
+        sig->emitServerMessage(msg);
         return;
     }
 
@@ -193,7 +193,7 @@ void Supercast::routeServerMessage(QVariant variantMsg)
 
         SupercastSignal* sig = this->queries->value(queryId);
 
-        emit sig->serverMessage(msg);
+        sig->emitServerMessage(msg);
 
         if (lastPdu) {
             this->queries->remove(queryId);
