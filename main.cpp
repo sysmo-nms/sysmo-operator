@@ -13,16 +13,18 @@
 #include <QVariant>
 #include <QStringList>
 
+/* Qt4 incompatible
+ * TODO log system
+ */
+/*
 void operatorMsgOut(
               QtMsgType           type,
         const QMessageLogContext &context,
         const QString            &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
-    /*
-    QString logDir = QDesktopServices::writableLocation(
-        QDesktopServices::AppDataLocation)
-    */
+    //QString logDir = QDesktopServices::writableLocation(
+        //QDesktopServices::AppDataLocation)
     switch (type) {
     case QtDebugMsg:
         fprintf(stderr, "Debug: %s (%s:%u, %s)\n",
@@ -56,6 +58,7 @@ void operatorMsgOut(
         break;
     }
 }
+*/
 
 
 int main(int argc, char* argv[])
@@ -76,7 +79,7 @@ int main(int argc, char* argv[])
     /* other OS/X11 things here */
 #endif
 
-                qInstallMessageHandler(operatorMsgOut);
+                //qInstallMessageHandler(operatorMsgOut); TODO C++ log system
 
                 QString version = "1.1.0";
 
@@ -86,9 +89,8 @@ int main(int argc, char* argv[])
                 //defaultFont.setFamily("Monospace");
                 //defaultFont.setPixelSize(11);
                 //QApplication::setFont(defaultFont);
-                QApplication::setApplicationName("Operator");
+                QApplication::setApplicationName("Sysmo Operator");
                 QApplication::setApplicationVersion(version);
-                QApplication::setApplicationDisplayName("Sysmo Operator");
                 QApplication::setOrganizationName("Sysmo NMS");
                 QApplication::setOrganizationDomain("sysmo.io");
                 QApplication::setQuitOnLastWindowClosed(true);
