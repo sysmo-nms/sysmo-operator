@@ -4,30 +4,6 @@ QPalette Themes::midnight = Themes::initMidnight();
 QPalette Themes::inland   = Themes::initInland();
 QPalette Themes::greys    = Themes::initGreys();
 QPalette Themes::iced     = Themes::initIced();
-QPalette Themes::native   = Themes::initNative();
-QFont Themes::defaultFont = Themes::initFont();
-
-QFont Themes::initFont()
-{
-    int   fake_argc = 0;
-    char* fake_argv[0];
-    QApplication fake_app(fake_argc, fake_argv);
-
-    return fake_app.font();
-}
-
-QPalette Themes::initNative()
-{
-    /*
-     * Start a fake QApplication to have an initialized
-     * system QPalette.
-     */
-    int   fake_argc = 0;
-    char* fake_argv[0];
-    QApplication fake_app(fake_argc, fake_argv);
-
-    return fake_app.palette();
-}
 
 QPalette Themes::initMidnight()
 {

@@ -94,13 +94,14 @@ int main(int argc, char* argv[])
                 QApplication::setOrganizationName("Sysmo NMS");
                 QApplication::setOrganizationDomain("sysmo.io");
                 QApplication::setQuitOnLastWindowClosed(true);
+#if QT_VERSION >= 0x050000
                 QApplication::setStyle("fusion");
-
+#else
+                QApplication::setStyle("plastique");
+#endif
                 QSettings settings;
                 QVariant variant = settings.value("color_theme");
-                if (!variant.isValid()) {
-                        QApplication::setPalette(Themes::native);
-                } else {
+                if (variant.isValid()) {
                         QString theme = variant.toString();
                         if (theme == "midnight") {
                                 QApplication::setPalette(Themes::midnight);
@@ -110,22 +111,25 @@ int main(int argc, char* argv[])
                                 QApplication::setPalette(Themes::greys);
                         } else if (theme == "iced") {
                                 QApplication::setPalette(Themes::iced);
-                        } else if (theme == "native") {
-                                QApplication::setPalette(Themes::native);
                         }
                 }
 
                 QApplication app(argc, argv);
-               /*
-                * QLibraryInfo::location(QLibraryInfo::PluginsPath);
-                */
+                // QLibraryInfo::location(QLibraryInfo::PluginsPath);
                 // don't load any plugins?
-                QApplication::setLibraryPaths(QStringList());
+                // QApplication::setLibraryPaths(QStringList());
 
                 app.setWindowIcon(QIcon(":/icons/logo.png"));
 
                 MainWindow w;
                 RETURN_CODE = app.exec();
+#if QT_VERSION < 0x050000
+                if (RETURN_CODE = Sysmo::APP_RESTART_CODE) {
+                    // app restart not working with qt4
+                    // return 0
+                    RETURN_CODE = 0;
+                }
+#endif
         } while (RETURN_CODE == Sysmo::APP_RESTART_CODE);
 
         return RETURN_CODE;
