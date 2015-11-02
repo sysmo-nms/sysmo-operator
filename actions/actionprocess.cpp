@@ -64,9 +64,9 @@ void ActionProcess::handleErrorMsg()
     this->error_string += QString(this->readAllStandardError());
 
     QString str;
-    str += this->program();
+    str += this->programString;
     str += " ";
-    str += this->arguments().join(" ");
+    str += this->programArgs.join(" ");
     str += "\n\n";
     str += this->error_string;
 
