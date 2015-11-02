@@ -5,15 +5,15 @@ Build dependencies
 
 ### CentOS 7 exemple
 ```sh
-$ sudo yum groupinstall 'Development Tools'
-$ sudo yum install qt-devel java-1.7.0-openjdk-devel
-$ git clone https://github.com/sysmo-nms/sysmo-operator.git
-$ cd sysmo-operator
-$ cd rrd4qt/
-$ ./gradlew installDist
-$ cd ..
-$ qmake -config release
-$ make
+sudo yum groupinstall 'Development Tools'
+sudo yum install qt-devel java-1.7.0-openjdk-devel
+git clone https://github.com/sysmo-nms/sysmo-operator.git
+cd sysmo-operator
+cd rrd4qt/
+./gradlew installDist
+cd ..
+qmake -config release
+make
 ```
 
 Deploying
