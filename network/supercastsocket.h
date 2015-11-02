@@ -19,7 +19,7 @@ class SupercastTcpSocket : public QTcpSocket
 {
 public:
     explicit SupercastTcpSocket(QObject* parent = 0);
-    void emitSocketReadyRead();
+    void emitReadyRead();
 };
 
 class SupercastSocket : public QObject
