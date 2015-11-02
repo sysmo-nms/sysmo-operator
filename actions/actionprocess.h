@@ -13,9 +13,12 @@ class ActionProcess : public QProcess
     Q_OBJECT
 public:
     ActionProcess(QObject *parent = 0);
+    void startProcess(const QString program, const QStringList arguments);
 
 private:
     QString error_string;
+    QString programString;
+    QStringList programArgs;
 
 private slots:
     void handleErrorMsg();

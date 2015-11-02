@@ -17,12 +17,20 @@ ActionProcess::ActionProcess(QObject *parent)
 
 }
 
+void ActionProcess::startProcess(const QString program, const QStringList arguments)
+{
+    this->programString = program;
+    this->programArgs = arguments;
+    this->start(program,arguments);
+
+}
+
 void ActionProcess::handleStartError(QProcess::ProcessError err)
 {
     QString str;
-    str += this->program();
+    str += this->programString;
     str += " ";
-    str += this->arguments().join(" ");
+    str += this->programArgs.join(" ");
     str += "\n\n";
 
     switch(err) {

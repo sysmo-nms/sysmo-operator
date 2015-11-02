@@ -102,7 +102,7 @@ void MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
     QStringList args_list = args.split(" ");
     qDebug() << "should execute " << cmd << " with args " << args;
     ActionProcess *proc = new ActionProcess();
-    proc->start(cmd, args_list);
+    proc->startProcess(cmd, args_list);
     this->close();
 }
 
