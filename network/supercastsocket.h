@@ -15,6 +15,13 @@
 #include <QTimer>
 #include <QVariant>
 
+class SupercastTcpSocket : public QTcpSocket
+{
+public:
+    explicit SupercastTcpSocket(QObject* parent = 0);
+    void emitSocketReadyRead();
+};
+
 class SupercastSocket : public QObject
 {
     Q_OBJECT
@@ -22,7 +29,7 @@ class SupercastSocket : public QObject
 public:
     explicit SupercastSocket(QHostAddress host, qint16 port);
     ~SupercastSocket();
-    QTcpSocket* socket;
+    SupercastTcpSocket* socket;
 
 public slots:
     void handleClientMessage(QVariant msg);

@@ -3,7 +3,7 @@
 SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
 {
     this->block_size = 0;
-    this->socket     = new QTcpSocket(this);
+    this->socket     = new SupercastTcpSocket(this);
 
     QTimer *timer = new QTimer(this);
     timer->setSingleShot(true);
@@ -89,7 +89,7 @@ void SupercastSocket::socketReadyRead()
      * without recursion (QueuedConnection).
      */
     if (this->socket->bytesAvailable() != 0)
-        emit this->socket->readyRead();
+        this->socket->emitReadyRead();
 }
 
 
@@ -122,4 +122,14 @@ QByteArray SupercastSocket::int32ToArray(qint32 source)
 
 void SupercastSocket::handleSocketError(QAbstractSocket::SocketError error) {
     emit this->socketError((int) error);
+}
+
+SupercastTcpSocket::SupercastTcpSocket(QObject *parent) : QTcpSocket(parent)
+{
+
+}
+
+void SupercastTcpSocket::emitSocketReadyRead()
+{
+    emit this->readyRead();
 }
