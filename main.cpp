@@ -79,16 +79,10 @@ int main(int argc, char* argv[])
     /* other OS/X11 things here */
 #endif
 
-                //qInstallMessageHandler(operatorMsgOut); TODO C++ log system
+                //qInstallMessageHandler(operatorMsgOut); TODO C++ qt4 compatible log system
 
                 QString version = "1.1.0";
 
-                //QFont defaultFont = Themes::defaultFont;
-                //defaultFont.setStretch(110);
-                //defaultFont.setFamily("Helvetica");
-                //defaultFont.setFamily("Monospace");
-                //defaultFont.setPixelSize(11);
-                //QApplication::setFont(defaultFont);
                 QApplication::setApplicationName("Sysmo Operator");
                 QApplication::setApplicationVersion(version);
                 QApplication::setOrganizationName("Sysmo NMS");
@@ -115,9 +109,6 @@ int main(int argc, char* argv[])
                 }
 
                 QApplication app(argc, argv);
-                // QLibraryInfo::location(QLibraryInfo::PluginsPath);
-                // don't load any plugins?
-                // QApplication::setLibraryPaths(QStringList());
 
                 app.setWindowIcon(QIcon(":/icons/logo.png"));
 
@@ -125,8 +116,7 @@ int main(int argc, char* argv[])
                 RETURN_CODE = app.exec();
 #if QT_VERSION < 0x050000
                 if (RETURN_CODE = Sysmo::APP_RESTART_CODE) {
-                    // app restart not working with qt4
-                    // return 0
+                    // TODO make app restart working with qt4
                     RETURN_CODE = 0;
                 }
 #endif
