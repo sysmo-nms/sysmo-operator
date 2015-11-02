@@ -6,9 +6,12 @@ DashboardWidget::DashboardWidget(QWidget *parent) : NFrame(parent)
     this->setLayout(grid);
 
     QTabWidget* tab = new QTabWidget(this);
+    // tabBar() in qt4 is protected
+    /*
     QTabBar* tab_bar = tab->tabBar();
     tab_bar->setUsesScrollButtons(true);
     tab_bar->setExpanding(true);
+    */
 
     QPushButton* button_add = new QPushButton(this);
     button_add->setIcon(QIcon(":/icons/list-add.png"));
