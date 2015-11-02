@@ -9,6 +9,8 @@ apply plugin: 'jdepend'
 
 sourceCompatibility = 1.7
 
+defaultTasks 'installDist'
+
 applicationDefaultJvmArgs = [
         "-client", "-Duser.language=en",
         "-Xms100M", "-Xmx100M"

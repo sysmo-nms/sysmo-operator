@@ -26,7 +26,7 @@ Building
 $ git clone https://github.com/sysmo-nms/sysmo-operator.git
 $ cd sysmo-operator
 $ cd rrd4qt/
-$ ./gradlew installDist
+$ ./gradlew
 $ cd ..
 $ qmake -config release
 $ make
