@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
                 MainWindow w;
                 RETURN_CODE = app.exec();
 #if QT_VERSION < 0x050000
-                if (RETURN_CODE = Sysmo::APP_RESTART_CODE) {
+                if (RETURN_CODE == Sysmo::APP_RESTART_CODE) {
                     // TODO make app restart working with qt4
                     RETURN_CODE = 0;
                 }
