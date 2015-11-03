@@ -8,7 +8,7 @@ DelegateProbeProgress::DelegateProbeProgress(QWidget* parent)
 
 void DelegateProbeProgress::ticTimeout()
 {
-    this->timestamp = QDateTime::currentMSecsSinceEpoch() / 1000;
+    this->timestamp = QDateTime::currentDateTime().toTime_t();
 }
 
 
