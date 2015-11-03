@@ -145,5 +145,5 @@ RESOURCES += \
     tree.qrc \
     rrd4qt.qrc
 
-target.path = /usr/bin
+target.path = /$(BINDIR)
 INSTALLS += target
