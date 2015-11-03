@@ -32,7 +32,9 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     this->setLayout(grid);
 
     QLineEdit* search = new QLineEdit(this);
+#if QT_VERSION >= 0x048000
     search->setPlaceholderText("Filter");
+#endif
 
     QPushButton* clear = new QPushButton(this);
     clear->setIcon(QIcon(":/icons/edit-clear.png"));

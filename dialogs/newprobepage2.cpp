@@ -92,7 +92,10 @@ void NewProbePage2::initializePage()
         QObject::connect(
                     edit, SIGNAL(textChanged(QString)),
                     this, SIGNAL(completeChanged()));
+
+#if QT_VERSION >= 0x048000
         edit->setPlaceholderText(i->hint);
+#endif
         edit->setToolTip(i->hint);
         if (i->has_helper) {
             NFrameContainer* fr   = new NFrameContainer(this->form_frame);
@@ -127,7 +130,9 @@ void NewProbePage2::initializePage()
     {
         QLineEdit* edit = new QLineEdit(this->form_frame);
         this->args->insert(j->flag_name, edit);
+#if QT_VERSION >= 0x048000
         edit->setPlaceholderText(j->hint);
+#endif
         edit->setText(j->defaults);
         edit->setToolTip(j->hint);
         if (j->has_helper) {
