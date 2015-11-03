@@ -14,7 +14,8 @@
 /rrd4qt/*.iml
 /rrd4qt/.idea
 
-/rrd4qt/build
+/rrd4qt/build/*
+!/rrd4qt/build/install/
 /rrd4qt/.gradle
 
 /ressources/rrd4qt
