@@ -9,4 +9,4 @@ Terminal=false
 Type=Application
 Keywords=monitor;sysmo;client;operator;
 Categories=System;Utility;
-StartupNotify=true;
+StartupNotify=true
