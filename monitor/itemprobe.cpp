@@ -107,7 +107,7 @@ void ItemProbe::updateReturnInfo(QMap<QString,QVariant> info)
     this->item_last_return->setData(reply, Qt::DisplayRole);
     this->item_last_return->setToolTip(reply);
     int in_sec      = info.value("nextReturn").toInt() / 1000;
-    int current_sec = QDateTime::currentMSecsSinceEpoch() / 1000;
+    int current_sec = QDateTime::currentDateTime().toTime_t();
     int next_in_sec = current_sec + in_sec;
     this->item_progress->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);
     this->emitDataChanged();
