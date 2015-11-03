@@ -22,7 +22,7 @@ task :linux_release do
   sh "qmake -config release"
   sh "make"
   FileUtils.mkdir(RELEASE_DIR)
-  FileUtils.mkdir(RELEASE_DIR + "platforms"))
+  FileUtils.mkdir(RELEASE_DIR + "platforms")
   FileUtils.cp("sysmo-operator", RELEASE_DIR)
   FileUtils.cp("release_utils/sysmo-operator.sh", "output/")
   FileUtils.cp("/home/seb/Qt/5.4/gcc_64/lib/libQt5Core.so.5", RELEASE_DIR)
@@ -82,4 +82,17 @@ desc "Build std icons from SVG src"
 task :std_icons do
   icon_size = 32
   sh "inkscape -z --export-png=ressources/icons/hub.png -w #{pix_size} -h #{pix_size} ressources/src/hub.svg"
+end
+
+task :rpm_icons do
+  sizes = ["16", "22", "24", "256", "32", "48"]
+  hcolorSrc = "ressources/src/sysmo-logo-src.svg"
+  hcontrastSrc = "ressources/src/sysmo-logo-hc-src.svg"
+  FileUtils.cp(hcolorSrc, "ressources/rpm/icons/hicolor/scalable/apps/")
+  sizes.each{ |s|
+    colorPath = "rpm_icons/icons/hicolor/#{s}x#{s}/apps"
+    contrastPath = "rpm_icons/icons/HighContrast/#{s}x#{s}/apps"
+    sh "inkscape -z --export-png=#{colorPath}/sysmo.png -w #{s} -h #{s} #{hcolorSrc}"
+    sh "inkscape -z --export-png=#{contrastPath}/sysmo.png -w #{s} -h #{s} #{hcontrastSrc}"
+  }
 end
