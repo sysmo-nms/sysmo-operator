@@ -8,5 +8,5 @@ Icon=sysmo
 Terminal=false
 Type=Application
 Keywords=monitor;sysmo;client;operator;
-Categories=Utility;Network;
+Categories=Network;
 StartupNotify=true
