@@ -96,3 +96,12 @@ task :rpm_icons do
     sh "inkscape -z --export-png=#{contrastPath}/sysmo.png -w #{s} -h #{s} #{hcontrastSrc}"
   }
 end
+
+task :deb_icons do
+  sizes = ["128", "64"]
+  hcolorSrc = "ressources/src/sysmo-logo-src.svg"
+  sizes.each{ |s|
+    colorPath = "deb_icons/#{s}x#{s}"
+    sh "inkscape -z --export-png=#{colorPath}/sysmo.png -w #{s} -h #{s} #{hcolorSrc}"
+  }
+end

@@ -21,7 +21,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
     QLabel* host_lab = new QLabel("Host:", this);
     this->target_host = new QLineEdit(this);
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
     this->target_host->setPlaceholderText("IP version 4/6 or hostname");
 #endif
     form->addRow(host_lab, this->target_host);
@@ -31,7 +31,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
     QLabel* name_lab = new QLabel("Display name:", this);
     this->target_name = new QLineEdit(this);
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
     this->target_name->setPlaceholderText("Optional. Hidden by MIB2::sysName if SNMP is enabled.");
 #endif
     form->addRow(name_lab, this->target_name);
@@ -95,7 +95,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     QLabel* community_lab = new QLabel("Community:", this);
     this->snmp_community = new QLineEdit(this);
     this->snmp_community->setText("public");
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
     this->snmp_community->setPlaceholderText("SNMP v1/v2c community name");
 #endif
     form->addRow(community_lab, this->snmp_community);
@@ -135,7 +135,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
     QLabel* usm_user_lab = new QLabel("User:", this);
     this->snmp_usm_user = new QLineEdit(this);
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
     this->snmp_usm_user->setPlaceholderText("SNMP v3 user name");
 #endif
     form->addRow(usm_user_lab, this->snmp_usm_user);
@@ -158,7 +158,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_auth_proto->insertItem(Sysmo::SNMP_AUTH_MD5, "MD5");
     this->snmp_auth_proto->setCurrentIndex(Sysmo::SNMP_AUTH_MD5);
     this->snmp_auth_key = new QLineEdit(this);
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
     this->snmp_auth_key->setPlaceholderText("SNMP v3 authentication key");
 #endif
     auth_grid->addWidget(this->snmp_auth_proto, 0,0);
@@ -191,7 +191,7 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
     this->snmp_priv_proto->insertItem(Sysmo::SNMP_PRIV_3DES,   "3DES");
     this->snmp_priv_proto->setCurrentIndex(Sysmo::SNMP_PRIV_AES128);
     this->snmp_priv_key = new QLineEdit(this);
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
     this->snmp_priv_key->setPlaceholderText("SNMP v3 privacy key");
 #endif
     priv_grid->addWidget(this->snmp_priv_proto, 0,0);

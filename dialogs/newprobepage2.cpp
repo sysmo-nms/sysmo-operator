@@ -93,7 +93,7 @@ void NewProbePage2::initializePage()
                     edit, SIGNAL(textChanged(QString)),
                     this, SIGNAL(completeChanged()));
 
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
         edit->setPlaceholderText(i->hint);
 #endif
         edit->setToolTip(i->hint);
@@ -130,7 +130,7 @@ void NewProbePage2::initializePage()
     {
         QLineEdit* edit = new QLineEdit(this->form_frame);
         this->args->insert(j->flag_name, edit);
-#if QT_VERSION >= 0x048000
+#if QT_VERSION >= 0x047000
         edit->setPlaceholderText(j->hint);
 #endif
         edit->setText(j->defaults);
