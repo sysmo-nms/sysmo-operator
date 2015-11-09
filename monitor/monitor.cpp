@@ -65,9 +65,11 @@ void Monitor::handleServerMessage(QVariant messageVariant)
 
 
     } else if (type == "syncBegin") {
+        qDebug() << "syncbegin";
         emit this->initialSyncBegin(mcontent);
 
     } else if (type == "syncEnd") {
+        qDebug() << "syncend";
         emit this->initialSyncEnd();
 
     } else if (type == "dbNotif") {

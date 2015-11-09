@@ -43,18 +43,13 @@ void ItemTarget::updateInfo(QMap<QString,QVariant> info_target)
 
     QString display;
 
-    if (!sys_name.isEmpty())
-    {
+    if ((!sys_name.isEmpty()) & (sys_name != "undefined")) {
         display.append(sys_name);
         display.append(QString("  (%1)").arg(hostname));
-    }
-    else if ((!fixed_name.isEmpty()) & (fixed_name != ""))
-    {
+    } else if ((!fixed_name.isEmpty()) & (fixed_name != "")) {
         display.append(fixed_name);
         display.append(QString("  (%1)").arg(hostname));
-    }
-    else
-    {
+    } else {
         display.append(hostname);
     }
 

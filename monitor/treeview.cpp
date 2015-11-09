@@ -86,13 +86,17 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
      * Then wait for initialSyncEnd() slot to be triggered and
      * finalize the initialisation.
      */
+
 }
 
 void TreeView::initialSyncEnd()
 {
+    this->restoreStateFromSettings();
     this->setModel(this->filter_model);
     this->expandAll();
-    this->restoreStateFromSettings();
+    this->update();
+
+    qDebug() << "SYYYYYYYYYYYYYYYNC END";
 }
 
 

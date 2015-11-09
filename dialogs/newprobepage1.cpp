@@ -10,10 +10,10 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     QString snmpAwareStr = properties.value("isSnmpAware").toString();
 
     bool snmpAware;
-    if (snmpAwareStr == "false") {
-        snmpAware = false;
-    } else {
+    if (snmpAwareStr == "true") {
         snmpAware = true;
+    } else {
+        snmpAware = false;
     }
 
     qDebug() << "target is snmpAware" << snmpAware;
