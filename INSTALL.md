@@ -1,33 +1,29 @@
+Runtime dependencies
+--------------------
+- Qt shared libraries,
+- Java 7 or 8.
+
 Build dependencies
 ------------------
-- C++/Qt5.X or Qt4.8 development environment,
-- java JDK >= 7 development tools,
+- C++, Qt5.X or Qt4.X <= 4.6 development environment,
 - git.
 
-#### CentOS 7 example
+#### CentOS 7 dependency install example
 ```sh
 $ sudo yum groupinstall 'Development Tools'
 $ sudo yum install git qt-devel java-1.7.0-openjdk-devel
 ```
 
-#### Debian 8 example
+#### Debian 8 dependency install example
 ```sh
 $ sudo apt-get install build-essentials git openjdk-7-jdk qt-jdk
 ```
-
-Runtime dependencies
---------------------
-- Qt shared libraries,
-- Java 7 or 8.
 
 Building
 --------
 ```sh
 $ git clone https://github.com/sysmo-nms/sysmo-operator.git
 $ cd sysmo-operator
-$ cd rrd4qt/
-$ ./gradlew
-$ cd ..
 $ qmake -config release
 $ make
 ```
