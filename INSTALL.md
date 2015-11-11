@@ -5,7 +5,7 @@ Runtime dependencies
 
 Build dependencies
 ------------------
-- C++, Qt5.X or Qt4.X <= 4.6 development environment,
+- C++, Qt5.X or Qt4.X >= 4.6 development environment,
 - git.
 
 #### CentOS 7 dependency install example
