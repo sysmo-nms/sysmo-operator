@@ -11,12 +11,12 @@ Build dependencies
 #### CentOS 7 dependency install example
 ```sh
 $ sudo yum groupinstall 'Development Tools'
-$ sudo yum install git qt-devel java-1.7.0-openjdk-devel
+$ sudo yum install git qt-devel
 ```
 
 #### Debian 8 dependency install example
 ```sh
-$ sudo apt-get install build-essentials git openjdk-7-jdk qt-jdk
+$ sudo apt-get install build-essentials git qt-jdk
 ```
 
 Building
