@@ -1,23 +1,22 @@
 Runtime dependencies
 --------------------
-- Qt shared libraries,
-- Java 7 or 8.
+- Qt shared libraries
+- Java 7 or 8
 
 Build dependencies
 ------------------
-- C++ build tools,
-- Qt5.X or Qt4.X >= 4.6 development environment,
-- git.
+- C++ build tools
+- Qt5.X or Qt4.X >= 4.6 development environment
 
 #### CentOS 7 dependency install example
 ```sh
 $ sudo yum groupinstall 'Development Tools'
-$ sudo yum install git qt-devel
+$ sudo yum install qt-devel
 ```
 
 #### Debian 8 dependency install example
 ```sh
-$ sudo apt-get install build-essentials git qt-jdk
+$ sudo apt-get install build-essentials qt-jdk
 ```
 
 Building
