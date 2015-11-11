@@ -12,6 +12,8 @@
 #include <QSettings>
 #include <QVariant>
 #include <QStringList>
+#include <QSplashScreen>
+#include <QPixmap>
 
 /* Qt4 incompatible
  * TODO log system
@@ -109,10 +111,17 @@ int main(int argc, char* argv[])
                 }
 
                 QApplication app(argc, argv);
-
                 app.setWindowIcon(QIcon(":/icons/logo.png"));
+                QPixmap pixmap(":/images/banner.png");
+                QSplashScreen splash(pixmap);
+                splash.show();
+                app.processEvents();
 
                 MainWindow w;
+
+                splash.finish(w.getLoginWindow());
+                w.initSysmo();
+
                 RETURN_CODE = app.exec();
 #if QT_VERSION < 0x050000
                 if (RETURN_CODE == Sysmo::APP_RESTART_CODE) {

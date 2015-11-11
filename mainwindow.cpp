@@ -4,6 +4,15 @@ QSize MainWindow::sizeHint() const {return this->default_size;}
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
+    this->log_in_dialog = new LogIn(this);
+}
+
+QWidget* MainWindow::getLoginWindow()
+{
+    return this->log_in_dialog;
+}
+
+void MainWindow::initSysmo() {
     /*
      * Initialize supercast.
      */
@@ -153,7 +162,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
      * create, connect and open the log_in_dialog
      * Note that on log_in failure, the entire application close.
      */
-    this->log_in_dialog = new LogIn(this);
     QObject::connect(
                 this->log_in_dialog, SIGNAL(rejected()),
                 this,                SLOT(close()));
