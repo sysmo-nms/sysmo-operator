@@ -21,7 +21,6 @@
 #include <QSettings>
 #include <QVariant>
 #include <QHash>
-#include <QTimer>
 
 class LogIn : public QDialog
 {
