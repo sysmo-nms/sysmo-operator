@@ -19,7 +19,9 @@
 
 class NewProbeProgressDialog : public QProgressDialog
 {
+
     Q_OBJECT
+
 public:
     NewProbeProgressDialog(
             QMap<QString, QLineEdit*>* args,

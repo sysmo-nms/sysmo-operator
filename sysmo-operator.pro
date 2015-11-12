@@ -15,7 +15,7 @@ TARGET = sysmo-operator
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
+SOURCES += main.cpp \
     mainwindow.cpp \
     centralwidget.cpp \
     ngrid.cpp \
@@ -137,8 +137,7 @@ HEADERS  += mainwindow.h \
     temporarydir.h \
     rrds/rrd4qtproc.h
 
-RESOURCES += \
-    icons.qrc \
+RESOURCES += icons.qrc \
     box_icons.qrc \
     images.qrc \
     pixmaps.qrc \
