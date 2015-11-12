@@ -264,6 +264,7 @@ void MainWindow::connectionStatus(int status)
         return;
     }
 
+    this->log_in_dialog->close();
     MessageBox err_box;
     err_box.setModal(true);
     err_box.setIconType(Sysmo::MESSAGE_ERROR);
@@ -272,7 +273,7 @@ void MainWindow::connectionStatus(int status)
     switch(status) {
         case Supercast::AUTHENTICATION_ERROR: {
             err_box.setText("Authentication failure.");
-            err_box.setInformativeText("The authentication procedure has failed. Check your password or username.");
+            err_box.setInformativeText("The authentication procedure has failed.");
             break;
         }
         case QAbstractSocket::ConnectionRefusedError: {

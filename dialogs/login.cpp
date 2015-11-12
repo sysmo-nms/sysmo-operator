@@ -2,6 +2,15 @@
 
 LogIn::LogIn(QWidget* parent) : QDialog(parent)
 {
+    QTimer* raiseTimer = new QTimer(this);
+    raiseTimer->setSingleShot(false);
+    raiseTimer->setInterval(100);
+    QObject::connect(
+                raiseTimer, SIGNAL(timeout()),
+                this, SLOT(raise()));
+    raiseTimer->start();
+    this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+
     this->default_name = "admin";
     this->default_port = 9758;
     this->default_server = "127.0.0.1";

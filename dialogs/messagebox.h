@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QPixmap>
+#include <QTimer>
 
 class MessageBox : public QMessageBox
 {

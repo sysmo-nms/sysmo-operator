@@ -2,6 +2,16 @@
 
 MessageBox::MessageBox(QWidget* parent) : QMessageBox(parent)
 {
+    /*
+    this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+    QTimer* timer = new QTimer(this);
+    timer->setSingleShot(false);
+    timer->setInterval(100);
+    QObject::connect(
+                timer, SIGNAL(timeout()),
+                this, SLOT(raise()));
+                */
+    this->setModal(true);
 
 }
 
