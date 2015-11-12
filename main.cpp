@@ -12,6 +12,8 @@
 #include <QSettings>
 #include <QVariant>
 #include <QStringList>
+#include <QLibraryInfo>
+
 //#include <QSplashScreen>
 //#include <QPixmap>
 
@@ -111,6 +113,11 @@ int main(int argc, char* argv[])
                 }
 
                 QApplication app(argc, argv);
+
+                qDebug() << "will look for plugins in: "
+                         << QLibraryInfo::location(QLibraryInfo::PluginsPath);
+                qDebug() << "will look for libraries in: "
+                         << QLibraryInfo::location(QLibraryInfo::LibrariesPath);
                 app.setWindowIcon(QIcon(":/icons/logo.png"));
                 //QPixmap pixmap(":/images/banner.png");
                 //QSplashScreen splash(pixmap);
