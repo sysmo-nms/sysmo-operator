@@ -11,16 +11,11 @@
 #include <QtGlobal>
 #include <QSettings>
 #include <QVariant>
-#include <QStringList>
-#include <QLibraryInfo>
 
-//#include <QSplashScreen>
-//#include <QPixmap>
-
-/* Qt4 incompatible
- * TODO log system
- */
 /*
+ * TODO log system Qt4 compatible
+ */
+#if QT_VERSION >= 0x050000
 void operatorMsgOut(
               QtMsgType           type,
         const QMessageLogContext &context,
@@ -62,8 +57,7 @@ void operatorMsgOut(
         break;
     }
 }
-*/
-
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -83,7 +77,6 @@ int main(int argc, char* argv[])
     /* other OS/X11 things here */
 #endif
 
-                //qInstallMessageHandler(operatorMsgOut); TODO C++ qt4 compatible log system
 
                 QString version = "1.1.0";
 
@@ -92,11 +85,6 @@ int main(int argc, char* argv[])
                 QApplication::setOrganizationName("Sysmo NMS");
                 QApplication::setOrganizationDomain("sysmo.io");
                 QApplication::setQuitOnLastWindowClosed(true);
-#if QT_VERSION >= 0x050000
-                QApplication::setStyle("fusion");
-#else
-                QApplication::setStyle("plastique");
-#endif
                 QSettings settings;
                 QVariant variant = settings.value("color_theme");
                 if (variant.isValid()) {
@@ -114,20 +102,16 @@ int main(int argc, char* argv[])
 
                 QApplication app(argc, argv);
 
-                qDebug() << "will look for plugins in: "
-                         << QLibraryInfo::location(QLibraryInfo::PluginsPath);
-                qDebug() << "will look for libraries in: "
-                         << QLibraryInfo::location(QLibraryInfo::LibrariesPath);
+#if QT_VERSION >= 0x050000
+                QApplication::setStyle("fusion");
+                qInstallMessageHandler(operatorMsgOut);
+#else
+                QApplication::setStyle("plastique");
+#endif
+
                 app.setWindowIcon(QIcon(":/icons/logo.png"));
-                //QPixmap pixmap(":/images/banner.png");
-                //QSplashScreen splash(pixmap);
-                //splash.show();
-                //app.processEvents();
 
                 MainWindow w;
-
-                //splash.finish(w.getLoginWindow());
-                w.initSysmo();
 
                 RETURN_CODE = app.exec();
 #if QT_VERSION < 0x050000

@@ -5,14 +5,7 @@ QSize MainWindow::sizeHint() const {return this->default_size;}
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
     this->log_in_dialog = new LogIn(this);
-}
 
-QWidget* MainWindow::getLoginWindow()
-{
-    return this->log_in_dialog;
-}
-
-void MainWindow::initSysmo() {
     /*
      * Initialize supercast.
      */
@@ -171,6 +164,11 @@ void MainWindow::initSysmo() {
     this->log_in_dialog->open();
 
     this->restoreStateFromSettings();
+}
+
+QWidget* MainWindow::getLoginWindow()
+{
+    return this->log_in_dialog;
 }
 
 
