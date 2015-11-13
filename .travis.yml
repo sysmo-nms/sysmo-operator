@@ -6,3 +6,5 @@ install:
 script:
   - qmake -config release
   - make
+
+sudo: false
