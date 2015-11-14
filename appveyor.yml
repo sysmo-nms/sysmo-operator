@@ -3,7 +3,7 @@ branches:
     only:
         - master
 build_script:
-    - setx path "%path%;C:\Qt\Tools\mingw491_32\bin"
-    - setx path "%path%;C:\Qt\5.4\mingw491_32\bin"
-    - qmake.exe -config release
-    - mingw32-make.exe
+    - cmd: setx path "%path%;C:\Qt\Tools\mingw491_32\bin"
+    - cmd: setx path "%path%;C:\Qt\5.4\mingw491_32\bin"
+    - cmd: qmake.exe -config release
+    - cmd: mingw32-make.exe
