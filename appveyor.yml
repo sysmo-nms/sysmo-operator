@@ -1,8 +1,7 @@
-version: 2.6.1.{build}
+version: {build}
 branches:
-  only:
-    - master
+    only:
+        - master
 build_script:
-  - cmd:
-    - qmake -config release
+    - qmake --config release
     - make
