@@ -65,10 +65,10 @@ task :rpm_icons do
   sizes = ["16", "22", "24", "256", "32", "48"]
   hcolorSrc = "src/sysmo-logo-src.svg"
   hcontrastSrc = "src/sysmo-logo-hc-src.svg"
-  FileUtils.cp(hcolorSrc, "rpm/icons/hicolor/scalable/apps/")
+  FileUtils.cp(hcolorSrc, "pkgs/rpm_icons/icons/hicolor/scalable/apps/")
   sizes.each{ |s|
-    colorPath = "rpm_icons/icons/hicolor/#{s}x#{s}/apps"
-    contrastPath = "rpm_icons/icons/HighContrast/#{s}x#{s}/apps"
+    colorPath = "pkgs/rpm_icons/icons/hicolor/#{s}x#{s}/apps"
+    contrastPath = "pkgs/rpm_icons/icons/HighContrast/#{s}x#{s}/apps"
     sh "inkscape -z --export-png=#{colorPath}/sysmo.png -w #{s} -h #{s} #{hcolorSrc}"
     sh "inkscape -z --export-png=#{contrastPath}/sysmo.png -w #{s} -h #{s} #{hcontrastSrc}"
   }
@@ -78,7 +78,7 @@ task :deb_icons do
   sizes = ["128", "64"]
   hcolorSrc = "src/sysmo-logo-src.svg"
   sizes.each{ |s|
-    colorPath = "deb_icons/#{s}x#{s}"
+    colorPath = "pkgs/deb_icons/#{s}x#{s}"
     sh "inkscape -z --export-png=#{colorPath}/sysmo.png -w #{s} -h #{s} #{hcolorSrc}"
   }
 end
