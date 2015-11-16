@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/box_icons">
+        <file alias="dialog-error.png">box_icons/dialog-error.png</file>
+        <file alias="dialog-information.png">box_icons/dialog-information.png</file>
+        <file alias="dialog-warning.png">box_icons/dialog-warning.png</file>
+    </qresource>
+</RCC>

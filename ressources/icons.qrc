@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="logo.png">icons/logo.png</file>
+        <file alias="list-add.png">icons/list-add.png</file>
+        <file alias="edit-clear.png">icons/edit-clear.png</file>
+        <file alias="system-log-out.png">icons/system-log-out.png</file>
+        <file alias="view-fullscreen.png">icons/view-fullscreen.png</file>
+        <file alias="preferences-desktop-theme.png">icons/preferences-desktop-theme.png</file>
+        <file alias="dialog-information.png">icons/dialog-information.png</file>
+        <file alias="force.png">icons/force.png</file>
+        <file alias="utilities-terminal.png">icons/utilities-terminal.png</file>
+        <file alias="process-stop.png">icons/process-stop.png</file>
+        <file alias="utilities-system-monitor.png">icons/utilities-system-monitor.png</file>
+        <file alias="folder-saved-search.png">icons/folder-saved-search.png</file>
+        <file alias="document-save.png">icons/document-save.png</file>
+        <file alias="edit-undo.png">icons/edit-undo.png</file>
+        <file alias="system-search.png">icons/system-search.png</file>
+        <file alias="help-browser.png">icons/help-browser.png</file>
+        <file alias="weather-clear-night.png">icons/weather-clear-night.png</file>
+        <file alias="weather-clear.png">icons/weather-clear.png</file>
+        <file alias="weather-few-clouds-night.png">icons/weather-few-clouds-night.png</file>
+        <file alias="weather-severe-alert.png">icons/weather-severe-alert.png</file>
+        <file alias="weather-showers.png">icons/weather-showers.png</file>
+        <file alias="appointment-new.png">icons/appointment-new.png</file>
+        <file alias="edit-paste.png">icons/edit-paste.png</file>
+    </qresource>
+</RCC>

@@ -10,6 +10,7 @@
 
 /sysmo-operator
 /sysmo-operator.pro.user*
+/sysmo-operator.pro.desktop
 
 /rrd4qt/*.iml
 /rrd4qt/.idea

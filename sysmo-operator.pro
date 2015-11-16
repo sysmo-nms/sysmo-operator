@@ -137,12 +137,12 @@ HEADERS  += include/mainwindow.h \
     include/temporarydir.h \
     include/rrds/rrd4qtproc.h
 
-RESOURCES += icons.qrc \
-    box_icons.qrc \
-    images.qrc \
-    pixmaps.qrc \
-    tree.qrc \
-    rrd4qt.qrc
+RESOURCES += ressources/icons.qrc \
+    ressources/box_icons.qrc \
+    ressources/images.qrc \
+    ressources/pixmaps.qrc \
+    ressources/tree.qrc \
+    ressources/rrd4qt.qrc
 
 target.path = /$(BINDIR)
 INSTALLS += target

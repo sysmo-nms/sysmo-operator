@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/tree">
+        <file alias="tree.qss">tree/tree.qss</file>
+        <file alias="vline.png">tree/vline.png</file>
+        <file alias="branch-end.png">tree/branch-end.png</file>
+        <file alias="branch-more.png">tree/branch-more.png</file>
+        <file alias="back.png">tree/back.png</file>
+    </qresource>
+</RCC>

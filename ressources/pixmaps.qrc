@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/pixmaps">
+        <file alias="hub.png">pixmaps/hub.png</file>
+        <file alias="router.png">pixmaps/router.png</file>
+        <file alias="server-generic.png">pixmaps/server-generic.png</file>
+        <file alias="wireless-router.png">pixmaps/wireless-router.png</file>
+        <file alias="firewall.png">pixmaps/firewall.png</file>
+        <file alias="printer.png">pixmaps/printer.png</file>
+        <file alias="computer-generic.png">pixmaps/computer-generic.png</file>
+
+        <file alias="weather-clear-night.png">pixmaps/weather-clear-night.png</file>
+        <file alias="weather-clear.png">pixmaps/weather-clear.png</file>
+        <file alias="weather-few-clouds.png">pixmaps/weather-few-clouds.png</file>
+        <file alias="weather-few-clouds-night.png">pixmaps/weather-few-clouds-night.png</file>
+        <file alias="weather-overcast.png">pixmaps/weather-overcast.png</file>
+        <file alias="weather-severe-alert.png">pixmaps/weather-severe-alert.png</file>
+        <file alias="weather-showers-scattered.png">pixmaps/weather-showers-scattered.png</file>
+        <file alias="weather-showers.png">pixmaps/weather-showers.png</file>
+        <file alias="weather-snow.png">pixmaps/weather-snow.png</file>
+        <file alias="weather-storm.png">pixmaps/weather-storm.png</file>
+        <file alias="media-playback-start.png">pixmaps/media-playback-start.png</file>
+        <file alias="media-playback-pause.png">pixmaps/media-playback-pause.png</file>
+    </qresource>
+</RCC>
