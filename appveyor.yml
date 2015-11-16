@@ -7,5 +7,6 @@ environment:
     QMAKE_CXX: C:\Qt\Tools\ming491_32\g++.exe
 
 build_script:
-    - C:\Qt\5.4\mingw491_32\bin\qmake.exe
-    - C:\Qt\Tools\mingw491_32\bin\mingw32-make.exe
+    - set PATH=C:\Tools\mingw491_32\bin;%PATH%
+    - C:\Qt\5.4\mingw491_32\bin\qmake.exe -config release
+    - mingw32-make.exe
