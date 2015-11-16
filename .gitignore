@@ -12,11 +12,9 @@
 /sysmo-operator.pro.user*
 /sysmo-operator.pro.desktop
 
-/rrd4qt/*.iml
-/rrd4qt/.idea
+/ressources/rrd4qt/*.iml
+/ressources/rrd4qt/.idea
 
-/rrd4qt/build/*
-!/rrd4qt/build/install/
-/rrd4qt/.gradle
-
-/ressources/rrd4qt
+/ressources/rrd4qt/build/*
+!/ressources/rrd4qt/build/install/
+/ressources/rrd4qt/.gradle
