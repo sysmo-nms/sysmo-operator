@@ -2,6 +2,10 @@ version: 1.{build}
 branches:
     only:
         - master
+
+environment:
+    QMAKE_CXX: "C:\Qt\Tools\ming491_32\g++.exe"
+
 build_script:
-    - C:\Qt\5.4\msvc2013_64_opengl\bin\qmake.exe -config release
-    - where nmake.exe
+    - C:\Qt\5.4\mingw491_32\bin\qmake.exe
+    - C:\Qt\Tools\mingw491_32\bin\mingw32-make.exe
