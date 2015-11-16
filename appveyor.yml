@@ -4,7 +4,7 @@ branches:
         - master
 
 environment:
-    QMAKE_CXX: "C:\Qt\Tools\ming491_32\g++.exe"
+    QMAKE_CXX: C:\Qt\Tools\ming491_32\g++.exe
 
 build_script:
     - C:\Qt\5.4\mingw491_32\bin\qmake.exe
