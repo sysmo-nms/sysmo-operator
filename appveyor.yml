@@ -9,4 +9,5 @@ environment:
 build_script:
     - set PATH=C:\Tools\mingw491_32\bin;%PATH%
     - C:\Qt\5.4\mingw491_32\bin\qmake.exe -config release
+    - echo %PATH%
     - mingw32-make.exe
