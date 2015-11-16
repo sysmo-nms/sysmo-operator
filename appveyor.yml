@@ -3,5 +3,5 @@ branches:
     only:
         - master
 build_script:
-    - C:\Qt\5.4\mingw491_32\bin\qmake.exe -set QMAKE_CXX C:\Qt\Tools\ming491_32\g++.exe -config release
-    - C:\Qt\Tools\mingw491_32\bin\mingw32-make.exe
+    - C:\Qt\5.4\msvc2013_64_opengl\bin\qmake.exe -config release
+    - nmake

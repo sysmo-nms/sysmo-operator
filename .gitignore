@@ -1,6 +1,9 @@
 # emacs
 /*~
 
+# vim
+*.swp
+*.swo
 # build
 /*.o
 /moc_*
