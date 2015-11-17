@@ -1,7 +1,12 @@
 language: C++
+
+os:
+  - linux
+  - osx
+
 install:
-  - sudo apt-get update
-  - sudo apt-get install libqt4-dev qt4-qmake
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; sudo apt-get install libqt4-dev qt4-qmake; fi
 
 script:
   - qmake -config release
