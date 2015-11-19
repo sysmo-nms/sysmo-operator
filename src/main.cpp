@@ -42,11 +42,12 @@ int main(int argc, char* argv[])
 
                 QApplication app(argc, argv);
                 RotatingFileLogger::getLogger()->setParent(&app);
-                qInstallMessageHandler(RotatingFileLogger::log);
 
 #if QT_VERSION >= 0x050000
+                qInstallMessageHandler(RotatingFileLogger::log);
                 QApplication::setStyle("fusion");
 #else
+                qInstallMsgHandler(RotatingFileLogger::log);
                 QApplication::setStyle("plastique");
 #endif
 
