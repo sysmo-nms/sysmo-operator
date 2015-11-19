@@ -144,7 +144,7 @@ void RotatingFileLogger::log(
         char fhead[9] = "\nFatal: ";
         RotatingFileLogger::singleton->logFile->write(fhead);
         RotatingFileLogger::singleton->logFile->write(logMsg);
-        break
+        abort();
     default:
         break;
     }
