@@ -74,7 +74,8 @@ SOURCES += src/main.cpp \
     src/statusbuttonwidget.cpp \
     src/qjson.cpp \
     src/temporarydir.cpp \
-    src/rrds/rrd4qtproc.cpp
+    src/rrds/rrd4qtproc.cpp \
+    src/rotatingfilelogger.cpp
 
 HEADERS  += include/mainwindow.h \
     include/centralwidget.h \
@@ -135,7 +136,8 @@ HEADERS  += include/mainwindow.h \
     include/statusbuttonwidget.h \
     include/qjson.h \
     include/temporarydir.h \
-    include/rrds/rrd4qtproc.h
+    include/rrds/rrd4qtproc.h \
+    include/rotatingfilelogger.h
 
 RESOURCES += ressources/icons.qrc \
     ressources/box_icons.qrc \

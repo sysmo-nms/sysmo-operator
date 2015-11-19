@@ -4,6 +4,7 @@
 #include "include/mainwindow.h"
 #include "include/themes.h"
 #include "include/sysmo.h"
+#include "include/rotatingfilelogger.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -12,72 +13,11 @@
 #include <QSettings>
 #include <QVariant>
 
-/*
- * TODO log system Qt4 compatible
- */
-#if QT_VERSION >= 0x050000
-void operatorMsgOut(
-              QtMsgType           type,
-        const QMessageLogContext &context,
-        const QString            &msg)
-{
-    QByteArray localMsg = msg.toLocal8Bit();
-    //QString logDir = QDesktopServices::writableLocation(
-        //QDesktopServices::AppDataLocation)
-    switch (type) {
-    case QtDebugMsg:
-        fprintf(stderr, "Debug: %s (%s:%u, %s)\n",
-                localMsg.constData(),
-                context.file,
-                context.line,
-                context.function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n",
-                localMsg.constData(),
-                context.file,
-                context.line,
-                context.function);
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n",
-                localMsg.constData(),
-                context.file,
-                context.line,
-                context.function);
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n",
-                localMsg.constData(),
-                context.file,
-                context.line,
-                context.function);
-        abort();
-    default:
-        break;
-    }
-}
-#endif
-
 int main(int argc, char* argv[])
 {
 
         int RETURN_CODE;
         do {
-// see http://doc.qt.io/qt-5/qtglobal.html
-#if !defined QT_DEBUG
-    qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
-#endif
-
-#if   defined Q_OS_MAC
-    /* put mac things here*/
-#elif defined Q_OS_WIN
-    /* put windows things here*/
-#else
-    /* other OS/X11 things here */
-#endif
-
-
                 QString version = "1.1.0";
 
                 QApplication::setApplicationName("Sysmo Operator");
@@ -101,10 +41,11 @@ int main(int argc, char* argv[])
                 }
 
                 QApplication app(argc, argv);
+                RotatingFileLogger::getLogger()->setParent(&app);
+                qInstallMessageHandler(RotatingFileLogger::log);
 
 #if QT_VERSION >= 0x050000
                 QApplication::setStyle("fusion");
-                qInstallMessageHandler(operatorMsgOut);
 #else
                 QApplication::setStyle("plastique");
 #endif
