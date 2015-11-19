@@ -131,18 +131,18 @@ void RotatingFileLogger::log(
     switch (type) {
     case QtDebugMsg:
     case QtWarningMsg:
-        char head[11] = "\nWarning: ";
-        RotatingFileLogger::singleton->logFile->write(head);
+        char whead[11] = "\nWarning: ";
+        RotatingFileLogger::singleton->logFile->write(whead);
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtCriticalMsg:
-        char head[12] = "\nCritical: ";
-        RotatingFileLogger::singleton->logFile->write(head);
+        char chead[12] = "\nCritical: ";
+        RotatingFileLogger::singleton->logFile->write(chead);
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtFatalMsg:
-        char head[9] = "\nFatal: ";
-        RotatingFileLogger::singleton->logFile->write(head);
+        char fhead[9] = "\nFatal: ";
+        RotatingFileLogger::singleton->logFile->write(fhead);
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break
     default:
