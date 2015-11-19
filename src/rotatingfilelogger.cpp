@@ -93,24 +93,25 @@ void RotatingFileLogger::log(
     Q_UNUSED(context);
     RotatingFileLogger::mtx.lock();
     QByteArray logMsg = msg.toLocal8Bit();
+    QString head;
     switch (type) {
     case QtDebugMsg:
-        QString head = "\nDebug: ";
+        head = "\nDebug: ";
         RotatingFileLogger::singleton->logFile->write(head.toLocal8Bit());
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtWarningMsg:
-        QString head = "\nWarning: ";
+        head = "\nWarning: ";
         RotatingFileLogger::singleton->logFile->write(head.toLocal8Bit());
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtCriticalMsg:
-        QString head = "\nCritical: ";
+        head = "\nCritical: ";
         RotatingFileLogger::singleton->logFile->write(head.toLocal8Bit());
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtFatalMsg:
-        QString head = "\nFatal: ";
+        head = "\nFatal: ";
         RotatingFileLogger::singleton->logFile->write(head.toLocal8Bit());
         RotatingFileLogger::singleton->logFile->write(logMsg);
         abort();
@@ -130,17 +131,17 @@ void RotatingFileLogger::log(
     switch (type) {
     case QtDebugMsg:
     case QtWarningMsg:
-        char head[10] = "\nWarning: ";
+        char head[11] = "\nWarning: ";
         RotatingFileLogger::singleton->logFile->write(&head);
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtCriticalMsg:
-        char head[11] = "\nCritical: ";
+        char head[12] = "\nCritical: ";
         RotatingFileLogger::singleton->logFile->write(&head);
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break;
     case QtFatalMsg:
-        char head[8] = "\nFatal: ";
+        char head[9] = "\nFatal: ";
         RotatingFileLogger::singleton->logFile->write(&head);
         RotatingFileLogger::singleton->logFile->write(logMsg);
         break
