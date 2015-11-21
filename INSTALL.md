@@ -30,9 +30,5 @@ $ make
 
 Deploying
 ---------
-For package mainteners: *make install* will only install the target in $INSTALL_ROOT/bin. For example to install *sysmo-operator* binary in /home/user/bin:
-```sh
-export INSTALL_ROOT=~
-make install
-```
-If INSTALL_ROOT is ommited, *make install* will try to install in /bin wich is certainly not what you want.
+Everything is contained in the *sysmo-operator* executable. Move it somewhere
+in your $PATH.
