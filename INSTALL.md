@@ -31,4 +31,4 @@ $ make
 Deploying
 ---------
 Everything is contained in the *sysmo-operator* executable. Move it somewhere
-in your $PATH.
+in your $PATH and you're done.
