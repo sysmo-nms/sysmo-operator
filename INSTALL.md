@@ -24,6 +24,11 @@ Building
 ```sh
 $ git clone https://github.com/sysmo-nms/sysmo-operator.git
 $ cd sysmo-operator
+$ git tag
+```
+Pick the latest release tag, in our case v1.1.1:
+```sh
+$ git checkout v1.1.1
 $ qmake -config release
 $ make
 ```
