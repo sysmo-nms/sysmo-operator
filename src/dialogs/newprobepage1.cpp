@@ -50,7 +50,7 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     this->setLayout(grid);
 
     QLineEdit* search = new QLineEdit(this);
-#if QT_VERSION >= 0x047000
+#if QT_VERSION >= 0x040700
     search->setPlaceholderText("Filter");
 #endif
 

@@ -62,10 +62,10 @@ int main(int argc, char* argv[])
                 RotatingFileLogger::getLogger()->setParent(&app);
 
 #if QT_VERSION >= 0x050000
-                qInstallMessageHandler(RotatingFileLogger::log);
+                //qInstallMessageHandler(RotatingFileLogger::log);
                 QApplication::setStyle("fusion");
 #else
-                qInstallMsgHandler(RotatingFileLogger::log);
+                //qInstallMsgHandler(RotatingFileLogger::log);
                 QApplication::setStyle("plastique");
 #endif
 

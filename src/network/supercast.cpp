@@ -116,7 +116,11 @@ void Supercast::tryConnect(
     this->user_pass = user_pass;
     this->data_base_url.setHost(host.toString());
 
+#if QT_VERSION >= 0x050300
+    SupercastWebSocket* socket_t = new SupercastWebSocket(host,port);
+#else
     SupercastSocket* socket_t = new SupercastSocket(host,port);
+#endif
 
     // server -> message -> client
     QObject::connect(
@@ -145,7 +149,11 @@ void Supercast::tryConnect(
                 this,             SLOT(socketConnected()),
                 Qt::QueuedConnection);
 
+    QObject::connect(
+                &this->socket_thread, SIGNAL(started()),
+                socket_t, SLOT(threadStarted()));
     socket_t->moveToThread(&this->socket_thread);
+
     QObject::connect(
                 &this->socket_thread, SIGNAL(finished()),
                 socket_t,             SLOT(deleteLater()));

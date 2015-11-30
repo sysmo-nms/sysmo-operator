@@ -7,6 +7,7 @@
 QT       += core gui network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_VERSION, 5.2): QT += websockets
 
 # log with line numbers and files
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -37,7 +38,6 @@ SOURCES += src/main.cpp \
     src/dialogs/newtarget.cpp \
     src/dialogs/newtargetpage1.cpp \
     src/network/supercast.cpp \
-    src/network/supercastsocket.cpp \
     src/network/supercasthttp.cpp \
     src/network/supercastsignal.cpp \
     src/dialogs/newprobe.cpp \
@@ -98,7 +98,6 @@ HEADERS  += include/mainwindow.h \
     include/dialogs/newtarget.h \
     include/dialogs/newtargetpage1.h \
     include/network/supercast.h \
-    include/network/supercastsocket.h \
     include/network/supercasthttp.h \
     include/network/supercastsignal.h \
     include/dialogs/newprobe.h \
@@ -138,6 +137,16 @@ HEADERS  += include/mainwindow.h \
     include/temporarydir.h \
     include/rrds/rrd4qtproc.h \
     include/rotatingfilelogger.h
+
+
+# QWebSocket only available in 5.3
+greaterThan(QT_VERSION, 5.2): {
+  SOURCES += src/network/supercastwebsocket.cpp
+  HEADERS += include/network/supercastwebsocket.h
+} else {
+  SOURCES += src/network/supercastsocket.cpp
+  HEADERS += include/network/supercastsocket.h
+}
 
 RESOURCES += ressources/icons.qrc \
     ressources/box_icons.qrc \

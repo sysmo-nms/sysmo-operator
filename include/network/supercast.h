@@ -19,11 +19,16 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SUPERCAST_H
 #define SUPERCAST_H
 
-#include "include/network/supercastsocket.h"
 #include "include/network/supercastsignal.h"
 #include "include/network/supercasthttp.h"
 #include "include/network/supercasthttprequest.h"
 #include "include/network/supercasthttpreply.h"
+
+#if QT_VERSION >= 0x050000
+#include "include/network/supercastwebsocket.h"
+#else
+#include "include/network/supercastsocket.h"
+#endif
 
 #include <QObject>
 #include <QThread>
