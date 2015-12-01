@@ -236,9 +236,11 @@ void Supercast::handleSupercastMessage(QVariant variantMsg)
     }
     else if (type == "serverInfo")
     {
+        qDebug() << "server info" << message;
         QMap<QString,QVariant> val = message.value("value").toMap();
         this->data_base_url.setPort(val.value("dataPort").toInt());
         this->data_base_url.setScheme(val.value("dataProto").toString());
+        qDebug() << "server data port" << val.value("dataPort").toInt();
     }
     else if (type == "subscribeOk" || type == "subscribeErr")
     {
