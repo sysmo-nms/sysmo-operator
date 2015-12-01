@@ -39,6 +39,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QVariant>
 #include <QHash>
+#include <QDebug>
 
 class LogIn : public QDialog
 {

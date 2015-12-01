@@ -24,7 +24,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/network/supercasthttprequest.h"
 #include "include/network/supercasthttpreply.h"
 
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050300
 #include "include/network/supercastwebsocket.h"
 #else
 #include "include/network/supercastsocket.h"

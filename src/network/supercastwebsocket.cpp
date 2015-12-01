@@ -42,24 +42,12 @@ SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject
     QObject::connect(
                 this->socket, SIGNAL(binaryMessageReceived(QByteArray)),
                 this,         SLOT(handleBinaryMessage(QByteArray)));
-
-    /*
-    QUrl url("ws://localhost:8080/websocket");
-    url.setHost(host.toString());
-    qDebug() << "will open " << host.toString();
-    url.setPort(port);
-    qDebug() << "will open " << port;
-    url.setScheme("ws");
-    url.set
-    url.setPath("websocket");
-    timer->start();
-    qDebug() << "will open " << url.toString();
-    this->socket->open(url);
-    */
 }
+
 void SupercastWebSocket::threadStarted()
 {
-    QUrl url("ws://localhost:8080/websocket");
+    QString urlStr = "ws://%1:%2/websocket";
+    QUrl url(urlStr.arg(this->host.toString()).arg(this->port));
     this->timer->start();
     qDebug() << "will open " << url.toString();
     this->socket->open(url);

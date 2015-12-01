@@ -42,7 +42,12 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     srv_frame->setLayout(srv_lay);
     srv_lay->setContentsMargins(0,0,0,0);
     srv_lay->addWidget(this->server_name, 0,0);
-    srv_lay->addWidget(new QLabel("Port",this), 0,1);
+#if QT_VERSION >= 0x050300
+    this->default_port = 8080;
+    srv_lay->addWidget(new QLabel("HTTP Port",this), 0,1);
+#else
+    srv_lay->addWidget(new QLabel("TCP Port",this), 0,1);
+#endif
     srv_lay->addWidget(this->server_port, 0,2);
     srv_lay->setColumnStretch(0,1);
     srv_lay->setColumnStretch(1,0);
@@ -153,11 +158,14 @@ void LogIn::restoreForm()
 
 void LogIn::saveLoginState()
 {
+    qDebug() << "save login state" << this->server_name->text();
+    qDebug() << "save login state" << this->server_port->value();
     QSettings s;
     QHash<QString, QVariant> lstate = s.value("login/login_state").toHash();
+    lstate.insert("name", QVariant(this->user_name->text()));
     lstate.insert("server", QVariant(this->server_name->text()));
     lstate.insert("password", QVariant(this->user_pass->text()));
-    lstate.insert("server_port", QVariant(this->server_port->value()));
+    lstate.insert("port", QVariant(this->server_port->value()));
     s.setValue("login/login_state", QVariant(lstate));
 }
 
