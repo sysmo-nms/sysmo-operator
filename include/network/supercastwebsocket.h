@@ -58,7 +58,7 @@ private:
     QTimer* timer;
 
 private slots:
-    void handleBinaryMessage(const QByteArray &message);
+    void handleTextMessage(const QString &message);
 
 signals:
     void serverMessage(QVariant msg);

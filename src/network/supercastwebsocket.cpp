@@ -40,8 +40,8 @@ SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject
                 this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
 
     QObject::connect(
-                this->socket, SIGNAL(binaryMessageReceived(QByteArray)),
-                this,         SLOT(handleBinaryMessage(QByteArray)));
+                this->socket, SIGNAL(textMessageReceived(QString)),
+                this,         SLOT(handleTextMessage(QString)));
 }
 
 void SupercastWebSocket::threadStarted()
@@ -68,17 +68,17 @@ void SupercastWebSocket::timerTimeout()
     }
 }
 
-void SupercastWebSocket::handleBinaryMessage(const QByteArray &message)
+void SupercastWebSocket::handleTextMessage(const QString &message)
 {
-    QVariant   json_obj = QJson::decode(QString(message));
+    QVariant json_obj = QJson::decode(message);
     emit this->serverMessage(json_obj);
 }
 
 
 void SupercastWebSocket::handleClientMessage(QVariant msg)
 {
-    QByteArray json_array = QJson::encode(msg).toLatin1();
-    this->socket->sendBinaryMessage(json_array);
+    //QByteArray json_array = QJson::encode(msg).toLatin1();
+    this->socket->sendTextMessage(QJson::encode(msg));
 }
 
 qint32 SupercastWebSocket::arrayToInt32(QByteArray source)
