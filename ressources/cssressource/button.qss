@@ -1,0 +1,13 @@
+QAbstractButton 
+{
+	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(173,216,230,60%), stop:1 rgba(0,0,139,60%) );
+	border-color: black;
+	border-style: solid;
+	border-width: 3px;
+	border-radius: 0px;
+}
+
+QAbstractButton:pressed, QAbstractButton:checked
+{
+	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0,0,139,60%), stop:1 rgba(173,216,230,60%) );
+}
