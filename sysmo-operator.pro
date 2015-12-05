@@ -7,14 +7,18 @@
 QT       += core gui network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-greaterThan(QT_VERSION, 5.2): QT += websockets
+
+# QWebSocket only available in 5.3
+greaterThan(QT_VERSION, 5.2): {
+    QT += websockets
+    DEFINES += USE_WEBSOCKET
+}
 
 # log with line numbers and files
 DEFINES += QT_MESSAGELOGCONTEXT
 
 TARGET = sysmo-operator
 TEMPLATE = app
-
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
@@ -75,7 +79,8 @@ SOURCES += src/main.cpp \
     src/qjson.cpp \
     src/temporarydir.cpp \
     src/rrds/rrd4qtproc.cpp \
-    src/rotatingfilelogger.cpp
+    src/rotatingfilelogger.cpp \
+    src/lineedit.cpp
 
 HEADERS  += include/mainwindow.h \
     include/centralwidget.h \
@@ -136,11 +141,11 @@ HEADERS  += include/mainwindow.h \
     include/qjson.h \
     include/temporarydir.h \
     include/rrds/rrd4qtproc.h \
-    include/rotatingfilelogger.h
+    include/rotatingfilelogger.h \
+    include/lineedit.h
 
 
-# QWebSocket only available in 5.3
-greaterThan(QT_VERSION, 5.2): {
+contains(DEFINES, USE_WEBSOCKET): {
   SOURCES += src/network/supercastwebsocket.cpp
   HEADERS += include/network/supercastwebsocket.h
 } else {
@@ -153,7 +158,8 @@ RESOURCES += ressources/icons.qrc \
     ressources/images.qrc \
     ressources/pixmaps.qrc \
     ressources/tree.qrc \
-    ressources/rrd4qt.qrc
+    ressources/rrd4qt.qrc \
+    ressources/cssressource.qrc
 
 target.path = /$(BINDIR)
 INSTALLS += target

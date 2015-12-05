@@ -19,14 +19,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORACTIONCREATE_H
 #define MONITORACTIONCREATE_H
 
-#include <include/ngrid.h>
-#include <include/nframecontainer.h>
-#include <include/ngridcontainer.h>
+#include "include/ngrid.h"
+#include "include/nframecontainer.h"
+#include "include/ngridcontainer.h"
+#include "include/lineedit.h"
 
 #include <QObject>
 #include <QWidget>
 #include <QDialog>
-#include <QLineEdit>
 #include <QLabel>
 #include <QFormLayout>
 #include <QPushButton>
@@ -46,9 +46,9 @@ public:
     explicit MonitorActionCreate(
             QString name,QHash<QString, QVariant> conf, QWidget *parent = 0);
 
-    QLineEdit *name;
-    QLineEdit *cmd;
-    QLineEdit *args;
+    LineEdit *name;
+    LineEdit *cmd;
+    LineEdit *args;
 
 private:
     QPushButton *apply;

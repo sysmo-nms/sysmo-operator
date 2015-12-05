@@ -33,6 +33,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/network/supercastsignal.h"
 #include "include/network/supercast.h"
 #include "include/qjson.h"
+#include "include/lineedit.h"
 
 #include <QWidget>
 #include <QObject>
@@ -75,12 +76,12 @@ public:
 private:
     QString     target;
     QString     probe_class;
-    QMap<QString,QLineEdit*>* args;
+    QMap<QString,LineEdit*>* args;
     QTextEdit*  docs;
     NFrame*     form_frame;
     NGrid*      grid;
-    QLineEdit *name_line;
-    QList<QLineEdit*>* mandatory_args;
+    LineEdit *name_line;
+    QList<LineEdit*>* mandatory_args;
 };
 
 
@@ -88,11 +89,11 @@ class HelperExec: public QObject
 {
     Q_OBJECT
 public:
-    HelperExec(QLineEdit* line, QWidget *parent = 0);
+    HelperExec(LineEdit* line, QWidget *parent = 0);
     QString    h_class;
     QString    h_target;
     QWidget*   w_parent;
-    QLineEdit* flag_line;
+    LineEdit* flag_line;
 
 private:
     QProgressDialog* dial;

@@ -116,7 +116,7 @@ void Supercast::tryConnect(
     this->user_pass = user_pass;
     this->data_base_url.setHost(host.toString());
 
-#if QT_VERSION >= 0x050300
+#ifdef USE_WEBSOCKET
     SupercastWebSocket* socket_t = new SupercastWebSocket(host,port);
 #else
     SupercastSocket* socket_t = new SupercastSocket(host,port);

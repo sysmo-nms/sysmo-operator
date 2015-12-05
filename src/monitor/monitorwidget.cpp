@@ -83,7 +83,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
     clear->setIcon(QIcon(":/icons/edit-clear.png"));
     clear->setStatusTip("Clear filter line");
 
-    QLineEdit* search = new QLineEdit(this);
+    LineEdit* search = new LineEdit(this);
     search->setFixedWidth(250);
     search->setStatusTip("Filter the target/probe view");
     QObject::connect(

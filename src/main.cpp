@@ -70,6 +70,9 @@ int main(int argc, char* argv[])
 #endif
         app.setWindowIcon(QIcon(":/icons/logo.png"));
 
+#ifdef USE_WEBSOCKET
+        qDebug() << "will use websocket";
+#endif
         MainWindow win;
 
         RETURN_CODE = app.exec();

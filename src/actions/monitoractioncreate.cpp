@@ -42,9 +42,9 @@ void MonitorActionCreate::initLayout()
     this->setLayout(grid);
     this->setMinimumWidth(500);
 
-    this->name = new QLineEdit(this);
-    this->cmd = new QLineEdit(this);
-    this->args = new QLineEdit(this);
+    this->name = new LineEdit(this);
+    this->cmd = new LineEdit(this);
+    this->args = new LineEdit(this);
 
     QObject::connect(
                 this->name, SIGNAL(textChanged(QString)),

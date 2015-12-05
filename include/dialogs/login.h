@@ -20,11 +20,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #define LOGIN_H
 
 #include "include/nframecontainer.h"
+#include "include/lineedit.h"
 
 #include <QObject>
 #include <QWidget>
 #include <QDialog>
-#include <QLineEdit>
 #include <QSpinBox>
 #include <QFrame>
 #include <QGridLayout>
@@ -54,9 +54,9 @@ public:
     void saveLoginState();
 
 private:
-    QLineEdit*	 user_name;
-    QLineEdit*	 user_pass;
-    QLineEdit*	 server_name;
+    LineEdit*	 user_name;
+    LineEdit*	 user_pass;
+    LineEdit*	 server_name;
     QSpinBox*    server_port;
     QPushButton* ok_but;
     void restoreForm();

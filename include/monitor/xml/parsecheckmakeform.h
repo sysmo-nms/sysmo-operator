@@ -20,8 +20,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #define PARSECHECKMAKEFORM_H
 
 #include <QXmlDefaultHandler>
-
-#include <QLineEdit>
 #include <QList>
 
 #include <QDebug>

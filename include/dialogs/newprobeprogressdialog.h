@@ -23,13 +23,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/network/supercast.h"
 #include "include/network/supercastsignal.h"
 #include "include/systemtray.h"
+#include "include/lineedit.h"
 
 #include <QObject>
 #include <QWidget>
 #include <QProgressDialog>
 #include <QMap>
 #include <QMapIterator>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QVariant>
 
@@ -42,7 +42,7 @@ class NewProbeProgressDialog : public QProgressDialog
 
 public:
     NewProbeProgressDialog(
-            QMap<QString, QLineEdit*>* args,
+            QMap<QString, LineEdit*>* args,
             QString target,
             QString probe_name,
             QString probe_class,

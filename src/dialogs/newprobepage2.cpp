@@ -53,8 +53,8 @@ void NewProbePage2::initializePage()
 {
     this->form_frame = new NFrame(this);
     this->grid->addWidget(this->form_frame, 0, 0);
-    this->args = new QMap<QString, QLineEdit*>();
-    this->mandatory_args = new QList<QLineEdit*>();
+    this->args = new QMap<QString, LineEdit*>();
+    this->mandatory_args = new QList<LineEdit*>();
 
     QString str("Configure probe %1");
     QString probe_name(this->field("selection").toString());
@@ -88,7 +88,7 @@ void NewProbePage2::initializePage()
     this->probe_class = form_parser->probe_class;
 
 
-    this->name_line = new QLineEdit(this);
+    this->name_line = new LineEdit(this);
     this->name_line->setText(probe_name);
 
     QFormLayout* form = new QFormLayout();
@@ -104,16 +104,14 @@ void NewProbePage2::initializePage()
     for (i = mandat->begin(); i != mandat->end(); ++i)
     {
         qDebug() << "iterate" << i->flag_name;
-        QLineEdit* edit = new QLineEdit(this->form_frame);
+        LineEdit* edit = new LineEdit(this->form_frame);
         this->args->insert(i->flag_name, edit);
         this->mandatory_args->append(edit);
         QObject::connect(
                     edit, SIGNAL(textChanged(QString)),
                     this, SIGNAL(completeChanged()));
 
-#if QT_VERSION >= 0x040700
         edit->setPlaceholderText(i->hint);
-#endif
         edit->setToolTip(i->hint);
         if (i->has_helper) {
             NFrameContainer* fr   = new NFrameContainer(this->form_frame);
@@ -146,11 +144,9 @@ void NewProbePage2::initializePage()
     QList<FormConfig>::iterator j;
     for (j = options->begin(); j != options->end(); ++j)
     {
-        QLineEdit* edit = new QLineEdit(this->form_frame);
+        LineEdit* edit = new LineEdit(this->form_frame);
         this->args->insert(j->flag_name, edit);
-#if QT_VERSION >= 0x040700
         edit->setPlaceholderText(j->hint);
-#endif
         edit->setText(j->defaults);
         edit->setToolTip(j->hint);
         if (j->has_helper) {
@@ -178,7 +174,7 @@ void NewProbePage2::initializePage()
     delete form_parser;
     delete form_input;
 
-    QLineEdit* host_edit = this->args->value("host");
+    LineEdit* host_edit = this->args->value("host");
     if (host_edit == NULL) return;
 
     QMap<QString,QVariant> val = Monitor::getInstance()->targets->value(this->target).toMap();
@@ -207,7 +203,7 @@ bool NewProbePage2::validatePage()
 bool NewProbePage2::isComplete() const
 {
     for (int i = 0; i < this->mandatory_args->size(); ++i) {
-        QLineEdit *edit = this->mandatory_args->at(i);
+        LineEdit *edit = this->mandatory_args->at(i);
         if (edit->text() == "") return false;
     }
     return true;
@@ -215,7 +211,7 @@ bool NewProbePage2::isComplete() const
 
 
 
-HelperExec::HelperExec(QLineEdit* line, QWidget* parent) : QObject(parent)
+HelperExec::HelperExec(LineEdit* line, QWidget* parent) : QObject(parent)
 {
     this->h_class   = "";
     this->h_target  = "";

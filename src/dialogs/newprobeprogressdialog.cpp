@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/dialogs/newprobeprogressdialog.h"
 
 NewProbeProgressDialog::NewProbeProgressDialog(
-        QMap<QString,QLineEdit*>* args,
+        QMap<QString,LineEdit*>* args,
         QString target,
         QString probe_name,
         QString probe_class,
@@ -38,7 +38,7 @@ NewProbeProgressDialog::NewProbeProgressDialog(
     this->setCancelButton(cancel);
 
     QMap<QString,QVariant> props;
-    QMapIterator<QString, QLineEdit*> i(*args);
+    QMapIterator<QString, LineEdit*> i(*args);
     while (i.hasNext()) {
         i.next();
         props.insert(i.key(), i.value()->text());

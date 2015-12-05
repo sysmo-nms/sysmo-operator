@@ -30,10 +30,10 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     this->setFixedWidth(470);
     this->setWindowTitle("Log in");
 
-    this->user_name   = new QLineEdit(this);
-    this->user_pass   = new QLineEdit(this);
-    this->user_pass->setEchoMode(QLineEdit::Password);
-    this->server_name = new QLineEdit(this);
+    this->user_name   = new LineEdit(this);
+    this->user_pass   = new LineEdit(this);
+    this->user_pass->setEchoMode(LineEdit::Password);
+    this->server_name = new LineEdit(this);
     this->server_port = new QSpinBox(this);
     this->server_port->setRange(1, 65535);
 
@@ -42,7 +42,7 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     srv_frame->setLayout(srv_lay);
     srv_lay->setContentsMargins(0,0,0,0);
     srv_lay->addWidget(this->server_name, 0,0);
-#if QT_VERSION >= 0x050300
+#ifdef USE_WEBSOCKET
     this->default_port = 8080;
     srv_lay->addWidget(new QLabel("HTTP Port",this), 0,1);
 #else

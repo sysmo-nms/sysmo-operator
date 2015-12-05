@@ -26,6 +26,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/network/supercastsignal.h"
 #include "include/monitor/treeview.h"
 #include "include/dialogs/messagebox.h"
+#include "include/lineedit.h"
 
 #include <QObject>
 #include <QWidget>
@@ -35,7 +36,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QListIterator>
 #include <QWizardPage>
 #include <QFormLayout>
-#include <QLineEdit>
 #include <QSpinBox>
 #include <QComboBox>
 #include <QCheckBox>
@@ -64,18 +64,18 @@ public slots:
     void createTargetReply(QVariant reply);
 
 private:
-    QLineEdit* target_host;
-    QLineEdit* target_name;
-    QSpinBox*  snmp_port;
-    QSpinBox*  snmp_timeout;
+    LineEdit* target_host;
+    LineEdit* target_name;
+    QSpinBox* snmp_port;
+    QSpinBox* snmp_timeout;
     QComboBox* snmp_version;
-    QLineEdit* snmp_community;
+    LineEdit* snmp_community;
     QComboBox* snmp_seclevel;
-    QLineEdit* snmp_usm_user;
+    LineEdit* snmp_usm_user;
     QComboBox* snmp_auth_proto;
     QComboBox* snmp_priv_proto;
-    QLineEdit* snmp_auth_key;
-    QLineEdit* snmp_priv_key;
+    LineEdit* snmp_auth_key;
+    LineEdit* snmp_priv_key;
     QCheckBox* snmp_enable;
 
     //QCheckBox* include_icmp_probe;

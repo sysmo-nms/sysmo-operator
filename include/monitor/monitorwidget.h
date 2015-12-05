@@ -32,13 +32,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/monitor/monitor.h"
 #include "include/monitor/monitorlogs.h"
 #include "include/statusbuttonwidget.h"
+#include "include/lineedit.h"
 
 #include <QObject>
 #include <QWidget>
 #include <QLabel>
 #include <QFrame>
 #include <QPushButton>
-#include <QLineEdit>
 #include <QIcon>
 #include <QMap>
 #include <QDesktopServices>

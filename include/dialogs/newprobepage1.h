@@ -23,13 +23,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "include/monitor/nchecks.h"
 #include "include/monitor/xml/parsecheckgetinfos.h"
 #include "include/monitor/monitor.h"
+#include "include/lineedit.h"
 
 #include <Qt>
 #include <QObject>
 #include <QWidget>
 #include <QWizard>
 #include <QWizardPage>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QTreeView>
 #include <QAbstractItemView>
@@ -64,7 +64,7 @@ public:
 
 private:
     QTreeView* treeview;
-    QLineEdit* selection;
+    LineEdit* selection;
 
 private slots:
     void handleHelpTriggered();

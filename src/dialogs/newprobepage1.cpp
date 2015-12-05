@@ -42,17 +42,15 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     /*
      * Result hiden. only here for register field
      */
-    this->selection = new QLineEdit(this);
+    this->selection = new LineEdit(this);
     this->selection->hide();
     this->registerField("selection", this->selection);
 
     NGrid* grid = new NGrid();
     this->setLayout(grid);
 
-    QLineEdit* search = new QLineEdit(this);
-#if QT_VERSION >= 0x040700
+    LineEdit* search = new LineEdit(this);
     search->setPlaceholderText("Filter");
-#endif
 
     QPushButton* clear = new QPushButton(this);
     clear->setIcon(QIcon(":/icons/edit-clear.png"));

@@ -42,6 +42,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QFile>
 
 class MainWindow : public QMainWindow
 {
