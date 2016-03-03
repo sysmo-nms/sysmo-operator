@@ -19,8 +19,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SUPERCASTSOCKET_H
 #define SUPERCASTSOCKET_H
 
-#include "include/sysmo.h"
-#include "include/qjson.h"
+#include "../sysmo.h"
+#include "../qjson.h"
 
 #include <QObject>
 #include <QStringList>
