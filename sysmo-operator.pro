@@ -14,143 +14,146 @@ greaterThan(QT_VERSION, 5.2): {
     DEFINES += USE_WEBSOCKET
 }
 
+# add include
+INCLUDEPATH += code/
+
 # log with line numbers and files
 DEFINES += QT_MESSAGELOGCONTEXT
 
 TARGET = sysmo-operator
 TEMPLATE = app
 
-SOURCES += src/main.cpp \
-    src/mainwindow.cpp \
-    src/centralwidget.cpp \
-    src/ngrid.cpp \
-    src/ngridcontainer.cpp \
-    src/nframe.cpp \
-    src/nframecontainer.cpp \
-    src/sidebutton.cpp \
-    src/monitor/treeview.cpp \
-    src/monitor/treemodel.cpp \
-    src/monitor/itemtarget.cpp \
-    src/monitor/delegateprobeprogress.cpp \
-    src/monitor/itemprobe.cpp \
-    src/monitor/menuprobe.cpp \
-    src/monitor/menutarget.cpp \
-    src/monitor/monitorwidget.cpp \
-    src/monitor/monitor.cpp \
-    src/monitor/nchecks.cpp \
-    src/dialogs/login.cpp \
-    src/dialogs/newtarget.cpp \
-    src/dialogs/newtargetpage1.cpp \
-    src/network/supercast.cpp \
-    src/network/supercasthttp.cpp \
-    src/network/supercastsignal.cpp \
-    src/dialogs/newprobe.cpp \
-    src/dialogs/newprobepage1.cpp \
-    src/themes.cpp \
-    src/dashboard/dashboardwidget.cpp \
-    src/dashboard/dashboardtab.cpp \
-    src/dialogs/messagebox.cpp \
-    src/network/supercasthttprequest.cpp \
-    src/network/supercasthttpreply.cpp \
-    src/dialogs/newprobepage2.cpp \
-    src/monitor/xml/parseallchecks.cpp \
-    src/monitor/xml/parsecheckgetid.cpp \
-    src/monitor/xml/parsecheckgetinfos.cpp \
-    src/monitor/xml/parsecheckmakedoc.cpp \
-    src/monitor/xml/parsecheckmakeform.cpp \
-    src/dialogs/newprobepage3.cpp \
-    src/dialogs/newprobeprogressdialog.cpp \
-    src/windows/probewindow.cpp \
-    src/monitor/monitorchannel.cpp \
-    src/monitor/xml/parsecheckmakegraphcmd.cpp \
-    src/rrds/rrd4qtsignal.cpp \
-    src/rrds/rrd4qtgraph.cpp \
-    src/rrds/rrd4qt.cpp \
-    src/actions/monitoractions.cpp \
-    src/actions/monitoractionsdialog.cpp \
-    src/actions/monitoractioncreate.cpp \
-    src/actions/actionprocess.cpp \
-    src/systemtray.cpp \
-    src/nowheelcombobox.cpp \
-    src/monitor/monitorlogs.cpp \
-    src/actions/monitoractionconfig.cpp \
-    src/statusbutton.cpp \
-    src/statusbuttonwidget.cpp \
-    src/qjson.cpp \
-    src/temporarydir.cpp \
-    src/rrds/rrd4qtproc.cpp \
-    src/rotatingfilelogger.cpp \
-    src/lineedit.cpp
+SOURCES += code/main.cpp \
+    code/mainwindow.cpp \
+    code/centralwidget.cpp \
+    code/ngrid.cpp \
+    code/ngridcontainer.cpp \
+    code/nframe.cpp \
+    code/nframecontainer.cpp \
+    code/sidebutton.cpp \
+    code/monitor/treeview.cpp \
+    code/monitor/treemodel.cpp \
+    code/monitor/itemtarget.cpp \
+    code/monitor/delegateprobeprogress.cpp \
+    code/monitor/itemprobe.cpp \
+    code/monitor/menuprobe.cpp \
+    code/monitor/menutarget.cpp \
+    code/monitor/monitorwidget.cpp \
+    code/monitor/monitor.cpp \
+    code/monitor/nchecks.cpp \
+    code/dialogs/login.cpp \
+    code/dialogs/newtarget.cpp \
+    code/dialogs/newtargetpage1.cpp \
+    code/network/supercast.cpp \
+    code/network/supercasthttp.cpp \
+    code/network/supercastsignal.cpp \
+    code/dialogs/newprobe.cpp \
+    code/dialogs/newprobepage1.cpp \
+    code/themes.cpp \
+    code/dashboard/dashboardwidget.cpp \
+    code/dashboard/dashboardtab.cpp \
+    code/dialogs/messagebox.cpp \
+    code/network/supercasthttprequest.cpp \
+    code/network/supercasthttpreply.cpp \
+    code/dialogs/newprobepage2.cpp \
+    code/monitor/xml/parseallchecks.cpp \
+    code/monitor/xml/parsecheckgetid.cpp \
+    code/monitor/xml/parsecheckgetinfos.cpp \
+    code/monitor/xml/parsecheckmakedoc.cpp \
+    code/monitor/xml/parsecheckmakeform.cpp \
+    code/dialogs/newprobepage3.cpp \
+    code/dialogs/newprobeprogressdialog.cpp \
+    code/windows/probewindow.cpp \
+    code/monitor/monitorchannel.cpp \
+    code/monitor/xml/parsecheckmakegraphcmd.cpp \
+    code/rrds/rrd4qtsignal.cpp \
+    code/rrds/rrd4qtgraph.cpp \
+    code/rrds/rrd4qt.cpp \
+    code/actions/monitoractions.cpp \
+    code/actions/monitoractionsdialog.cpp \
+    code/actions/monitoractioncreate.cpp \
+    code/actions/actionprocess.cpp \
+    code/actions/monitoractionconfig.cpp \
+    code/systemtray.cpp \
+    code/nowheelcombobox.cpp \
+    code/monitor/monitorlogs.cpp \
+    code/statusbutton.cpp \
+    code/statusbuttonwidget.cpp \
+    code/qjson.cpp \
+    code/temporarydir.cpp \
+    code/rrds/rrd4qtproc.cpp \
+    code/rotatingfilelogger.cpp \
+    code/lineedit.cpp
 
-HEADERS  += include/mainwindow.h \
-    include/centralwidget.h \
-    include/ngrid.h \
-    include/ngridcontainer.h \
-    include/nframe.h \
-    include/nframecontainer.h \
-    include/sidebutton.h \
-    include/monitor/treeview.h \
-    include/monitor/treemodel.h \
-    include/monitor/itemprobe.h \
-    include/monitor/itemtarget.h \
-    include/monitor/delegateprobeprogress.h \
-    include/monitor/monitorwidget.h \
-    include/monitor/monitor.h \
-    include/monitor/menuprobe.h \
-    include/monitor/menutarget.h \
-    include/monitor/nchecks.h \
-    include/dialogs/login.h \
-    include/dialogs/newtarget.h \
-    include/dialogs/newtargetpage1.h \
-    include/network/supercast.h \
-    include/network/supercasthttp.h \
-    include/network/supercastsignal.h \
-    include/dialogs/newprobe.h \
-    include/dialogs/newprobepage1.h \
-    include/themes.h \
-    include/sysmo.h \
-    include/dashboard/dashboardwidget.h \
-    include/dashboard/dashboardtab.h \
-    include/dialogs/messagebox.h \
-    include/network/supercasthttprequest.h \
-    include/network/supercasthttpreply.h \
-    include/dialogs/newprobepage2.h \
-    include/monitor/xml/parseallchecks.h \
-    include/monitor/xml/parsecheckgetid.h \
-    include/monitor/xml/parsecheckgetinfos.h \
-    include/monitor/xml/parsecheckmakedoc.h \
-    include/monitor/xml/parsecheckmakeform.h \
-    include/dialogs/newprobepage3.h \
-    include/dialogs/newprobeprogressdialog.h \
-    include/windows/probewindow.h \
-    include/monitor/monitorchannel.h \
-    include/monitor/xml/parsecheckmakegraphcmd.h \
-    include/rrds/rrd4qtsignal.h \
-    include/rrds/rrd4qtgraph.h \
-    include/rrds/rrd4qt.h \
-    include/actions/monitoractions.h \
-    include/actions/monitoractionsdialog.h \
-    include/actions/monitoractioncreate.h \
-    include/actions/actionprocess.h \
-    include/systemtray.h \
-    include/nowheelcombobox.h \
-    include/monitor/monitorlogs.h \
-    include/actions/monitoractionconfig.h \
-    include/statusbutton.h \
-    include/statusbuttonwidget.h \
-    include/qjson.h \
-    include/temporarydir.h \
-    include/rrds/rrd4qtproc.h \
-    include/rotatingfilelogger.h \
-    include/lineedit.h
+HEADERS  += code/mainwindow.h \
+    code/centralwidget.h \
+    code/ngrid.h \
+    code/ngridcontainer.h \
+    code/nframe.h \
+    code/nframecontainer.h \
+    code/sidebutton.h \
+    code/monitor/treeview.h \
+    code/monitor/treemodel.h \
+    code/monitor/itemprobe.h \
+    code/monitor/itemtarget.h \
+    code/monitor/delegateprobeprogress.h \
+    code/monitor/monitorwidget.h \
+    code/monitor/monitor.h \
+    code/monitor/menuprobe.h \
+    code/monitor/menutarget.h \
+    code/monitor/nchecks.h \
+    code/dialogs/login.h \
+    code/dialogs/newtarget.h \
+    code/dialogs/newtargetpage1.h \
+    code/network/supercast.h \
+    code/network/supercasthttp.h \
+    code/network/supercastsignal.h \
+    code/dialogs/newprobe.h \
+    code/dialogs/newprobepage1.h \
+    code/themes.h \
+    code/sysmo.h \
+    code/dashboard/dashboardwidget.h \
+    code/dashboard/dashboardtab.h \
+    code/dialogs/messagebox.h \
+    code/network/supercasthttprequest.h \
+    code/network/supercasthttpreply.h \
+    code/dialogs/newprobepage2.h \
+    code/monitor/xml/parseallchecks.h \
+    code/monitor/xml/parsecheckgetid.h \
+    code/monitor/xml/parsecheckgetinfos.h \
+    code/monitor/xml/parsecheckmakedoc.h \
+    code/monitor/xml/parsecheckmakeform.h \
+    code/dialogs/newprobepage3.h \
+    code/dialogs/newprobeprogressdialog.h \
+    code/windows/probewindow.h \
+    code/monitor/monitorchannel.h \
+    code/monitor/xml/parsecheckmakegraphcmd.h \
+    code/rrds/rrd4qtsignal.h \
+    code/rrds/rrd4qtgraph.h \
+    code/rrds/rrd4qt.h \
+    code/actions/monitoractions.h \
+    code/actions/monitoractionsdialog.h \
+    code/actions/monitoractioncreate.h \
+    code/actions/actionprocess.h \
+    code/actions/monitoractionconfig.h \
+    code/systemtray.h \
+    code/nowheelcombobox.h \
+    code/monitor/monitorlogs.h \
+    code/statusbutton.h \
+    code/statusbuttonwidget.h \
+    code/qjson.h \
+    code/temporarydir.h \
+    code/rrds/rrd4qtproc.h \
+    code/rotatingfilelogger.h \
+    code/lineedit.h
 
 
 contains(DEFINES, USE_WEBSOCKET): {
-  SOURCES += src/network/supercastwebsocket.cpp
-  HEADERS += include/network/supercastwebsocket.h
+  SOURCES += code/network/supercastwebsocket.cpp
+  HEADERS += code/network/supercastwebsocket.h
 } else {
-  SOURCES += src/network/supercastsocket.cpp
-  HEADERS += include/network/supercastsocket.h
+  SOURCES += code/network/supercastsocket.cpp
+  HEADERS += code/network/supercastsocket.h
 }
 
 RESOURCES += ressources/icons.qrc \
