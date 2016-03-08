@@ -21,3 +21,7 @@
 /ressources/rrd4qt/build/*
 !/ressources/rrd4qt/build/install/
 /ressources/rrd4qt/.gradle
+
+# cmake
+/build
+/Makefile
