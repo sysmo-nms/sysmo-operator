@@ -186,9 +186,43 @@ elseif (QT_VERSION_MAJOR EQUAL 4)
         code/network/supercastsocket.h)
 
     set (OPERATOR_LIBS ${QT_LIBRARIES})
-    QT4_ADD_RESOURCES(QtApp_RCC_SRCS ${OPERATOR_QRC})
-    set (OPERATOR_SRC ${OPERATOR_SRC} ${QtApp_RCC_SRCS})
+    QT4_ADD_RESOURCES(OP_QRC ${OPERATOR_QRC})
+    set (OPERATOR_SRC ${OPERATOR_SRC} ${OP_QRC})
 
+else()
+    # try this
+    find_package(Qt5Widgets REQUIRED)
+    find_package(Qt5Core REQUIRED)
+    find_package(Qt5Gui REQUIRED)
+    find_package(Qt5Network REQUIRED)
+    find_package(Qt5Xml REQUIRED)
+    set (OPERATOR_INCLUDES
+        ${Qt5Widgets_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS}
+        ${Qt5Gui_INCLUDE_DIRS}
+        ${Qt5Network_INCLUDE_DIRS}
+        ${Qt5Xml_INCLUDE_DIRS})
+    set (OPERATOR_LIBS
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Network
+        Qt5::Xml
+        Qt5::Widgets)
+    if (QT_VERSION_MINOR GREATER 2)
+        find_package(Qt5Websocket REQUIRED)
+        set(OPERATOR_LIBS ${OPERATOR_LIBS} Qt5::QtWebsocket)
+        add_definitions(-DUSE_WEBSOCKET)
+        set (OPERATOR_SRC ${OPERATOR_SRC}
+            code/network/supercastwebsocket.cpp
+            code/network/supercastwebsocket.h)
+    else()
+        set (OPERATOR_SRC ${OPERATOR_SRC}
+            code/network/supercastsocket.cpp
+            code/network/supercastsocket.h)
+    endif (QT_VERSION_MINOR GREATER 2)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+    QT5_ADD_RESOURCES(OP_QRC ${OPERATOR_QRC})
+    set (OPERATOR_SRC ${OPERATOR_SRC} ${OP_QRC})
 endif(QT_VERSION_MAJOR EQUAL 5)
 
 

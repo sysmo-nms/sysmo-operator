@@ -1,6 +1,16 @@
 version: 1.{build}
 
-build_script:
-    - set PATH=C:\Qt\Tools\mingw491_32\bin;%PATH%
-    - C:\Qt\5.4\mingw491_32\bin\qmake.exe -config release
-    - mingw32-make.exe
+clone_folder: c:\projects\SysmoOperator
+os: Visual Studio 2013
+platform: x64
+configuration: Release
+
+before_build:
+    - set PATH=C:\Qt\5.5\msvc2013_64\bin;%PATH%
+    - echo Running cmake...
+    - cd c:\projects\SysmoOperator
+    - cmake -H. -Bbuild -G "Visual Studio 12 Win64" -DCMAKE_PREFIX_PATH=C:\Qt\5.5\msvc2013_64
+
+build:
+    project: build/sysmo-operator.sln
+
