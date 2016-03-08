@@ -22,18 +22,13 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
 {
     this->block_size = 0;
     this->socket     = new SupercastTcpSocket(this);
+    this->host = host;
+    this->port = port;
 
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(true);
-    timer->setInterval(Sysmo::SUPERCAST_SOCKET_TIMEOUT);
-
-    QObject::connect(
-                timer, SIGNAL(timeout()),
-                this, SLOT(timerTimeout()),
-                Qt::QueuedConnection);
     QObject::connect(
                 this->socket, SIGNAL(error(QAbstractSocket::SocketError)),
                 this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
+
 
     /*
      * QueuedConnection because the SLOT may emit the SIGNAL he is
@@ -44,9 +39,25 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
                 this,         SLOT(socketReadyRead()),
                 Qt::QueuedConnection);
 
-    timer->start();
-    this->socket->connectToHost(host, port);
 }
+
+
+void SupercastSocket::threadStarted()
+{
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(Sysmo::SUPERCAST_SOCKET_TIMEOUT);
+
+    QObject::connect(
+                timer, SIGNAL(timeout()),
+                this, SLOT(timerTimeout()),
+                Qt::QueuedConnection);
+
+    timer->start();
+    this->socket->connectToHost(this->host, this->port);
+
+}
+
 
 SupercastSocket::~SupercastSocket()
 {

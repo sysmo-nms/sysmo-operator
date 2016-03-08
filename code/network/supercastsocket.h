@@ -53,6 +53,7 @@ public slots:
     void handleClientMessage(QVariant msg);
     void timerTimeout();
     void handleSocketError(QAbstractSocket::SocketError error);
+    void threadStarted();
 
 private:
     qint32 block_size;
@@ -60,6 +61,8 @@ private:
 
     static qint32     arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32 source);
+    QHostAddress host;
+    qint16 port;
 
 private slots:
     void socketReadyRead();

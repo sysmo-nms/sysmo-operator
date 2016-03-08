@@ -152,6 +152,7 @@ void Supercast::tryConnect(
     QObject::connect(
                 &this->socket_thread, SIGNAL(started()),
                 socket_t, SLOT(threadStarted()));
+
     socket_t->moveToThread(&this->socket_thread);
 
     QObject::connect(
