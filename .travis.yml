@@ -9,9 +9,10 @@ compiler:
   - clang
 
 install:
+  - cmake --version
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; sudo apt-get install libqt4-dev qt4-qmake; fi
 
 script:
-  - ./configure
-  - make
+  - mkdir build && cd build
+  - cmake .. && make

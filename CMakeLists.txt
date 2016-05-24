@@ -1,5 +1,19 @@
+# cmake_minimum_required(VERSION 2.8.11)
+# 2.8.11 required for Qt5 build but travis uses 2.8.7 on osx
 cmake_minimum_required(VERSION 2.8)
+
+
+if (CMAKE_VERSION_PATCH GREATER 10)
+    cmake_policy(SET CMP0020 NEW)
+else()
+    # WARNING
+endif (CMAKE_VERSION_PATCH GREATER 10)
+
+
 project(sysmo-operator)
+
+set (CMAKE_AUTOMOC ON)
+include_directories (code/ ${QT_INCLUDES})
 
 set (OPERATOR_SRC
     code/main.cpp
@@ -125,54 +139,23 @@ set (OPERATOR_SRC
     code/windows/probewindow.h)
 
 set (OPERATOR_QRC 
-    ressources/icons.qrc
-    ressources/box_icons.qrc
-    ressources/images.qrc
-    ressources/pixmaps.qrc
-    ressources/tree.qrc
-    ressources/rrd4qt.qrc
-    ressources/cssressource.qrc)
+    support/icons.qrc
+    support/box_icons.qrc
+    support/images.qrc
+    support/pixmaps.qrc
+    support/tree.qrc
+    support/rrd4qt.qrc
+    support/cssressource.qrc)
 
-find_package(Qt REQUIRED)
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 set (OPERATOR_LIBS "")
 set (OPERATOR_INCLUDES "")
 
-if (QT_VERSION_MAJOR EQUAL 5)
-    # WILL FAIL
+find_package(Qt4 QUIET)
+if (QT4_FOUND)
 
-    find_package(Qt5Widgets)
-    find_package(Qt5Core)
-    find_package(Qt5Gui)
-    find_package(Qt5Network)
-    find_package(Qt5Xml)
-    set (OPERATOR_INCLUDES
-        ${Qt5Widgets_INCLUDE_DIRS}
-        ${Qt5Core_INCLUDE_DIRS}
-        ${Qt5Gui_INCLUDE_DIRS}
-        ${Qt5Network_INCLUDE_DIRS}
-        ${Qt5Xml_INCLUDE_DIRS})
-    set (OPERATOR_LIBS
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Network
-        Qt5::Xml
-        Qt5::Widget)
-    if (QT_VERSION_MINOR GREATER 2)
-        set(OPERATOR_LIBS ${OPERATOR_LIBS} Qt5::Websocket)
-        add_definitions(-DUSE_WEBSOCKET)
-        set (OPERATOR_SRC ${OPERATOR_SRC}
-            code/network/supercastwebsocket.cpp
-            code/network/supercastwebsocket.h)
-    else()
-        set (OPERATOR_SRC ${OPERATOR_SRC}
-            code/network/supercastsocket.cpp
-            code/network/supercastsocket.h)
-    endif (QT_VERSION_MINOR GREATER 2)
-
-elseif (QT_VERSION_MAJOR EQUAL 4)
-
+    message(STATUS "QtWebsockets not supported. Fallback to TCP.")
     find_package (Qt4 REQUIRED QtCore QtGui QtNetwork QtXml)
     include (${QT_USE_FILE})
     set (OPERATOR_INCLUDES
@@ -190,12 +173,12 @@ elseif (QT_VERSION_MAJOR EQUAL 4)
     set (OPERATOR_SRC ${OPERATOR_SRC} ${OP_QRC})
 
 else()
-    # try this
+
     find_package(Qt5Widgets REQUIRED)
     find_package(Qt5Core REQUIRED)
     find_package(Qt5Gui REQUIRED)
-    find_package(Qt5Network REQUIRED)
     find_package(Qt5Xml REQUIRED)
+    find_package(Qt5Network REQUIRED)
     set (OPERATOR_INCLUDES
         ${Qt5Widgets_INCLUDE_DIRS}
         ${Qt5Core_INCLUDE_DIRS}
@@ -208,30 +191,44 @@ else()
         Qt5::Network
         Qt5::Xml
         Qt5::Widgets)
-    if (QT_VERSION_MINOR GREATER 2)
-        find_package(Qt5Websocket REQUIRED)
-        set(OPERATOR_LIBS ${OPERATOR_LIBS} Qt5::QtWebsocket)
+
+    # Use websocket if available
+    find_package(Qt5WebSockets QUIET)
+
+    if (Qt5WebSockets_FOUND)
+
+        message(STATUS "QtWebsockets found.")
         add_definitions(-DUSE_WEBSOCKET)
-        set (OPERATOR_SRC ${OPERATOR_SRC}
+        find_package(Qt5Websockets REQUIRED)
+        set (OPERATOR_INCLUDES
+            ${OPERATOR_INCLUDES}
+            ${Qt5WebSockets_INCLUDE_DIRS})
+        set(OPERATOR_LIBS
+            ${OPERATOR_LIBS}
+            Qt5::WebSockets)
+        set (OPERATOR_SRC
+            ${OPERATOR_SRC}
             code/network/supercastwebsocket.cpp
             code/network/supercastwebsocket.h)
+
     else()
-        set (OPERATOR_SRC ${OPERATOR_SRC}
+
+        message(STATUS "QtWebsockets not supported. Fallback to TCP.")
+        set (OPERATOR_SRC
+            ${OPERATOR_SRC}
             code/network/supercastsocket.cpp
             code/network/supercastsocket.h)
-    endif (QT_VERSION_MINOR GREATER 2)
-    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+    endif (Qt5WebSockets_FOUND)
+
     QT5_ADD_RESOURCES(OP_QRC ${OPERATOR_QRC})
+
     set (OPERATOR_SRC ${OPERATOR_SRC} ${OP_QRC})
-endif(QT_VERSION_MAJOR EQUAL 5)
+
+endif(QT4_FOUND)
 
 
-set (CMAKE_AUTOMOC ON)
-
-include_directories (code/ ${QT_INCLUDES})
+# finally
 add_executable(sysmo-operator ${OPERATOR_SRC})
 target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
-
-
-
 

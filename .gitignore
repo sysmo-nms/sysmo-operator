@@ -15,13 +15,14 @@
 /sysmo-operator.pro.user*
 /sysmo-operator.pro.desktop
 
-/ressources/rrd4qt/*.iml
-/ressources/rrd4qt/.idea
+/support/rrd4qt/*.iml
+/support/rrd4qt/.idea
 
-/ressources/rrd4qt/build/*
-!/ressources/rrd4qt/build/install/
-/ressources/rrd4qt/.gradle
+/support/rrd4qt/build/*
+!/support/rrd4qt/build/install/
+/support/rrd4qt/.gradle
 
 # cmake
 /build
 /Makefile
+/CMakeLists.txt.user
