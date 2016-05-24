@@ -1,19 +1,13 @@
 # cmake_minimum_required(VERSION 2.8.11)
 # 2.8.11 required for Qt5 build but travis uses 2.8.7 on osx
 cmake_minimum_required(VERSION 2.8)
-
-
 if (CMAKE_VERSION_PATCH GREATER 10)
     cmake_policy(SET CMP0020 NEW)
 else()
     # WARNING
 endif (CMAKE_VERSION_PATCH GREATER 10)
 
-
 project(sysmo-operator)
-
-set (CMAKE_AUTOMOC ON)
-include_directories (code/ ${QT_INCLUDES})
 
 set (OPERATOR_SRC
     code/main.cpp
@@ -151,6 +145,7 @@ add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 set (OPERATOR_LIBS "")
 set (OPERATOR_INCLUDES "")
+set (OPERATOR_RESSOURCES "")
 
 find_package(Qt4 QUIET)
 if (QT4_FOUND)
@@ -169,8 +164,7 @@ if (QT4_FOUND)
         code/network/supercastsocket.h)
 
     set (OPERATOR_LIBS ${QT_LIBRARIES})
-    QT4_ADD_RESOURCES(OP_QRC ${OPERATOR_QRC})
-    set (OPERATOR_SRC ${OPERATOR_SRC} ${OP_QRC})
+    QT4_ADD_RESOURCES(OPERATOR_RESSOURCES ${OPERATOR_QRC})
 
 else()
 
@@ -221,14 +215,14 @@ else()
 
     endif (Qt5WebSockets_FOUND)
 
-    QT5_ADD_RESOURCES(OP_QRC ${OPERATOR_QRC})
-
-    set (OPERATOR_SRC ${OPERATOR_SRC} ${OP_QRC})
+    QT5_ADD_RESOURCES(OPERATOR_RESSOURCES ${OPERATOR_QRC})
 
 endif(QT4_FOUND)
 
 
 # finally
-add_executable(sysmo-operator ${OPERATOR_SRC})
+set (CMAKE_AUTOMOC ON)
+include_directories (code/ ${OPERATOR_INCLUDES})
+add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_RESSOURCES})
 target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
 
