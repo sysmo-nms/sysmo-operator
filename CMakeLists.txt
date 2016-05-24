@@ -1,11 +1,11 @@
 # cmake_minimum_required(VERSION 2.8.11)
 # 2.8.11 required for Qt5 build but travis uses 2.8.7 on osx
 cmake_minimum_required(VERSION 2.8)
-if (CMAKE_VERSION_PATCH GREATER 10)
-    cmake_policy(SET CMP0020 NEW)
-else()
+if (CMAKE_VERSION VERSION_LESS 2.8.11)
     # WARNING
-endif (CMAKE_VERSION_PATCH GREATER 10)
+else()
+    cmake_policy(SET CMP0020 NEW)
+endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
 project(sysmo-operator)
 
