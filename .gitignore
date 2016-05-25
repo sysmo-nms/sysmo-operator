@@ -1,28 +1,6 @@
-# emacs
-/*~
-
-# vim
-*.swp
-*.swo
-# build
-/*.o
-/moc_*
-/qrc_*
-
-/Makefile
-
-/sysmo-operator
-/sysmo-operator.pro.user*
-/sysmo-operator.pro.desktop
-
-/support/rrd4qt/*.iml
-/support/rrd4qt/.idea
-
 /support/rrd4qt/build/*
 !/support/rrd4qt/build/install/
 /support/rrd4qt/.gradle
 
-# cmake
+# cmake standard build
 /build
-/Makefile
-/CMakeLists.txt.user
