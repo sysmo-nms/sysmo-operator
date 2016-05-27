@@ -23,6 +23,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "themes.h"
 #include "sysmo.h"
 #include "rotatingfilelogger.h"
+#include "updates.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -74,6 +75,10 @@ int main(int argc, char* argv[])
         qDebug() << "will use websocket";
 #endif
         MainWindow win;
+
+#ifdef _WIN32
+        Updates::start();
+#endif
 
         RETURN_CODE = app.exec();
 #if QT_VERSION < 0x050000
