@@ -29,8 +29,8 @@ bool ParseAllChecks::startElement(
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
 
-    if (qName == "CheckUrl") {
-        this->values->append(atts.value("Value"));
+    if (qName == "Check") {
+        this->values->append(atts.value("Id") + ".xml");
     }
     return true;
 }
