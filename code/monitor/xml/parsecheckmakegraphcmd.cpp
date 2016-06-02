@@ -35,11 +35,14 @@ bool ParseCheckMakeGraphCMD::startElement(
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
     if (qName == "Performances") {
+        this->config.clear();
         this->config.insert("type",   atts.value("Type"));
         return true;
     }
 
     if (qName == "Graph") {
+        this->current_graph.clear();
+        this->current_draws.clear();
         this->current_graph_id = atts.value("Id");
         this->current_graph.insert("minimum", atts.value("Minimum"));
         this->current_graph.insert("maximum", atts.value("Maximum"));
@@ -63,6 +66,7 @@ bool ParseCheckMakeGraphCMD::startElement(
     }
     // Graph -> Draw
     if (qName == "Draw") {
+        this->current_draw.clear();
         this->current_draw.insert("type",
                                   atts.value("Type"));
         this->current_draw.insert("color",
