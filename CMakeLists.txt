@@ -151,7 +151,6 @@ add_definitions(-DQT_MESSAGELOGCONTEXT)
 set (OPERATOR_LIBS "")
 set (OPERATOR_INCLUDES "")
 set (OPERATOR_RESSOURCES "")
-
 find_package(Qt4 QUIET)
 if (QT4_FOUND)
 
@@ -232,11 +231,13 @@ include_directories (code/ ${OPERATOR_INCLUDES})
 add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_RESSOURCES})
 target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
 
+
 # install
 install(TARGETS sysmo-operator DESTINATION bin)
 if (WIN32)
-    # TODO find and install Qt shared libraries
+    install(FILES ${OPERATOR_LIBS} DESTINATION bin)
 endif(WIN32)
+
 
 # packages
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sysmo-NMS user interface")
