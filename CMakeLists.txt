@@ -221,6 +221,7 @@ endif(QT4_FOUND)
 
 
 # finally
+set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
 include_directories (code/ ${OPERATOR_INCLUDES})
 add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_RESSOURCES})
