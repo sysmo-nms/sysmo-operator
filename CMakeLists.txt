@@ -7,7 +7,12 @@ else()
     cmake_policy(SET CMP0020 NEW)
 endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
-project(sysmo-operator)
+
+project(Sysmo-Operator)
+set (SYSMO_OPERATOR_VERSION_MAJOR "1")
+set (SYSMO_OPERATOR_VERSION_MINOR "1")
+set (SYSMO_OPERATOR_VERSION_PATCH "0")
+
 
 set (OPERATOR_SRC
     code/main.cpp
@@ -227,3 +232,23 @@ include_directories (code/ ${OPERATOR_INCLUDES})
 add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_RESSOURCES})
 target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
 
+# install
+install(TARGETS sysmo-operator DESTINATION bin)
+if (WIN32)
+    # TODO find and install Qt shared libraries
+endif(WIN32)
+
+# packages
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sysmo-NMS user interface")
+set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set (CPACK_PACKAGE_VERSION_MAJOR "${SYSMO_OPERATOR_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR "${SYSMO_OPERATOR_VERSION_MINOR}")
+set (CPACK_PACKAGE_VERSION_PATCH "${SYSMO_OPERATOR_VERSION_PATCH}")
+set (CPACK_STRIP_FILES "bin/sysmo-operator")
+if (WIN32)
+    set (CPACK_GENERATOR "NSIS")
+else()
+    set (CPACK_GENERATOR "TGZ")
+endif(WIN32)
+include(CPack)
