@@ -18,6 +18,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "stdio.h"
 #include "stdlib.h"
+#include "clog.h"
+#include "cargo.h"
 
 #include "mainwindow.h"
 #include "themes.h"

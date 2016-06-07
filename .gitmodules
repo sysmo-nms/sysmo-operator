@@ -4,3 +4,9 @@
 [submodule "deps/cargo"]
 	path = deps/cargo
 	url = https://github.com/funlibs/cargo.git
+[submodule "deps/xmlc"]
+	path = deps/xmlc
+	url = https://github.com/funlibs/xmlc.git
+[submodule "deps/parson"]
+	path = deps/parson
+	url = https://github.com/funlibs/parson.git
