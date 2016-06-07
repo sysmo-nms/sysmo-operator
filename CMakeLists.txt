@@ -227,7 +227,11 @@ endif(QT4_FOUND)
 # finally
 set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
-include_directories (code/ ${OPERATOR_INCLUDES})
+include_directories (
+    code/
+    deps/clog/
+    deps/cargo/
+    ${OPERATOR_INCLUDES})
 add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_RESSOURCES})
 target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
 

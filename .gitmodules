@@ -1,0 +1,6 @@
+[submodule "deps/clog"]
+	path = deps/clog
+	url = https://github.com/funlibs/clog.git
+[submodule "deps/cargo"]
+	path = deps/cargo
+	url = https://github.com/funlibs/cargo.git

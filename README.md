@@ -31,6 +31,7 @@ Building
 ```sh
 $ git clone https://github.com/sysmo-nms/sysmo-operator.git
 $ cd sysmo-operator
+$ git submodule update --init
 $ mkdir build
 $ cd build
 $ cmake ..
