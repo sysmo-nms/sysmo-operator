@@ -187,5 +187,5 @@ int NewProbePage1::nextId() const {return 2;}
 
 void NewProbePage1::handleHelpTriggered()
 {
-    QDesktopServices::openUrl(QUrl("https://github.com/sysmo-nms/sysmo-wiki/wiki/Sysmo-NChecks"));
+    QDesktopServices::openUrl(QUrl("https://github.com/sysmo-nms/sysmo-nms.github.io/wiki/Sysmo-NChecks"));
 }
