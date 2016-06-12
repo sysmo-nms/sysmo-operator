@@ -153,7 +153,6 @@ add_definitions(-DQT_MESSAGELOGCONTEXT)
 set (OPERATOR_DEPS_INCLUDES  "")
 set (OPERATOR_DEPS_LIBRARIES "")
 add_subdirectory(deps/)
-message(STATUS "qqqqqqqqqqqqqqqqqq ${OPERATOR_DEPS_INCLUDES}")
 
 # qt
 set (OPERATOR_QT_LIBRARIES "")
