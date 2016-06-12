@@ -14,6 +14,7 @@ Build dependencies
 ------------------
 - C++ build tools
 - Qt5.X or Qt4.X >= 4.6 development environment
+- CMake
 
 #### CentOS 7 dependency install example
 ```sh
@@ -40,7 +41,7 @@ $ make
 
 Deploying
 ---------
-Everything is contained in the *sysmo-operator* executable. Move it somewhere
+Everything is contained in the *build/sysmo-operator* executable. Move it somewhere
 in your $PATH and you're done.
 
 TODO
