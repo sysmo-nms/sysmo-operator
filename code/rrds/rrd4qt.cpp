@@ -59,30 +59,30 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 
     QString proc_path;
 #if defined Q_OS_WIN
-    QString bat_path = QDir(bin_dir).absoluteFilePath("rrd4qt.bat");
-    QFile   bat(":/rrd4qt/rrd4qt.bat");
+    QString bat_path = QDir(bin_dir).absoluteFilePath("rrdio.bat");
+    QFile   bat(":/rrdio/rrdio.bat");
     bat.copy(bat_path);
     proc_path = bat_path;
 #else
-    QString sh_path = QDir(bin_dir).absoluteFilePath("rrd4qt");
-    QFile   sh(":/rrd4qt/rrd4qt.sh");
+    QString sh_path = QDir(bin_dir).absoluteFilePath("rrdio");
+    QFile   sh(":/rrdio/rrdio.sh");
     sh.copy(sh_path);
     QFile sh_file(sh_path);
     sh_file.setPermissions(sh_file.permissions() | QFile::ExeOwner);
     proc_path = sh_path;
 #endif
 
-    QFile   rrd4j(":/rrd4qt/rrd4j.jar");
+    QFile   rrd4j(":/rrdio/rrd4j.jar");
     QString rrd4j_jar_path =
-            QDir(lib_dir).absoluteFilePath("rrd4j-3.0-SYSMO-SNAPSHOT.jar");
+            QDir(lib_dir).absoluteFilePath("rrd4j-3.0-SNAPSHOT.jar");
     rrd4j.copy(rrd4j_jar_path);
 
-    QFile   rrd4qt(":/rrd4qt/rrd4qt.jar");
-    QString rrd4qt_jar_path =
-            QDir(lib_dir).absoluteFilePath("rrd4qt-1.0-SNAPSHOT.jar");
-    rrd4qt.copy(rrd4qt_jar_path);
+    QFile   rrdio(":/rrdio/rrdio.jar");
+    QString rrdio_jar_path =
+            QDir(lib_dir).absoluteFilePath("rrdio-1.0-SNAPSHOT.jar");
+    rrdio.copy(rrdio_jar_path);
 
-    QFile   json(":/rrd4qt/json.jar");
+    QFile   json(":/rrdio/json.jar");
     QString json_jar_path =
             QDir(lib_dir).absoluteFilePath("javax.json-1.0.4.jar");
     json.copy(json_jar_path);
