@@ -19,23 +19,18 @@ Build dependencies
 #### CentOS 7 dependency install example
 ```sh
 $ sudo yum groupinstall 'Development Tools'
-$ sudo yum install qt-devel
+$ sudo yum install qt-devel cmake
 ```
 
 #### Debian 8 dependency install example
 ```sh
-$ sudo apt-get install build-essentials qt-jdk
+$ sudo apt-get install build-essentials qt-jdk cmake
 ```
 
 Building
 --------
 ```sh
-$ git clone https://github.com/sysmo-nms/sysmo-operator.git
-$ cd sysmo-operator
-$ git submodule update --init
-$ mkdir build
-$ cd build
-$ cmake ..
+$ ./configure
 $ make
 ```
 
