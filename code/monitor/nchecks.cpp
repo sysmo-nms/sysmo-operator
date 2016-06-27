@@ -50,7 +50,7 @@ void NChecks::connectionStatus(int status)
                 sig,  SIGNAL(serverMessage(QString)),
                 this, SLOT(handleAllChecksReply(QString)));
 
-    Supercast::httpGet("/nchecks/AllChecks.xml", sig);
+    Supercast::httpGet("/nchecks/NChecksRepository.xml", sig);
 }
 
 void NChecks::handleAllChecksReply(QString body)

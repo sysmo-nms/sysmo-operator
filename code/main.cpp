@@ -18,11 +18,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "stdio.h"
 #include "stdlib.h"
+#include "clog.h"
+#include "cargo.h"
 
 #include "mainwindow.h"
 #include "themes.h"
 #include "sysmo.h"
-#include "rotatingfilelogger.h"
 #include "updates.h"
 
 #include <QApplication>
@@ -63,10 +64,10 @@ int main(int argc, char* argv[])
         //RotatingFileLogger::getLogger()->setParent(&app);
 
 #if QT_VERSION < 0x050000
-        //qInstallMsgHandler(RotatingFileLogger::log);
+        //qInstallMsgHandler(logger...)
         QApplication::setStyle("plastique");
 #else
-        //qInstallMessageHandler(RotatingFileLogger::log);
+        //qInstallMessageHandler(logger...)
         QApplication::setStyle("fusion");
 #endif
         app.setWindowIcon(QIcon(":/icons/logo.png"));

@@ -7,7 +7,12 @@ else()
     cmake_policy(SET CMP0020 NEW)
 endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
-project(sysmo-operator)
+
+project(Sysmo-Operator)
+set (OPERATOR_VERSION_MAJOR "1")
+set (OPERATOR_VERSION_MINOR "1")
+set (OPERATOR_VERSION_PATCH "0")
+
 
 set (OPERATOR_SRC
     code/main.cpp
@@ -108,8 +113,6 @@ set (OPERATOR_SRC
     code/nowheelcombobox.h
     code/qjson.cpp
     code/qjson.h
-    code/rotatingfilelogger.cpp
-    code/rotatingfilelogger.h
     code/rrds/rrd4qt.cpp
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h
@@ -145,17 +148,23 @@ set (OPERATOR_QRC
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
-set (OPERATOR_LIBS "")
-set (OPERATOR_INCLUDES "")
-set (OPERATOR_RESSOURCES "")
 
+# dependencies
+set (OPERATOR_DEPS_INCLUDES  "")
+set (OPERATOR_DEPS_LIBRARIES "")
+add_subdirectory(deps/)
+
+# qt
+set (OPERATOR_QT_LIBRARIES "")
+set (OPERATOR_QT_INCLUDES "")
+set (OPERATOR_QT_RESSOURCES "")
 find_package(Qt4 QUIET)
 if (QT4_FOUND)
 
     message(STATUS "QtWebsockets not supported. Fallback to TCP.")
     find_package (Qt4 REQUIRED QtCore QtGui QtNetwork QtXml)
     include (${QT_USE_FILE})
-    set (OPERATOR_INCLUDES
+    set (OPERATOR_QT_INCLUDES
         ${Qt4Core_INCLUDE_DIRS}
         ${Qt4Gui_INCLUDE_DIRS}
         ${Qt4Network_INCLUDE_DIRS}
@@ -165,8 +174,8 @@ if (QT4_FOUND)
         code/network/supercastsocket.cpp
         code/network/supercastsocket.h)
 
-    set (OPERATOR_LIBS ${QT_LIBRARIES})
-    QT4_ADD_RESOURCES(OPERATOR_RESSOURCES ${OPERATOR_QRC})
+    set (OPERATOR_QT_LIBRARIES ${QT_LIBRARIES})
+    QT4_ADD_RESOURCES(OPERATOR_QT_RESSOURCES ${OPERATOR_QRC})
 
 else()
 
@@ -175,13 +184,13 @@ else()
     find_package(Qt5Gui REQUIRED)
     find_package(Qt5Xml REQUIRED)
     find_package(Qt5Network REQUIRED)
-    set (OPERATOR_INCLUDES
+    set (OPERATOR_QT_INCLUDES
         ${Qt5Widgets_INCLUDE_DIRS}
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
         ${Qt5Network_INCLUDE_DIRS}
         ${Qt5Xml_INCLUDE_DIRS})
-    set (OPERATOR_LIBS
+    set (OPERATOR_QT_LIBRARIES
         Qt5::Core
         Qt5::Gui
         Qt5::Network
@@ -196,11 +205,11 @@ else()
         message(STATUS "QtWebsockets found.")
         add_definitions(-DUSE_WEBSOCKET)
         find_package(Qt5Websockets REQUIRED)
-        set (OPERATOR_INCLUDES
-            ${OPERATOR_INCLUDES}
+        set (OPERATOR_QT_INCLUDES
+            ${OPERATOR_QT_INCLUDES}
             ${Qt5WebSockets_INCLUDE_DIRS})
-        set(OPERATOR_LIBS
-            ${OPERATOR_LIBS}
+        set(OPERATOR_QT_LIBRARIES
+            ${OPERATOR_QT_LIBRARIES}
             Qt5::WebSockets)
         set (OPERATOR_SRC
             ${OPERATOR_SRC}
@@ -217,14 +226,45 @@ else()
 
     endif (Qt5WebSockets_FOUND)
 
-    QT5_ADD_RESOURCES(OPERATOR_RESSOURCES ${OPERATOR_QRC})
+    QT5_ADD_RESOURCES(OPERATOR_QT_RESSOURCES ${OPERATOR_QRC})
 
 endif(QT4_FOUND)
 
 
 # finally
+set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
-include_directories (code/ ${OPERATOR_INCLUDES})
-add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_RESSOURCES})
-target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
+include_directories (
+    code/
+    ${OPERATOR_DEPS_INCLUDES}
+    ${OPERATOR_QT_INCLUDES})
+add_executable(sysmo-operator
+    ${OPERATOR_SRC}
+    ${OPERATOR_QT_RESSOURCES})
+target_link_libraries(sysmo-operator
+    ${OPERATOR_QT_LIBRARIES}
+    ${OPERATOR_DEPS_LIBRARIES})
 
+
+# install
+install(TARGETS sysmo-operator DESTINATION bin)
+if (WIN32)
+    # include Qt shared libs for Windows
+    install(FILES ${OPERATOR_QT_LIBRARIES} DESTINATION bin)
+endif(WIN32)
+
+
+# packages
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sysmo-NMS user interface")
+set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set (CPACK_PACKAGE_VERSION_MAJOR "${OPERATOR_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR "${OPERATOR_VERSION_MINOR}")
+set (CPACK_PACKAGE_VERSION_PATCH "${OPERATOR_VERSION_PATCH}")
+set (CPACK_STRIP_FILES "bin/sysmo-operator")
+if (WIN32)
+    set (CPACK_GENERATOR "NSIS")
+else()
+    set (CPACK_GENERATOR "TGZ")
+endif(WIN32)
+include(CPack)
