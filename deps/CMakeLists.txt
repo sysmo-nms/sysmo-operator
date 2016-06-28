@@ -10,10 +10,11 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 else ()
     set (GRADLE_BIN ${CMAKE_CURRENT_SOURCE_DIR}/rrdio/gradlew)
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+message(STATUS "Preparing Java RrdIO...")
 execute_process(
     COMMAND ${GRADLE_BIN} installDist
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rrdio
-    OUTPUT_QUIET)
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rrdio)
+message(STATUS "Java RrdIO Ready")
 
 # return
 set(OPERATOR_DEPS_INCLUDES  ${DEPS_INCLUDES} PARENT_SCOPE)
