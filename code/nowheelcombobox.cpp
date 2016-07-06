@@ -18,6 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "nowheelcombobox.h"
 
+/**
+ * A QComboBox with weel disabled.
+ */
 NoWheelComboBox::NoWheelComboBox(QWidget *parent)
     : QComboBox(parent)
 {
@@ -26,5 +29,7 @@ NoWheelComboBox::NoWheelComboBox(QWidget *parent)
 
 void NoWheelComboBox::wheelEvent(QWheelEvent *event)
 {
+    
     event->ignore();
+    
 }

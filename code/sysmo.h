@@ -21,6 +21,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Qt>
 
+
+/**
+ * Various constant used by sysmo-operator classes
+ */
 namespace Sysmo {
 
     /*

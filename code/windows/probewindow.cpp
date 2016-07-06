@@ -18,11 +18,15 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "probewindow.h"
 
+/**
+ * Windows opened when double clicking on a probe element in the treeview
+ */
 QMap<QString,ProbeWindow*> ProbeWindow::windows = QMap<QString,ProbeWindow*>();
 
 ProbeWindow::ProbeWindow(QString probeName)
                         : MonitorProxyWidget(probeName)
 {
+    
     this->divider = 1;
     this->margin = 150;
     this->name = probeName;
@@ -156,10 +160,13 @@ ProbeWindow::ProbeWindow(QString probeName)
      * end generic layout
      */
     this->restoreStateFromSettings();
+    
 }
+
 
 ProbeWindow::~ProbeWindow()
 {
+    
     ProbeWindow::windows.remove(this->name);
 
     QString geom_str  = "win_geometry/" + this->name;
@@ -168,41 +175,52 @@ ProbeWindow::~ProbeWindow()
 
     QString size_str = "graph_size/" + this->name;
     s.setValue(size_str, QVariant(this->height_cbox->currentIndex()));
+    
 }
+
 
 void ProbeWindow::restoreStateFromSettings()
 {
+    
     QString geom_str  = "win_geometry/" + this->name;
     QSettings s;
     QVariant geom_var = s.value(geom_str);
-    if (geom_var.isValid()) {
+    if (geom_var.isValid())
         this->restoreGeometry(geom_var.toByteArray());
-    } else {
+    else
         this->setGeometry(0,0,900,500);
-    }
 
     QString size_str = "graph_size/" + this->name;
     QVariant size_var = s.value(size_str);
-    if(size_var.isValid()) {
+    if(size_var.isValid())
         this->height_cbox->setCurrentIndex(size_var.toInt());
-    }
+    
 }
+
 
 void ProbeWindow::handleTimerTimeout()
 {
+    
     int margins = this->margin * this->divider;
     int size = (this->size().width() - margins) / this->divider;
     emit this->graphWidthChanged(size);
+    
 }
+
 
 void ProbeWindow::resizeEvent(QResizeEvent *event)
 {
+    
     this->timer->start();
     MonitorProxyWidget::resizeEvent(event);
+    
 }
 
+
 void ProbeWindow::handleEvent(QVariant event_var) {
+    
     QMap<QString,QVariant> event = event_var.toMap();
+    
     /*
      * If event is "update"
      */
@@ -301,6 +319,7 @@ void ProbeWindow::handleEvent(QVariant event_var) {
         qDebug() << "simple draw " << event;
         frame->show();
         return;
+        
     }
 
 
@@ -432,16 +451,18 @@ void ProbeWindow::handleEvent(QVariant event_var) {
          */
         qDebug() << "table draw " << event;
         frame->show();
-
-        return;
+        
     }
+    
 }
 
 
 void ProbeWindow::closeEvent(QCloseEvent* event)
 {
+    
     event->accept();
     this->deleteLater();
+    
 }
 
 
@@ -450,6 +471,7 @@ void ProbeWindow::closeEvent(QCloseEvent* event)
  */
 void ProbeWindow::openWindow(QString name)
 {
+    
     ProbeWindow* win;
 
     /*
@@ -482,56 +504,66 @@ void ProbeWindow::openWindow(QString name)
     win->showNormal();
     win->setFocus();
     qApp->setActiveWindow(win);
+    
 }
+
 
 int ProbeWindow::getHeightFor(int value)
 {
+    
     switch (value)
     {
-    case ProbeWindow::HEIGHT_SMALL:
-        return 30;
-    case ProbeWindow::HEIGHT_NORMAL:
-        return 90;
-    case ProbeWindow::HEIGHT_LARGE:
-        return 180;
-    default:
-        qWarning() << "unknown size:" << value;
-        return 150;
+        case ProbeWindow::HEIGHT_SMALL:
+            return 30;
+        case ProbeWindow::HEIGHT_NORMAL:
+            return 90;
+        case ProbeWindow::HEIGHT_LARGE:
+            return 180;
+        default:
+            qWarning() << "unknown size:" << value;
+            return 150;
     }
+    
 }
+
 
 int ProbeWindow::getSpanFor(int value)
 {
+    
     switch(value)
     {
-    case ProbeWindow::SPAN_TWO_HOURS:
-        return 7200;
-    case ProbeWindow::SPAN_TWELVE_HOURS:
-        return 43200;
-    case ProbeWindow::SPAN_TWO_DAYS:
-        return 172800;
-    case ProbeWindow::SPAN_SEVEN_DAYS:
-        return 604800;
-    case ProbeWindow::SPAN_TWO_WEEKS:
-        return 1209600;
-    case ProbeWindow::SPAN_ONE_MONTH:
-        return 2592000;
-    case ProbeWindow::SPAN_SIX_MONTH:
-        return 15552000;
-    case ProbeWindow::SPAN_ONE_YEAR:
-        return 31536000;
-    case ProbeWindow::SPAN_THREE_YEARS:
-        return 94608000;
-    case ProbeWindow::SPAN_TEN_YEARS:
-        return 315360000;
-    default:
-        qWarning() << "Unknown time span:" << value;
-        return 604800;
+        case ProbeWindow::SPAN_TWO_HOURS:
+            return 7200;
+        case ProbeWindow::SPAN_TWELVE_HOURS:
+            return 43200;
+        case ProbeWindow::SPAN_TWO_DAYS:
+            return 172800;
+        case ProbeWindow::SPAN_SEVEN_DAYS:
+            return 604800;
+        case ProbeWindow::SPAN_TWO_WEEKS:
+            return 1209600;
+        case ProbeWindow::SPAN_ONE_MONTH:
+            return 2592000;
+        case ProbeWindow::SPAN_SIX_MONTH:
+            return 15552000;
+        case ProbeWindow::SPAN_ONE_YEAR:
+            return 31536000;
+        case ProbeWindow::SPAN_THREE_YEARS:
+            return 94608000;
+        case ProbeWindow::SPAN_TEN_YEARS:
+            return 315360000;
+        default:
+            qWarning() << "Unknown time span:" << value;
+            return 604800;
     }
+    
 }
+
 
 bool ProbeWindow::isThumbnail(int value)
 {
+    
+    // TODO remove or use?
     Q_UNUSED(value);
     /*
     switch(value)
@@ -543,16 +575,23 @@ bool ProbeWindow::isThumbnail(int value)
     }
     */
     return false;
+    
 }
+
 
 void ProbeWindow::handleHeightChanged(int height)
 {
+    
     int height_val = ProbeWindow::getHeightFor(height);
     emit this->graphHeightChanged(height_val);
+    
 }
+
 
 void ProbeWindow::handleSpanChanged(int span)
 {
+    
     int span_val = ProbeWindow::getSpanFor(span);
     emit this->timeSpanChanged(span_val);
+    
 }

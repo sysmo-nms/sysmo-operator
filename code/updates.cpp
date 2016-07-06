@@ -26,7 +26,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "updates.h"
 
+/**
+ * TODO try to connect to a sysmo.io service and find if a new version
+ * of the client is available
+ */
 Updates::Updates() : QObject(0) {
+    
     this->manager = new QNetworkAccessManager(this);
     QObject::connect(this->manager, SIGNAL(finished(QNetworkReply*)),
                   this,          SLOT(handleHttpReply(QNetworkReply*)));
@@ -46,14 +51,18 @@ Updates::Updates() : QObject(0) {
 
 void Updates::start()
 {
+    
     /*
      * Will trigger a check for update every five minutes.
      */
     new Updates();
+    
 }
 
 void Updates::check()
 {
+    
+    // TODO do not use github API
     manager->get(
       QNetworkRequest(
         QUrl("https://api.github.com/repos/sysmo-nms/sysmo-operator/releases")));

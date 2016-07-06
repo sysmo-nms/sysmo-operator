@@ -18,9 +18,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "statusbutton.h"
 
+/**
+ * Status button including a layout to show an image status,
+ * a counter, and blinking border if the status is not OK
+ */
 StatusButton::StatusButton(QWidget *parent, QString type, QPixmap pixmap)
         : QPushButton(parent)
 {
+    
     this->red = false;
     this->type = type;
     this->counter = 0;
@@ -44,31 +49,40 @@ StatusButton::StatusButton(QWidget *parent, QString type, QPixmap pixmap)
                 this, SIGNAL(clicked(bool)),
                 this, SLOT(updateText()));
     this->lcd->setStyleSheet("");
+    
 }
+
 
 void StatusButton::increment()
 {
+    
     this->counter += 1;
     this->lcd->display(this->counter);
+    
 }
+
 
 void StatusButton::decrement()
 {
+    
     this->counter -= 1;
     this->lcd->display(this->counter);
-    if (this->counter == 0) {
+    if (this->counter == 0)
         this->lcd->setStyleSheet("");
-    }
+    
 }
 
 void StatusButton::updateText()
 {
+    
     QString filter = "status:%1";
     emit this->setText(filter.arg(this->type));
+    
 }
 
 void StatusButton::toggleRed()
 {
+    
     if (this->counter > 0) {
         if (this->red) {
             this->lcd->setStyleSheet("");
@@ -78,4 +92,5 @@ void StatusButton::toggleRed()
             this->red = true;
         }
     }
+    
 }

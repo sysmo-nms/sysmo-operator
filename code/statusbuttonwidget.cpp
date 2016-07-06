@@ -18,9 +18,15 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "statusbuttonwidget.h"
 
+
+/**
+ * QFrame container for StatusButtons, handling sysmo monitor events
+ * to set correct statuses on buttons.
+ */
 StatusButtonWidget::StatusButtonWidget(QWidget* parent) :
     NFrameContainer(parent)
 {
+    
     QTimer* timer = new QTimer(this);
     timer->setInterval(600);
     timer->setSingleShot(false);
@@ -38,13 +44,13 @@ StatusButtonWidget::StatusButtonWidget(QWidget* parent) :
     this->setLayout(grid);
 
     this->ok = new StatusButton(this, "OK",
-                                              QPixmap(":/icons/weather-clear"));
+                                QPixmap(":/icons/weather-clear"));
     this->err = new StatusButton(this, "ERROR",
-                                   QPixmap(":/icons/weather-few-clouds-night"));
+                                QPixmap(":/icons/weather-few-clouds-night"));
     this->warn = new StatusButton(this, "WARNING",
-                                            QPixmap(":/icons/weather-showers"));
+                                QPixmap(":/icons/weather-showers"));
     this->crit = new StatusButton(this, "CRITICAL",
-                                       QPixmap(":/icons/weather-severe-alert"));
+                                QPixmap(":/icons/weather-severe-alert"));
     QObject::connect(
                 timer, SIGNAL(timeout()),
                 this->err, SLOT(toggleRed()));
@@ -61,21 +67,25 @@ StatusButtonWidget::StatusButtonWidget(QWidget* parent) :
     grid->addWidget(this->err,  2,0);
     grid->addWidget(this->ok,   3,0);
     this->setFixedWidth(110);
+    
 }
 
 
 void StatusButtonWidget::handleDeleteProbe(QVariant obj_var)
 {
+    
     QMap<QString,QVariant> obj = obj_var.toMap();
     QString name = obj.value("name").toString();
     if (this->status_map->contains(name)) {
         QString status = this->status_map->take(name);
         this->decrementStatus(status);
     }
+    
 }
 
 void StatusButtonWidget::handleInfoProbe(QVariant obj_var)
 {
+    
     QMap<QString,QVariant> obj = obj_var.toMap();
     QString name = obj.value("name").toString();
     QString status = obj.value("status").toString();
@@ -89,30 +99,33 @@ void StatusButtonWidget::handleInfoProbe(QVariant obj_var)
 
     }
     this->status_map->insert(name,status);
+    
 }
 
 void StatusButtonWidget::incrementStatus(QString status)
 {
-    if (status == "OK") {
+    
+    if (status == "OK")
             this->ok->increment();
-    } else if (status == "ERROR") {
+    else if (status == "ERROR")
             this->err->increment();
-    } else if (status == "WARNING") {
+    else if (status == "WARNING")
             this->warn->increment();
-    } else if (status == "CRITICAL") {
+    else if (status == "CRITICAL")
             this->crit->increment();
-    }
+    
 }
 
 void StatusButtonWidget::decrementStatus(QString status)
 {
-    if (status == "OK") {
+    
+    if (status == "OK")
             this->ok->decrement();
-    } else if (status == "ERROR") {
+    else if (status == "ERROR")
             this->err->decrement();
-    } else if (status == "WARNING") {
+    else if (status == "WARNING")
             this->warn->decrement();
-    } else if (status == "CRITICAL") {
+    else if (status == "CRITICAL")
             this->crit->decrement();
-    }
+    
 }

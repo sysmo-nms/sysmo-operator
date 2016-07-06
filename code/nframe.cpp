@@ -20,5 +20,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 NFrame::NFrame(QWidget* parent) : QFrame(parent)
 {
+    
     this->setContentsMargins(2,2,2,2);
+    
 }

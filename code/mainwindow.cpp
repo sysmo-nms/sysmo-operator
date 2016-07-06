@@ -18,10 +18,16 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "mainwindow.h"
 
-QSize MainWindow::sizeHint() const {return this->default_size;}
-
+/**
+ * Lot of logic in this class. Most of the UI and network is initialized
+ * from here.
+ */
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
+    
+    /*
+     * Just initialize log in dialog (not shown)
+     */
     this->log_in_dialog = new LogIn(this);
 
     /*
@@ -51,7 +57,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     /*
      * Fill the menu bar
      */
-
     QMenuBar* menu_bar  = this->menuBar();
     // Sysmo menu
     QMenu*    main_menu = menu_bar->addMenu("Sysmo");
@@ -144,8 +149,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     help_menu->addAction(about);
 
     /*
-     * Initialize acceptable default. Will be overriden by saveState and
-     * restore state after the first app start.
+     * Initialize acceptable default. Will be overriden by saveState() and
+     * restoreState() after the first app start.
      */
     this->default_size = QSize(1040,585);
 
@@ -170,8 +175,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
 
     /*
-     * create, connect and open the log_in_dialog
-     * Note that on log_in failure, the entire application close.
+     * Connect and open the log_in_dialog
+     * NOTE: on log_in failure, the entire application close.
      */
     QObject::connect(
                 this->log_in_dialog, SIGNAL(rejected()),
@@ -182,24 +187,32 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     this->log_in_dialog->open();
 
     this->restoreStateFromSettings();
+    
 }
+
 
 QWidget* MainWindow::getLoginWindow()
 {
+    
     return this->log_in_dialog;
+    
 }
 
 
 MainWindow::~MainWindow()
 {
+    
     QSettings s;
     s.setValue("main/geometry", this->saveGeometry());
+    
 }
+
 
 void MainWindow::restoreStateFromSettings()
 {
+    
     /*
-     * Restaure color theme
+     * Restore color theme
      */
     QSettings s;
     QVariant v = s.value("color_theme");
@@ -214,30 +227,57 @@ void MainWindow::restoreStateFromSettings()
         }
     }
 
+    /*
+     * Restore geometry
+     */
     QVariant geom = s.value("main/geometry");
-    if (geom.isValid()) {
+    if (geom.isValid())
         this->restoreGeometry(geom.toByteArray());
-    }
+    
 }
 
-/*
+
+QSize MainWindow::sizeHint() const
+{
+    
+    return this->default_size;
+    
+}
+
+/*******************************************************************************
  * SLOTS
- */
+ ******************************************************************************/
 void MainWindow::configureDocEngine()
 {
+    
+    // TODO
 
 }
 
+/**
+ * Triggered by menu->sysmo->toggleFullScreen click or F11
+ */
 void MainWindow::toggleFullScreen()
 {
+    
     if (this->isFullScreen()) this->showNormal();
     else                      this->showFullScreen();
+    
 }
 
+
+/**
+ * Triggered by menu->sysmo->color_theme->$color_theme click
+ */
 void MainWindow::setThemeConfig(QAction *theme)
 {
+    
+    /*
+     * Store color theme configuration
+     */
     QSettings s;
     s.setValue("color_theme", theme->data());
+    
     MessageBox msgbox(this);
     msgbox.setIconType(Sysmo::MESSAGE_INFO);
     msgbox.setText("Color theme is succesfully modified. You must restart the application to make it effective.");
@@ -245,9 +285,13 @@ void MainWindow::setThemeConfig(QAction *theme)
     msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgbox.setDefaultButton(QMessageBox::Yes);
     int ret = msgbox.exec();
-    if (ret == QMessageBox::Yes) {
+    
+    /*
+     * Maybe restart application if the user requested it
+     */
+    if (ret == QMessageBox::Yes)
         QCoreApplication::exit(Sysmo::APP_RESTART_CODE);
-    }
+    
 }
 
 
@@ -256,6 +300,7 @@ void MainWindow::setThemeConfig(QAction *theme)
  */
 void MainWindow::tryValidate()
 {
+    
     this->log_in_dialog->setEnabled(false);
     QString   user(this->log_in_dialog->getUserName());
     QString   pass(this->log_in_dialog->getPassword());
@@ -263,6 +308,7 @@ void MainWindow::tryValidate()
     qint16    port(this->log_in_dialog->getServerPort());
 
     this->supercast->tryConnect(QHostAddress(server), port, user, pass);
+    
 }
 
 
@@ -272,6 +318,7 @@ void MainWindow::tryValidate()
  */
 void MainWindow::connectionStatus(int status)
 {
+    
     qDebug() << "conn status: " << status;
     if (status == Supercast::CONNECTION_SUCCESS) {
         this->log_in_dialog->saveLoginState();
@@ -286,64 +333,91 @@ void MainWindow::connectionStatus(int status)
     err_box.setIconType(Sysmo::MESSAGE_ERROR);
     err_box.setStandardButtons(QMessageBox::Close);
     this->setEnabled(false);
+    
+    QString dialog_text;
+    QString dialog_informative_text;
+    
     switch(status) {
         case Supercast::AUTHENTICATION_ERROR: {
-            err_box.setText("Authentication failure.");
-            err_box.setInformativeText("The authentication procedure has failed.");
+            dialog_text = "Authentication failure.";
+            dialog_informative_text = "The authentication procedure has failed.";
             break;
         }
         case QAbstractSocket::ConnectionRefusedError: {
-            err_box.setText("The connection was refused by the peer.");
-            err_box.setInformativeText("You may trying to connect to the wrong host, or the wrong port.");
+            dialog_text = "The connection was refused by the peer.";
+            dialog_informative_text = "You may trying to connect to the wrong host, or the wrong port.";
             break;
         }
         case QAbstractSocket::RemoteHostClosedError: {
-            err_box.setText("The remote host closed the connection.");
-            err_box.setInformativeText("This can append if the host came down, or if the service is restarting.");
+            dialog_text = "The remote host closed the connection.";
+            dialog_informative_text = "This can append if the host came down, or if the service is restarting.";
             break;
         }
         case QAbstractSocket::HostNotFoundError: {
-            err_box.setText("Host not found.");
-            err_box.setInformativeText("Cannot resolve hostname.");
+            dialog_text = "Host not found.";
+            dialog_informative_text = "Cannot resolve hostname.";
             break;
         }
         case QAbstractSocket::SocketTimeoutError: {
-            err_box.setText("Socket timed out.");
-            err_box.setInformativeText("You may trying to connect to the wrong host, or the wrong port.");
+            dialog_text = "Socket timed out.";
+            dialog_informative_text = "You may trying to connect to the wrong host, or the wrong port.";
             break;
         }
         case QAbstractSocket::NetworkError: {
-            err_box.setText("Network error.");
-            err_box.setInformativeText("Can not reach the host.");
+            dialog_text = "Network error.";
+            dialog_informative_text = "Can not reach the host.";
             break;
         }
         default: {
-            err_box.setText("Unknown socket Error");
+            dialog_text = "Unknown socket Error";
+            dialog_informative_text = "";
         }
     }
 
+    err_box.setText(dialog_text);
+    err_box.setInformativeText(dialog_informative_text);
     err_box.exec();
+    
     QCoreApplication::exit(1);
+    
 }
 
+
+/*
+ * Triggered by menu->about button
+ */
 void MainWindow::handleAboutAction()
 {
+    
     QString msg;
-    msg += "Copyright (c) 2012-2015 Sebastien Serre <ssbx@sysmo.io>\n\n";
+    msg += "Copyright (c) 2012-2016 Sebastien Serre <ssbx@sysmo.io>\n\n";
     msg += "Sysmo NMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n";
     msg += "Sysmo NMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n";
     msg += "You should have received a copy of the GNU General Public License along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.";
 
 
     QMessageBox::about(this, "Sysmo NMS (www.sysmo.io)", msg);
+    
 }
 
+
+/*
+ * Triggered by menu->main_website button
+ */
 void MainWindow::handleMainWebsiteAction()
 {
+    
     QDesktopServices::openUrl(QUrl("http://www.sysmo.io"));
+    
 }
 
+
+/*
+ * Triggered by menu->help button
+ */
 void MainWindow::handleHelpAction()
 {
+    
     QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community"));
+    
 }

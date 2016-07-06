@@ -1,5 +1,9 @@
 #include "lineedit.h"
 
+/**
+ * Used to stay compatible with Qt4.7 QLineEdit from wich setPlaceholderText
+ * is missing
+ */
 LineEdit::LineEdit(QWidget* parent) : QLineEdit(parent)
 {
 

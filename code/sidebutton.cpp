@@ -18,7 +18,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebutton.h"
 
+/**
+ * Special vertical button on the left of the UI
+ */
 SideButton::SideButton(QWidget* parent) : QPushButton(parent)
 {
+    
     this->setSizePolicy(QSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored));
+    
 }

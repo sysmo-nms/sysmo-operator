@@ -20,6 +20,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 NGrid::NGrid(QWidget* parent) : QGridLayout(parent)
 {
+    
     this->setContentsMargins(4,4,4,4);
+    
 }
 

@@ -21,6 +21,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 NFrameContainer::NFrameContainer(QWidget* parent)
         : QFrame(parent)
 {
+    
     this->setContentsMargins(0,0,0,0);
+    
 }
 

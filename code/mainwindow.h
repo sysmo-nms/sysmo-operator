@@ -1,7 +1,7 @@
 /*
 Sysmo NMS Network Management and Monitoring solution (http://www.sysmo.io)
 
-Copyright (c) 2012-2015 Sebastien Serre <ssbx@sysmo.io>
+Copyright (c) 2012-2016 Sebastien Serre <ssbx@sysmo.io>
 
 Sysmo NMS is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 class MainWindow : public QMainWindow
 {
+    
     Q_OBJECT
 
 public:
@@ -74,6 +75,7 @@ private slots:
     void handleHelpAction();
     void handleMainWebsiteAction();
     void handleAboutAction();
+    
 };
 
 #endif // MAINWINDOW_H

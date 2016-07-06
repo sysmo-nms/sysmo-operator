@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
         QApplication app(argc, argv);
         //RotatingFileLogger::getLogger()->setParent(&app);
 
+        
+        
 #if QT_VERSION < 0x050000
         //qInstallMsgHandler(logger...)
         QApplication::setStyle("plastique");
@@ -70,25 +72,46 @@ int main(int argc, char* argv[])
         //qInstallMessageHandler(logger...)
         QApplication::setStyle("fusion");
 #endif
+        
+        
+        
         app.setWindowIcon(QIcon(":/icons/logo.png"));
+ 
+        
 
 #ifdef USE_WEBSOCKET
         qDebug() << "will use websocket";
 #endif
+        
+        
+        
         MainWindow win;
+
+        
 
 #ifdef _WIN32
         Updates::start();
 #endif
 
+
+        
         RETURN_CODE = app.exec();
+        
+        
+        
 #if QT_VERSION < 0x050000
         if (RETURN_CODE == Sysmo::APP_RESTART_CODE) {
+            
             // TODO make app restart working with qt4
             RETURN_CODE = 0;
+            
         }
 #endif
+
+
+
     } while (RETURN_CODE == Sysmo::APP_RESTART_CODE);
 
     return RETURN_CODE;
+    
 }

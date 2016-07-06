@@ -18,8 +18,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "temporarydir.h"
 
+/**
+ * Portable (Qt X.X) temporary directory.
+ */
 TemporaryDir::TemporaryDir(QObject *parent) : QObject(parent)
 {
+    
     QString tempDir = QDir::tempPath();
     QString tempPath = QDir(tempDir).filePath("sysmo-tmpdir-");
     QDir dir;
@@ -30,20 +34,29 @@ TemporaryDir::TemporaryDir(QObject *parent) : QObject(parent)
             break;
         }
     }
+    
 }
+
 
 QString TemporaryDir::path()
 {
+    
     return this->directoryName;
+    
 }
+
 
 TemporaryDir::~TemporaryDir()
 {
+    
     TemporaryDir::removeDir(this->directoryName);
+    
 }
+
 
 bool TemporaryDir::removeDir(QString dirName)
 {
+    
     bool result = true;
     QDir dir(dirName);
 
@@ -69,10 +82,13 @@ bool TemporaryDir::removeDir(QString dirName)
         result = dir.rmdir(dirName);
     }
     return result;
+    
 }
+
 
 QString TemporaryDir::getRandomString()
 {
+    
     const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
     const int randomStringLength = 12;
 
@@ -84,4 +100,5 @@ QString TemporaryDir::getRandomString()
         randomString.append(nextChar);
     }
     return randomString;
+    
 }

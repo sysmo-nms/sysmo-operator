@@ -18,8 +18,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "centralwidget.h"
 
+
+/**
+ * Only UI layout things in this class
+ */
 CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent)
 {
+    
     // Left selector
     NFrameContainer* selector = new NFrameContainer(this);
     selector->setFixedWidth(30);
@@ -73,4 +78,5 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent)
     grid->setColumnStretch(1,1);
     grid->addWidget(selector, 0,0);
     grid->addWidget(stack,    0,1);
+    
 }

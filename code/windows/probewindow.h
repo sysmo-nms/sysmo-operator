@@ -19,15 +19,15 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PROBEWINDOW_H
 #define PROBEWINDOW_H
 
-#include "../nframecontainer.h"
-#include "../ngridcontainer.h"
-#include "../ngrid.h"
-#include "../nframe.h"
-#include "../monitor/monitor.h"
-#include "../monitor/nchecks.h"
-#include "../monitor/xml/parsecheckmakegraphcmd.h"
-#include "../rrds/rrd4qtgraph.h"
-#include "../nowheelcombobox.h"
+#include "nframecontainer.h"
+#include "ngridcontainer.h"
+#include "ngrid.h"
+#include "nframe.h"
+#include "monitor/monitor.h"
+#include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckmakegraphcmd.h"
+#include "rrds/rrd4qtgraph.h"
+#include "nowheelcombobox.h"
 
 #include <QObject>
 #include <QWidget>
