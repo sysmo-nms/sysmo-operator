@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "newtargetpage1.h"
 
+
 NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 {
+
     this->setTitle("Add new targets");
     this->setSubTitle("Use this form to add new targets to the system.");
     this->setFinalPage(true);
@@ -221,16 +223,19 @@ NewTargetPage1::NewTargetPage1(QWidget* parent) : QWizardPage(parent)
 
 NewTargetPage1::~NewTargetPage1()
 {
+
     delete this->snmp_widgets;
     delete this->snmp_v2_widgets;
     delete this->snmp_v3_widgets;
     delete this->snmp_v3_auth_widgets;
     delete this->snmp_v3_priv_widgets;
+
 }
 
 
 bool NewTargetPage1::isComplete() const
 {
+
     this->disableUnusedWidgets();
     if (this->target_host->text() == "") return false;
     if (!this->snmp_enable->isChecked()) return true;
@@ -251,11 +256,13 @@ bool NewTargetPage1::isComplete() const
 
     if (this->snmp_priv_key->text() == "") return false;
     return true;
+
 }
 
 
 void NewTargetPage1::disableUnusedWidgets() const
 {
+
     if (!this->snmp_enable->isChecked()) {
         QListIterator<QWidget*> it(*this->snmp_widgets);
         while (it.hasNext()) {
@@ -310,10 +317,13 @@ void NewTargetPage1::disableUnusedWidgets() const
     }
 
     return; // <---- END (snmp v3 authPriv)
+
 }
+
 
 int NewTargetPage1::configType() const
 {
+
     if (!this->snmp_enable->isChecked())
         return NewTargetPage1::NO_SNMP;
 
@@ -330,6 +340,7 @@ int NewTargetPage1::configType() const
 
     // then it is v3 authpriv
     return NewTargetPage1::SNMP_V3_AUTHPRIV;
+
 }
 
 
@@ -445,10 +456,13 @@ bool NewTargetPage1::validatePage()
                 this, SLOT(createTargetReply(QVariant)));
     Supercast::sendQuery(createTargetQuery, sig);
     return false;
+
 }
+
 
 void NewTargetPage1::createTargetReply(QVariant replyVariant)
 {
+
     QMap<QString,QVariant> reply = replyVariant.toMap();
     qDebug() << "received qt reply: " << reply;
     QMap<QString,QVariant> val = reply.value("value").toMap();
@@ -475,4 +489,5 @@ void NewTargetPage1::createTargetReply(QVariant replyVariant)
        msgbox.setStandardButtons(QMessageBox::Ok);
        msgbox.exec();
    }
+
 }

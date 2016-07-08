@@ -18,30 +18,34 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitoractions.h"
 
+
 void MonitorActions::openActionFor(QString target)
 {
+
     qDebug() << "open action for" << target;
 
-    QSettings s;
-    QVariant var = s.value("actions/monitoractions");
+    QSettings actions_settings;
+    QVariant variant_actions_settings = actions_settings.value("actions/monitoractions");
 
     // if settings is initialized
-    if (var.isValid())
+    if (variant_actions_settings.isValid())
     {
-        QMap<QString, QVariant> dict = var.toMap();
-        QVariant tval = dict.value(target);
+        QMap<QString, QVariant> dict_actions_settings =
+                                               variant_actions_settings.toMap();
+        QVariant target_actions = dict_actions_settings.value(target);
 
         // if tval is valid hence have at least one action execute it
-        if (tval.isValid()) {
+        if (target_actions.isValid()) {
             //return;
             qDebug() << "should execute action and exit?";
         }
+
     } else {
         /*
          * Initialize empty QMap<QString,QVariant>
          */
-        s.setValue("actions/monitoractions", QMap<QString,QVariant>());
-        s.sync();
+        actions_settings.setValue("actions/monitoractions", QMap<QString,QVariant>());
+        actions_settings.sync();
     }
 
     /*
@@ -50,8 +54,9 @@ void MonitorActions::openActionFor(QString target)
      * For the dial to be shown on the center of the application rect, use
      * MonitorWidget instance has parent
      */
-    MonitorActionsDialog* dial =
+    MonitorActionsDialog* dialog =
        new MonitorActionsDialog(
                 Monitor::getCenterWidget(), target);
-    dial->open();
+    dialog->open();
+
 }

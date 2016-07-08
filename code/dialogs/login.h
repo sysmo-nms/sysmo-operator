@@ -19,8 +19,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef LOGIN_H
 #define LOGIN_H
 
-#include "../nframecontainer.h"
-#include "../lineedit.h"
+#include "nframecontainer.h"
+#include "lineedit.h"
 
 #include <QObject>
 #include <QWidget>

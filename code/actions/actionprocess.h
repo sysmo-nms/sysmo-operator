@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ACTIONPROCESS_H
 #define ACTIONPROCESS_H
 
-#include "../systemtray.h"
+#include "systemtray.h"
 
 #include <QObject>
 #include <QProcess>

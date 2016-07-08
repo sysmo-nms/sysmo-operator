@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "supercastwebsocket.h"
 
+
 SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject()
 {
+
     this->socket = new QWebSocket();
     this->socket->setParent(this);
     this->host = host;
@@ -42,10 +44,13 @@ SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject
     QObject::connect(
                 this->socket, SIGNAL(textMessageReceived(QString)),
                 this,         SLOT(handleTextMessage(QString)));
+
 }
+
 
 void SupercastWebSocket::threadStarted()
 {
+
     QString urlStr = "ws://%1:%2/websocket";
     QUrl url(urlStr.arg(this->host.toString()).arg(this->port));
     this->timer->start();
@@ -54,51 +59,68 @@ void SupercastWebSocket::threadStarted()
 
 }
 
+
 SupercastWebSocket::~SupercastWebSocket()
 {
+
     this->socket->close();
+
 }
+
 
 void SupercastWebSocket::timerTimeout()
 {
+
     if (this->socket->state() == QAbstractSocket::UnconnectedState) return;
     if (this->socket->state() != QAbstractSocket::ConnectedState) {
         emit this->waitTimeout(QAbstractSocket::NetworkError);
         this->socket->abort();
     }
+
 }
+
 
 void SupercastWebSocket::handleTextMessage(const QString &message)
 {
+
     QVariant json_obj = QJson::decode(message);
     emit this->serverMessage(json_obj);
+
 }
 
 
 void SupercastWebSocket::handleClientMessage(QVariant msg)
 {
+
     //QByteArray json_array = QJson::encode(msg).toLatin1();
     this->socket->sendTextMessage(QJson::encode(msg));
+
 }
 
 qint32 SupercastWebSocket::arrayToInt32(QByteArray source)
 {
+
     qint32 temp;
     QDataStream data(&source, QIODevice::ReadWrite);
     data >> temp;
     return temp;
+
 }
 
 QByteArray SupercastWebSocket::int32ToArray(qint32 source)
 {
+
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);
     data << source;
     return temp;
+
 }
 
 void SupercastWebSocket::handleSocketError(QAbstractSocket::SocketError error) {
+
     emit this->socketError((int) error);
+   
 }
 
 

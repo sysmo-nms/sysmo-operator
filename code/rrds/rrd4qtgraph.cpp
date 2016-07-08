@@ -18,12 +18,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "rrd4qtgraph.h"
 
+
 Rrd4QtGraph::Rrd4QtGraph(
         QString     rrd_db_file,
         QMap<QString,QVariant> rrd_graph_config,
         int         initial_height,
         QWidget*    parent) : QLabel(parent)
 {
+
     /*
      * Open and close temporary file to generate fileName()
      */
@@ -69,8 +71,10 @@ Rrd4QtGraph::Rrd4QtGraph(
 
 }
 
+
 void Rrd4QtGraph::handleRrdReply(QVariant reply_var)
 {
+
     QMap<QString,QVariant> reply = reply_var.toMap();
     if (reply.value("reply") == "success")
     {
@@ -80,10 +84,13 @@ void Rrd4QtGraph::handleRrdReply(QVariant reply_var)
     }
 
     qWarning() << "callRrd graph returned:" << reply;
+
 }
+
 
 void Rrd4QtGraph::setTimeSpan(int time_span)
 {
+
     qDebug() << "set time span";
     this->graph_config.insert("spanBegin", 0 - time_span);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
@@ -92,10 +99,13 @@ void Rrd4QtGraph::setTimeSpan(int time_span)
                 this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
+
 }
+
 
 void Rrd4QtGraph::setGraphHeight(int height)
 {
+
     this->graph_config.insert("height", height);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
@@ -103,10 +113,13 @@ void Rrd4QtGraph::setGraphHeight(int height)
                 this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
+
 }
+
 
 void Rrd4QtGraph::setGraphWidth(int width)
 {
+
     if (width < 250) {
         qDebug() << "is min than 250";
         width = 250;
@@ -120,4 +133,5 @@ void Rrd4QtGraph::setGraphWidth(int width)
                 this,  SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
+   
 }

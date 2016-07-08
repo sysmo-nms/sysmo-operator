@@ -18,9 +18,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "actionprocess.h"
 
+
 ActionProcess::ActionProcess(QObject *parent)
     : QProcess(parent)
 {
+
     QObject::connect(
                 this, SIGNAL(finished(int)),
                 this, SLOT(deleteLater()));
@@ -37,6 +39,7 @@ ActionProcess::ActionProcess(QObject *parent)
 
 void ActionProcess::startProcess(const QString program, const QStringList arguments)
 {
+
     this->programString = program;
     this->programArgs = arguments;
     this->start(program,arguments);
@@ -45,6 +48,7 @@ void ActionProcess::startProcess(const QString program, const QStringList argume
 
 void ActionProcess::handleStartError(QProcess::ProcessError err)
 {
+
     QString str;
     str += this->programString;
     str += " ";
@@ -75,10 +79,12 @@ void ActionProcess::handleStartError(QProcess::ProcessError err)
 
     SystemTray::singleton->showMessage("Start action error", str,
                                        QSystemTrayIcon::Critical, 10000);
+
 }
 
 void ActionProcess::handleErrorMsg()
 {
+
     this->error_string += QString(this->readAllStandardError());
 
     QString str;
@@ -91,4 +97,5 @@ void ActionProcess::handleErrorMsg()
     SystemTray::singleton->showMessage(
                 "Start action stderr msg", str,
                                        QSystemTrayIcon::Warning, 5000);
+
 }

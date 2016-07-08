@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "newprobe.h"
 
+
 NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent)
 {
+
     this->setWindowTitle("New probe");
     this->setModal(true);
     this->setButtonText(QWizard::FinishButton, "Validate");
@@ -36,4 +38,5 @@ NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent)
     this->setPage(2, page2);
     //this->setPage(3, page3);
     this->setStartId(1);
+   
 }

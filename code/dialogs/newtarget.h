@@ -19,8 +19,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NEWTARGET_H
 #define NEWTARGET_H
 
-#include "../sysmo.h"
 #include "newtargetpage1.h"
+
+#include "sysmo.h"
 
 #include <QObject>
 #include <QWidget>

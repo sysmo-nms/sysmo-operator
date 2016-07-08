@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "login.h"
 
+
 LogIn::LogIn(QWidget* parent) : QDialog(parent)
 {
+
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 
     this->default_name = "admin";
@@ -110,33 +112,45 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     this->setLayout(main_grid);
     QRect screen = QApplication::desktop()->screenGeometry();
     this->move(screen.center() - rect().center());
+
 }
+
 
 QString LogIn::getUserName()
 {
+
     return this->user_name->text();
+
 }
 
 
 QString LogIn::getPassword()
 {
+
     return this->user_pass->text();
+
 }
 
 
 QString LogIn::getServerName()
 {
+
     return this->server_name->text();
+
 }
 
 
 qint16 LogIn::getServerPort()
 {
+
     return this->server_port->value();
+
 }
+
 
 void LogIn::restoreForm()
 {
+
     QSettings s;
 
     QVariant var = s.value("login/login_state");
@@ -154,10 +168,13 @@ void LogIn::restoreForm()
     this->user_pass->setText(login_state.value("password").toString());
     this->server_name->setText(login_state.value("server").toString());
     this->server_port->setValue(login_state.value("port").toInt());
+
 }
+
 
 void LogIn::saveLoginState()
 {
+
     qDebug() << "save login state" << this->server_name->text();
     qDebug() << "save login state" << this->server_port->value();
     QSettings s;
@@ -167,13 +184,16 @@ void LogIn::saveLoginState()
     lstate.insert("password", QVariant(this->user_pass->text()));
     lstate.insert("port", QVariant(this->server_port->value()));
     s.setValue("login/login_state", QVariant(lstate));
+
 }
+
 
 /*
  * SLOTS
  */
 void LogIn::isValid()
 {
+
     if (this->user_name->text().isEmpty())
         {this->ok_but->setEnabled(false); return;}
     if (this->user_pass->text().isEmpty())
@@ -181,4 +201,5 @@ void LogIn::isValid()
     if (this->server_name->text().isEmpty())
         {this->ok_but->setEnabled(false); return;}
     this->ok_but->setEnabled(true);
+
 }

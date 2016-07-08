@@ -27,18 +27,23 @@ QNetworkRequest::Attribute SupercastHTTP::att_opaque  =
 QNetworkRequest::Attribute SupercastHTTP::att_dstfile =
         static_cast<QNetworkRequest::Attribute>(QNetworkRequest::User + 3);
 
+
 SupercastHTTP::~SupercastHTTP() {}
+
 
 SupercastHTTP::SupercastHTTP(QObject* parent)
     : QNetworkAccessManager(parent)
 {
+
     QObject::connect(
                 this, SIGNAL(finished(QNetworkReply*)),
                 this, SLOT(handleNetworkReply(QNetworkReply*)));
 }
 
+
 void SupercastHTTP::handleClientRequest(SupercastHttpRequest request)
 {
+
     QNetworkRequest net_request = QNetworkRequest(request.url);
     net_request.setAttribute(
                 SupercastHTTP::att_request,
@@ -53,10 +58,13 @@ void SupercastHTTP::handleClientRequest(SupercastHttpRequest request)
                 QNetworkRequest::HttpPipeliningAllowedAttribute,
                 QVariant(true));
     this->get(net_request);
+
 }
+
 
 void SupercastHTTP::handleNetworkReply(QNetworkReply* net_reply)
 {
+
     int request_id = net_reply->request()
                          .attribute(SupercastHTTP::att_request)
                          .toInt();
@@ -92,4 +100,5 @@ void SupercastHTTP::handleNetworkReply(QNetworkReply* net_reply)
         }
     }
     net_reply->deleteLater();
+
 }

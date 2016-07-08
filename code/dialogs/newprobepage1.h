@@ -19,11 +19,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NEWPROBEPAGE1_H
 #define NEWPROBEPAGE1_H
 
-#include "../ngrid.h"
-#include "../monitor/nchecks.h"
-#include "../monitor/xml/parsecheckgetinfos.h"
-#include "../monitor/monitor.h"
-#include "../lineedit.h"
+#include "ngrid.h"
+#include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckgetinfos.h"
+#include "monitor/monitor.h"
+#include "lineedit.h"
 
 #include <Qt>
 #include <QObject>

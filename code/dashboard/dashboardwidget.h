@@ -19,8 +19,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DASHBOARDWIDGET_H
 #define DASHBOARDWIDGET_H
 
-#include "../nframe.h"
-#include "../ngridcontainer.h"
+#include "nframe.h"
+#include "ngridcontainer.h"
 #include "dashboard/dashboardtab.h"
 
 #include <QObject>

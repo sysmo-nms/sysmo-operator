@@ -50,7 +50,9 @@ MonitorActionConfig::MonitorActionConfig(QWidget* parent, QString target)
     grid->addWidget(buttonBox, 2,0);
 
 
-    NGridContainer *gcontainer = new NGridContainer(this);
-    gcontainer->addWidget(frame);
+    NGridContainer *grid_container = new NGridContainer(this);
+    grid_container->addWidget(frame);
+
+
 }
 

@@ -18,9 +18,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitoractionsdialog.h"
 
+
 MonitorActionsDialog::MonitorActionsDialog(QWidget* parent, QString target)
     : QDialog(parent)
 {
+
     this->target = target;
     NGrid* grid = new NGrid();
     this->setLayout(grid);
@@ -83,10 +85,13 @@ MonitorActionsDialog::MonitorActionsDialog(QWidget* parent, QString target)
     grid->setColumnStretch(0,0);
     grid->setColumnStretch(1,1);
     this->updateView();
+
 }
+
 
 void MonitorActionsDialog::updateView()
 {
+
     this->list_view->clear();
     this->handleSelectionChange();
     QSettings s;
@@ -103,10 +108,13 @@ void MonitorActionsDialog::updateView()
         i.next();
         this->list_view->addItem(i.key());
     }
+
 }
+
 
 void MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
 {
+
     QString name = item->data(Qt::DisplayRole).toString();
 
     QSettings s;
@@ -122,10 +130,13 @@ void MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
     ActionProcess *proc = new ActionProcess();
     proc->startProcess(cmd, args_list);
     this->close();
+
 }
+
 
 void MonitorActionsDialog::handleDelAction()
 {
+
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
     QListWidgetItem *item = selection.at(0);
     QString name = item->data(Qt::DisplayRole).toString();
@@ -145,10 +156,13 @@ void MonitorActionsDialog::handleDelAction()
     s.setValue("actions/monitoractions", acts);
     s.sync();
     this->updateView();
+
 }
+
 
 void MonitorActionsDialog::handleEditAction()
 {
+
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
     QListWidgetItem *item = selection.at(0);
     QString name = item->data(Qt::DisplayRole).toString();
@@ -175,10 +189,13 @@ void MonitorActionsDialog::handleEditAction()
     s.setValue("actions/monitoractions", acts);
     s.sync();
     this->updateView();
+
 }
+
 
 void MonitorActionsDialog::handleSelectionChange()
 {
+
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
     if (selection.size() == 0) {
         this->delAction->setDisabled(true);
@@ -192,6 +209,7 @@ void MonitorActionsDialog::handleSelectionChange()
 
 void MonitorActionsDialog::handleAddAction()
 {
+
     MonitorActionCreate create(this);
 
     if (create.exec() == QDialog::Rejected) return;
@@ -225,4 +243,5 @@ void MonitorActionsDialog::handleAddAction()
     s.setValue("actions/monitoractions", acts);
     s.sync();
     this->updateView();
+   
 }

@@ -18,11 +18,16 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "rrd4qt.h"
 
+
 Rrd4Qt* Rrd4Qt::singleton = NULL;
+
+
 Rrd4Qt* Rrd4Qt::getInstance() {return Rrd4Qt::singleton;}
+
 
 Rrd4Qt::~Rrd4Qt()
 {
+
     this->proc->kill();
     this->proc->waitForFinished();
     delete this->proc;
@@ -37,10 +42,13 @@ Rrd4Qt::~Rrd4Qt()
         delete sig;
     }
     delete this->queries;
+
 }
+
 
 Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 {
+
     Rrd4Qt::singleton = this;
     this->queries     = new QMap<int, Rrd4QtSignal*>();
     this->block_size  = 0;
@@ -109,10 +117,13 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 
     // TODO move to a thread
     this->proc->start(proc_path);
+
 }
+
 
 void Rrd4Qt::procStdoutReadyRead()
 {
+
     /*
      * read header to set block_size. Only read when the header is
      * complete.
@@ -158,10 +169,13 @@ void Rrd4Qt::procStdoutReadyRead()
      */
     if (this->proc->bytesAvailable() != 0)
         this->proc->emitReadyRead();
+
 }
+
 
 void Rrd4Qt::callRrd(QMap<QString,QVariant> msg, Rrd4QtSignal* sig)
 {
+
     int queryId = 0;
     while (Rrd4Qt::singleton->queries->contains(queryId)) queryId += 1;
     Rrd4Qt::singleton->queries->insert(queryId, sig);
@@ -172,43 +186,58 @@ void Rrd4Qt::callRrd(QMap<QString,QVariant> msg, Rrd4QtSignal* sig)
     qint32     json_size = json_array.size();
     Rrd4Qt::singleton->proc->write(Rrd4Qt::int32ToArray(json_size));
     Rrd4Qt::singleton->proc->write(json_array.data(), json_size);
+
 }
+
 
 void Rrd4Qt::callRrd(QMap<QString,QVariant> msg)
 {
+
     QByteArray json_array = QJson::encode(msg).toLatin1();
     qint32     json_size(json_array.size());
     Rrd4Qt::singleton->proc->write(Rrd4Qt::int32ToArray(json_size));
     Rrd4Qt::singleton->proc->write(json_array.data(), json_size);
+
 }
+
 
 qint32 Rrd4Qt::arrayToInt32(QByteArray source)
 {
+
     qint32 temp;
     QDataStream data(&source, QIODevice::ReadWrite);
     data >> temp;
     return temp;
+
 }
+
 
 QByteArray Rrd4Qt::int32ToArray(qint32 source)
 {
+
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);
     data << source;
     return temp;
+
 }
+
 
 void Rrd4Qt::procStopped(int exitCode, QProcess::ExitStatus exitStatus)
 {
+
     emit this->javaStopped();
     qDebug() << "proc stoped " << exitCode << " " << exitStatus;
+
 }
+
 
 void Rrd4Qt::procStderrReadyRead()
 {
-    qDebug() << "stderr " << this->proc->readAllStandardError();
-}
 
+    qDebug() << "stderr " << this->proc->readAllStandardError();
+
+}
 
 
 void Rrd4Qt::procStarted()
@@ -288,4 +317,5 @@ void Rrd4Qt::procStarted()
     msg.insert("XAXIS", cdark);
 
     Rrd4Qt::callRrd(msg);
+   
 }

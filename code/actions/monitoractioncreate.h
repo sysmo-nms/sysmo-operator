@@ -19,10 +19,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORACTIONCREATE_H
 #define MONITORACTIONCREATE_H
 
-#include "../ngrid.h"
-#include "../nframecontainer.h"
-#include "../ngridcontainer.h"
-#include "../lineedit.h"
+#include "ngrid.h"
+#include "nframecontainer.h"
+#include "ngridcontainer.h"
+#include "lineedit.h"
 
 #include <QObject>
 #include <QWidget>
@@ -37,6 +37,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QIcon>
 #include <QVariant>
 #include <QHash>
+
 
 class MonitorActionCreate : public QDialog
 {

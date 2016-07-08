@@ -19,11 +19,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORACTIONS_H
 #define MONITORACTIONS_H
 
-#include "../monitor/monitor.h"
+#include "monitor/monitor.h"
 
 #include "monitoractionsdialog.h"
 #include "monitoractionconfig.h"
-
 
 #include <QDebug>
 #include <QSettings>

@@ -19,10 +19,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef RRD4QT_H
 #define RRD4QT_H
 
-#include "../qjson.h"
-#include "../temporarydir.h"
 #include "rrd4qtsignal.h"
 #include "rrd4qtproc.h"
+
+#include "qjson.h"
+#include "temporarydir.h"
 
 #include <QObject>
 #include <QThread>

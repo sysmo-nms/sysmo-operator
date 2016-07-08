@@ -19,9 +19,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORACTIONSDIALOG_H
 #define MONITORACTIONSDIALOG_H
 
-#include "../ngrid.h"
-#include "../nframe.h"
-#include "../dialogs/messagebox.h"
+#include "ngrid.h"
+#include "nframe.h"
+#include "dialogs/messagebox.h"
+
 #include "monitoractioncreate.h"
 #include "actionprocess.h"
 

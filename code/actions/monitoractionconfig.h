@@ -19,9 +19,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORACTIONCONFIG_H
 #define MONITORACTIONCONFIG_H
 
-#include "../ngrid.h"
-#include "../nframe.h"
-#include "../ngridcontainer.h"
+#include "ngrid.h"
+#include "nframe.h"
+#include "ngridcontainer.h"
 
 #include <QDialog>
 #include <QString>

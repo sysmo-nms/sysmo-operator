@@ -19,11 +19,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NEWPROBEPROGRESSDIALOG_H
 #define NEWPROBEPROGRESSDIALOG_H
 
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "systemtray.h"
+#include "lineedit.h"
+
 #include "messagebox.h"
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
-#include "../systemtray.h"
-#include "../lineedit.h"
 
 #include <QObject>
 #include <QWidget>

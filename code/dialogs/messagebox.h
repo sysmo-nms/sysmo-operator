@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MESSAGEBOX_H
 #define MESSAGEBOX_H
 
-#include "../sysmo.h"
+#include "sysmo.h"
 
 #include <QObject>
 #include <QWidget>

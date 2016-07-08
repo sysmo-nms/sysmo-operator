@@ -19,19 +19,20 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NEWPROBEPAGE2_H
 #define NEWPROBEPAGE2_H
 
-#include "../sysmo.h"
-#include "../nframe.h"
-#include "../nframecontainer.h"
-#include "../ngrid.h"
-#include "../ngridcontainer.h"
-#include "../monitor/monitor.h"
-#include "../monitor/nchecks.h"
-#include "../monitor/xml/parsecheckmakedoc.h"
-#include "../monitor/xml/parsecheckmakeform.h"
-#include "../network/supercastsignal.h"
-#include "../network/supercast.h"
-#include "../qjson.h"
-#include "../lineedit.h"
+#include "sysmo.h"
+#include "nframe.h"
+#include "nframecontainer.h"
+#include "ngrid.h"
+#include "ngridcontainer.h"
+#include "monitor/monitor.h"
+#include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckmakedoc.h"
+#include "monitor/xml/parsecheckmakeform.h"
+#include "network/supercastsignal.h"
+#include "network/supercast.h"
+#include "qjson.h"
+#include "lineedit.h"
+
 #include "newprobeprogressdialog.h"
 #include "messagebox.h"
 

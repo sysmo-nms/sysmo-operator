@@ -19,14 +19,15 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NEWTARGETPAGE1_H
 #define NEWTARGETPAGE1_H
 
-#include "../sysmo.h"
-#include "../nframecontainer.h"
-#include "../ngridcontainer.h"
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
-#include "../monitor/treeview.h"
-#include "../lineedit.h"
 #include "messagebox.h"
+
+#include "sysmo.h"
+#include "nframecontainer.h"
+#include "ngridcontainer.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "monitor/treeview.h"
+#include "lineedit.h"
 
 #include <QObject>
 #include <QWidget>

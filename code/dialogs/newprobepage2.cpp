@@ -18,10 +18,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "newprobepage2.h"
 
+
 NewProbePage2::NewProbePage2(
         QString  forTarget,
         QWizard* parent) : QWizardPage(parent)
 {
+
     this->target = forTarget;
     this->probe_class = "";
     this->setSubTitle("Complete the form to configure the new probe");
@@ -34,23 +36,32 @@ NewProbePage2::NewProbePage2(
     this->grid->addWidget(this->docs, 0, 1);
     this->grid->setColumnStretch(0,1);
     this->grid->setColumnStretch(1,1);
+
 }
+
 
 int NewProbePage2::nextId() const
 {
+
     return -1;
+
 }
+
 
 void NewProbePage2::cleanupPage()
 {
+
     this->grid->removeWidget(this->form_frame);
     this->form_frame->deleteLater();
     delete this->args;
     delete this->mandatory_args;
+
 }
+
 
 void NewProbePage2::initializePage()
 {
+
     this->form_frame = new NFrame(this);
     this->grid->addWidget(this->form_frame, 0, 0);
     this->args = new QMap<QString, LineEdit*>();
@@ -180,10 +191,13 @@ void NewProbePage2::initializePage()
     QMap<QString,QVariant> val = Monitor::getInstance()->targets->value(this->target).toMap();
     QString host = val.value("properties").toMap().value("host").toString();
     host_edit->setText(host);
+
 }
+
 
 bool NewProbePage2::validatePage()
 {
+
     QString probe_name(this->field("selection").toString());
     NewProbeProgressDialog* dial = new NewProbeProgressDialog(
                 this->args,
@@ -198,29 +212,36 @@ bool NewProbePage2::validatePage()
     } else {
         return false;
     }
+
 }
+
 
 bool NewProbePage2::isComplete() const
 {
+
     for (int i = 0; i < this->mandatory_args->size(); ++i) {
         LineEdit *edit = this->mandatory_args->at(i);
         if (edit->text() == "") return false;
     }
     return true;
-}
 
+}
 
 
 HelperExec::HelperExec(LineEdit* line, QWidget* parent) : QObject(parent)
 {
+
     this->h_class   = "";
     this->h_target  = "";
     this->w_parent  = parent;
     this->flag_line = line;
+
 }
+
 
 void HelperExec::execHelper()
 {
+
     QMap<QString,QVariant> helperQuery;
     QMap<QString,QVariant> value;
     value.insert("target", this->h_target);
@@ -241,10 +262,13 @@ void HelperExec::execHelper()
                 sig,  SIGNAL(serverMessage(QVariant)),
                 this, SLOT(helperReply(QVariant)));
     Supercast::sendQuery(helperQuery, sig);
+
 }
+
 
 void HelperExec::helperReply(QVariant replyVariant)
 {
+
     QMap<QString,QVariant> reply = replyVariant.toMap();
     this->dial->close();
     this->dial->deleteLater();
@@ -277,12 +301,15 @@ void HelperExec::helperReply(QVariant replyVariant)
 
         mbox->exec();
     }
+
 }
+
 
 HelperDialog::HelperDialog(
         QVariant helperReplyVariant,
         QWidget* parent) : QDialog(parent)
 {
+
     QMap<QString,QVariant> helperReply = helperReplyVariant.toMap();
 
     this->value = "";
@@ -409,10 +436,13 @@ HelperDialog::HelperDialog(
         tree->header()->resizeSections(QHeaderView::ResizeToContents);
         tree->expandAll();
     }
+
 }
+
 
 void HelperDialog::validateSelection()
 {
+
     QList<QTreeWidgetItem*> selection;
     QMap<QString, QTreeWidgetItem*>::iterator i;
     for (i  = this->root_items.begin();
@@ -435,10 +465,13 @@ void HelperDialog::validateSelection()
         this->value.append(selection[j]->data(0, Qt::UserRole).toString());
     }
     emit this->accept();
+
 }
+
 
 void HelperDialog::resetTreeCheckState()
 {
+
     QMap<QString, QTreeWidgetItem*>::iterator i;
     for (i  = this->root_items.begin();
          i != this->root_items.end();
@@ -454,10 +487,13 @@ void HelperDialog::resetTreeCheckState()
         }
 
     }
+
 }
+
 
 void HelperDialog::refreshTreeState(QTreeWidgetItem *item, int column)
 {
+
     Q_UNUSED(column);
     int child_count = item->childCount();
     if (child_count > 0) { // it is a root item
@@ -497,10 +533,13 @@ void HelperDialog::refreshTreeState(QTreeWidgetItem *item, int column)
     // set apply button state
 }
 
+
 QString HelperDialog::getValue()
 {
+
     /*
      * TODO return selected items
      */
     return this->value;
+
 }

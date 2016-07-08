@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "messagebox.h"
 
+
 MessageBox::MessageBox(QWidget* parent) : QMessageBox(parent)
 {
+
     /*
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
     QTimer* timer = new QTimer(this);
@@ -37,6 +39,7 @@ MessageBox::MessageBox(QWidget* parent) : QMessageBox(parent)
 
 void MessageBox::setIconType(int icon_type)
 {
+
     if (icon_type == Sysmo::MESSAGE_ERROR) {
         this->setIconPixmap(QPixmap(":/box_icons/dialog-error.png"));
         return;
@@ -51,4 +54,6 @@ void MessageBox::setIconType(int icon_type)
         this->setIconPixmap(QPixmap(":/box_icons/dialog-information.png"));
         return;
     }
+   
 }
+

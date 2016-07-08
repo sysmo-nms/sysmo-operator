@@ -19,10 +19,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "supercast.h"
 
 Supercast* Supercast::singleton = NULL;
+
+
 Supercast* Supercast::getInstance() {return Supercast::singleton;}
+
 
 Supercast::~Supercast()
 {
+
     this->http_thread.quit();
     this->socket_thread.quit();
 
@@ -64,11 +68,13 @@ Supercast::~Supercast()
         delete sig;
     }
     delete this->http_requests;
+
 }
 
 
 Supercast::Supercast(QObject* parent) : QObject(parent)
 {
+
     this->user_name = "";
     this->user_pass = "";
     this->data_base_url = QUrl();
@@ -103,6 +109,7 @@ Supercast::Supercast(QObject* parent) : QObject(parent)
                 &this->http_thread, SIGNAL(finished()),
                 http_t,               SLOT(deleteLater()));
     this->http_thread.start();
+
 }
 
 
@@ -112,6 +119,7 @@ void Supercast::tryConnect(
         QString      user_name,
         QString      user_pass)
 {
+
     this->user_name = user_name;
     this->user_pass = user_pass;
     this->data_base_url.setHost(host.toString());
@@ -159,6 +167,7 @@ void Supercast::tryConnect(
                 &this->socket_thread, SIGNAL(finished()),
                 socket_t,             SLOT(deleteLater()));
     this->socket_thread.start();
+
 }
 
 
@@ -178,13 +187,16 @@ void Supercast::socketConnected()
 
 
     emit this->clientMessage(QVariant(authResp));
+
 }
 
 
 void Supercast::socketError(int error)
 {
+
     qDebug() << "conn error: " << error;
     emit this->connectionStatus(error);
+
 }
 
 
@@ -228,11 +240,13 @@ void Supercast::routeServerMessage(QVariant variantMsg)
     }
 
     qCritical() << "unknown msg type: " << msg;
+
 }
 
 
 void Supercast::handleSupercastMessage(QVariant variantMsg)
 {
+
     QMap<QString, QVariant> message = variantMsg.toMap();
     QString type = message.value("type").toString();
     if (type == "authAck")
@@ -269,10 +283,13 @@ void Supercast::handleSupercastMessage(QVariant variantMsg)
     {
         qWarning() << "should handle this message?: " << message;
     }
+
 }
+
 
 void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
 {
+
     QMap<QString, QVariant> subscribeMsg;
     QMap<QString, QVariant> value;
     value.insert("queryId", 0);
@@ -284,10 +301,13 @@ void Supercast::subscribe(QString channel, SupercastSignal* subscriber)
     Supercast::singleton->channels->insert(channel, subscriber);
 
     emit Supercast::singleton->clientMessage(subscribeMsg);
+
 }
+
 
 void Supercast::unsubscribe(QString channel)
 {
+
     QMap<QString, QVariant> unsubscribeMsg;
     QMap<QString, QVariant> value;
     value.insert("queryId", 0);
@@ -300,10 +320,13 @@ void Supercast::unsubscribe(QString channel)
     sig->deleteLater();
 
     emit Supercast::singleton->clientMessage(unsubscribeMsg);
+
 }
+
 
 void Supercast::sendQuery(QVariant queryVariant, SupercastSignal *reply)
 {
+
     QMap<QString,QVariant> query = queryVariant.toMap();
     int queryId = 1;
     while (Supercast::singleton->queries->contains(queryId)) queryId += 1;
@@ -312,11 +335,12 @@ void Supercast::sendQuery(QVariant queryVariant, SupercastSignal *reply)
     query.insert("queryId", queryId);
 
     emit Supercast::singleton->clientMessage(query);
+
 }
+
 
 void Supercast::httpGet(QString path, SupercastSignal *reply)
 {
-
 
     int  queryId = 0;
     while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
@@ -328,10 +352,13 @@ void Supercast::httpGet(QString path, SupercastSignal *reply)
 
     emit Supercast::singleton->clientHttpRequest(
                                         SupercastHttpRequest(queryId, url));
+
 }
+
 
 void Supercast::httpGet(QString path, QString dst_file, SupercastSignal *reply)
 {
+
     int queryId = 0;
     while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
 
@@ -351,6 +378,7 @@ void Supercast::httpGet(
         SupercastSignal* reply,
         QString          opaque)
 {
+
     int queryId = 0;
     while (Supercast::singleton->http_requests->contains(queryId)) queryId += 1;
     Supercast::singleton->http_requests->insert(queryId, reply);
@@ -360,14 +388,18 @@ void Supercast::httpGet(
 
     emit Supercast::singleton->clientHttpRequest(
                         SupercastHttpRequest(queryId, dst_file, url, opaque));
+
 }
+
 
 void Supercast::handleHttpReply(SupercastHttpReply reply)
 {
+
     int queryId = reply.id;
     SupercastSignal* sig = Supercast::singleton->http_requests->take(queryId);
 
     sig->emitServerMessage(reply.body);
 
     sig->deleteLater();
+
 }

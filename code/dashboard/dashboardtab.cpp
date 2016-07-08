@@ -18,8 +18,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dashboardtab.h"
 
+// TODO
+
 DashboardTab::DashboardTab(QWidget* parent) : NFrameContainer(parent)
 {
+
     NGrid* grid = new NGrid();
     this->setLayout(grid);
 
@@ -43,5 +46,6 @@ DashboardTab::DashboardTab(QWidget* parent) : NFrameContainer(parent)
     grid->addWidget(mdi, 1, 0);
     grid->setRowStretch(0,0);
     grid->setRowStretch(1,1);
+   
 }
 

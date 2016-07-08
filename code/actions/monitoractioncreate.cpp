@@ -18,24 +18,32 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitoractioncreate.h"
 
+
 MonitorActionCreate::MonitorActionCreate(
         QString name, QHash<QString, QVariant> conf, QWidget *parent)
                 : QDialog(parent)
 {
+
     this->initLayout();
     this->name->setText(name);
     this->cmd->setText(conf.value("cmd").toString());
     this->args->setText(conf.value("args").toString());
+
 }
+
 
 MonitorActionCreate::MonitorActionCreate(QWidget *parent)
     : QDialog(parent)
 {
+
     this->initLayout();
+
 }
+
 
 void MonitorActionCreate::initLayout()
 {
+
     NFrameContainer *fr = new NFrameContainer(this);
 
     NGrid *grid = new NGrid();
@@ -109,21 +117,25 @@ void MonitorActionCreate::initLayout()
     grid->setRowStretch(0,0);
     grid->setRowStretch(1,1);
     grid->setRowStretch(2,0);
+
 }
+
 
 void MonitorActionCreate::handleSearchExe()
 {
+
     QFileDialog fdiag(this);
     fdiag.setFileMode(QFileDialog::ExistingFile);
     // TODO filter only executables on linux?
     //fdiag.setFilter(QDir::AllDirs | QDir::Files | QDir::Executable);
-    if (fdiag.exec()) {
+    if (fdiag.exec())
         this->cmd->setText(fdiag.selectedFiles().at(0));
-    }
+
 }
 
 void MonitorActionCreate::handleEditOk()
 {
+
     if (this->name->text() == "") {
         this->apply->setDisabled(true);
         return;
@@ -135,4 +147,5 @@ void MonitorActionCreate::handleEditOk()
     }
 
     this->apply->setDisabled(false);
+
 }

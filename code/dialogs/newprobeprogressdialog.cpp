@@ -18,6 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "newprobeprogressdialog.h"
 
+
 NewProbeProgressDialog::NewProbeProgressDialog(
         QMap<QString,LineEdit*>* args,
         QString target,
@@ -27,6 +28,7 @@ NewProbeProgressDialog::NewProbeProgressDialog(
         QWidget* parent)
         : QProgressDialog(parent)
 {
+
     this->setModal(true);
     this->setLabelText("Applying probe configuration");
     this->setMinimum(0);
@@ -60,11 +62,13 @@ NewProbeProgressDialog::NewProbeProgressDialog(
                 sig, SIGNAL(serverMessage(QVariant)),
                 this, SLOT(createProbeReply(QVariant)));
     Supercast::sendQuery(createProbeQuery, sig);
+
 }
 
 
 void NewProbeProgressDialog::createProbeReply(QVariant replyVariant)
 {
+
     QMap<QString,QVariant> reply = replyVariant.toMap();
     qDebug() << "reply: " << reply;
     bool status = reply.value("value").toMap().value("status").toBool();
@@ -83,4 +87,5 @@ void NewProbeProgressDialog::createProbeReply(QVariant replyVariant)
                     10000);
         this->reject();
     }
+
 }

@@ -18,6 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "newprobepage1.h"
 
+
 NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     : QWizardPage(parent)
 {
@@ -166,10 +167,13 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     delete input;
     this->treeview->resizeColumnToContents(0);
     this->treeview->resizeColumnToContents(1);
+
 }
+
 
 bool NewProbePage1::isComplete() const
 {
+
     QList<QModelIndex> idx = this->treeview->selectionModel()->selectedIndexes();
     if (idx.length() == 0) {
         this->selection->setText("");
@@ -180,12 +184,16 @@ bool NewProbePage1::isComplete() const
     this->selection->setText(id.data().toString());
     qDebug() << "field is: " << this->field("selection");
     return true;
+
 }
 
 
 int NewProbePage1::nextId() const {return 2;}
 
+
 void NewProbePage1::handleHelpTriggered()
 {
+
     QDesktopServices::openUrl(QUrl("https://github.com/sysmo-nms/sysmo-nms.github.io/wiki/Sysmo-NChecks"));
+
 }

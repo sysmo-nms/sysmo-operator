@@ -18,11 +18,15 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "rrd4qtproc.h"
 
+
 Rrd4QtProc::Rrd4QtProc(QObject* parent) : QProcess(parent)
 {
 
 }
 
+
 void Rrd4QtProc::emitReadyRead() {
+
     emit this->readyRead();
+   
 }
