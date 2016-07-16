@@ -19,10 +19,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORCHANNEL_H
 #define MONITORCHANNEL_H
 
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
-#include "../rrds/rrd4qt.h"
-#include "../rrds/rrd4qtsignal.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "rrds/rrd4qt.h"
+#include "rrds/rrd4qtsignal.h"
 
 #include <QObject>
 #include <QDebug>

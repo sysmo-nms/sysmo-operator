@@ -17,10 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "treeview.h"
+
 TreeView* TreeView::singleton = NULL;
+
 
 TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 {
+
     // empty treeview right clic
     this->add_target_action = new QAction("Create a new target...", this);
     this->add_target_action->setIcon(QIcon(":/icons/list-add.png"));
@@ -107,26 +110,33 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 
 }
 
+
 void TreeView::initialSyncEnd()
 {
+
     this->restoreStateFromSettings();
     this->setModel(this->filter_model);
     this->expandAll();
     this->update();
 
     qDebug() << "SYYYYYYYYYYYYYYYNC END";
+
 }
 
 
 TreeView::~TreeView()
 {
+
     QSettings s;
     s.setValue("treeview/header_state", this->header()->saveState());
     s.setValue("treeview/header_geometry", this->header()->saveGeometry());
+
 }
+
 
 void TreeView::restoreStateFromSettings()
 {
+
     QSettings s;
     QVariant hs = s.value("treeview/header_state");
     if (hs.isValid()) {
@@ -136,20 +146,29 @@ void TreeView::restoreStateFromSettings()
     if (hg.isValid()) {
         this->header()->restoreGeometry(hg.toByteArray());
     }
+
 }
+
 
 // SLOTS
 void TreeView::expandIndex(QModelIndex index)
 {
+
     this->expand(this->filter_model->mapFromSource(index));
+
 }
+
 
 void TreeView::selectIndex(QModelIndex index)
 {
+
     this->setCurrentIndex(this->filter_model->mapFromSource(index));
+
 }
 
+
 void TreeView::stopTimer() { this->timer->stop(); }
+
 
 void TreeView::openContextMenu(const QPoint point) {
 
@@ -175,10 +194,13 @@ void TreeView::openContextMenu(const QPoint point) {
         QString target = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
         this->target_menu->showMenuFor(target, this->mapToGlobal(point));
     }
+
 }
+
 
 void TreeView::handleDoubleClicked(const QModelIndex index)
 {
+
     qDebug() << "double clicked" << index;
     QModelIndex idx_sibling = index.sibling(index.row(), 0);
     QModelIndex idx_origin  = this->filter_model->mapToSource(idx_sibling);
@@ -193,4 +215,5 @@ void TreeView::handleDoubleClicked(const QModelIndex index)
     {
         MonitorActions::openActionFor(name);
     }
+
 }

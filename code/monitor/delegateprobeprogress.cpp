@@ -18,6 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "delegateprobeprogress.h"
 
+
 DelegateProbeProgress::DelegateProbeProgress(QWidget* parent)
         : QStyledItemDelegate(parent)
 {
@@ -26,7 +27,9 @@ DelegateProbeProgress::DelegateProbeProgress(QWidget* parent)
 
 void DelegateProbeProgress::ticTimeout()
 {
+
     this->timestamp = QDateTime::currentDateTime().toTime_t();
+
 }
 
 
@@ -35,6 +38,7 @@ void DelegateProbeProgress::paint(
         const QStyleOptionViewItem  &option,
         const QModelIndex 			&index) const
 {
+
     QVariant item_type(index.data(Sysmo::ROLE_IS_PROGRESS_ITEM));
 
     if (item_type.toInt() == 0)
@@ -73,4 +77,5 @@ void DelegateProbeProgress::paint(
 
     opts.textVisible = true;
     QApplication::style()->drawControl(QStyle::CE_ProgressBar, &opts, painter);
+
 }

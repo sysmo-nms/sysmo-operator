@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "menutarget.h"
 
+
 MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
 {
+
     this->target_name = "undefined";
     /* TODO double clic open actions list QMenu
     this->operation_menu = new QMenu("Operator Actions", this);
@@ -66,30 +68,38 @@ MenuTarget::MenuTarget(QWidget* parent) : QMenu(parent)
     QObject::connect(
                 delete_target, SIGNAL(triggered(bool)),
                 this,          SLOT(deleteTarget()));
+
 }
 
 
 void MenuTarget::showMenuFor(QString target, QPoint at)
 {
+
     qDebug() << "show menu for target" << target << at;
     at.setX(at.x() + 12);
     this->target_name = target;
     this->popup(at);
+
 }
+
 
 /*
  * Is connected to MonitorWidgets::showNewPobeDialog(QString) by
  * MonitorWidgets: Treeview.target_menu. (avoid dependecy loop).
  */
 void MenuTarget::connectNewProbeDialog() {
+
     emit this->openNewProbeDialog(this->target_name);
+
 }
+
 
 /*
  * Delete target logic and slots
  */
 void MenuTarget::deleteTarget()
 {
+
     MessageBox* box = new MessageBox((QWidget *) this->parent());
     box->setIconType(Sysmo::MESSAGE_WARNING);
     box->setModal(true);
@@ -113,14 +123,21 @@ void MenuTarget::deleteTarget()
                 sig,  SIGNAL(serverMessage(QVariant)),
                 this, SLOT(deleteTargetReply(QVariant)));
     Supercast::sendQuery(query, sig);
+
 }
+
 
 void MenuTarget::deleteTargetReply(QVariant reply)
 {
+
     qDebug() << "delete target reply: " << reply;
+
 }
+
 
 void MenuTarget::handleOperatorActionsConfig()
 {
+
     MonitorActions::openActionFor(this->target_name);
+   
 }

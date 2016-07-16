@@ -19,12 +19,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORLOGS_H
 #define MONITORLOGS_H
 
-#include "../nframecontainer.h"
-#include "../nframe.h"
-#include "../ngrid.h"
-#include "../ngridcontainer.h"
-#include "../network/supercastsignal.h"
-#include "../network/supercast.h"
+#include "nframecontainer.h"
+#include "nframe.h"
+#include "ngrid.h"
+#include "ngridcontainer.h"
+#include "network/supercastsignal.h"
+#include "network/supercast.h"
 #include "monitor.h"
 
 #include <QWidget>

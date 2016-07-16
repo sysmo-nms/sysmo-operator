@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitorlogs.h"
 
+
 MonitorLogs::MonitorLogs(QWidget* parent) : QTabWidget(parent)
 {
+
     this->table = new MonitorTableLogs(this);
     this->table->setColumnCount(5);
     this->table->verticalHeader()->hide();
@@ -43,10 +45,13 @@ MonitorLogs::MonitorLogs(QWidget* parent) : QTabWidget(parent)
     QObject::connect(
                 Monitor::getInstance(), SIGNAL(dbNotification(QVariant)),
                 this, SLOT(handleDbNotif(QVariant)));
+
 }
+
 
 void MonitorLogs::handleInitialSyncBegin(QVariant message_var)
 {
+
     QMap<QString,QVariant> message = message_var.toMap();
     QString syncDir = "sync";
     QString dumpDir = message.value("dumpDir").toString();
@@ -58,9 +63,12 @@ void MonitorLogs::handleInitialSyncBegin(QVariant message_var)
                 sig, SIGNAL(serverMessage(QString)),
                 this, SLOT(handleHttpReply(QString)));
     Supercast::httpGet(http_url, sig);
+
 }
 
+
 void MonitorLogs::handleHttpReply(QString body) {
+
     QVariant json_var = QJson::decode(body);
     QList<QVariant> json_array = json_var.toList();
     this->table->setRowCount(json_array.size());
@@ -84,10 +92,13 @@ void MonitorLogs::handleHttpReply(QString body) {
        j++;
        qDebug() << obj;
     }
+
 }
+
 
 void MonitorLogs::handleDbNotif(QVariant obj_var)
 {
+
     QMap<QString,QVariant> obj = obj_var.toMap();
     int timestamp = obj.value("DATE_CREATED").toInt();
     QDateTime date = QDateTime::fromTime_t(timestamp);
@@ -106,7 +117,9 @@ void MonitorLogs::handleDbNotif(QVariant obj_var)
     this->table->setRowHeight(0, 20);
 
     qDebug() << "have received: " << message;
+
 }
+
 
 MonitorTableLogs::MonitorTableLogs(QWidget *parent) : QTableWidget(parent)
 {
@@ -114,15 +127,21 @@ MonitorTableLogs::MonitorTableLogs(QWidget *parent) : QTableWidget(parent)
 
 CustomTableItem::CustomTableItem(QString text) : QTableWidgetItem(text)
 {
+
     this->setFlags(Qt::ItemIsEnabled);
+
 }
+
 
 QColor StatusTableItem::red = QColor(239,41,41);
 QColor StatusTableItem::yellow = QColor(237,212,0);
 QColor StatusTableItem::green = QColor(237,212,0);
 QColor StatusTableItem::white = QColor(254,254,254);
 QColor StatusTableItem::dark = QColor(40,40,40);
+
+
 StatusTableItem::StatusTableItem(QString text) : CustomTableItem(text)
+
 {
     if (text == "CRITICAL") {
         this->setBackground(QBrush(StatusTableItem::red));
@@ -133,4 +152,5 @@ StatusTableItem::StatusTableItem(QString text) : CustomTableItem(text)
         this->setBackground(QBrush(StatusTableItem::dark));
         this->setForeground(QBrush(StatusTableItem::white));
     }
+   
 }

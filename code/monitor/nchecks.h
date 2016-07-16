@@ -19,8 +19,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NCHECKS_H
 #define NCHECKS_H
 
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
 #include "xml/parseallchecks.h"
 #include "xml/parsecheckgetid.h"
 

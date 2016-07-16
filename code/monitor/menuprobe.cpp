@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "menuprobe.h"
 
+
 MenuProbe::MenuProbe(QWidget* parent) : QMenu(parent)
 {
+
     this->probe_name = "undefined";
 
 
@@ -57,23 +59,32 @@ MenuProbe::MenuProbe(QWidget* parent) : QMenu(parent)
     QObject::connect(
                 delete_probe, SIGNAL(triggered(bool)),
                 this,         SLOT(handleDeleteProbe()));
+
 }
+
 
 void MenuProbe::handleShowPerf()
 {
+
     ProbeWindow::openWindow(this->probe_name);
+
 }
+
 
 void MenuProbe::showMenuFor(QString probe, QPoint at)
 {
+
     qDebug() << "show menu for probe" << probe << at;
     this->probe_name = probe;
     at.setX(at.x() + 12);
     this->popup(at);
+
 }
+
 
 void MenuProbe::handleForceProbe()
 {
+
     qDebug() << "force probe" << this->probe_name;
     QMap<QString,QVariant> force_msg;
     QMap<QString,QVariant> value;
@@ -87,15 +98,21 @@ void MenuProbe::handleForceProbe()
                 sig,  SIGNAL(serverMessage(QVariant)),
                 this, SLOT(handleForceProbeReply(QVariant)));
     Supercast::sendQuery(force_msg, sig);
+
 }
+
 
 void MenuProbe::handleForceProbeReply(QVariant reply_variant)
 {
+
     qDebug() << "force probe reply" << reply_variant;
+
 }
+
 
 void MenuProbe::handleDeleteProbe()
 {
+
     qDebug() << "delete probe" << this->probe_name;
 
     MessageBox* box = new MessageBox((QWidget *) this->parent());
@@ -120,15 +137,22 @@ void MenuProbe::handleDeleteProbe()
                 sig, SIGNAL(serverMessage(QVariant)),
                 this, SLOT(handleDeleteProbeReply(QVariant)));
     Supercast::sendQuery(delete_msg, sig);
+
 }
+
 
 void MenuProbe::handleDeleteProbeReply(QVariant reply)
 {
+
     Q_UNUSED(reply);
     qDebug() << "delete probe" << this->probe_name;
+
 }
+
 
 void MenuProbe::handlePauseProbe()
 {
+
     qDebug() << "pause probe" << this->probe_name;
+
 }

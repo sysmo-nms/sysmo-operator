@@ -18,10 +18,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "itemprobe.h"
 
+
 int ItemProbe::type() const { return Sysmo::TYPE_PROBE; }
+
 
 ItemProbe::ItemProbe(QMap<QString,QVariant> info_probe) : QStandardItem()
 {
+
     // TODO include probe config from server and show it as a tooltip here
     this->name      = info_probe.value("name").toString();
     this->belong_to = info_probe.value("target").toString();
@@ -42,22 +45,31 @@ ItemProbe::ItemProbe(QMap<QString,QVariant> info_probe) : QStandardItem()
     this->item_last_return = new QStandardItem();
 
     this->updateInfo(info_probe);
+
 }
+
 
 void ItemProbe::setTargetFilter(QString filter)
 {
+
     this->targ_filter = filter;
     this->updateFilter();
+
 }
+
 
 void ItemProbe::updateFilter()
 {
+
     QString filter = this->orig_filter + this->targ_filter;
     this->setData(filter.remove("\""), Sysmo::ROLE_FILTER_STRING);
+
 }
+
 
 void ItemProbe::updateInfo(QMap<QString,QVariant> info_probe)
 {
+
     this->orig_filter = QJson::encode(info_probe);
     this->updateFilter();
 
@@ -116,11 +128,13 @@ void ItemProbe::updateInfo(QMap<QString,QVariant> info_probe)
                                   Qt::DecorationRole);
                                   */
     }
+
 }
 
 
 void ItemProbe::updateReturnInfo(QMap<QString,QVariant> info)
 {
+
     QString reply = info.value("replyString").toString();
     this->item_last_return->setData(reply, Qt::DisplayRole);
     this->item_last_return->setToolTip(reply);
@@ -129,4 +143,5 @@ void ItemProbe::updateReturnInfo(QMap<QString,QVariant> info)
     int next_in_sec = current_sec + in_sec;
     this->item_progress->setData(next_in_sec, Sysmo::ROLE_PROGRESS_NEXT);
     this->emitDataChanged();
+   
 }

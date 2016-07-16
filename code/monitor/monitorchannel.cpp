@@ -18,9 +18,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitorchannel.h"
 
+
 MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
     : QObject(parent)
 {
+
     this->sync_dir = "sync";
     this->channel = chan_name;
     this->chan_type = "none";
@@ -37,15 +39,21 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
                 this, SLOT(handleServerEvent(QVariant)));
 
     Supercast::subscribe(this->channel, sig);
+
 }
+
 
 MonitorChannel::~MonitorChannel()
 {
+
     emit this->channelDeleted(this->channel);
+
 }
+
 
 void MonitorChannel::handleServerEvent(QVariant event_variant)
 {
+
     QMap<QString,QVariant> event = event_variant.toMap();
     if (event.value("type").toString() == "subscribeOk")  return;
     if (event.value("type").toString() == "subscribeErr") return;
@@ -305,10 +313,13 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
     }
 
     qWarning() << "handleServerMessage unknown message type" << event;
+
 }
+
 
 void MonitorChannel::handleRrdEventTable(QVariant event_variant)
 {
+
     QMap<QString,QVariant> event = event_variant.toMap();
     /*
      * Extract opaque set in handlerServerEvent() from event
@@ -367,12 +378,13 @@ void MonitorChannel::handleRrdEventTable(QVariant event_variant)
         if (!this->pending_updates.isEmpty())
             this->handleServerEvent(this->pending_updates.dequeue());
     }
-}
 
+}
 
 
 void MonitorChannel::handleRrdEventSimple(QVariant event_variant)
 {
+
     Q_UNUSED(event_variant);
 
     /*
@@ -397,12 +409,13 @@ void MonitorChannel::handleRrdEventSimple(QVariant event_variant)
      */
     if (!this->pending_updates.isEmpty())
         this->handleServerEvent(this->pending_updates.dequeue());
-}
 
+}
 
 
 void MonitorChannel::handleHttpReplySimple(QString rep)
 {
+
     Q_UNUSED(rep);
 
     /*
@@ -425,7 +438,9 @@ void MonitorChannel::handleHttpReplySimple(QString rep)
      */
     if (!this->pending_updates.isEmpty())
         this->handleServerEvent(this->pending_updates.dequeue());
+
 }
+
 
 void MonitorChannel::handleHttpReplyTable(QString element) {
 
@@ -478,11 +493,16 @@ void MonitorChannel::handleHttpReplyTable(QString element) {
         if (!this->pending_updates.isEmpty())
             this->handleServerEvent(this->pending_updates.dequeue());
     }
+
 }
 
+
 void MonitorChannel::increaseSubscriberCount(){this->subscriber_count += 1;}
+
+
 void MonitorChannel::decreaseSubscriberCount()
 {
+
     this->subscriber_count -= 1;
 
     /*
@@ -493,16 +513,23 @@ void MonitorChannel::decreaseSubscriberCount()
         Supercast::unsubscribe(this->channel);
         this->deleteLater();
     }
+
 }
 
 bool        MonitorChannel::hasDumpInfo() {return this->synchronized;}
+
+
 QMap<QString,QVariant> MonitorChannel::getDumpInfo()
 {
+
     return this->buildDump();
+
 }
+
 
 QMap<QString,QVariant> MonitorChannel::buildDump()
 {
+
     /*
      * If chan is "simple" the buildDump is simple
      */
@@ -540,4 +567,5 @@ QMap<QString,QVariant> MonitorChannel::buildDump()
     qCritical() <<
               "buildDump() called with wrong chan_type: " << this->chan_type;
     return QMap<QString,QVariant>();
+   
 }

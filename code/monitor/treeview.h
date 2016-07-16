@@ -19,9 +19,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TREEVIEW_H
 #define TREEVIEW_H
 
-#include "../windows/probewindow.h"
-#include "../sysmo.h"
-#include "../actions/monitoractions.h"
+#include "windows/probewindow.h"
+#include "sysmo.h"
+#include "actions/monitoractions.h"
 #include "delegateprobeprogress.h"
 #include "treemodel.h"
 #include "menuprobe.h"

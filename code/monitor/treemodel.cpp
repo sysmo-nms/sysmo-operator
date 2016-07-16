@@ -18,8 +18,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "treemodel.h"
 
+
 TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
 {
+
     this->targets = new QMap<QString, ItemTarget*>();
     this->probes  = new QMap<QString, ItemProbe*>();
 
@@ -47,17 +49,22 @@ TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent)
     QObject::connect(
                 monitor, SIGNAL(probeReturn(QVariant)),
                 this,	 SLOT(handleProbeReturn(QVariant)));
+
 }
 
 
 TreeModel::~TreeModel()
 {
+
     delete this->targets;
     delete this->probes;
+
 }
+
 
 void TreeModel::handleInfoProbe(QVariant message_var)
 {
+
     QMap<QString,QVariant> message = message_var.toMap();
     QString info_type = message.value("infoType").toString();
 
@@ -89,11 +96,13 @@ void TreeModel::handleInfoProbe(QVariant message_var)
         target->updateProbeFilter(probe->name, message);
         target->updateIconStatus();
     }
+
 }
 
 
 void TreeModel::handleInfoTarget(QVariant message_var)
 {
+
     QMap<QString,QVariant> message = message_var.toMap();
     QString info_type = message.value("infoType").toString();
     if (info_type == "create") {
@@ -109,11 +118,13 @@ void TreeModel::handleInfoTarget(QVariant message_var)
         ItemTarget* target      = this->targets->value(target_name);
         target->updateInfo(message);
     }
+
 }
 
 
 void TreeModel::handleDeleteProbe(QVariant message_var)
 {
+
     QMap<QString,QVariant> message = message_var.toMap();
     QString     probe_name = message.value("name").toString();
     ItemProbe*  probe      = this->probes->take(probe_name);
@@ -121,22 +132,27 @@ void TreeModel::handleDeleteProbe(QVariant message_var)
     target->removeRow(probe->row());
     target->deleteProbeFilter(probe->name);
     target->updateIconStatus();
+
 }
 
 
 void TreeModel::handleDeleteTarget(QVariant message_var)
 {
+
     QMap<QString,QVariant> message = message_var.toMap();
     QString     target_name = message.value("name").toString();
     ItemTarget* target      = this->targets->take(target_name);
     this->removeRow(target->row());
+
 }
 
 
 void TreeModel::handleProbeReturn(QVariant message_var)
 {
+
     QMap<QString,QVariant> message = message_var.toMap();
     QString     probe_name = message.value("name").toString();
     ItemProbe*  probe      = this->probes->value(probe_name);
     probe->updateReturnInfo(message);
+
 }

@@ -20,23 +20,33 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 NChecks* NChecks::singleton = NULL;
 
+
 QList<QString> NChecks::getCheckList() {
+
     return NChecks::singleton->checks->keys();
+
 }
 
+
 QString NChecks::getCheck(QString check) {
+
     return NChecks::singleton->checks->value(check);
+
 }
+
 
 NChecks::~NChecks() {delete this->checks;}
 
+
 NChecks::NChecks(QObject *parent) : QObject(parent)
 {
+
     NChecks::singleton = this;
     this->checks = new QHash<QString, QString>();
     QObject::connect(
                 Supercast::getInstance(), SIGNAL(connectionStatus(int)),
                 this,                     SLOT(connectionStatus(int)));
+
 }
 
 
@@ -51,6 +61,7 @@ void NChecks::connectionStatus(int status)
                 this, SLOT(handleAllChecksReply(QString)));
 
     Supercast::httpGet("/nchecks/NChecksRepository.xml", sig);
+
 }
 
 void NChecks::handleAllChecksReply(QString body)
@@ -85,11 +96,13 @@ void NChecks::handleAllChecksReply(QString body)
 
     delete parser;
     delete input;
+
 }
 
 
 void NChecks::handleCheckDefDeply(QString body)
 {
+
     ParseCheckGetId* parser = new ParseCheckGetId();
     QXmlInputSource* input  = new QXmlInputSource();
     QXmlSimpleReader reader;
@@ -103,6 +116,7 @@ void NChecks::handleCheckDefDeply(QString body)
 
     delete parser;
     delete input;
+   
 }
 
 

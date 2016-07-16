@@ -19,20 +19,20 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORWIDGET_H
 #define MONITORWIDGET_H
 
-#include "../nframe.h"
-#include "../nframecontainer.h"
-#include "../ngrid.h"
-#include "../ngridcontainer.h"
-#include "../dialogs/newtarget.h"
-#include "../dialogs/newprobe.h"
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
+#include "nframe.h"
+#include "nframecontainer.h"
+#include "ngrid.h"
+#include "ngridcontainer.h"
+#include "dialogs/newtarget.h"
+#include "dialogs/newprobe.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
 #include "treeview.h"
 #include "nchecks.h"
 #include "monitor.h"
 #include "monitorlogs.h"
-#include "../statusbuttonwidget.h"
-#include "../lineedit.h"
+#include "statusbuttonwidget.h"
+#include "lineedit.h"
 
 #include <QObject>
 #include <QWidget>

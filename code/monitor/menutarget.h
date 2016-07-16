@@ -19,12 +19,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MENUTARGET_H
 #define MENUTARGET_H
 
-#include "../sysmo.h"
+#include "sysmo.h"
 #include "monitor.h"
-#include "../dialogs/messagebox.h"
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
-#include "../actions/monitoractions.h"
+#include "dialogs/messagebox.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "actions/monitoractions.h"
 
 #include <QObject>
 #include <QWidget>

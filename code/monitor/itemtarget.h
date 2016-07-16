@@ -19,8 +19,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ITEMTARGET_H
 #define ITEMTARGET_H
 
-#include "../sysmo.h"
-#include "../qjson.h"
+#include "sysmo.h"
+#include "qjson.h"
 
 #include <QStandardItem>
 #include <QVariant>

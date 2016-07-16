@@ -19,9 +19,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ITEMPROBE_H
 #define ITEMPROBE_H
 
-#include "../sysmo.h"
-#include "../systemtray.h"
-#include "../qjson.h"
+#include "sysmo.h"
+#include "systemtray.h"
+#include "qjson.h"
 
 #include <QObject>
 #include <QStandardItem>

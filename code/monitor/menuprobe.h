@@ -19,10 +19,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MENUPROBE_H
 #define MENUPROBE_H
 
-#include "../network/supercast.h"
-#include "../network/supercastsignal.h"
-#include "../windows/probewindow.h"
-#include "../dialogs/messagebox.h"
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "windows/probewindow.h"
+#include "dialogs/messagebox.h"
 
 #include <QMenu>
 #include <QWidget>

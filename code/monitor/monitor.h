@@ -19,8 +19,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITOR_H
 #define MONITOR_H
 
-#include "../network/supercast.h"
-#include "../qjson.h"
+#include "network/supercast.h"
+#include "qjson.h"
 #include "monitorchannel.h"
 
 #include <QObject>

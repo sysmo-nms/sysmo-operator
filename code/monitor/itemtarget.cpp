@@ -18,27 +18,39 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "itemtarget.h"
 
+
 int ItemTarget::type() const { return Sysmo::TYPE_TARGET; }
+
 
 ItemTarget::ItemTarget(QMap<QString,QVariant> info_target) : QStandardItem()
 {
+
     this->updateInfo(info_target);
     this->updateIconStatus();
+
 }
+
 
 void ItemTarget::updateProbeFilter(QString probe_name, QMap<QString,QVariant> obj)
 {
+
     this->filter_hash.insert(probe_name, QJson::encode(obj));
     this->updateFilter();
+
 }
+
 
 void ItemTarget::deleteProbeFilter(QString probe_name)
 {
+
     this->filter_hash.remove(probe_name);
     this->updateFilter();
+
 }
 
+
 void ItemTarget::updateFilter() {
+
     QString str = this->orig_filter;
     QMapIterator<QString, QString> i(this->filter_hash);
     while(i.hasNext()) {
@@ -46,10 +58,13 @@ void ItemTarget::updateFilter() {
         str = str + i.value();
     }
     this->setData(str.remove("\""), Sysmo::ROLE_FILTER_STRING);
+
 }
+
 
 void ItemTarget::updateInfo(QMap<QString,QVariant> info_target)
 {
+
     this->name              = info_target.value("name").toString();
     this->target_properties = info_target.value("properties").toMap();
 
@@ -77,10 +92,13 @@ void ItemTarget::updateInfo(QMap<QString,QVariant> info_target)
     this->setData(this->orig_filter, Sysmo::ROLE_FILTER_ORIG);
     this->updateFilter();
     this->updateTooltip();
+
 }
+
 
 void ItemTarget::updateTooltip()
 {
+
     QString tooltip;
     QStringList keys = this->target_properties.keys();
     keys.sort();
@@ -93,10 +111,13 @@ void ItemTarget::updateTooltip()
     }
     tooltip += "</table>";
     this->setToolTip(tooltip);
+
 }
+
 
 void ItemTarget::updateIconStatus()
 {
+
     int status = 0;
     if (this->rowCount() == 0) {
         this->setData(QPixmap(":/pixmaps/weather-clear-night.png"), Qt::DecorationRole);
@@ -129,6 +150,6 @@ void ItemTarget::updateIconStatus()
     {
         this->setData(QPixmap(":/pixmaps/weather-severe-alert.png"), Qt::DecorationRole);
     }
-}
 
+}
 

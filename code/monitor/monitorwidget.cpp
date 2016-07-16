@@ -18,11 +18,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitorwidget.h"
 
+
 MonitorWidget* MonitorWidget::singleton  = NULL;
 MonitorWidget* MonitorWidget::getInstance() {return MonitorWidget::singleton;}
 
+
 MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent)
 {
+
     MonitorWidget::singleton = this;
 
     /*
@@ -201,6 +204,7 @@ void MonitorWidget::connectionStatus(int status)
         TreeView* tree = this->findChild<TreeView *>("MonitorTreeView");
         tree->stopTimer();
     }
+
 }
 
 
@@ -210,20 +214,27 @@ void MonitorWidget::connectionStatus(int status)
  */
 void MonitorWidget::showNewTargetDialog()
 {
+
     NewTarget* tdial = new NewTarget(this);
     tdial->exec();
     tdial->deleteLater();
+
 }
+
 
 void MonitorWidget::showNewProbeDialog(QString forTarget)
 {
+
     NewProbe* pdial = new NewProbe(forTarget, this);
     pdial->exec();
     pdial->deleteLater();
+
 }
+
 
 void MonitorWidget::handleHelpClicked()
 {
+   
     QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community/"));
 
 }

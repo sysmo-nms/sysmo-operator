@@ -18,12 +18,16 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "monitor.h"
 
+
 Monitor* Monitor::singleton = NULL;
+
 
 Monitor* Monitor::getInstance() {return Monitor::singleton;}
 
+
 Monitor::Monitor(QObject *parent) : QObject(parent)
 {
+
     Monitor::singleton = this;
     this->targets  = new QMap<QString, QVariant>();
     this->probes   = new QMap<QString, QVariant>();
@@ -34,18 +38,25 @@ Monitor::Monitor(QObject *parent) : QObject(parent)
 
 Monitor::~Monitor()
 {
+
     delete this->targets;
     delete this->probes;
     delete this->channels;
+
 }
+
 
 QWidget* Monitor::getCenterWidget()
 {
+
     return dynamic_cast<QWidget*>(Monitor::singleton->parent());
+
 }
+
 
 void Monitor::handleServerMessage(QVariant messageVariant)
 {
+
     QMap<QString,QVariant> message = messageVariant.toMap();
     QString         type = message.value("type").toString();
     QMap<QString,QVariant> mcontent = message.value("value").toMap();
@@ -101,22 +112,31 @@ void Monitor::handleServerMessage(QVariant messageVariant)
     } else {
         qWarning() << "received message!!" << type << QJson::encode(message);
    }
+
 }
 
 
 QVariant Monitor::getTarget(QString targetId)
 {
+
     return Monitor::singleton->targets->value(targetId);
+
 }
+
 
 QVariant Monitor::getProbe(QString probeId)
 {
+
     return Monitor::singleton->probes->value(probeId);
+
 }
+
 
 void Monitor::channelDeleted(QString chan_name)
 {
+
     this->channels->remove(chan_name);
+
 }
 
 
@@ -124,6 +144,7 @@ void Monitor::unsubscribeToChannel(
         QString             channel,
         MonitorProxyWidget* subscriber)
 {
+
     Monitor* mon = Monitor::getInstance();
 
     /*
@@ -137,6 +158,7 @@ void Monitor::unsubscribeToChannel(
     } else {
         qWarning() << "Call unsubscribeToChannel for unknonw channel" << channel;
     }
+
 }
 
 
@@ -144,6 +166,7 @@ void Monitor::subscribeToChannel(
         QString             channel,
         MonitorProxyWidget* subscriber)
 {
+
     Monitor* mon = Monitor::getInstance();
 
     /*
@@ -202,15 +225,15 @@ void Monitor::subscribeToChannel(
                     chan,       SIGNAL(channelEvent(QVariant)),
                     subscriber, SLOT(handleEvent(QVariant)));
     }
+
 }
-
-
 
 
 MonitorProxyWidget::MonitorProxyWidget(
         QString channel,
         QWidget *parent) : QWidget(parent)
 {
+
     this->my_channel = channel;
 
     /*
@@ -223,14 +246,19 @@ MonitorProxyWidget::MonitorProxyWidget(
                 this, SLOT(connectToChannel()),
                 Qt::QueuedConnection);
     emit this->connectMe();
+
 }
 
 void MonitorProxyWidget::connectToChannel()
 {
+
     Monitor::subscribeToChannel(this->my_channel, this);
+
 }
 
 MonitorProxyWidget::~MonitorProxyWidget()
 {
+
     Monitor::unsubscribeToChannel(this->my_channel, this);
+
 }
