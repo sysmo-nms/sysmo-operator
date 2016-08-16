@@ -80,9 +80,10 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
     proc_path = sh_path;
 #endif
 
+    // TODO jar versions should not be hard coded
     QFile   rrd4j(":/rrdio/rrd4j.jar");
     QString rrd4j_jar_path =
-            QDir(lib_dir).absoluteFilePath("rrd4j-3.0-SNAPSHOT.jar");
+            QDir(lib_dir).absoluteFilePath("rrd4j-3.0.jar");
     rrd4j.copy(rrd4j_jar_path);
 
     QFile   rrdio(":/rrdio/rrdio.jar");
@@ -317,5 +318,5 @@ void Rrd4Qt::procStarted()
     msg.insert("XAXIS", cdark);
 
     Rrd4Qt::callRrd(msg);
-   
+
 }
