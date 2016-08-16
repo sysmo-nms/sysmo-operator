@@ -117,6 +117,7 @@ set (OPERATOR_SRC
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h
     code/rrds/rrd4qt.h
+    code/rrds/rrd4qt_config.h
     code/rrds/rrd4qtproc.cpp
     code/rrds/rrd4qtproc.h
     code/rrds/rrd4qtsignal.cpp
@@ -137,13 +138,13 @@ set (OPERATOR_SRC
     code/windows/probewindow.cpp
     code/windows/probewindow.h)
 
-set (OPERATOR_QRC 
+set (OPERATOR_QRC
     support/icons.qrc
     support/box_icons.qrc
     support/images.qrc
     support/pixmaps.qrc
     support/tree.qrc
-    support/rrd4qt.qrc
+    support/rrdio.qrc
     support/cssressource.qrc)
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
@@ -152,7 +153,15 @@ add_definitions(-DQT_MESSAGELOGCONTEXT)
 # dependencies
 set (OPERATOR_DEPS_INCLUDES  "")
 set (OPERATOR_DEPS_LIBRARIES "")
+
+# add deps will build rrdio
 add_subdirectory(deps/)
+# add support will build rrdio.qrc
+add_subdirectory(support/)
+# configure rrd4qt
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
 
 # qt
 set (OPERATOR_QT_LIBRARIES "")

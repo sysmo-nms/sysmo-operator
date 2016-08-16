@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "rrd4qt.h"
+#include "rrd4qt_config.h"
 
 
 Rrd4Qt* Rrd4Qt::singleton = NULL;
@@ -81,19 +82,19 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent)
 #endif
 
     // TODO jar versions should not be hard coded
-    QFile   rrd4j(":/rrdio/rrd4j.jar");
-    QString rrd4j_jar_path =
-            QDir(lib_dir).absoluteFilePath("rrd4j-3.0.jar");
-    rrd4j.copy(rrd4j_jar_path);
-
     QFile   rrdio(":/rrdio/rrdio.jar");
     QString rrdio_jar_path =
-            QDir(lib_dir).absoluteFilePath("rrdio-1.0-SNAPSHOT.jar");
+            QDir(lib_dir).absoluteFilePath(RRDIO_JAR);
     rrdio.copy(rrdio_jar_path);
+
+    QFile   rrd4j(":/rrdio/rrd4j.jar");
+    QString rrd4j_jar_path =
+            QDir(lib_dir).absoluteFilePath(RRDIO_RRD4J_JAR);
+    rrd4j.copy(rrd4j_jar_path);
 
     QFile   json(":/rrdio/json.jar");
     QString json_jar_path =
-            QDir(lib_dir).absoluteFilePath("javax.json-1.0.4.jar");
+            QDir(lib_dir).absoluteFilePath(RRDIO_JSON_JAR);
     json.copy(json_jar_path);
 
     /*
