@@ -46,7 +46,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 class MainWindow : public QMainWindow
 {
-    
+
     Q_OBJECT
 
 public:
@@ -75,7 +75,7 @@ private slots:
     void handleHelpAction();
     void handleMainWebsiteAction();
     void handleAboutAction();
-    
+
 };
 
 #endif // MAINWINDOW_H

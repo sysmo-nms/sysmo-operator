@@ -24,7 +24,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
-    
     /*
      * Just initialize log in dialog (not shown)
      */
@@ -34,7 +33,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
      * Initialize supercast.
      */
     this->supercast = new Supercast(this);
-
 
     /*
      * Initialize rrd4c-> Will effectively start the java rrd4qt process.
@@ -52,7 +50,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     this->setWindowIcon(QIcon(":/icons/logo.png"));
     this->setCentralWidget(new CentralWidget(this));
     this->statusBar()->show();
-
 
     /*
      * Fill the menu bar
@@ -154,12 +151,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
      */
     this->default_size = QSize(1040,585);
 
-
     /*
      * Be sure to not be shown before the log in dialog
      */
     this->hide();
-
 
     /*
      * Set up supercast signals and slots.
@@ -172,7 +167,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     QObject::connect(
                 this->supercast, SIGNAL(connectionStatus(int)),
                 this,            SLOT(connectionStatus(int)));
-
 
     /*
      * Connect and open the log_in_dialog
@@ -187,30 +181,23 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     this->log_in_dialog->open();
 
     this->restoreStateFromSettings();
-    
 }
-
-
-QWidget* MainWindow::getLoginWindow()
-{
-    
-    return this->log_in_dialog;
-    
-}
-
 
 MainWindow::~MainWindow()
 {
-    
     QSettings s;
     s.setValue("main/geometry", this->saveGeometry());
-    
 }
 
-
-void MainWindow::restoreStateFromSettings()
+QWidget*
+MainWindow::getLoginWindow()
 {
-    
+    return this->log_in_dialog;
+}
+
+void
+MainWindow::restoreStateFromSettings()
+{
     /*
      * Restore color theme
      */
@@ -233,51 +220,45 @@ void MainWindow::restoreStateFromSettings()
     QVariant geom = s.value("main/geometry");
     if (geom.isValid())
         this->restoreGeometry(geom.toByteArray());
-    
 }
 
-
-QSize MainWindow::sizeHint() const
+QSize
+MainWindow::sizeHint() const
 {
-    
     return this->default_size;
-    
 }
 
 /*******************************************************************************
  * SLOTS
  ******************************************************************************/
-void MainWindow::configureDocEngine()
+void
+MainWindow::configureDocEngine()
 {
-    
     // TODO
-
 }
 
 /**
  * Triggered by menu->sysmo->toggleFullScreen click or F11
  */
-void MainWindow::toggleFullScreen()
+void
+MainWindow::toggleFullScreen()
 {
-    
     if (this->isFullScreen()) this->showNormal();
     else                      this->showFullScreen();
-    
 }
-
 
 /**
  * Triggered by menu->sysmo->color_theme->$color_theme click
  */
-void MainWindow::setThemeConfig(QAction *theme)
+void
+MainWindow::setThemeConfig(QAction *theme)
 {
-    
     /*
      * Store color theme configuration
      */
     QSettings s;
     s.setValue("color_theme", theme->data());
-    
+
     MessageBox msgbox(this);
     msgbox.setIconType(Sysmo::MESSAGE_INFO);
     msgbox.setText("Color theme is succesfully modified. You must restart the application to make it effective.");
@@ -285,22 +266,21 @@ void MainWindow::setThemeConfig(QAction *theme)
     msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgbox.setDefaultButton(QMessageBox::Yes);
     int ret = msgbox.exec();
-    
+
     /*
      * Maybe restart application if the user requested it
      */
     if (ret == QMessageBox::Yes)
         QCoreApplication::exit(Sysmo::APP_RESTART_CODE);
-    
-}
 
+}
 
 /*
  * Triggered by LogIn validate button.
  */
-void MainWindow::tryValidate()
+void
+MainWindow::tryValidate()
 {
-    
     this->log_in_dialog->setEnabled(false);
     QString   user(this->log_in_dialog->getUserName());
     QString   pass(this->log_in_dialog->getPassword());
@@ -308,17 +288,15 @@ void MainWindow::tryValidate()
     qint16    port(this->log_in_dialog->getServerPort());
 
     this->supercast->tryConnect(QHostAddress(server), port, user, pass);
-    
 }
-
 
 /*
  * Triggered by Supercast. Finalize the connection, or
  * close the application.
  */
-void MainWindow::connectionStatus(int status)
+void
+MainWindow::connectionStatus(int status)
 {
-    
     qDebug() << "conn status: " << status;
     if (status == Supercast::CONNECTION_SUCCESS) {
         this->log_in_dialog->saveLoginState();
@@ -333,10 +311,10 @@ void MainWindow::connectionStatus(int status)
     err_box.setIconType(Sysmo::MESSAGE_ERROR);
     err_box.setStandardButtons(QMessageBox::Close);
     this->setEnabled(false);
-    
+
     QString dialog_text;
     QString dialog_informative_text;
-    
+
     switch(status) {
         case Supercast::AUTHENTICATION_ERROR: {
             dialog_text = "Authentication failure.";
@@ -377,18 +355,17 @@ void MainWindow::connectionStatus(int status)
     err_box.setText(dialog_text);
     err_box.setInformativeText(dialog_informative_text);
     err_box.exec();
-    
+
     QCoreApplication::exit(1);
-    
 }
 
 
 /*
  * Triggered by menu->about button
  */
-void MainWindow::handleAboutAction()
+void
+MainWindow::handleAboutAction()
 {
-    
     QString msg;
     msg += "Copyright (c) 2012-2016 Sebastien Serre <ssbx@sysmo.io>\n\n";
     msg += "Sysmo NMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n";
@@ -397,27 +374,22 @@ void MainWindow::handleAboutAction()
 
 
     QMessageBox::about(this, "Sysmo NMS (www.sysmo.io)", msg);
-    
 }
-
 
 /*
  * Triggered by menu->main_website button
  */
-void MainWindow::handleMainWebsiteAction()
+void
+MainWindow::handleMainWebsiteAction()
 {
-    
     QDesktopServices::openUrl(QUrl("http://www.sysmo.io"));
-    
 }
-
 
 /*
  * Triggered by menu->help button
  */
-void MainWindow::handleHelpAction()
+void
+MainWindow::handleHelpAction()
 {
-    
     QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community"));
-    
 }

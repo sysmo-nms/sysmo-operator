@@ -34,9 +34,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariant>
 #include <QPointer>
 
-int main(int argc, char* argv[])
+int
+main(int argc, char* argv[])
 {
-
     int RETURN_CODE;
     do {
         QString version = "1.1.0";
@@ -49,22 +49,20 @@ int main(int argc, char* argv[])
         QVariant variant = settings.value("color_theme");
         if (variant.isValid()) {
             QString theme = variant.toString();
-            if (theme == "midnight") {
+            if (theme == "midnight")
                 QApplication::setPalette(Themes::midnight);
-            } else if (theme == "inland") {
+            else if (theme == "inland")
                 QApplication::setPalette(Themes::inland);
-            } else if (theme == "greys") {
+            else if (theme == "greys")
                 QApplication::setPalette(Themes::greys);
-            } else if (theme == "iced") {
+            else if (theme == "iced")
                 QApplication::setPalette(Themes::iced);
-            }
         }
 
         QApplication app(argc, argv);
         //RotatingFileLogger::getLogger()->setParent(&app);
 
-        
-        
+
 #if QT_VERSION < 0x050000
         //qInstallMsgHandler(logger...)
         QApplication::setStyle("plastique");
@@ -72,46 +70,33 @@ int main(int argc, char* argv[])
         //qInstallMessageHandler(logger...)
         QApplication::setStyle("fusion");
 #endif
-        
-        
-        
+
         app.setWindowIcon(QIcon(":/icons/logo.png"));
- 
-        
 
 #ifdef USE_WEBSOCKET
         qDebug() << "will use websocket";
 #endif
-        
-        
-        
-        MainWindow win;
 
-        
+        MainWindow win;
 
 #ifdef _WIN32
         Updates::start();
 #endif
 
-
-        
         RETURN_CODE = app.exec();
-        
-        
-        
+
 #if QT_VERSION < 0x050000
+
         if (RETURN_CODE == Sysmo::APP_RESTART_CODE) {
-            
+
             // TODO make app restart working with qt4
             RETURN_CODE = 0;
-            
+
         }
+
 #endif
-
-
 
     } while (RETURN_CODE == Sysmo::APP_RESTART_CODE);
 
     return RETURN_CODE;
-    
 }
