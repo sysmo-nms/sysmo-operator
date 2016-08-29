@@ -28,10 +28,9 @@ class Updates : public QObject
     Q_OBJECT
 
 public:
-    static void start();
+    explicit Updates(QObject* parent = 0);
 
 private:
-    explicit Updates();
     QNetworkAccessManager *manager;
 
 public slots:

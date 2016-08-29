@@ -25,6 +25,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "rrds/rrd4qt.h"
 #include "dialogs/messagebox.h"
 #include "systemtray.h"
+#include "updates/updates.h"
 
 #include <QMainWindow>
 #include <QIcon>
@@ -53,19 +54,20 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
     QWidget* getLoginWindow();
-    QSize sizeHint() const;
+    QSize    sizeHint() const;
 
 public slots:
     void connectionStatus(int status);
 
 private:
     void restoreStateFromSettings();
-    Supercast* supercast;
-    LogIn* log_in_dialog;
-    Rrd4Qt* rrd4c;
+    Supercast*    supercast;
+    LogIn*        log_in_dialog;
+    Rrd4Qt*       rrd4c;
     QActionGroup* color_group;
-    SystemTray* system_tray;
-    QSize default_size;
+    SystemTray*   system_tray;
+    QSize         default_size;
+    Updates*      updates;
 
 private slots:
     void toggleFullScreen();

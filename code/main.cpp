@@ -24,7 +24,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "mainwindow.h"
 #include "themes.h"
 #include "sysmo.h"
-#include "updates.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -78,10 +77,6 @@ main(int argc, char* argv[])
 #endif
 
         MainWindow win;
-
-#ifdef _WIN32
-        Updates::start();
-#endif
 
         RETURN_CODE = app.exec();
 

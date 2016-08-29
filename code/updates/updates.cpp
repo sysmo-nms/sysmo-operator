@@ -24,17 +24,19 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 #include <QCoreApplication>
 
-#include "updates.h"
+#include "updates/updates.h"
 
 /**
- * TODO try to connect to a sysmo.io service and find if a new version
- * of the client is available
+ * Try to connect to a sysmo.io service and find if a new version
+ * of the client is available.
  */
-Updates::Updates() : QObject(0) {
-    
+Updates::Updates(QObject* parent)
+    : QObject(parent)
+{
+
     this->manager = new QNetworkAccessManager(this);
     QObject::connect(this->manager, SIGNAL(finished(QNetworkReply*)),
-                  this,          SLOT(handleHttpReply(QNetworkReply*)));
+                     this,          SLOT(handleHttpReply(QNetworkReply*)));
 
     QTimer *timer = new QTimer(this);
     timer->setInterval(1000 * 300); // 5 minutes
@@ -49,34 +51,22 @@ Updates::Updates() : QObject(0) {
 
 }
 
-void Updates::start()
+void
+Updates::check()
 {
-    
-    /*
-     * Will trigger a check for update every five minutes.
-     */
-    new Updates();
-    
+    // our file content
+    manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/releases.xml")));
+    // the PGP signature
+    manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/releases.xml.asc")));
+    // TODO check PGP signature
+    // Define the link to the release binary and download it:
+    //manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/myreleases.exe")));
+    // TODO verify MD5 and SHA sums then:
+    // this->updateAvailable("hello crypto world");
 }
 
-void Updates::check()
+void
+Updates::handleHttpReply(QNetworkReply *reply)
 {
-    
-    // TODO do not use github API
-    manager->get(
-      QNetworkRequest(
-        QUrl("https://api.github.com/repos/sysmo-nms/sysmo-operator/releases")));
-
-}
-
-void Updates::handleHttpReply(QNetworkReply *reply)
-{
-
-    /* TODO handle json reply
-     * If (update available)
-     *  emit updateAvailable(msg)
-     */
-
-        qDebug() << "got reply" << reply;
-
+    qDebug() << "REPLY got reply" << reply->readAll();
 }

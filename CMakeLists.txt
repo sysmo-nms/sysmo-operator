@@ -16,8 +16,8 @@ set (OPERATOR_VERSION_PATCH "0")
 
 set (OPERATOR_SRC
     code/main.cpp
-    code/updates.cpp
-    code/updates.h
+    code/updates/updates.cpp
+    code/updates/updates.h
     code/actions/actionprocess.cpp
     code/actions/actionprocess.h
     code/actions/monitoractionconfig.cpp

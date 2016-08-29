@@ -35,6 +35,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     this->supercast = new Supercast(this);
 
     /*
+     * Initialize windows updates system if relevant
+     */
+/* #ifdef _WIN32 */
+    this->updates = new Updates(this);
+    this->updates->check();
+/* #endif */
+
+    /*
      * Initialize rrd4c-> Will effectively start the java rrd4qt process.
      */
     this->rrd4c = new Rrd4Qt(this);
