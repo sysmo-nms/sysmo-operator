@@ -58,5 +58,4 @@ void MonitorActions::openActionFor(QString target)
        new MonitorActionsDialog(
                 Monitor::getCenterWidget(), target);
     dialog->open();
-
 }

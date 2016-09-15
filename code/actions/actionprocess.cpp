@@ -37,18 +37,17 @@ ActionProcess::ActionProcess(QObject *parent)
 
 }
 
-void ActionProcess::startProcess(const QString program, const QStringList arguments)
+void
+ActionProcess::startProcess(const QString program, const QStringList arguments)
 {
-
     this->programString = program;
     this->programArgs = arguments;
     this->start(program,arguments);
-
 }
 
-void ActionProcess::handleStartError(QProcess::ProcessError err)
+void
+ActionProcess::handleStartError(QProcess::ProcessError err)
 {
-
     QString str;
     str += this->programString;
     str += " ";
@@ -76,15 +75,13 @@ void ActionProcess::handleStartError(QProcess::ProcessError err)
         break;
     }
 
-
     SystemTray::singleton->showMessage("Start action error", str,
                                        QSystemTrayIcon::Critical, 10000);
-
 }
 
-void ActionProcess::handleErrorMsg()
+void
+ActionProcess::handleErrorMsg()
 {
-
     this->error_string += QString(this->readAllStandardError());
 
     QString str;
@@ -97,5 +94,4 @@ void ActionProcess::handleErrorMsg()
     SystemTray::singleton->showMessage(
                 "Start action stderr msg", str,
                                        QSystemTrayIcon::Warning, 5000);
-
 }

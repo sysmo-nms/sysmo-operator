@@ -89,7 +89,8 @@ MonitorActionsDialog::MonitorActionsDialog(QWidget* parent, QString target)
 }
 
 
-void MonitorActionsDialog::updateView()
+void
+MonitorActionsDialog::updateView()
 {
 
     this->list_view->clear();
@@ -112,7 +113,8 @@ void MonitorActionsDialog::updateView()
 }
 
 
-void MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
+void
+MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
 {
 
     QString name = item->data(Qt::DisplayRole).toString();
@@ -134,7 +136,8 @@ void MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
 }
 
 
-void MonitorActionsDialog::handleDelAction()
+void
+MonitorActionsDialog::handleDelAction()
 {
 
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
@@ -160,7 +163,8 @@ void MonitorActionsDialog::handleDelAction()
 }
 
 
-void MonitorActionsDialog::handleEditAction()
+void
+MonitorActionsDialog::handleEditAction()
 {
 
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
@@ -193,7 +197,8 @@ void MonitorActionsDialog::handleEditAction()
 }
 
 
-void MonitorActionsDialog::handleSelectionChange()
+void
+MonitorActionsDialog::handleSelectionChange()
 {
 
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
@@ -207,7 +212,8 @@ void MonitorActionsDialog::handleSelectionChange()
 
 }
 
-void MonitorActionsDialog::handleAddAction()
+void
+MonitorActionsDialog::handleAddAction()
 {
 
     MonitorActionCreate create(this);
@@ -243,5 +249,5 @@ void MonitorActionsDialog::handleAddAction()
     s.setValue("actions/monitoractions", acts);
     s.sync();
     this->updateView();
-   
+
 }
