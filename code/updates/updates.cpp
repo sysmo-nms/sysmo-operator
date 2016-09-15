@@ -56,12 +56,12 @@ Updates::check()
 {
     // our file content
     manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/releases.xml")));
-    // the PGP signature
-    manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/releases.xml.asc")));
-    // TODO check PGP signature
+    // TODO check PGP signature with what (Linux/Windows/Macos)
+    //manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/releases.xml.asc")));
+
     // Define the link to the release binary and download it:
     //manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/myreleases.exe")));
-    // TODO verify MD5 and SHA sums then:
+    // TODO verify MD5 and SHA sums then (QCryptographicHash)
     // this->updateAvailable("hello crypto world");
 }
 
