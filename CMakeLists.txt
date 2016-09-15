@@ -111,8 +111,6 @@ set (OPERATOR_SRC
     code/ngrid.h
     code/nowheelcombobox.cpp
     code/nowheelcombobox.h
-    code/qjson.cpp
-    code/qjson.h
     code/rrds/rrd4qt.cpp
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h
