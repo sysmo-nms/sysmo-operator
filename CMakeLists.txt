@@ -134,7 +134,9 @@ set (OPERATOR_SRC
     code/themes.cpp
     code/themes.h
     code/windows/probewindow.cpp
-    code/windows/probewindow.h)
+    code/windows/probewindow.h
+    code/qjson.h
+    code/qjson.cpp)
 
 set (OPERATOR_QRC
     support/icons.qrc

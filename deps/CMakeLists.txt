@@ -10,13 +10,6 @@ set(DEPS_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/clog/")
 set(DEPS_INCLUDES ${DEPS_INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/cargo/")
 
 #
-# qjson
-#
-add_subdirectory(qjson)
-set(DEPS_INCLUDES ${DEPS_INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/qjson/")
-set(DEPS_LIBRARIES qjson)
-
-#
 # RRDIO is a Java project built with Gradle
 #
 # Build it:
