@@ -1,5 +1,7 @@
 Sysmo Operator
 ==============
+[![Build Status](https://travis-ci.org/sysmo-nms/sysmo-operator.svg?branch=master)](https://travis-ci.org/sysmo-nms/sysmo-operator)
+[![Build status](https://ci.appveyor.com/api/projects/status/qlg4t5mi9lphvgj1/branch/master?svg=true)](https://ci.appveyor.com/project/ssbx/sysmo-operator-up4v8/branch/master)
 
 This is the repository of Sysmo Operator, the main UI for the Sysmo-core application.
 
