@@ -9,7 +9,7 @@ before_build:
     - set PATH=C:\Qt\5.5\msvc2013_64\bin;%PATH%
     - echo Running cmake...
     - cd c:\projects\SysmoOperator
-    - git submodule update --init
+    - git submodule update --init --recursive
     - cmake -H. -Bbuild -G "Visual Studio 12 Win64" -DCMAKE_PREFIX_PATH=C:\Qt\5.5\msvc2013_64
 
 build:
