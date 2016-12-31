@@ -25,6 +25,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QCoreApplication>
 
 #include "updates/updates.h"
+#include <md5.h>
 
 /**
  * Try to connect to a sysmo.io service and find if a new version
@@ -54,6 +55,9 @@ Updates::Updates(QObject* parent)
 void
 Updates::check()
 {
+    MD5Context md5_context;
+    MD5Init(&md5_context);
+
     // our file content
     manager->get(QNetworkRequest(QUrl("http://www.sysmo.io/releases.xml")));
     // TODO check PGP signature with what (Linux/Windows/Macos)

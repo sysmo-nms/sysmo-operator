@@ -239,12 +239,15 @@ else()
 
 endif(QT4_FOUND)
 
+# md5 lib
+add_library(md5 STATIC deps/md5/md5.c deps/md5/md5.h)
 
 # finally
 set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
 include_directories (
     code/
+    deps/md5/
     ${OPERATOR_DEPS_INCLUDES}
     ${OPERATOR_QT_INCLUDES})
 add_executable(sysmo-operator
@@ -253,6 +256,7 @@ add_executable(sysmo-operator
 target_link_libraries(sysmo-operator
     ${OPERATOR_QT_LIBRARIES}
     ${OPERATOR_DEPS_LIBRARIES})
+target_link_libraries(sysmo-operator md5)
 
 
 # install
