@@ -239,8 +239,6 @@ else()
 
 endif(QT4_FOUND)
 
-# md5 lib
-add_library(md5 STATIC deps/md5/md5.c deps/md5/md5.h)
 
 # finally
 set (CMAKE_AUTORCC ON)
