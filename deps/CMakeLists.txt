@@ -10,6 +10,14 @@ set(DEPS_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/clog/")
 set(DEPS_INCLUDES ${DEPS_INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/cargo/")
 
 #
+# MD5
+#
+include_directories(md5/)
+add_library(md5 md5/md5.h md5/md5.c)
+set(DEPS_INCLUDES ${DEPS_INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/md5/")
+set(DEPS_LIBRARIES ${DEPS_LIBARRIES} md5)
+
+#
 # RRDIO is a Java project built with Gradle
 #
 # Build it:
