@@ -11,7 +11,7 @@ compiler:
 
 install:
   - cmake --version
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt4; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt && brew link --force qt; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; sudo apt-get install libqt4-dev qt4-qmake; fi
 
 script:
