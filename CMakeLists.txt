@@ -237,16 +237,6 @@ else()
 
     QT5_ADD_RESOURCES(OPERATOR_QT_RESSOURCES ${OPERATOR_QRC})
 
-    # Windeploy (TODO)
-    if (WIN32)
-        get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
-        get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE
-            ${QT5_QMAKE_EXECUTABLE} PATH)
-        set(QT5_WINDEPLOYQT_EXECUTABLE
-            "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
-        add_custom_command(TARGET sysmo-operator POST_BUILD
-            COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:sysmo-operator>)
-    endif(WIN32)
 
 endif(QT4_FOUND)
 
@@ -266,6 +256,19 @@ target_link_libraries(sysmo-operator
     ${OPERATOR_QT_LIBRARIES}
     ${OPERATOR_DEPS_LIBRARIES})
 target_link_libraries(sysmo-operator md5)
+
+# Windeploy (TODO)
+if (WIN32)
+    message("Windelpoy BEGIN=============================")
+    get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+    get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE
+        ${QT5_QMAKE_EXECUTABLE} PATH)
+    set(QT5_WINDEPLOYQT_EXECUTABLE
+        "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
+    add_custom_command(TARGET sysmo-operator POST_BUILD
+        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:sysmo-operator>)
+    message("Windelpoy END=============================")
+endif(WIN32)
 
 
 # install
