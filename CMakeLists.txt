@@ -12,6 +12,9 @@ project(Sysmo-Operator)
 set (OPERATOR_VERSION_MAJOR "1")
 set (OPERATOR_VERSION_MINOR "1")
 set (OPERATOR_VERSION_PATCH "0")
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
 
 
 set (OPERATOR_SRC
@@ -266,7 +269,7 @@ target_link_libraries(sysmo-operator md5)
 
 if (WIN32)
     if(MSVC)
-    	set_target_properties(sysmo-operator PROPERTIES 
+    	set_target_properties(sysmo-operator PROPERTIES
 	    LINK_FLAGS "/SUBSYSTEM:WINDOWS")
     endif(MSVC)
 endif(WIN32)
@@ -301,4 +304,4 @@ if (WIN32)
     set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
     include(CPack)
 endif(WIN32)
-    
+

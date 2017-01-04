@@ -24,6 +24,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "mainwindow.h"
 #include "themes.h"
 #include "sysmo.h"
+#include "operator_version.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -38,7 +39,7 @@ main(int argc, char* argv[])
 {
     int RETURN_CODE;
     do {
-        QString version = "1.1.0";
+        QString version = OPERATOR_VERSION_STR;
         QApplication::setApplicationName("Sysmo Operator");
         QApplication::setApplicationVersion(version);
         QApplication::setOrganizationName("Sysmo NMS");
