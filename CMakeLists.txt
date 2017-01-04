@@ -244,6 +244,13 @@ endif(QT4_FOUND)
 # finally
 set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
+
+if (WIN32)
+    if(MSVC)
+	    set(OPERATOR_QT_LIBRARIES ${OPERATOR_QT_LIBRARIES} Qt5::WinMain)
+    endif(MSVC)
+endif(WIN32)
+
 include_directories (
     code/
     deps/md5/
@@ -257,9 +264,15 @@ target_link_libraries(sysmo-operator
     ${OPERATOR_DEPS_LIBRARIES})
 target_link_libraries(sysmo-operator md5)
 
-# Windeploy (TODO)
 if (WIN32)
-    message("Windelpoy BEGIN=============================")
+    if(MSVC)
+    	set_target_properties(sysmo-operator PROPERTIES 
+	    LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+    endif(MSVC)
+endif(WIN32)
+
+# WIN32 Install...
+if (WIN32)
     get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
     get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE
         ${QT5_QMAKE_EXECUTABLE} PATH)
@@ -267,29 +280,25 @@ if (WIN32)
         "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
     add_custom_command(TARGET sysmo-operator POST_BUILD
         COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:sysmo-operator>)
-    message("Windelpoy END=============================")
+
+    install (DIRECTORY $<TARGET_FILE_DIR:sysmo-operator>/ DESTINATION .)
 endif(WIN32)
 
-
-# install
-install(TARGETS sysmo-operator DESTINATION bin)
+# WIN32 package
 if (WIN32)
-    # include Qt shared libs for Windows
-    install(FILES ${OPERATOR_QT_LIBRARIES} DESTINATION bin)
+    set (CPACK_GENERATOR NSIS)
+    set (CPACK_PACKAGE_NAME "Sysmo Operator")
+    set (CPACK_PACKAGE_CONTACT "contact@sysmo.io")
+    set (CPACK_INCLUDE_TOP_LEVEL_DIRECTORY 1)
+    set (CPACK_INSTALLED_DIRECTORIES $<TARGET_FILE_DIR:sysmo-operator>/ .)
+    set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY sysmo-operator)
+    set (CPACK_SOURCE_STRIP_FILES 1)
+    set (CPACK_PACKAGE_VERSION_MAJOR ${OPERATOR_VERSION_MAJOR})
+    set (CPACK_PACKAGE_VERSION_MINOR ${OPERATOR_VERSION_MINOR})
+    set (CPACK_PACKAGE_VERSION_PATCH ${OPERATOR_VERSION_PATCH})
+    set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+    set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sysmo-NMS user interface")
+    set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
+    include(CPack)
 endif(WIN32)
-
-
-# packages
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sysmo-NMS user interface")
-set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-set (CPACK_PACKAGE_VERSION_MAJOR "${OPERATOR_VERSION_MAJOR}")
-set (CPACK_PACKAGE_VERSION_MINOR "${OPERATOR_VERSION_MINOR}")
-set (CPACK_PACKAGE_VERSION_PATCH "${OPERATOR_VERSION_PATCH}")
-set (CPACK_STRIP_FILES "bin/sysmo-operator")
-if (WIN32)
-    set (CPACK_GENERATOR "NSIS")
-else()
-    set (CPACK_GENERATOR "TGZ")
-endif(WIN32)
-include(CPack)
+    
