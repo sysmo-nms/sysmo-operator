@@ -16,10 +16,10 @@ build:
     project: build/sysmo-operator.sln
 
 after_build:
-    - cd build/
-    - cpack
     - .\deps\rrdio\gradlew.bat --stop
     - del C:\Users\appveyor\.gradle\caches\modules-2\modules-2.lock
+    - cd build/
+    - cpack
 
 cache:
   - C:\Users\appveyor\.gradle\caches\
