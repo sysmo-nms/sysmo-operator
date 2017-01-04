@@ -18,3 +18,7 @@ build:
 after_build:
     - cd build/
     - cpack
+
+cache:
+  - C:\Users\appveyor\.gradle\caches\
+  - C:\Users\appveyor\.gradle\wrapper\
