@@ -8,10 +8,10 @@ platform:
 configuration: Release
 
 before_build:
-    - if /I %PLATFORM% == "x86" set qt_path_x=C:\Qt\5.7\msvc2015
-    - if /I %PLATFORM% == "x86" set vs_arch_x=""
-    - if /I %PLATFORM% == "x64" set qt_path_x=C:\Qt\5.7\msvc2015_64
-    - if /I %PLATFORM% == "x64" set vs_arch_x=Win64
+    - if /I %PLATFORM% == x86 set qt_path_x=C:\Qt\5.7\msvc2015
+    - if /I %PLATFORM% == x86 set vs_arch_x=""
+    - if /I %PLATFORM% == x64 set qt_path_x=C:\Qt\5.7\msvc2015_64
+    - if /I %PLATFORM% == x64 set vs_arch_x=Win64
     - set PATH=%qt_path_x%\bin;%PATH%
     - echo Running cmake...
     - cd c:\projects\SysmoOperator
