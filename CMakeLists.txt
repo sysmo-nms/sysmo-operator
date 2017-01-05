@@ -290,7 +290,7 @@ endif(WIN32)
 # WIN32 package
 if (WIN32)
     set (CPACK_GENERATOR NSIS)
-    set (CPACK_PACKAGE_NAME "Sysmo Operator")
+    set (CPACK_PACKAGE_NAME "Sysmo-Operator")
     set (CPACK_PACKAGE_CONTACT "contact@sysmo.io")
     set (CPACK_INCLUDE_TOP_LEVEL_DIRECTORY 1)
     set (CPACK_INSTALLED_DIRECTORIES $<TARGET_FILE_DIR:sysmo-operator>/ .)
