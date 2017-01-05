@@ -5,45 +5,52 @@ Sysmo Operator
 
 This is the repository of Sysmo Operator, the main UI for the Sysmo-core application.
 
-Runtime dependencies
---------------------
-- Qt shared libraries
-- Java JRE 7 or 8
+# Documentation
 
-Build dependencies
-------------------
+See the [Sysmo-NMS Wiki](https://github.com/sysmo-nms/sysmo-nms.github.io/wiki).
+
+# Howto Deploy Sysmo-Operator
+
+## Prepare the build environment
+
+### Dependencies
+- git
 - C++ build tools
 - Qt5.X or Qt4.X >= 4.6 development environment
 - Java JDK 7 or 8
 - CMake
 
-#### CentOS 7 dependency install example
+### Dependencies install examples
+#### CentOS 7
 ```sh
 $ sudo yum groupinstall 'Development Tools'
-$ sudo yum install qt-devel cmake
+$ sudo yum install git qt-devel java-1.7.0-openjdk-devel cmake
 ```
 
-#### Debian 8 dependency install example
+#### Debian 8
 ```sh
-$ sudo apt-get install build-essentials qt-jdk cmake
+$ sudo apt-get install git build-essentials qt-jdk openjdk-7-jdk cmake
 ```
 
-Building
---------
+#### MacOSX
 ```sh
+$ brew install git qt java cmake
+```
+
+## Build
+```sh
+$ git clone https://github.com/sysmo-nms/sysmo-operator.git
+$ cd sysmo-operator
 $ ./configure
 $ make
 ```
 
-Deploying
----------
-Everything is contained in the *build/sysmo-operator* executable. Move it somewhere
-in your $PATH and you're done.
+## Deploy
 
-TODO
-----
-- Splash screen with application startup progress
-- Timeline
-- modify probe
-- modify target
-- status buttons and filters
+### Runtime dependencies
+- Qt shared libraries
+- Java JRE 7 or 8
+
+Everything is contained in the *build/sysmo-operator* executable. Move it somewhere
+in the $PATH and you're done.
+
