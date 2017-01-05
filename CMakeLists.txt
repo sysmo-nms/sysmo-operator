@@ -271,7 +271,7 @@ if (WIN32)
     if(MSVC)
     	set_target_properties(sysmo-operator PROPERTIES
 	    LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-        set(CMAKE_C_FLAGS sysmo-operator "/D _CRT_SECURE_NO_WARNINGS")
+        add_definitions("/D _CRT_SECURE_NO_WARNINGS")
     endif(MSVC)
 endif(WIN32)
 
