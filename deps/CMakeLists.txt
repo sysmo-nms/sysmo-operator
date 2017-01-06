@@ -28,7 +28,7 @@ else ()
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 message(STATUS "Preparing Java RrdIO...")
 execute_process(
-    COMMAND ${GRADLE_BIN} installDist
+    COMMAND ${GRADLE_BIN} installDist --no-daemon
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rrdio)
 message(STATUS "Java RrdIO Ready")
 
