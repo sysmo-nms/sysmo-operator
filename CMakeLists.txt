@@ -12,6 +12,7 @@ project(Sysmo-Operator)
 set (OPERATOR_VERSION_MAJOR "1")
 set (OPERATOR_VERSION_MINOR "1")
 set (OPERATOR_VERSION_PATCH "3")
+set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPERATOR_VERSION_PATCH}")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
@@ -277,6 +278,7 @@ endif(WIN32)
 
 # WIN32 Install...
 if (WIN32)
+    set(WIX_SOURCE_DIR $<TARGET_FILE_DIR:sysmo-operator>)
     get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
     get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE
         ${QT5_QMAKE_EXECUTABLE} PATH)
