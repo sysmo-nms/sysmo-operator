@@ -11,7 +11,7 @@ endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 project(Sysmo-Operator)
 set (OPERATOR_VERSION_MAJOR "1")
 set (OPERATOR_VERSION_MINOR "1")
-set (OPERATOR_VERSION_PATCH "0")
+set (OPERATOR_VERSION_PATCH "2")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
