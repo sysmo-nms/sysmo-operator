@@ -19,12 +19,15 @@ artifacts:
     - path: build\Sysmo-Operator-*.exe
 
 deploy:
+    release: Sysmo-Operator-$(APPVEYOR_REPO_TAG_NAME)
     description: 'Automatic Sysmo Operator release deployment'
     provider: GitHub
     auth_token:
         secure: JbU57GgB5EBgwKdw4kTc2LTimc85On9dVaiCAbnqIPRbQxEs6KFEBOHxh8eFuqqD
     artifact: build/Sysmo-Operator*.exe
+    force_update: true
     draft: true
+    prerelease: false
     on:
         branch: master
         appveyor_repo_tag: true
