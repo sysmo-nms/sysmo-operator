@@ -13,11 +13,21 @@ build_script:
     - support\pkgs\win\bin\build_run.cmd
 
 after_build:
-    - support\pkgs\win\bin\build_installer.cmd
+    - build\build_installer.cmd
 
 artifacts:
-    - path: build\*.msi
+    - path: build\Sysmo-Operator-*.exe
+
+deploy:
+    description: 'Automatic Sysmo Operator release deployment'
+    provider: GitHub
+    auth_token:
+        secure: JbU57GgB5EBgwKdw4kTc2LTimc85On9dVaiCAbnqIPRbQxEs6KFEBOHxh8eFuqqD
+    artifact: build/Sysmo-Operator*.exe
+    draft: true
+    on:
+        branch: master
+        appveyor_repo_tag: true
 
 cache:
-  - C:\Users\appveyor\.gradle\
-  - C:\Users\appveyor\SYSMO_RESSOURCES\
+    - C:\Users\appveyor\SYSMO_OPERATOR_RESSOURCES\

@@ -290,7 +290,6 @@ endif(WIN32)
 
 # Windows package
 if (WIN32)
-
     set (CPACK_PACKAGE_NAME "Sysmo-Operator")
     set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
     set (CPACK_PACKAGE_CONTACT "contact@sysmo.io")
@@ -298,12 +297,17 @@ if (WIN32)
     set (CPACK_PACKAGE_VERSION_MAJOR ${OPERATOR_VERSION_MAJOR})
     set (CPACK_PACKAGE_VERSION_MINOR ${OPERATOR_VERSION_MINOR})
     set (CPACK_PACKAGE_VERSION_PATCH ${OPERATOR_VERSION_PATCH})
-    if ($ENV{PLATFORM} STREQUAL "")
-        set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-nodeps-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${CPACK_SYSTEM_NAME}")
+    set (CPACK_PACKAGE_FILE_NAME "operator")
+    if (NOT DEFINED ENV{PLATFORM})
+       set (BUILD_PLATFORM ${CPACK_SYSTEM_NAME})
     else()
-        set (BUILD_PLATFORM $ENV{PLATFORM})
-        set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-nodeps-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${BUILD_PLATFORM}")
-    endif()
+        if ($ENV{PLATFORM} STREQUAL "")
+            set (BUILD_PLATFORM ${CPACK_SYSTEM_NAME})
+        else()
+            set (BUILD_PLATFORM $ENV{PLATFORM})
+        endif($ENV{PLATFORM} STREQUAL "")
+    endif(NOT DEFINED ENV{PLATFORM})
+
     set (CPACK_PACKAGE_EXECUTABLES sysmo-operator "Sysmo-Operator")
     set (CPACK_STRIP_FILES 1)
     set (CPACK_SOURCE_STRIP_FILES 1)
@@ -316,6 +320,15 @@ if (WIN32)
     set (CPACK_GENERATOR WIX)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
     set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/icons/logo.png")
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bundle.wxs
+	${CMAKE_BINARY_DIR}/bundle.wxs)
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bin/build_installer.cmd.in
+	${CMAKE_BINARY_DIR}/build_installer.cmd)
+
 
     include(CPack)
 endif(WIN32)
