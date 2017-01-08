@@ -6,6 +6,9 @@ platform:
     - Win32
 configuration: Release
 
+init:
+    - if not defined APPVEYOR_REPO_TAG_NAME set APPVEYOR_REPO_TAG_NAME=current
+
 before_build:
     - support\pkgs\win\bin\build_prepare.cmd
 
