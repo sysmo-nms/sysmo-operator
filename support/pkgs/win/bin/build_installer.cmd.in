@@ -21,12 +21,12 @@ cpack
     @set vcredist_location="http://www.sysmo.io/runtime/msvc2015/vc_redist.x64.exe"
     @set java_location="http://www.sysmo.io/runtime/jre/jre-8u111-windows-x64.exe"
 )
-if not exist %VCREDIST_INSTALLER% curl -fSL -o "%VCREDIST_INSTALLER%" %vcredist_location%
+if not exist "%VCREDIST_INSTALLER%" curl -fSL -o "%VCREDIST_INSTALLER%" %vcredist_location%
 copy /y %VCREDIST_INSTALLER% build\vcredist.exe
 
 echo %JAVA_INSTALLER%
 echo %java_location%
-if not exist %JAVA_INSTALLER%     curl -fSL -o "%JAVA_INSTALLER%"     %java_location%
+if not exist "%JAVA_INSTALLER%" curl -fSL -o "%JAVA_INSTALLER%"     %java_location%
 copy /y %JAVA_INSTALLER% build\jre.exe
 
 
