@@ -32,7 +32,10 @@ copy /y %JAVA_INSTALLER% build\jre.exe
 
 :: Wix bundle
 @set PATH=C:\Program Files (x86)\Wix Toolset v3.10\bin;%PATH%
-@set wix_opts=-nologo -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension -ext WixFirewallExtension -ext WixUIExtension
+@set wix_opts= -v -nologo -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension -ext WixFirewallExtension -ext WixUIExtension
 
+@echo "Run candle.exe"
 candle.exe %wix_opts% -o build\bundle.wixobj build\bundle.wxs
+@echo "Run light.exe"
 light.exe %wix_opts% -o build\Sysmo-Operator-@OPERATOR_VERSION@-@BUILD_PLATFORM@.exe build\bundle.wixobj
+@echo "End of installer build"
