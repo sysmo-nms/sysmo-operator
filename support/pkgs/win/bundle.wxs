@@ -43,7 +43,7 @@
 			<ExePackage
 				Id="vcredist2015"
 				Cache="always"
-				Compressed="no"
+				Compressed="yes"
 				InstallCommand="/q /norestart"
 				RepairCommand="/q /repair /norestart"
 				Permanent="yes"
@@ -57,7 +57,7 @@
 			<ExePackage
 				Id="java8"
 				Cache="always"
-				Compressed="no"
+				Compressed="yes"
 				DetectCondition="SEARCH_CurrentJavaVersion >= v1.7"
 				PerMachine="yes"
 				Permanent="yes"
