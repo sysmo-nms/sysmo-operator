@@ -1,0 +1,17 @@
+<CPackWiXPatch>
+	<CPackWiXFragment Id="CM_SHORTCUT">
+		<Shortcut 
+			Id="CM_SP_sysmo_operator.exe" 
+			Name="Sysmo-Operator" 
+			Target="[#CM_FP_sysmo_operator.exe]" 
+			Icon="@CPACK_WIX_EXE_ICON@"
+			WorkingDirectory="INSTALL_ROOT"/>
+		<RegistryValue 
+			Root="HKCU" 
+			Key="Software\Sysmo NMS\Sysmo-Operator" 
+			Name="installed" 
+			Type="integer" 
+			Value="1" 
+			KeyPath="yes"/>
+	</CPackWiXFragment>
+</CPackWiXPatch>

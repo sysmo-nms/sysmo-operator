@@ -19,23 +19,15 @@
 		<BootstrapperApplicationRef
 			Id="WixStandardBootstrapperApplication.RtfLicense">
 			<bal:WixStandardBootstrapperApplication
-				LicenseFile="LICENSE.txt"
+				LicenseFile="support\pkgs\win\License.rtf"
 				LogoFile="support\pkgs\win\bundle-logo.png"
 				ShowVersion="yes"
 				SuppressOptionsUI="yes"
 				SuppressRepair="no"
 				LaunchHidden="no"
 				SuppressDowngradeFailure="no"
-				LaunchTarget="[ProgramFilesFolder]Sysmo NMS\Operator\sysmo.exe"
 				/>
 		</BootstrapperApplicationRef>
-
-		<util:RegistrySearch
-			Root="HKLM"
-			Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\VCredist\x64"
-			Value="Installed"
-			Variable="SEARCH_VCRedist2015Installed" />
-
 
 		<util:RegistrySearch
 			Root="HKLM"
@@ -51,23 +43,24 @@
 			<ExePackage
 				Id="vcredist2015"
 				Cache="always"
-				Permanent="yes"
+				Compressed="no"
 				InstallCommand="/q /norestart"
 				RepairCommand="/q /repair /norestart"
-				DetectCondition="SEARCH_VCRedist2015Installed = 1"
+				Permanent="yes"
 				PerMachine="yes"
 				Vital="yes"
 				SuppressSignatureVerification="yes"
-				SourceFile="build/vcredist.exe" />
+				SourceFile="build/vcredist.exe">
+				<ExitCode Value="1638" Behavior="success"/>
+			</ExePackage>
 
 			<ExePackage
 				Id="java8"
 				Cache="always"
-				Permanent="yes"
-				InstallCommand="/s"
-				RepairCommand="/s"
-				DetectCondition="SEARCH_CurrentJavaVersion = v1.8"
+				Compressed="no"
+				DetectCondition="SEARCH_CurrentJavaVersion >= v1.7"
 				PerMachine="yes"
+				Permanent="yes"
 				Vital="yes"
 				SuppressSignatureVerification="yes"
 				SourceFile="build/jre.exe" />
@@ -78,7 +71,8 @@
 				Id="MainPackage"
 				SourceFile="build/operator.msi"
 				Vital="yes"
-				DisplayInternalUI="yes" />
+				ForcePerMachine="yes"
+				DisplayInternalUI="no" />
 		</Chain>
 	</Bundle>
 </Wix>
