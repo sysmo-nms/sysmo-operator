@@ -19,9 +19,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef OPERATOR_VERSION
 #define OPERATOR_VERSION
 
-#define OPERATOR_VERSION_STR "1.1.0"
+#define OPERATOR_VERSION_STR "1.1.3"
 #define OPERATOR_VERSION_MAJOR 1
 #define OPERATOR_VERSION_MINOR 1
-#define OPERATOR_VERSION_PATCH 0
+#define OPERATOR_VERSION_PATCH 3
 
 #endif // OPERATOR_VERSION

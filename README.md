@@ -11,6 +11,9 @@ See the [Sysmo-NMS Wiki](https://github.com/sysmo-nms/sysmo-nms.github.io/wiki).
 
 # Howto Deploy Sysmo-Operator
 
+Packages and installer are [here](https://github.com/sysmo-nms/sysmo-operator/releases).
+
+
 ## Prepare the build environment
 
 ### Dependencies

@@ -296,6 +296,8 @@ if (WIN32)
     set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
     set (CPACK_PACKAGE_CONTACT "contact@sysmo.io")
     set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sysmo-NMS user interface")
+    set (CPACK_PACKAGE_INSTALL_DIRECTORY "Sysmo NMS/Operator")
+    set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "sysmo-operator/${OPERATOR_VERSION}")
     set (CPACK_PACKAGE_VERSION_MAJOR ${OPERATOR_VERSION_MAJOR})
     set (CPACK_PACKAGE_VERSION_MINOR ${OPERATOR_VERSION_MINOR})
     set (CPACK_PACKAGE_VERSION_PATCH ${OPERATOR_VERSION_PATCH})
@@ -309,20 +311,25 @@ if (WIN32)
             set (BUILD_PLATFORM $ENV{PLATFORM})
         endif($ENV{PLATFORM} STREQUAL "")
     endif(NOT DEFINED ENV{PLATFORM})
-
-    set (CPACK_PACKAGE_EXECUTABLES sysmo-operator "Sysmo-Operator")
     set (CPACK_STRIP_FILES 1)
     set (CPACK_SOURCE_STRIP_FILES 1)
     set (CPACK_CREATE_DESKTOP_LINKS 1)
     set (CPACK_INCLUDE_TOP_LEVEL_DIRECTORY 1)
     set (CPACK_INSTALLED_DIRECTORIES $<TARGET_FILE_DIR:sysmo-operator>/ .)
-    set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY sysmo-operator)
     set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+    set (CPACK_PACKAGE_EXECUTABLES sysmo-operator "Sysmo-Operator")
 
     set (CPACK_GENERATOR WIX)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
     set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/icons/logo.png")
 
+    set (CPACK_WIX_EXE_ICON "")
+    string(REPLACE "\\" "/" CPACK_WIX_EXE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/operator.ico")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/wix_icon_patch.xml
+	${CMAKE_BINARY_DIR}/wix_icon_patch.xml)
+
+#set (CPACK_WIX_PATCH_FILE "${CMAKE_BINARY_DIR}/wix_icon_patch.xml")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bundle.wxs
 	${CMAKE_BINARY_DIR}/bundle.wxs)
@@ -334,4 +341,3 @@ if (WIN32)
 
     include(CPack)
 endif(WIN32)
-
