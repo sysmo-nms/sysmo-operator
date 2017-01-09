@@ -35,4 +35,4 @@ copy /y %JAVA_INSTALLER% build\jre.exe
 @set wix_opts=-nologo -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension -ext WixFirewallExtension -ext WixUIExtension
 
 candle.exe %wix_opts% -o build\bundle.wixobj build\bundle.wxs
-light.exe %wix_opts% -o build\Sysmo-Operator-@OPERATOR_VERSION_MAJOR@.@OPERATOR_VERSION_MINOR@.@OPERATOR_VERSION_PATCH@-@BUILD_PLATFORM@.exe build\bundle.wixobj
+light.exe %wix_opts% -o build\Sysmo-Operator-@OPERATOR_VERSION@-@BUILD_PLATFORM@.exe build\bundle.wixobj
