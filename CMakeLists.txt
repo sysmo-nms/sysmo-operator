@@ -9,9 +9,9 @@ endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
 
 project(Sysmo-Operator)
-set (OPERATOR_VERSION_MAJOR "1")
-set (OPERATOR_VERSION_MINOR "1")
-set (OPERATOR_VERSION_PATCH "3")
+set (OPERATOR_VERSION_MAJOR "2")
+set (OPERATOR_VERSION_MINOR "0")
+set (OPERATOR_VERSION_PATCH "1")
 set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPERATOR_VERSION_PATCH}")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
@@ -249,32 +249,44 @@ endif(QT4_FOUND)
 set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
 
+add_executable(sysmo-operator
+    ${OPERATOR_SRC}
+    ${OPERATOR_QT_RESSOURCES})
+
 if (WIN32)
     if(MSVC)
-	    set(OPERATOR_QT_LIBRARIES ${OPERATOR_QT_LIBRARIES} Qt5::WinMain)
+
+        # Suppress incorrect warnings
+        add_definitions("/D _CRT_SECURE_NO_WARNINGS")
+
+        # Needed for windowed applications
+        set_target_properties(sysmo-operator PROPERTIES
+            LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+        set(OPERATOR_QT_LIBRARIES ${OPERATOR_QT_LIBRARIES} Qt5::WinMain)
+
+        # Icon for executable
+        configure_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/icon-ressource.rc.in
+            ${CMAKE_BINARY_DIR}/icon-ressource.rc)
+        add_custom_command(
+            TARGET sysmo-operator PRE_BUILD
+            COMMAND rc /fo ${CMAKE_BINARY_DIR}/icon-ressource.res ${CMAKE_BINARY_DIR}/icon-ressource.rc)
+        set(OPERATOR_DEPS_LIBRARIES
+            ${OPERATOR_DEPS_LIBRARIES}
+            ${CMAKE_BINARY_DIR}/icon-ressource.res)
+
     endif(MSVC)
 endif(WIN32)
 
 include_directories (
     code/
     deps/md5/
-    ${OPERATOR_DEPS_INCLUDES}
-    ${OPERATOR_QT_INCLUDES})
-add_executable(sysmo-operator
-    ${OPERATOR_SRC}
-    ${OPERATOR_QT_RESSOURCES})
+    ${OPERATOR_QT_INCLUDES}
+    ${OPERATOR_DEPS_INCLUDES})
+
 target_link_libraries(sysmo-operator
     ${OPERATOR_QT_LIBRARIES}
-    ${OPERATOR_DEPS_LIBRARIES})
-target_link_libraries(sysmo-operator md5)
-
-if (WIN32)
-    if(MSVC)
-    	set_target_properties(sysmo-operator PROPERTIES
-	    LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-        add_definitions("/D _CRT_SECURE_NO_WARNINGS")
-    endif(MSVC)
-endif(WIN32)
+    ${OPERATOR_DEPS_LIBRARIES} md5)
 
 # WIN32 Install...
 if (WIN32)
@@ -323,20 +335,13 @@ if (WIN32)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
     set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/icons/logo.png")
 
-    set (CPACK_WIX_EXE_ICON "")
-    string(REPLACE "\\" "/" CPACK_WIX_EXE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/operator.ico")
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/wix_icon_patch.xml
-	${CMAKE_BINARY_DIR}/wix_icon_patch.xml)
-
-#set (CPACK_WIX_PATCH_FILE "${CMAKE_BINARY_DIR}/wix_icon_patch.xml")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bundle.wxs
-	${CMAKE_BINARY_DIR}/bundle.wxs)
+        ${CMAKE_BINARY_DIR}/bundle.wxs)
 
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bin/build_installer.cmd.in
-	${CMAKE_BINARY_DIR}/build_installer.cmd)
+        ${CMAKE_BINARY_DIR}/build_installer.cmd)
 
 
     include(CPack)
