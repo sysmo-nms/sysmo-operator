@@ -322,6 +322,11 @@ if (WIN32)
             set (BUILD_PLATFORM $ENV{PLATFORM})
         endif($ENV{PLATFORM} STREQUAL "")
     endif(NOT DEFINED ENV{PLATFORM})
+
+    if (${BUILD_PLATFORM} STREQUAL "Win32")
+        set (BUILD_PLATFORM "i586")
+    endif()
+
     set (CPACK_PACKAGE_FILE_NAME "operator-${BUILD_PLATFORM}")
     set (CPACK_STRIP_FILES 1)
     set (CPACK_SOURCE_STRIP_FILES 1)
