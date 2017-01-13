@@ -1,3 +1,9 @@
+#
+# Sysmo-Operator build
+#
+project(Sysmo-Operator)
+enable_language(CXX)
+
 # cmake_minimum_required(VERSION 2.8.11)
 # 2.8.11 required for Qt5 build but travis uses 2.8.7 on osx
 cmake_minimum_required(VERSION 2.8)
@@ -11,7 +17,6 @@ if(UNIX)
     configure_file(${CMAKE_SOURCE_DIR}/Makefile.in ${CMAKE_SOURCE_DIR}/Makefile)
 endif(UNIX)
 
-project(Sysmo-Operator)
 set (OPERATOR_VERSION_MAJOR "2")
 set (OPERATOR_VERSION_MINOR "0")
 set (OPERATOR_VERSION_PATCH "2")
@@ -344,7 +349,7 @@ if (WIN32)
     set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/icons/logo.png")
 
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bundle.wxs
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bundle.wxs.in
         ${CMAKE_BINARY_DIR}/bundle.wxs)
 
     configure_file(
