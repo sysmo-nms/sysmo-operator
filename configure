@@ -1,19 +1,5 @@
 #!/bin/sh
 
-# easy makefile
-echo '
-.PHONY: all clean_all
-
-all:
-	make -C build all
-
-clean_all:
-	rm -rf build; rm Makefile
-
-%:
-	make -C build $@
-' > Makefile
-
 # cleanup build dir if exist
 rm -rf build
 git submodule update --init --recursive

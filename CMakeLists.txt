@@ -7,6 +7,9 @@ else()
     cmake_policy(SET CMP0020 NEW)
 endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
+if(UNIX)
+    configure_file(${CMAKE_SOURCE_DIR}/Makefile.in ${CMAKE_SOURCE_DIR}/Makefile)
+endif(UNIX)
 
 project(Sysmo-Operator)
 set (OPERATOR_VERSION_MAJOR "2")

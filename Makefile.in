@@ -1,0 +1,11 @@
+.PHONY: all clean_all
+
+all:
+	make -C @CMAKE_BINARY_DIR@ all
+
+clean_all:
+	rm -rf @CMAKE_BINARY_DIR@; rm Makefile
+
+%:
+	make -C @CMAKE_BINARY_DIR@ $@
+
