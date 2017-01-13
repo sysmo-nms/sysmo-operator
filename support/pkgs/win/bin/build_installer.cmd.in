@@ -7,8 +7,8 @@ cpack
 @set ressources=%USERPROFILE%\SYSMO_OPERATOR_RESSOURCES
 @if not exist %ressources% mkdir %ressources%
 
-
 @if not DEFINED PLATFORM set PLATFORM="x64"
+
 
 @if "%PLATFORM%" == "Win32" (
     @set VCREDIST_INSTALLER=%ressources%\vcredist_x86.exe
@@ -35,7 +35,7 @@ copy /y %JAVA_INSTALLER% build\jre.exe
 @set wix_opts= -v -nologo -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension -ext WixFirewallExtension -ext WixUIExtension
 
 @echo "Run candle.exe"
-candle.exe %wix_opts% -o build\bundle.wixobj build\bundle.wxs
+candle.exe %wix_opts% -arch %PLATFORM% -o build\bundle.wixobj build\bundle.wxs
 @echo "Run light.exe"
 light.exe %wix_opts% -o build\Sysmo-Operator-@OPERATOR_VERSION@-@BUILD_PLATFORM@.exe build\bundle.wixobj
 @echo "End of installer build"
