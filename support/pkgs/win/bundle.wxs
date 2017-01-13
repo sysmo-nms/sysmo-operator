@@ -69,7 +69,7 @@
 
 			<MsiPackage
 				Id="MainPackage"
-				SourceFile="build\operator.msi"
+				SourceFile="build\operator-@BUILD_PLATFORM@.msi"
 				Vital="yes"
 				ForcePerMachine="yes"
 				DisplayInternalUI="no" />
