@@ -13,11 +13,11 @@ build_script:
     - support\pkgs\win\bin\build_run.cmd
 
 after_build:
-    - build\build_installer.cmd
+    - _build\build_installer.cmd
 
 artifacts:
-    - path: build\Sysmo-Operator-*.exe
-    - path: build\operator-*.msi
+    - path: _build\Sysmo-Operator-*.exe
+    - path: _build\operator-*.msi
 
 deploy:
     release: CURRENT
