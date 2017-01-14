@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # cleanup build dir if exist
-rm -rf build
+rm -rf _build
 git submodule update --init --recursive
 
 # create Unix Makefiles project
-mkdir build && cd build && cmake ..
+mkdir _build && cd _build && cmake ..
 
 echo "\nYou can now run \"make\""
 

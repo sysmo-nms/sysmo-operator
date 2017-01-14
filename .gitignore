@@ -3,5 +3,5 @@
 /support/rrd4qt/.gradle
 
 # cmake standard build
-/build
+/_build
 /Makefile
