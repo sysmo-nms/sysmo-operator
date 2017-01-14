@@ -1,6 +1,6 @@
 :: Build CMake project
 
-@if exist build rmdir build /s /q
+@if exist _build rmdir _build /s /q
 git submodule update --init --recursive
 
 @if not DEFINED PLATFORM (
@@ -18,5 +18,5 @@ git submodule update --init --recursive
 
 @set PATH=%qt_path%\bin;%PATH%
 
-cmake -H. -Bbuild -G %cmake_gen% -DCMAKE_PREFIX_PATH=%qt_path%
+cmake -H. -B_build -G %cmake_gen% -DCMAKE_PREFIX_PATH=%qt_path%
 

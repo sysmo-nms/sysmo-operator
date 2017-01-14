@@ -1,5 +1,5 @@
 :: Build installer component
-@cd build
+@cd _build
 cpack
 @cd ..
 
@@ -23,12 +23,12 @@ cpack
     @set java_location="http://www.sysmo.io/runtime/jre/jre-8u111-windows-x64.exe"
 )
 if not exist "%VCREDIST_INSTALLER%" curl -fSL -o "%VCREDIST_INSTALLER%" %vcredist_location%
-copy /y %VCREDIST_INSTALLER% build\vcredist.exe
+copy /y %VCREDIST_INSTALLER% _build\vcredist.exe
 
 echo %JAVA_INSTALLER%
 echo %java_location%
 if not exist "%JAVA_INSTALLER%" curl -fSL -o "%JAVA_INSTALLER%"     %java_location%
-copy /y %JAVA_INSTALLER% build\jre.exe
+copy /y %JAVA_INSTALLER% _build\jre.exe
 
 
 :: Wix bundle
@@ -36,7 +36,7 @@ copy /y %JAVA_INSTALLER% build\jre.exe
 @set wix_opts= -v -nologo -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension -ext WixFirewallExtension -ext WixUIExtension
 
 @echo "Run candle.exe"
-candle.exe %wix_opts% -arch %WIX_ARCH% -o build\bundle.wixobj build\bundle.wxs
+candle.exe %wix_opts% -arch %WIX_ARCH% -o _build\bundle.wixobj _build\bundle.wxs
 @echo "Run light.exe"
-light.exe %wix_opts% -o build\Sysmo-Operator-@OPERATOR_VERSION@-@BUILD_PLATFORM@.exe build\bundle.wixobj
+light.exe %wix_opts% -o _build\Sysmo-Operator-@OPERATOR_VERSION@-@BUILD_PLATFORM@.exe _build\bundle.wixobj
 @echo "End of installer build"
