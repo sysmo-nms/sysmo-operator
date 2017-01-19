@@ -6,7 +6,7 @@
 		Name="Sysmo Operator UI - @OPERATOR_VERSION@"
 		Version="@OPERATOR_VERSION@"
 		Manufacturer="Sysmo.io"
-		UpgradeCode="abcdef01-7349-453F-94F6-BCB5110BA4FD"
+		UpgradeCode="7BE1BABB-90DC-4478-850F-0592D84CA5B1"
 		Copyright="Copyright (c) sebastien.serre@sysmo.io. All rights reserved."
 		IconSourceFile="support\pkgs\win\bundle.ico"
 		DisableModify="no"
