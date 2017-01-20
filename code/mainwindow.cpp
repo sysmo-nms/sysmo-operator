@@ -193,8 +193,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
 MainWindow::~MainWindow()
 {
-    QSettings s;
-    s.setValue("main/geometry", this->saveGeometry());
+    if (this->isFullScreen() == false) {
+        QSettings s;
+        s.setValue("main/geometry", this->saveGeometry());
+    }
 }
 
 QWidget*
