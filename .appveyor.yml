@@ -17,7 +17,7 @@ after_build:
 
 artifacts:
     - path: _build\Sysmo-Operator-*.exe
-    - path: _build\operator-*.msi
+    - path: _build\_installer-*.msi
 
 deploy:
     release: CURRENT
@@ -25,7 +25,7 @@ deploy:
     provider: GitHub
     auth_token:
         secure: JbU57GgB5EBgwKdw4kTc2LTimc85On9dVaiCAbnqIPRbQxEs6KFEBOHxh8eFuqqD
-    artifact: /Sysmo-Operator-.*\.exe/, /operator-.*\.msi/
+    artifact: /Sysmo-Operator-.*\.exe/, /_installer-.*\.msi/
     force_update: true
     draft: true
     prerelease: false

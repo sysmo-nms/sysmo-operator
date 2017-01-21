@@ -335,7 +335,7 @@ if (WIN32)
         set (BUILD_PLATFORM "i586")
     endif()
 
-    set (CPACK_PACKAGE_FILE_NAME "operator-${BUILD_PLATFORM}")
+    set (CPACK_PACKAGE_FILE_NAME "_installer-${BUILD_PLATFORM}")
     set (CPACK_STRIP_FILES 1)
     set (CPACK_SOURCE_STRIP_FILES 1)
     set (CPACK_CREATE_DESKTOP_LINKS 1)
