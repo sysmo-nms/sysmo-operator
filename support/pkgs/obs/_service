@@ -1,0 +1,13 @@
+<services>
+  <service name="tar_scm">
+    <param name="url">https://github.com/sysmo-nms/sysmo-operator.git</param>
+    <param name="scm">git</param>
+    <param name="version">2.0.3</param>
+    <param name="submodules">enable</param>
+  </service>
+  <service name="recompress">
+    <param name="file">*.tar</param>
+    <param name="compression">gz</param>
+  </service>
+  <service name="set_version" />
+</services>

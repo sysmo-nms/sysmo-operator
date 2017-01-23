@@ -1,0 +1,11 @@
+Source: sysmo-operator
+Section: unknown
+Priority: optional
+Maintainer: Sebastien Serre <ssbx@sysmo.io>
+Build-Depends: debhelper (>= 4.1.16), g++, libqt4-dev, libgtk2.0-bin, desktop-file-utils, cmake
+
+Package: sysmo-operator
+Architecture: any
+Depends: ${shlibs:Depends}, libqtcore4, libqtgui4, libqt4-network, libqt4-xml, openjdk-7-jre
+Description: Sysmo core user interface
+ Sysmo core user interface.

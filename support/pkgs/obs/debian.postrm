@@ -1,0 +1,10 @@
+#!/bin/sh
+
+touch --no-create /usr/share/icons/hicolor
+touch --no-create /usr/share/app-install
+if [ -x /usr/bin/gtk-update-icon-cache ]; then
+  gtk-update-icon-cache -q /usr/share/icons/hicolor;
+  gtk-update-icon-cache -q /usr/share/app-install;
+fi
+update-mime-database /usr/share/mime &> /dev/null || :
+update-desktop-database &> /dev/null || :
