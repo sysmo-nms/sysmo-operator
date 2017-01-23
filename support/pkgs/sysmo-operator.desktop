@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Sysmo Operator
+Comment=Take control of a Sysmo Core server
+GenericName=Sysmo Operator client UI
+Exec=sysmo-operator
+Icon=sysmo
+Terminal=false
+Type=Application
+Keywords=monitor;sysmo;client;operator;
+Categories=Network;
+StartupNotify=true
