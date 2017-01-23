@@ -1,4 +1,4 @@
-.PHONY: all clean_all
+.PHONY: all clean_all packages
 
 all:
 	make -C @CMAKE_BINARY_DIR@ all
@@ -9,3 +9,11 @@ clean_all:
 %:
 	make -C @CMAKE_BINARY_DIR@ $@
 
+packages: all
+	cd @CMAKE_BINARY_DIR@
+	osc checkout home\:sysmo\:unstable
+	cd home\:sysmo\:unstable
+	cp ../../support/pkgs/obs/* .
+	osc up
+	osc commit
+	@echo "See result at: https://build.opensuse.org/package/show/home:sysmo:unstable/sysmo-operator"
