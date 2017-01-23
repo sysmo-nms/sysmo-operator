@@ -19,19 +19,6 @@ set(DEPS_LIBRARIES ${DEPS_LIBARRIES} md5)
 
 #
 # RRDIO is a Java project built with Gradle
-#
-# Build it:
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set (GRADLE_BIN ${CMAKE_CURRENT_SOURCE_DIR}/rrdio/gradlew.bat)
-else ()
-    set (GRADLE_BIN ${CMAKE_CURRENT_SOURCE_DIR}/rrdio/gradlew)
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-message(STATUS "Preparing Java RrdIO...")
-execute_process(
-    COMMAND ${GRADLE_BIN} installDist --no-daemon
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rrdio)
-message(STATUS "Java RrdIO Ready")
-
 # Get all dependencies
 file(GLOB RRD4J_JAR_FULL rrdio/build/install/rrdio/lib/rrd4j*.jar)
 get_filename_component(RRD4J_JAR ${RRD4J_JAR_FULL} NAME)
