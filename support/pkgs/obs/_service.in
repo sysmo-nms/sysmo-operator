@@ -7,7 +7,7 @@
   </service>
   <service name="extract_file">
     <param name="archive">*.tar</param>
-    <param name="files"> */support/pkgs/obs/rpm/sysmo-operator.* */support/pkgs/obs/deb/debian.* </param>
+    <param name="files"> */support/pkgs/obs/rpm/sysmo-operator.spec */support/pkgs/obs/deb/debian.* */support/pkgs/obs/deb/sysmo-operator.dsc </param>
   </service>
   <service name="recompress">
     <param name="file">*.tar</param>
