@@ -2,7 +2,7 @@ Source: sysmo-operator
 Section: unknown
 Priority: optional
 Maintainer: Sebastien Serre <ssbx@sysmo.io>
-Build-Depends: debhelper (>= 4.1.16), g++, libqt4-dev, libgtk2.0-bin, desktop-file-utils, cmake
+Build-Depends: debhelper (>= 9), g++, libqt4-dev, libgtk2.0-bin, desktop-file-utils, cmake
 
 Package: sysmo-operator
 Architecture: any
