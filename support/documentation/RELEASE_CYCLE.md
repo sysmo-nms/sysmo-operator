@@ -15,7 +15,7 @@ This file is an action remainder for the core development team. It is of no inte
 # STEP1 Promoting the actual "unstable" build
 
 * Log in on github.com and promote the CURRENT release the actual version (set in CMakeList.txt). It will create a new tag (do not forget to "git pull" from your machine to update the tag).
-* Run the support/pkgs/obs/release.sh script that will promote the build from "unstable" to regular.
+* Run the support/pkgs/obs/promote.sh script that will promote the build from "unstable" to regular.
 
 The release is now available as:
 * Windows installer on the github latest release: [https://github.com/sysmo-nms/sysmo-operator/releases/latest](https://github.com/sysmo-nms/sysmo-operator/releases/latest).
