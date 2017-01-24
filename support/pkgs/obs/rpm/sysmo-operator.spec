@@ -64,10 +64,10 @@ install -m 751 _build/sysmo-operator %{buildroot}%{_bindir}
 desktop-file-install \
 	--vendor="" \
 	--dir=%{buildroot}%{_datadir}/applications/ \
-	support/pkgs/sysmo-operator.desktop
+	support/pkgs/obs/common/sysmo-operator.desktop
 
 mkdir -p %{buildroot}%{_datadir}
-cp -R support/pkgs/rpm_icons/icons %{buildroot}%{_datadir}
+cp -R support/pkgs/obs/rpm/icons %{buildroot}%{_datadir}
 find %{buildroot}%{_datadir} -name "*.png" -exec chmod 644 {} \;
 
 %post
