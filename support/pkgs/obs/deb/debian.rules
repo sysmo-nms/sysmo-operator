@@ -47,16 +47,15 @@ install: build
 
 	# Add here commands to install the package
 	# The DESTDIR Has To Be Exactly  /usr/src/packages/BUILD/debian/<nameOfPackage>
-	make install INSTALL_ROOT=$(DESTDIR) BINDIR=/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/applications
 	mkdir -p $(DESTDIR)/usr/share/pixmaps
 	mkdir -p $(DESTDIR)/usr/share/app-install/icons
 	mkdir -p $(DESTDIR)/usr/share/icons/hicolor/128x128
 	install -m 751 _build/sysmo-operator $(DESTDIR)/usr/bin
-	install -m 644 sysmo-operator.desktop $(DESTDIR)/usr/share/applications/
-	install -m 644 ressources/pkgs/deb_icons/64x64/sysmo.png $(DESTDIR)/usr/share/app-install/icons/
-	install -m 644 ressources/pkgs/deb_icons/128x128/sysmo.png $(DESTDIR)/usr/share/pixmaps/
-	install -m 644 ressources/pkgs/deb_icons/128x128/sysmo.png $(DESTDIR)/usr/share/icons/hicolor/128x128/
+	install -m 644 support/pkgs/obs/common/sysmo-operator.desktop $(DESTDIR)/usr/share/applications/
+	install -m 644 support/pkgs/obs/deb/icons/64x64/sysmo.png $(DESTDIR)/usr/share/app-install/icons/
+	install -m 644 support/pkgs/obs/deb/icons/128x128/sysmo.png $(DESTDIR)/usr/share/pixmaps/
+	install -m 644 support/pkgs/obs/deb/icons/128x128/sysmo.png $(DESTDIR)/usr/share/icons/hicolor/128x128/
 	# --- end custom part for installing
 
 # Build architecture-independent files here.
