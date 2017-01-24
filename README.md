@@ -11,7 +11,13 @@ See the [Sysmo-NMS Wiki](https://github.com/sysmo-nms/sysmo-nms.github.io/wiki).
 
 # Howto Deploy Sysmo-Operator
 
+## Windows
 Packages and installer are [here](https://github.com/sysmo-nms/sysmo-operator/releases).
+
+## Linux
+You can find the repositories for your linux distribution [here](https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator).
+
+Linux users can also use the "unstable" repository to enjoy the latest builds and enhencement [here](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator)
 
 
 ## Prepare the build environment

@@ -1,12 +1,16 @@
-Release steps
+Release cycle
 =============
 
 This file is an action remainder for the core development team. It is of no interest for users.
 
+### Description
+- Windows installers are build with AppVeyor service (see .appveyor.yml),
+- Linux repositories are filled with OpenSuse OpenBuildService (see support/pkgs/obs/*).
+
 ### Where is the current "unstable" release
 
-* As windows installer, only available for authorized users (devel team) as a draft release of name "CURRENT": [https://github.com/sysmo-nms/sysmo-operator/releases](https://github.com/sysmo-nms/sysmo-operator/releases).
-* As packages for linux at [https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator)
+* As windows installer, only available for authorized users (devel team) as a draft release of name "CURRENT": [https://github.com/sysmo-nms/sysmo-operator/releases](https://github.com/sysmo-nms/sysmo-operator/releases). We may in the future make this release public but tagged as "prerelease".
+* As packages for linux at [https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator), wich is publicly available for linux users.
 
 # STEP1 Promoting the actual "unstable" build
 
