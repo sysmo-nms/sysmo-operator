@@ -24,6 +24,9 @@ set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPE
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/obs/_service.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/obs/_service)
 
 
 set (OPERATOR_SRC
