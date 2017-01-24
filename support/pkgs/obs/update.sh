@@ -14,5 +14,5 @@ osc checkout home:sysmo:unstable
 cd home:sysmo:unstable/sysmo-operator/
 cp $SOURCE_DIR/_service .
 osc up
-osc commit
+osc commit -m "_service file update"
 
