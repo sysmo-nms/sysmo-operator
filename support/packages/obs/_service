@@ -2,12 +2,12 @@
   <service name="tar_scm">
     <param name="url">https://github.com/sysmo-nms/sysmo-operator.git</param>
     <param name="scm">git</param>
-    <param name="version">@OPERATOR_VERSION@</param>
+    <param name="version">2.0.3</param>
     <param name="submodules">enable</param>
   </service>
   <service name="extract_file">
     <param name="archive">*.tar</param>
-    <param name="files"> */support/pkgs/obs/rpm/sysmo-operator.spec */support/pkgs/obs/deb/debian.* */support/pkgs/obs/deb/sysmo-operator.dsc </param>
+    <param name="files"> */support/packages/obs/rpm/sysmo-operator.spec */support/packages/obs/deb/debian.* */support/packages/obs/deb/sysmo-operator.dsc </param>
   </service>
   <service name="recompress">
     <param name="file">*.tar</param>

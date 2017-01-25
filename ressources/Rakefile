@@ -4,21 +4,9 @@ ROOT     = Dir.pwd
 JAVA_DIR = File.join(ROOT, "rrd4qt")
 GRADLE   = File.join(JAVA_DIR, "gradlew")
 
-RELEASE_VER = "1.0"
-RELEASE_DIR = "sysmo-operator-${RELEASE_VER}/"
-
-task :default => :java_ressource
-
 
 desc "Build good sized pixmap for tree and side icons"
 task :graphics => [:side_icons, :tree_pixmaps]
-
-
-desc "TODO why does this not work under win32?"
-task :rrd4qt do
-  cd JAVA_DIR; sh "#{GRADLE} installDist"
-end
-
 
 
 desc "Build side icons from SVG src"
@@ -65,7 +53,7 @@ task :rpm_icons do
   sizes = ["16", "22", "24", "256", "32", "48"]
   hcolorSrc = "src/sysmo-logo-src.svg"
   hcontrastSrc = "src/sysmo-logo-hc-src.svg"
-  FileUtils.cp(hcolorSrc, "pkgs/rpm_icons/icons/hicolor/scalable/apps/")
+  FileUtils.cp(hcolorSrc, "../support/packages/rpm/icons/icons/hicolor/scalable/apps/")
   sizes.each{ |s|
     colorPath = "pkgs/rpm_icons/icons/hicolor/#{s}x#{s}/apps"
     contrastPath = "pkgs/rpm_icons/icons/HighContrast/#{s}x#{s}/apps"

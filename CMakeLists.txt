@@ -25,8 +25,8 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/obs/_service.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/obs/_service)
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
 
 
 set (OPERATOR_SRC
@@ -154,13 +154,13 @@ set (OPERATOR_SRC
     code/qjson.cpp)
 
 set (OPERATOR_QRC
-    support/icons.qrc
-    support/box_icons.qrc
-    support/images.qrc
-    support/pixmaps.qrc
-    support/tree.qrc
-    support/rrdio.qrc
-    support/cssressource.qrc)
+    ressources/icons.qrc
+    ressources/box_icons.qrc
+    ressources/images.qrc
+    ressources/pixmaps.qrc
+    ressources/tree.qrc
+    ressources/rrdio.qrc
+    ressources/cssressource.qrc)
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
@@ -171,8 +171,12 @@ set (OPERATOR_DEPS_LIBRARIES "")
 
 # add deps will build rrdio
 add_subdirectory(deps/)
-# add support will build rrdio.qrc
-add_subdirectory(support/)
+
+# configure rrdio.qrc
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc)
+
 # configure rrd4qt
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
@@ -277,7 +281,7 @@ if (WIN32)
 
         # Icon for executable
         configure_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/icon-ressource.rc.in
+            ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/icon-ressource.rc.in
             ${CMAKE_BINARY_DIR}/icon-ressource.rc)
         add_custom_command(
             TARGET sysmo-operator PRE_BUILD
@@ -349,14 +353,14 @@ if (WIN32)
 
     set (CPACK_GENERATOR WIX)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
-    set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/icons/logo.png")
+    set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/ressources/icons/logo.png")
 
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bundle.wxs.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bundle.wxs.in
         ${CMAKE_BINARY_DIR}/bundle.wxs)
 
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/support/pkgs/win/bin/build_installer.cmd.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bin/build_installer.cmd.in
         ${CMAKE_BINARY_DIR}/build_installer.cmd)
 
 

@@ -1,0 +1,1 @@
+IDI_ICON1               ICON    DISCARDABLE     "@CMAKE_CURRENT_SOURCE_DIR@/support/packages/win/sysmo.ico"

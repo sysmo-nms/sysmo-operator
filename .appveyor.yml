@@ -7,10 +7,10 @@ platform:
 configuration: Release
 
 before_build:
-    - support\pkgs\win\bin\build_prepare.cmd
+    - support\packages\win\bin\build_prepare.cmd
 
 build_script:
-    - support\pkgs\win\bin\build_run.cmd
+    - support\packages\win\bin\build_run.cmd
 
 after_build:
     - _build\build_installer.cmd

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/rrdio">
+        <file alias="rrdio.sh">C:/Users/jeux/src/sysmo-operator/deps/rrdio/build/install/rrdio/bin/rrdio</file>
+        <file alias="rrdio.bat">C:/Users/jeux/src/sysmo-operator/deps/rrdio/build/install/rrdio/bin/rrdio.bat</file>
+        <file alias="rrdio.jar">C:/Users/jeux/src/sysmo-operator/deps/rrdio/build/install/rrdio/lib/rrdio-1.0-SNAPSHOT.jar</file>
+        <file alias="rrd4j.jar">C:/Users/jeux/src/sysmo-operator/deps/rrdio/build/install/rrdio/lib/rrd4j-3.0.jar</file>
+        <file alias="json.jar">C:/Users/jeux/src/sysmo-operator/deps/rrdio/build/install/rrdio/lib/javax.json-1.0.4.jar</file>
+    </qresource>
+</RCC>
