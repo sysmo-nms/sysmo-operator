@@ -154,13 +154,13 @@ set (OPERATOR_SRC
     code/qjson.cpp)
 
 set (OPERATOR_QRC
-    ressources/icons.qrc
-    ressources/box_icons.qrc
-    ressources/images.qrc
-    ressources/pixmaps.qrc
-    ressources/tree.qrc
-    ressources/rrdio.qrc
-    ressources/cssressource.qrc)
+    qrcs/icons.qrc
+    qrcs/box_icons.qrc
+    qrcs/images.qrc
+    qrcs/pixmaps.qrc
+    qrcs/tree.qrc
+    qrcs/rrdio.qrc
+    qrcs/cssressource.qrc)
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
@@ -174,8 +174,8 @@ add_subdirectory(deps/)
 
 # configure rrdio.qrc
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
 
 # configure rrd4qt
 configure_file(
@@ -353,7 +353,7 @@ if (WIN32)
 
     set (CPACK_GENERATOR WIX)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
-    set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/ressources/icons/logo.png")
+    set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/logo.png")
 
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bundle.wxs.in

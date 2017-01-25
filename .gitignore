@@ -1,7 +1,9 @@
-/support/rrd4qt/build/*
-!/support/rrd4qt/build/install/
-/support/rrd4qt/.gradle
-
 # cmake standard build
 /_build
+
+# dynamicaly configured files
 /Makefile
+/code/operator_version.h
+/code/rrds/rrd4qt_config.h
+/support/packages/obs/_service
+/qrcs/rrdio.qrc
