@@ -34,4 +34,4 @@ deploy:
         appveyor_repo_tag: false
 
 cache:
-    - C:\Users\appveyor\SYSMO_OPERATOR_RESSOURCES\
+    #- C:\Users\appveyor\SYSMO_OPERATOR_RESSOURCES\
