@@ -51,7 +51,7 @@ install: build
 	mkdir -p $(DESTDIR)/usr/share/pixmaps
 	mkdir -p $(DESTDIR)/usr/share/app-install/icons
 	mkdir -p $(DESTDIR)/usr/share/icons/hicolor/128x128
-	install -m 751 _build/sysmo-operator $(DESTDIR)/usr/bin
+	install -m 751 _build/sysmo-operator $(DESTDIR)/usr/bin/
 	install -m 644 support/packages/obs/common/sysmo-operator.desktop $(DESTDIR)/usr/share/applications/
 	install -m 644 support/packages/obs/deb/icons/64x64/sysmo.png $(DESTDIR)/usr/share/app-install/icons/
 	install -m 644 support/packages/obs/deb/icons/128x128/sysmo.png $(DESTDIR)/usr/share/pixmaps/
