@@ -27,13 +27,13 @@ Once the release is built:
 * Push it and wait for appveyor build,
 * Publish the CURRENT release to the new bundle version.
 
-The Windows installer bundle is available at: [https://github.com/sysmo-nms/sysmo-operator/bundle/latest](https://github.com/sysmo-nms/sysmo-operator/bundle/latest).
+The Windows installer bundle is available at: [https://github.com/sysmo-nms/bundle/releases/latest](https://github.com/sysmo-nms/bundle/releases/latest).
 
 # STEP3 Finalysing
 
 * Modify the $OPERATOR_VERSION variable in CMakelist.txt,
 * Run cmake. this action will configure relevant files with the new version value,
 * Commit the changes,
-* Run the support/pkgs/obs/update.sh script that will push newly configurated files to OBS.
+* Run the support/packages/obs/update.sh script that will push newly configurated files to OBS.
 
 After some commits (at least one to create the "CURRENT" draft release on github), you can promote another build (STEP1).
