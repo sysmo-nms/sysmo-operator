@@ -1,4 +1,5 @@
 Format: 1.0
+DEBTRANSFORM-RELEASE: 1
 Source: sysmo-operator
 Version: 1.1.1-1
 Binary: sysmo-operator

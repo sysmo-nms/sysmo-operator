@@ -60,7 +60,7 @@ make
 %install
 mkdir -p "%{buildroot}%{_bindir}"
 mkdir -p "%{buildroot}%{_datadir}/applications"
-install -m 751 _build/sysmo-operator %{buildroot}%{_bindir}
+install -m 751 _build/sysmo-operator %{buildroot}%{_bindir}/
 desktop-file-install \
 	--vendor="" \
 	--dir=%{buildroot}%{_datadir}/applications/ \
