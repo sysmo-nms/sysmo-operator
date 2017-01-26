@@ -10,18 +10,21 @@ This file is an action remainder for the core development team. It is of no inte
 ### Where is the current "unstable" release
 
 * As windows installer, only available for authorized users (devel team) as a draft release of name "CURRENT": [https://github.com/sysmo-nms/sysmo-operator/releases](https://github.com/sysmo-nms/sysmo-operator/releases). We may in the future make this release public but tagged as "prerelease". It is rebuilt at each git push.
-* As packages for linux at [https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator), wich is publicly available for linux users. It is rebuild at each manual call to "make packages".
+* As packages for linux at [https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator), wich is publicly available for linux users. It is rebuild at each manual call to "make packages" (you must have write permission on the build.opensuse.org repo home:sysmo).
 
 # STEP1 Promoting the actual "unstable" build
 
 * Log in on github.com and promote the CURRENT release the actual version (set in CMakeList.txt). It will create a new tag (do not forget to "git pull" from your machine to update the tag),
-* Run the support/pkgs/obs/forcerun.sh script that will build the current revision,
-* Run the support/pkgs/obs/promote.sh script that will promote the build from "unstable" to regular.
+* Run the support/pkgs/obs/promote.sh script that will promote the OBS build and publish to the repository.
 
 The release is now available as:
 * Windows installer on the github latest release: [https://github.com/sysmo-nms/sysmo-operator/releases/latest](https://github.com/sysmo-nms/sysmo-operator/releases/latest).
-* Packages are available througth RPM or DEB repositories for various linux distributions at OpenSuze OpenBuildService (OBS): [https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator).
+* Packages are available througth RPM or DEB repositories for various linux distributions at OpenSuze OpenBuildService (OBS): [https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator). (Can take some time before complete)
 
+# STEP2 Rebuild the windows bundle
+Once the release is available upgrade the OPERATOR_VERION and BUNDLE_VERSION in [bundle.cmd](https://github.com/sysmo-nms/bundle). Push it.
+
+The Windows installer bundle is available at: [https://github.com/sysmo-nms/sysmo-operator/bundle/latest](https://github.com/sysmo-nms/sysmo-operator/bundle/latest).
 
 # STEP2 Finalysing
 
@@ -30,4 +33,4 @@ The release is now available as:
 * Commit the changes,
 * Run the support/pkgs/obs/update.sh script that will push newly configurated files to OBS.
 
-After some commits (at least one to create the "CURRENT" draft release on github, and trigger a rebuild on OBS), you can promote another build (STEP1).
+After some commits (at least one to create the "CURRENT" draft release on github), you can promote another build (STEP1).
