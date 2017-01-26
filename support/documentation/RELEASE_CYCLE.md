@@ -9,16 +9,16 @@ This file is an action remainder for the core development team. It is of no inte
 
 ## About OBS builds
 
-The only file modified on OBS that is elligible for revision, is the "_service" file wich describe how to download (git clone) patch and build the source. The OBS "_service" file is located at "support/packages/obs/_service" wich is build with "./configure" from "support/packages/obs/_service.in".
+The only file modified on OBS that is elligible for revision, is the "_service" file wich describe how to download (git clone) patch and build the source. The OBS "_service" file is located at "support/packages/obs/_service" wich is build with "./configure" from "support/packages/obs/_service.in". It will allways contains the "${OPERATOR_VERSION}" defined in "CMakeLists.txt".
 
-* A call to "support/packages/obs/update_unstable.sh" will commit and push the actual "support/packages/obs/_service" to the OBS "unstable" repository.
-* A call to "support/packages/obs/update_stable.sh" will commit and push the actual "support/packages/obs/_service" to the OBS "stable" repository.
-* A call to "make packages" will force a rebuild on OBS "unstable" with the latest repo commit.
+* A call to "support/packages/obs/update_unstable.sh" will commit and push the actual "support/packages/obs/_service" to the OBS "unstable" repository. Typicaly used after an OPERATOR_VERSION bump.
+* A call to "support/packages/obs/update_stable.sh" will commit and push the actual "support/packages/obs/_service" to the OBS "stable" repository. Typicaly used for publishing the actual OPERATOR_VERSION release.
+* A call to "make packages" will force a rebuild on OBS "unstable" with the latest repo commit. Typicaly used to publish the latest commit to the "unstable" repository.
 
 ### Where is the current "unstable" release
 
-* As windows installer, only available for authorized users (devel team) as a draft release of name "CURRENT": [https://github.com/sysmo-nms/sysmo-operator/releases](https://github.com/sysmo-nms/sysmo-operator/releases). We may in the future make this release public but tagged as "prerelease". It is rebuilt at each git push.
-* As packages for linux at [https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator), wich is publicly available for linux users. It is rebuild at each manual call to "make packages" (you must have write permission on the build.opensuse.org repo home:sysmo).
+* A windows installer, only available for authorized users (devel team) as a draft release of name "CURRENT": [https://github.com/sysmo-nms/sysmo-operator/releases](https://github.com/sysmo-nms/sysmo-operator/releases). We may in the future make this release public but tagged as "prerelease". It is rebuilt at each git push.
+* A packages for linux at [https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo%3Aunstable&package=sysmo-operator), wich is publicly available for linux users. It is rebuild at each manual call to "make packages" (you must have write permission on the build.opensuse.org repo home:sysmo).
 
 # STEP1 Promoting the "CURRENT"/"unstable" build
 
