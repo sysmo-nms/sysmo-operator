@@ -22,11 +22,14 @@ The release is now available as:
 * Packages are available througth RPM or DEB repositories for various linux distributions at OpenSuze OpenBuildService (OBS): [https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator](https://software.opensuse.org/download.html?project=home%3Asysmo&package=sysmo-operator). (Can take some time before complete)
 
 # STEP2 Rebuild the windows bundle
-Once the release is available upgrade the OPERATOR_VERION and BUNDLE_VERSION in [bundle.cmd](https://github.com/sysmo-nms/bundle). Push it.
+Once the release is built:
+* Upgrade the OPERATOR_VERION and BUNDLE_VERSION in [bundle.cmd](https://github.com/sysmo-nms/bundle).
+* Push it and wait for appveyor build,
+* Publish the CURRENT release to the new bundle version.
 
 The Windows installer bundle is available at: [https://github.com/sysmo-nms/sysmo-operator/bundle/latest](https://github.com/sysmo-nms/sysmo-operator/bundle/latest).
 
-# STEP2 Finalysing
+# STEP3 Finalysing
 
 * Modify the $OPERATOR_VERSION variable in CMakelist.txt,
 * Run cmake. this action will configure relevant files with the new version value,
