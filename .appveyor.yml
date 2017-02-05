@@ -7,13 +7,13 @@ platform:
 configuration: Release
 
 before_build:
-    - support\packages\win\bin\build_prepare.cmd
+    - support\packages\win\bin\configure.cmd
 
 build_script:
-    - support\packages\win\bin\build_run.cmd
+    - support\packages\win\bin\make.cmd
 
 after_build:
-    - _build\build_installer.cmd
+    - _build\generate_bundle.cmd
 
 artifacts:
     - path: _build\Sysmo-Operator-*.exe

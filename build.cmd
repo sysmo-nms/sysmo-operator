@@ -1,10 +1,10 @@
 ::
 
 @echo prepare
-call support\packages\win\bin\build_prepare.cmd
+call support\packages\win\bin\configure.cmd
 
 @echo run
-call support\packages\win\bin\build_run.cmd
+call support\packages\win\bin\make.cmd
 
 @echo build installer
-call _build\build_installer.cmd
+call _build\generate_bundle.cmd

@@ -360,8 +360,8 @@ if (WIN32)
         ${CMAKE_BINARY_DIR}/bundle.wxs)
 
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bin/build_installer.cmd.in
-        ${CMAKE_BINARY_DIR}/build_installer.cmd)
+        ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bin/generate_bundle.cmd.in
+        ${CMAKE_BINARY_DIR}/generate_bundle.cmd)
 
 
     include(CPack)
