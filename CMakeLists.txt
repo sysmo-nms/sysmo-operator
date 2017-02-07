@@ -29,6 +29,8 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
 
 
+message("flags are" ${CMAKE_C_FLAGS})
+
 set (OPERATOR_SRC
     code/main.cpp
     code/updates/updates.cpp
