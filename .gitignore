@@ -7,3 +7,24 @@
 /code/rrds/rrd4qt_config.h
 /support/packages/obs/_service
 /qrcs/rrdio.qrc
+
+# In source build
+/*.cpp
+/*.cxx
+/CMakeFiles
+/CMakeCache.txt
+/cmake_install.cmake
+/compile_commands.json
+/deps/CMakeFiles/
+/deps/Makefile
+/deps/cmake_install.cmake
+/deps/libmd5.a
+/nbproject/
+/qrcs/box_icons.qrc.depends
+/qrcs/cssressource.qrc.depends
+/qrcs/icons.qrc.depends
+/qrcs/images.qrc.depends
+/qrcs/pixmaps.qrc.depends
+/qrcs/rrdio.qrc.depends
+/qrcs/tree.qrc.depends
+/sysmo-operator
