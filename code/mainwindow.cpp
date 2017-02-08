@@ -23,6 +23,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  * from here.
  */
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+    this->should_close = false;
+
     /*
      * Just initialize log in dialog (not shown)
      */
@@ -53,7 +55,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         this->system_tray = new SystemTray(this);
     }
     QObject::connect(
-            this->system_tray, SIGNAL(QSystemTrayIcon::ActivationReason),
+            this->system_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 
     /*
@@ -75,7 +77,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     action_exit->setShortcut(QKeySequence("Ctrl+Q"));
     QObject::connect(
             action_exit, SIGNAL(triggered(bool)),
-            this, SLOT(close()));
+            this, SLOT(reallyClose()));
 
     //QAction* action_proxy_conf  = new QAction("&Proxy configuration...",  this);
     QAction* action_doc_engine = new QAction("&Configure doc engine...", this);
@@ -404,11 +406,30 @@ MainWindow::handleHelpAction() {
 }
 
 void
-MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
-    qDebug() << "tray activated";
-    if (this->isVisible()) {
-        this->setVisible(false);
+MainWindow::closeEvent(QCloseEvent *event) {
+
+    if (this->should_close == true) {
+        event->accept();
     } else {
-        this->setVisible(true);
+        event->ignore();
+        this->setVisible(false);
+    }
+}
+
+void
+MainWindow::reallyClose() {
+    this->should_close = true;
+    this->close();
+}
+
+void
+MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
+    qDebug() << "tray activated" << reason;
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (this->isVisible()) {
+            this->setVisible(false);
+        } else {
+            this->setVisible(true);
+        }
     }
 }
