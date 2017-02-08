@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -42,32 +42,31 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSize>
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QSystemTrayIcon>
 #include <QUrl>
 #include <QFile>
 
-class MainWindow : public QMainWindow
-{
-
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
     QWidget* getLoginWindow();
-    QSize    sizeHint() const;
+    QSize sizeHint() const;
 
 public slots:
     void connectionStatus(int status);
 
 private:
     void restoreStateFromSettings();
-    Supercast*    supercast;
-    LogIn*        log_in_dialog;
-    Rrd4Qt*       rrd4c;
+    Supercast* supercast;
+    LogIn* log_in_dialog;
+    Rrd4Qt* rrd4c;
     QActionGroup* color_group;
-    SystemTray*   system_tray;
-    QSize         default_size;
-    Updates*      updates;
+    SystemTray* system_tray;
+    QSize default_size;
+    Updates* updates;
 
 private slots:
     void toggleFullScreen();
@@ -77,6 +76,7 @@ private slots:
     void handleHelpAction();
     void handleMainWebsiteAction();
     void handleAboutAction();
+    void trayActivated(QSystemTrayIcon::ActivationReason reason);
 
 };
 

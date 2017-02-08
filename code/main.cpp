@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "stdio.h"
 #include "stdlib.h"
 #include "clog.h"
@@ -35,8 +35,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPointer>
 
 int
-main(int argc, char* argv[])
-{
+main(int argc, char* argv[]) {
     int RETURN_CODE;
     do {
         QString version = OPERATOR_VERSION_STR;
@@ -44,7 +43,8 @@ main(int argc, char* argv[])
         QApplication::setApplicationVersion(version);
         QApplication::setOrganizationName("Sysmo NMS");
         QApplication::setOrganizationDomain("sysmo.io");
-        QApplication::setQuitOnLastWindowClosed(true);
+        // QApplication::setQuitOnLastWindowClosed(true);
+        QApplication::setQuitOnLastWindowClosed(false);
         QSettings settings;
         QVariant variant = settings.value("color_theme");
         if (variant.isValid()) {

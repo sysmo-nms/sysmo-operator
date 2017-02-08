@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "systemtray.h"
 
 /**
@@ -23,14 +23,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 SystemTray* SystemTray::singleton = NULL;
 
-
 SystemTray::SystemTray(QObject *parent)
-    : QSystemTrayIcon(parent)
-{
-    
+: QSystemTrayIcon(parent) {
+
+
     SystemTray::singleton = this;
     //this->setContextMenu(new QMenu());
     this->setIcon(QIcon(":icons/logo.png"));
     this->show();
-    
+
 }
