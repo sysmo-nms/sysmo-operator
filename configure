@@ -5,25 +5,20 @@ CXXFLAGS="-g3 -gdwarf-2"
 
 for var in "$@"; do
     varname=$(echo $var | cut -s -f 1 -d =)
-    echo $varname
     if [ $varname = 'CFLAGS' ]; then
-        echo "ok set cflags"
         CFLAGS=$(echo $var | cut -f 2 -d =)
         continue
     fi
     if [ $varname = 'CXXFLAGS' ]; then
         CXXFLAGS=$(echo $var | cut -f 2 -d =)
-        echo "ok set cxxflags $CXXFLAGS"
         continue
     fi
-    echo $CFLAGS
 done
 
 # cleanup build dir if exist
 rm -rf _build
 git submodule update --init --recursive
 
-echo " -DCMAKE_CXX_FLAGS=${CXXFLAGS} -DCMAKE_C_FLAGS=${CFLAGS} .."
 # create Unix Makefiles project
 mkdir _build && cd _build && cmake -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_C_FLAGS="${CFLAGS}" ..
 

@@ -67,6 +67,7 @@ private:
     SystemTray* system_tray;
     QSize default_size;
     Updates* updates;
+    bool should_close;
 
 private slots:
     void toggleFullScreen();
@@ -77,6 +78,8 @@ private slots:
     void handleMainWebsiteAction();
     void handleAboutAction();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
+    void closeEvent(QCloseEvent *event);
+    void reallyClose();
 
 };
 

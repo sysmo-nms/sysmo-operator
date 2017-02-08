@@ -43,8 +43,7 @@ main(int argc, char* argv[]) {
         QApplication::setApplicationVersion(version);
         QApplication::setOrganizationName("Sysmo NMS");
         QApplication::setOrganizationDomain("sysmo.io");
-        // QApplication::setQuitOnLastWindowClosed(true);
-        QApplication::setQuitOnLastWindowClosed(false);
+        QApplication::setQuitOnLastWindowClosed(true);
         QSettings settings;
         QVariant variant = settings.value("color_theme");
         if (variant.isValid()) {

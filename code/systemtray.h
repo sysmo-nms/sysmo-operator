@@ -27,6 +27,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 class SystemTray : public QSystemTrayIcon
 {
     Q_OBJECT
+    
 public:
     explicit SystemTray(QObject *parent = 0);
 

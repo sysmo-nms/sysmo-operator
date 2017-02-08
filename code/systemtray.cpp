@@ -24,8 +24,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 SystemTray* SystemTray::singleton = NULL;
 
 SystemTray::SystemTray(QObject *parent)
-: QSystemTrayIcon(parent) {
-
+    : QSystemTrayIcon(parent) {
 
     SystemTray::singleton = this;
     //this->setContextMenu(new QMenu());
