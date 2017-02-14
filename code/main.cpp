@@ -33,6 +33,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QVariant>
 #include <QPointer>
+#include <QFile>
 
 int
 main(int argc, char* argv[]) {
@@ -45,6 +46,8 @@ main(int argc, char* argv[]) {
         QApplication::setOrganizationDomain("sysmo.io");
         QApplication::setQuitOnLastWindowClosed(true);
         QSettings settings;
+
+        bool use_darcula_qss = false;
         QVariant variant = settings.value("color_theme");
         if (variant.isValid()) {
             QString theme = variant.toString();
@@ -56,7 +59,10 @@ main(int argc, char* argv[]) {
                 QApplication::setPalette(Themes::greys);
             else if (theme == "iced")
                 QApplication::setPalette(Themes::iced);
+            else if (theme == "darcula")
+                use_darcula_qss = true;
         }
+
 
         QApplication app(argc, argv);
         //RotatingFileLogger::getLogger()->setParent(&app);
@@ -70,13 +76,19 @@ main(int argc, char* argv[]) {
         QApplication::setStyle("fusion");
 #endif
 
+
         app.setWindowIcon(QIcon(":/icons/logo.png"));
 
 #ifdef USE_WEBSOCKET
         qDebug() << "will use websocket";
 #endif
-
         MainWindow win;
+
+        if (use_darcula_qss == true) {
+            QFile file(":/darcula/darcula.qss");
+            file.open(QIODevice::ReadOnly | QIODevice::Text);
+            win.setStyleSheet(file.readAll());
+        }
 
         RETURN_CODE = app.exec();
 

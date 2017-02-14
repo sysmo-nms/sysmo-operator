@@ -116,12 +116,17 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* theme_ice = new QAction("Iced", this);
     theme_ice->setData(QVariant("iced"));
     theme_ice->setCheckable(true);
+    QAction* theme_darcula = new QAction("Darcula", this);
+    theme_darcula->setData(QVariant("darcula"));
+    theme_darcula->setCheckable(true);
+
     this->color_group = new QActionGroup(this);
     this->color_group->addAction(theme_nat);
     this->color_group->addAction(theme_mid);
     this->color_group->addAction(theme_inl);
     this->color_group->addAction(theme_gre);
     this->color_group->addAction(theme_ice);
+    this->color_group->addAction(theme_darcula);
     this->color_group->setExclusive(true);
     QObject::connect(
             this->color_group, SIGNAL(triggered(QAction*)),
@@ -132,6 +137,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     color_menu->addAction(theme_inl);
     color_menu->addAction(theme_gre);
     color_menu->addAction(theme_ice);
+    color_menu->addAction(theme_darcula);
     color_menu->setIcon(QIcon(":/icons/preferences-desktop-theme.png"));
     theme_nat->setChecked(true);
     // Fill sysmo menu bar END

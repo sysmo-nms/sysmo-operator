@@ -5,14 +5,14 @@
         <file alias="arrow-down-disabled.png">darcula/arrow-down-disabled.png</file>
         <file alias="arrow-down.png">darcula/arrow-down.png</file>
         <file alias="arrow-left.png">darcula/arrow-left.png</file>
+        <file alias="checkbox_checked_focus.png">darcula/checkbox_checked_focus.png</file>
         <file alias="arrow-up-disabled.png">darcula/arrow-up-disabled.png</file>
         <file alias="arrow-up.png">darcula/arrow-up.png</file>
         <file alias="checkbox_checked_disabled.png">darcula/checkbox_checked_disabled.png</file>
-        <file alias="checkbox_checked_focus.png">darcula/checkbox_checked_focus.png</file>
         <file alias="checkbox_checked.png">darcula/checkbox_checked.png</file>
         <file alias="checkbox_unchecked_disabled.png">darcula/checkbox_unchecked_disabled.png</file>
-        <file alias="checkbox_unchecked_focus.png</">darcula/checkbox_unchecked_focus.png</file>
         <file alias="checkbox_unchecked.png">darcula/checkbox_unchecked.png</file>
+        <file alias="checkbox_unchecked_focus.png">darcula/checkbox_unchecked_focus.png</file>
         <file alias="checked.png">darcula/checked.png</file>
         <file alias="close-hover.png">darcula/close-hover.png</file>
         <file alias="close.png">darcula/close.png</file>
