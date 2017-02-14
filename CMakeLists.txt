@@ -162,7 +162,8 @@ set (OPERATOR_QRC
     qrcs/pixmaps.qrc
     qrcs/tree.qrc
     qrcs/rrdio.qrc
-    qrcs/cssressource.qrc)
+    qrcs/cssressource.qrc
+    qrcs/darcula.qrc)
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
