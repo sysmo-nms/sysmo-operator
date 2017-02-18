@@ -28,6 +28,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "monitor/xml/parsecheckmakegraphcmd.h"
 #include "rrds/rrd4qtgraph.h"
 #include "nowheelcombobox.h"
+#include "themes.h"
 
 #include <QObject>
 #include <QWidget>

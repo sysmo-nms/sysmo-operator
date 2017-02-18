@@ -163,7 +163,8 @@ set (OPERATOR_QRC
     qrcs/tree.qrc
     qrcs/rrdio.qrc
     qrcs/cssressource.qrc
-    qrcs/darcula.qrc)
+    qrcs/darcula.qrc
+    qrcs/operator-ui.qrc)
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 

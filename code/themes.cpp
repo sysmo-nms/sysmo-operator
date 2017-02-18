@@ -18,6 +18,28 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "themes.h"
 
+QString Themes::style_used = "";
+void Themes::setStyle(QString style) {
+    Themes::style_used = style;
+}
+
+QString Themes::getStyleSheet() {
+    if (Themes::style_used == "darcula") {
+        QFile file(":/darcula/darcula.qss");
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        return file.readAll();
+    } else if (Themes::style_used == "midnight") {
+        QFile file(":/styles/midnight.qss");
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        return file.readAll();
+    } else {
+        QFile file(":/styles/common.qss");
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        return file.readAll();
+
+    }
+}
+
 QPalette Themes::midnight = Themes::initMidnight();
 QPalette Themes::inland   = Themes::initInland();
 QPalette Themes::greys    = Themes::initGreys();

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/styles">
+        <file alias="common.qss">operator-styles/common.qss</file>
+        <file alias="midnight.qss">operator-styles/midnight.qss</file>
+    </qresource>
+</RCC>

@@ -20,6 +20,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #define SYSMO
 
 #include <Qt>
+#include <QString>
+#include <QFile>
+#include <QIODevice>
 
 
 /**

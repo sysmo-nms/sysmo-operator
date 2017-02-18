@@ -23,6 +23,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPalette>
 #include <QFont>
 #include <QColor>
+#include <QString>
+#include <QFile>
+#include <QIODevice>
 
 class Themes
 {
@@ -31,6 +34,9 @@ public:
     static QPalette inland;
     static QPalette greys;
     static QPalette iced;
+    static QString style_used;
+    static void setStyle(QString style);
+    static QString getStyleSheet();
 
 private:
     static QPalette initMidnight();

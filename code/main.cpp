@@ -34,6 +34,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariant>
 #include <QPointer>
 #include <QFile>
+#include <QFont>
 
 int
 main(int argc, char* argv[]) {
@@ -50,23 +51,28 @@ main(int argc, char* argv[]) {
         bool use_darcula_qss = false;
         QVariant variant = settings.value("color_theme");
         if (variant.isValid()) {
-            QString theme = variant.toString();
-            if (theme == "midnight")
-                QApplication::setPalette(Themes::midnight);
-            else if (theme == "inland")
-                QApplication::setPalette(Themes::inland);
-            else if (theme == "greys")
-                QApplication::setPalette(Themes::greys);
-            else if (theme == "iced")
-                QApplication::setPalette(Themes::iced);
-            else if (theme == "darcula")
-                use_darcula_qss = true;
+                QString theme = variant.toString();
+                Themes::setStyle(theme);
+                if (theme == "midnight") {
+                        //QApplication::setFont(default_font);
+                        QApplication::setPalette(Themes::midnight);
+                } else if (theme == "inland") {
+                        //QApplication::setFont(default_font);
+                        QApplication::setPalette(Themes::inland);
+                } else if  (theme == "greys") {
+                        //QApplication::setFont(default_font);
+                        QApplication::setPalette(Themes::greys);
+                } else if (theme == "iced") {
+                        //QApplication::setFont(default_font);
+                        QApplication::setPalette(Themes::iced);
+                } else if (theme == "darcula") {
+                        use_darcula_qss = true;
+                }
         }
 
 
         QApplication app(argc, argv);
         //RotatingFileLogger::getLogger()->setParent(&app);
-
 
 #if QT_VERSION < 0x050000
         //qInstallMsgHandler(logger...)
@@ -83,12 +89,7 @@ main(int argc, char* argv[]) {
         qDebug() << "will use websocket";
 #endif
         MainWindow win;
-
-        if (use_darcula_qss == true) {
-            QFile file(":/darcula/darcula.qss");
-            file.open(QIODevice::ReadOnly | QIODevice::Text);
-            win.setStyleSheet(file.readAll());
-        }
+        win.setStyleSheet(Themes::getStyleSheet());
 
         RETURN_CODE = app.exec();
 

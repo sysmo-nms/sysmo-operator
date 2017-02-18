@@ -27,6 +27,7 @@ QMap<QString,ProbeWindow*> ProbeWindow::windows = QMap<QString,ProbeWindow*>();
 ProbeWindow::ProbeWindow(QString probeName)
                         : MonitorProxyWidget(probeName)
 {
+    this->setStyleSheet(Themes::getStyleSheet());
 
     this->divider = 1;
     this->margin = 150;

@@ -1,0 +1,69 @@
+* {
+    font-size: 13px;
+    color: #bbb;
+}
+
+QLabel:disabled {
+    color: #777777;
+}
+
+QToolButton:disabled {
+    color: #777777;
+}
+
+QPushButton:disabled,
+QDialog QToolButton:disabled,
+QPushButton::menu-indicator:disabled,
+QDialog QToolButton::menu-button:disabled {
+    color: #777777;
+    background-color: transparent;
+}
+
+QCheckBox:disabled {
+    color: #777777;
+}
+
+QRadioButton:disabled {
+    color: #777777;
+}
+
+QAbstractLineEdit:disabled,
+QTextEdit:disabled,
+QTextEdit:disabled:focus,
+QLineEdit:disabled,
+QLineEdit:disabled:focus,
+QLineEdit:read-only,
+QLineEdit:read-only:focus {
+    color: #777777;
+}
+
+QAbstractSpinBox:disabled,
+QAbstractSpinBox:disabled:focus,
+QAbstractSpinBox::up-button:disabled,
+QAbstractSpinBox::down-button:disabled,
+QSpinBox:disabled,
+QSpinBox:disabled:focus,
+QSpinBox::up-button:disabled,
+QSpinBox::down-button:disabled {
+    color: #777777;
+}
+
+QComboBox:disabled,
+QComboBox::drop-down:disabled {
+    color: #777777;
+}
+
+QComboBox::drop-down:no-frame,
+QComboBox::drop-down:no-frame::disabled {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+QMenu::item:disabled,
+QComboBox QAbstractItemView::item:disabled {
+    color: #666;
+}
+
+QHeaderView::section:disabled {
+    color: #777777;
+}
