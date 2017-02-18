@@ -23,6 +23,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  * from here.
  */
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+
     this->should_close = false;
 
     /*
