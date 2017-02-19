@@ -47,29 +47,27 @@ main(int argc, char* argv[]) {
         QApplication::setOrganizationDomain("sysmo.io");
         QApplication::setQuitOnLastWindowClosed(true);
         QSettings settings;
-
         bool use_darcula_qss = false;
         QVariant variant = settings.value("color_theme");
         if (variant.isValid()) {
-                QString theme = variant.toString();
-                Themes::setStyle(theme);
-                if (theme == "midnight") {
-                        //QApplication::setFont(default_font);
-                        QApplication::setPalette(Themes::midnight);
-                } else if (theme == "inland") {
-                        //QApplication::setFont(default_font);
-                        QApplication::setPalette(Themes::inland);
-                } else if  (theme == "greys") {
-                        //QApplication::setFont(default_font);
-                        QApplication::setPalette(Themes::greys);
-                } else if (theme == "iced") {
-                        //QApplication::setFont(default_font);
-                        QApplication::setPalette(Themes::iced);
-                } else if (theme == "darcula") {
-                        use_darcula_qss = true;
-                }
+            QString theme = variant.toString();
+            Themes::setStyle(theme);
+            if (theme == "midnight") {
+                //QApplication::setFont(default_font);
+                QApplication::setPalette(Themes::midnight);
+            } else if (theme == "inland") {
+                //QApplication::setFont(default_font);
+                QApplication::setPalette(Themes::inland);
+            } else if (theme == "greys") {
+                //QApplication::setFont(default_font);
+                QApplication::setPalette(Themes::greys);
+            } else if (theme == "iced") {
+                //QApplication::setFont(default_font);
+                QApplication::setPalette(Themes::iced);
+            } else if (theme == "darcula") {
+                use_darcula_qss = true;
+            }
         }
-
 
         QApplication app(argc, argv);
         //RotatingFileLogger::getLogger()->setParent(&app);
