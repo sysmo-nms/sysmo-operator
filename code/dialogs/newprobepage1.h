@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWPROBEPAGE1_H
 #define NEWPROBEPAGE1_H
 
@@ -45,13 +45,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMap>
+#include <QWizard>
 
 #include <QDebug>
 
-
-class NewProbePage1 : public QWizardPage
-{
-
+class NewProbePage1 : public QWizardPage {
     Q_OBJECT
 
 public:
@@ -60,7 +58,7 @@ public:
      */
     NewProbePage1(QString forTarget, QWizard* parent = 0);
     bool isComplete() const;
-    int  nextId()     const;
+    int nextId() const;
 
 private:
     QTreeView* treeview;
@@ -68,6 +66,10 @@ private:
 
 private slots:
     void handleHelpTriggered();
+    void checkComplete();
+
+signals:
+    void forceNext();
 };
 
 #endif // NEWPROBEPAGE1_H

@@ -15,17 +15,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "newprobepage1.h"
 
-
 NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
-    : QWizardPage(parent)
-{
+: QWizardPage(parent) {
 
-    QMap<QString,QVariant> target = Monitor::getTarget(forTarget).toMap();
+    QMap<QString, QVariant> target = Monitor::getTarget(forTarget).toMap();
 
-    QMap<QString,QVariant> properties = target.value("properties").toMap();
+    QMap<QString, QVariant> properties = target.value("properties").toMap();
     QString snmpAwareStr = properties.value("isSnmpAware").toString();
 
     bool snmpAware;
@@ -57,28 +55,31 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     clear->setIcon(QIcon(":/icons/edit-clear.png"));
 
     QObject::connect(
-                clear,  SIGNAL(clicked(bool)),
-                search, SLOT(clear()));
+            clear, SIGNAL(clicked(bool)),
+            search, SLOT(clear()));
 
     this->treeview = new QTreeView(this);
     this->treeview->setSelectionMode(QAbstractItemView::SingleSelection);
     this->treeview->setSortingEnabled(true);
 
     QObject::connect(
-                this->treeview, SIGNAL(clicked(QModelIndex)),
-                this,           SIGNAL(completeChanged()));
+            this->treeview, SIGNAL(clicked(QModelIndex)),
+            this, SIGNAL(completeChanged()));
 
     QObject::connect(
-                clear,          SIGNAL(clicked(bool)),
-                this->treeview, SLOT(clearSelection()));
+            clear, SIGNAL(clicked(bool)),
+            this->treeview, SLOT(clearSelection()));
 
     QObject::connect(
-                clear, SIGNAL(clicked(bool)),
-                this,  SIGNAL(completeChanged()));
+            clear, SIGNAL(clicked(bool)),
+            this, SIGNAL(completeChanged()));
 
     QObject::connect(
-                this->treeview, SIGNAL(doubleClicked(QModelIndex)),
-                parent,         SLOT(next()));
+            this->treeview, SIGNAL(doubleClicked(QModelIndex)),
+            this, SLOT(checkComplete()));
+    QObject::connect(
+            this, SIGNAL(forceNext()),
+            parent, SLOT(next()));
 
     QStandardItemModel* model = new QStandardItemModel(this);
     model->setColumnCount(2);
@@ -94,12 +95,12 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     proxy->setFilterKeyColumn(-1);
 
     QObject::connect(
-                search, SIGNAL(textChanged(QString)),
-                proxy,  SLOT(setFilterFixedString(QString)));
+            search, SIGNAL(textChanged(QString)),
+            proxy, SLOT(setFilterFixedString(QString)));
 
     QObject::connect(
-                search, SIGNAL(textChanged(QString)),
-                this,   SIGNAL(completeChanged()));
+            search, SIGNAL(textChanged(QString)),
+            this, SIGNAL(completeChanged()));
 
     this->treeview->setModel(proxy);
 
@@ -108,19 +109,19 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
     nchecks_help->setIcon(QIcon(":/icons/help-browser.png"));
     nchecks_help->setFlat(true);
     QObject::connect(
-                nchecks_help, SIGNAL(clicked(bool)),
-                this,         SLOT(handleHelpTriggered()));
+            nchecks_help, SIGNAL(clicked(bool)),
+            this, SLOT(handleHelpTriggered()));
 
-    grid->addWidget(clear, 0,0);
-    grid->addWidget(search, 0,1);
-    grid->addWidget(nchecks_help, 0,3);
-    grid->addWidget(this->treeview, 1,0,1,5);
-    grid->setColumnStretch(0,0);
-    grid->setColumnStretch(1,1);
-    grid->setColumnStretch(2,1);
-    grid->setColumnStretch(3,0);
-    grid->setRowStretch(0,0);
-    grid->setRowStretch(1,1);
+    grid->addWidget(clear, 0, 0);
+    grid->addWidget(search, 0, 1);
+    grid->addWidget(nchecks_help, 0, 3);
+    grid->addWidget(this->treeview, 1, 0, 1, 5);
+    grid->setColumnStretch(0, 0);
+    grid->setColumnStretch(1, 1);
+    grid->setColumnStretch(2, 1);
+    grid->setColumnStretch(3, 0);
+    grid->setRowStretch(0, 0);
+    grid->setRowStretch(1, 1);
 
     /*
      * Populate model
@@ -138,15 +139,15 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
         reader.parse(input);
 
         QStandardItem* item_name = new QStandardItem();
-        item_name->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        item_name->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         item_name->setData(parser->name, Qt::DisplayRole);
 
         QStandardItem* item_req = new QStandardItem();
-        item_req->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        item_req->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         item_req->setData(parser->require, Qt::DisplayRole);
 
         QStandardItem* item_desc = new QStandardItem();
-        item_desc->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        item_desc->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         item_desc->setData(parser->desc, Qt::DisplayRole);
 
         QList<QStandardItem*> row;
@@ -170,10 +171,15 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
 
 }
 
+void NewProbePage1::checkComplete() {
+    if (this->isComplete()) {
+        emit this->forceNext();
+    }
+}
 
-bool NewProbePage1::isComplete() const
-{
+bool NewProbePage1::isComplete() const {
 
+    qDebug() << "is complete?";
     QList<QModelIndex> idx = this->treeview->selectionModel()->selectedIndexes();
     if (idx.length() == 0) {
         this->selection->setText("");
@@ -187,12 +193,11 @@ bool NewProbePage1::isComplete() const
 
 }
 
+int NewProbePage1::nextId() const {
+    return 2;
+}
 
-int NewProbePage1::nextId() const {return 2;}
-
-
-void NewProbePage1::handleHelpTriggered()
-{
+void NewProbePage1::handleHelpTriggered() {
 
     QDesktopServices::openUrl(QUrl("https://github.com/sysmo-nms/sysmo-nms.github.io/wiki/Sysmo-NChecks"));
 
