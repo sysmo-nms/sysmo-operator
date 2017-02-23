@@ -72,8 +72,8 @@ find %{buildroot}%{_datadir} -name "*.png" -exec chmod 644 {} \;
 
 %post
 if [ -x %{_bindir}/gtk-update-icon-cache ]; then
-  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor;
-  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/HighContrast;
+  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor &> /dev/null
+  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/HighContrast &> /dev/null
 fi
 update-mime-database %{_datadir}/mime &> /dev/null || :
 update-desktop-database &> /dev/null || :
@@ -81,8 +81,8 @@ update-desktop-database &> /dev/null || :
 %postun
 touch --no-create %{_datadir}/icons/hicolor
 if [ -x %{_bindir}/gtk-update-icon-cache ]; then
-  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor;
-  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/HighContrast;
+  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor &> /dev/null || :
+  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/HighContrast &> /dev/null || :
 fi
 update-mime-database %{_datadir}/mime &> /dev/null || :
 update-desktop-database &> /dev/null || :
