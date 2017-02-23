@@ -60,6 +60,7 @@ QComboBox::drop-down:no-frame::disabled {
     background-color: transparent;
 }
 
+QTreeView::item:disabled,
 QMenu::item:disabled,
 QComboBox QAbstractItemView::item:disabled {
     color: #666;
