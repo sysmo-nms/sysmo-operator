@@ -102,6 +102,9 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
 
     QObject::connect(
             this->treeview, SIGNAL(doubleClicked(QModelIndex)),
+            this, SLOT(checkComplete()));
+    QObject::connect(
+            this, SIGNAL(forceNext()),
             parent, SLOT(next()));
 
     QStandardItemModel* model = new QStandardItemModel(this);
@@ -194,8 +197,15 @@ NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
 
 }
 
+void NewProbePage1::checkComplete() {
+    if (this->isComplete()) {
+        emit this->forceNext();
+    }
+}
+
 bool NewProbePage1::isComplete() const {
 
+    qDebug() << "is complete?";
     QList<QModelIndex> idx = this->treeview->selectionModel()->selectedIndexes();
     if (idx.length() == 0) {
         this->selection->setText("");

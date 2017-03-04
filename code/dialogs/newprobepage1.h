@@ -41,6 +41,10 @@ private:
 
 private slots:
     void handleHelpTriggered();
+    void checkComplete();
+
+signals:
+    void forceNext();
 };
 
 #endif // NEWPROBEPAGE1_H
