@@ -15,32 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MENUTARGET_H
 #define MENUTARGET_H
-
-#include "sysmo.h"
-#include "monitor.h"
-#include "dialogs/messagebox.h"
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "actions/monitoractions.h"
-
-#include <QObject>
+#include <QMenu>
 #include <QWidget>
 #include <QString>
-#include <QMenu>
 #include <QPoint>
-#include <QAction>
-#include <QIcon>
-#include <QMessageBox>
 #include <QVariant>
-#include <QMap>
 
-#include <QDebug>
-
-class MenuTarget : public QMenu
-{
+class MenuTarget : public QMenu {
     Q_OBJECT
 
 public:

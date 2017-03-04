@@ -15,13 +15,29 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "monitoractionsdialog.h"
+#include "sysmo.h"
+#include "ngrid.h"
+#include "nframe.h"
+#include "dialogs/messagebox.h"
 
+#include "monitoractioncreate.h"
+#include "actionprocess.h"
+
+#include <QObject>
+#include <QLabel>
+#include <QSettings>
+#include <QVariant>
+#include <QHash>
+#include <QDebug>
+#include <QIcon>
+#include <QDialogButtonBox>
+#include <QHashIterator>
+#include <QStringList>
 
 MonitorActionsDialog::MonitorActionsDialog(QWidget* parent, QString target)
-    : QDialog(parent)
-{
+: QDialog(parent) {
 
     this->target = target;
     NGrid* grid = new NGrid();
@@ -37,29 +53,29 @@ MonitorActionsDialog::MonitorActionsDialog(QWidget* parent, QString target)
     addAction->setText("New...");
     addAction->setIcon(QIcon(":/icons/list-add.png"));
     QObject::connect(
-                addAction, SIGNAL(clicked(bool)),
-                this, SLOT(handleAddAction()));
+            addAction, SIGNAL(clicked(bool)),
+            this, SLOT(handleAddAction()));
 
     this->delAction = new QPushButton(this);
     delAction->setText("Delete...");
     QObject::connect(
-                delAction, SIGNAL(clicked(bool)),
-                this, SLOT(handleDelAction()));
+            delAction, SIGNAL(clicked(bool)),
+            this, SLOT(handleDelAction()));
 
     this->editAction = new QPushButton(this);
     editAction->setText("Edit...");
     QObject::connect(
-                editAction, SIGNAL(clicked(bool)),
-                this, SLOT(handleEditAction()));
+            editAction, SIGNAL(clicked(bool)),
+            this, SLOT(handleEditAction()));
 
-    this->list_view  = new QListWidget(this);
+    this->list_view = new QListWidget(this);
     this->list_view->setSelectionMode(QAbstractItemView::SingleSelection);
     QObject::connect(
-                this->list_view, SIGNAL(itemSelectionChanged()),
-                this,            SLOT(handleSelectionChange()));
+            this->list_view, SIGNAL(itemSelectionChanged()),
+            this, SLOT(handleSelectionChange()));
     QObject::connect(
-                this->list_view, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-                this, SLOT(handleDoubleClicked(QListWidgetItem*)));
+            this->list_view, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(handleDoubleClicked(QListWidgetItem*)));
 
     /*
      * button box
@@ -68,30 +84,28 @@ MonitorActionsDialog::MonitorActionsDialog(QWidget* parent, QString target)
     buttonBox->addButton(QDialogButtonBox::Close);
     QPushButton *close = buttonBox->button(QDialogButtonBox::Close);
     QObject::connect(
-                close, SIGNAL(clicked(bool)),
-                this,  SLOT(close()));
-    grid->addWidget(addAction, 0,0);
-    grid->addWidget(this->editAction, 3,0);
-    grid->addWidget(this->delAction, 4,0);
-    grid->addWidget(list_view, 0,1,5,1);
-    grid->addWidget(buttonBox, 5,0,1,2);
+            close, SIGNAL(clicked(bool)),
+            this, SLOT(close()));
+    grid->addWidget(addAction, 0, 0);
+    grid->addWidget(this->editAction, 3, 0);
+    grid->addWidget(this->delAction, 4, 0);
+    grid->addWidget(list_view, 0, 1, 5, 1);
+    grid->addWidget(buttonBox, 5, 0, 1, 2);
 
-    grid->setRowStretch(0,0);
-    grid->setRowStretch(1,1);
-    grid->setRowStretch(2,0);
-    grid->setRowStretch(3,0);
-    grid->setRowStretch(4,0);
+    grid->setRowStretch(0, 0);
+    grid->setRowStretch(1, 1);
+    grid->setRowStretch(2, 0);
+    grid->setRowStretch(3, 0);
+    grid->setRowStretch(4, 0);
 
-    grid->setColumnStretch(0,0);
-    grid->setColumnStretch(1,1);
+    grid->setColumnStretch(0, 0);
+    grid->setColumnStretch(1, 1);
     this->updateView();
 
 }
 
-
 void
-MonitorActionsDialog::updateView()
-{
+MonitorActionsDialog::updateView() {
 
     this->list_view->clear();
     this->handleSelectionChange();
@@ -112,10 +126,8 @@ MonitorActionsDialog::updateView()
 
 }
 
-
 void
-MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
-{
+MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item) {
 
     QString name = item->data(Qt::DisplayRole).toString();
 
@@ -135,10 +147,8 @@ MonitorActionsDialog::handleDoubleClicked(QListWidgetItem *item)
 
 }
 
-
 void
-MonitorActionsDialog::handleDelAction()
-{
+MonitorActionsDialog::handleDelAction() {
 
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
     QListWidgetItem *item = selection.at(0);
@@ -162,10 +172,8 @@ MonitorActionsDialog::handleDelAction()
 
 }
 
-
 void
-MonitorActionsDialog::handleEditAction()
-{
+MonitorActionsDialog::handleEditAction() {
 
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
     QListWidgetItem *item = selection.at(0);
@@ -181,7 +189,7 @@ MonitorActionsDialog::handleEditAction()
 
     targetConf.remove(name);
 
-    QString cmd  = create.cmd->text();
+    QString cmd = create.cmd->text();
     QString args = create.args->text();
     QString newname = create.name->text();
 
@@ -196,10 +204,8 @@ MonitorActionsDialog::handleEditAction()
 
 }
 
-
 void
-MonitorActionsDialog::handleSelectionChange()
-{
+MonitorActionsDialog::handleSelectionChange() {
 
     QList<QListWidgetItem*> selection = this->list_view->selectedItems();
     if (selection.size() == 0) {
@@ -213,8 +219,7 @@ MonitorActionsDialog::handleSelectionChange()
 }
 
 void
-MonitorActionsDialog::handleAddAction()
-{
+MonitorActionsDialog::handleAddAction() {
 
     MonitorActionCreate create(this);
 

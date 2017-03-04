@@ -15,30 +15,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef ITEMPROBE_H
 #define ITEMPROBE_H
-
-#include "sysmo.h"
-#include "systemtray.h"
-#include "qjson.h"
-
-#include <QObject>
 #include <QStandardItem>
-#include <QList>
-#include <QVariant>
-#include <QIcon>
-#include <Qt>
-#include <QPixmap>
-#include <QDateTime>
 #include <QMap>
+#include <QString>
+#include <QVariant>
+#include <QPixmap>
 
-#include <QDebug>
-
-class ItemProbe : public QStandardItem
-{
+class ItemProbe : public QStandardItem {
 public:
-    ItemProbe(QMap<QString,QVariant> info_probe);
+    ItemProbe(QMap<QString, QVariant> info_probe);
     QString name;
     QString belong_to;
     QStandardItem* item_status;
@@ -48,8 +36,8 @@ public:
     QString orig_filter;
     QString targ_filter;
     int type() const;
-    void updateInfo(QMap<QString,QVariant> info_probe);
-    void updateReturnInfo(QMap<QString,QVariant> probe_return);
+    void updateInfo(QMap<QString, QVariant> info_probe);
+    void updateReturnInfo(QMap<QString, QVariant> probe_return);
     void setTargetFilter(QString filter);
 
 private:

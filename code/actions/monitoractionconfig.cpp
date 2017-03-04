@@ -15,12 +15,20 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "monitoractionconfig.h"
+#include "ngrid.h"
+#include "nframe.h"
+#include "ngridcontainer.h"
+
+#include <QTreeWidgetItem>
+#include <QStringList>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 MonitorActionConfig::MonitorActionConfig(QWidget* parent, QString target)
-        : QDialog(parent)
-{
+: QDialog(parent) {
 
     this->target = target;
     this->setMinimumHeight(200);
@@ -38,16 +46,16 @@ MonitorActionConfig::MonitorActionConfig(QWidget* parent, QString target)
     buttonBox->addButton(QDialogButtonBox::Close);
     QPushButton *close = buttonBox->button(QDialogButtonBox::Close);
     QObject::connect(
-                close, SIGNAL(clicked(bool)),
-                this,  SLOT(close()));
+            close, SIGNAL(clicked(bool)),
+            this, SLOT(close()));
 
     NFrame *frame = new NFrame(this);
 
     NGrid *grid = new NGrid();
     frame->setLayout(grid);
-    grid->addWidget(label, 0,0);
-    grid->addWidget(this->tree_widget, 1,0);
-    grid->addWidget(buttonBox, 2,0);
+    grid->addWidget(label, 0, 0);
+    grid->addWidget(this->tree_widget, 1, 0);
+    grid->addWidget(buttonBox, 2, 0);
 
 
     NGridContainer *grid_container = new NGridContainer(this);

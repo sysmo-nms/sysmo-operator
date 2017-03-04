@@ -15,28 +15,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SUPERCASTWEBSOCKET_H
 #define SUPERCASTWEBSOCKET_H
-
-#include "sysmo.h"
-#include "qjson.h"
-
 #include <QObject>
-#include <QStringList>
-#include <QTcpSocket>
-#include <QAbstractSocket>
-#include <QDataStream>
 #include <QHostAddress>
-#include <QIODevice>
-#include <Qt>
-#include <QTimer>
-#include <QVariant>
 #include <QWebSocket>
-#include <QUrl>
+#include <QVariant>
+#include <QAbstractSocket>
+#include <QByteArray>
+#include <QTimer>
 
-class SupercastWebSocket : public QObject
-{
+class SupercastWebSocket : public QObject {
     Q_OBJECT
 
 public:
@@ -51,7 +41,7 @@ public slots:
     void threadStarted();
 
 private:
-    static qint32     arrayToInt32(QByteArray source);
+    static qint32 arrayToInt32(QByteArray source);
     static QByteArray int32ToArray(qint32 source);
     QHostAddress host;
     qint16 port;

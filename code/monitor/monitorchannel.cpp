@@ -15,13 +15,22 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "monitorchannel.h"
 
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "rrds/rrd4qt.h"
+#include "rrds/rrd4qtsignal.h"
+
+#include <QDebug>
+#include <QMapIterator>
+#include <QStringList>
+#include <QStringListIterator>
+#include <QQueue>
 
 MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
-    : QObject(parent)
-{
+: QObject(parent) {
 
     this->sync_dir = "sync";
     this->channel = chan_name;
@@ -35,27 +44,23 @@ MonitorChannel::MonitorChannel(QString chan_name, QObject *parent)
      */
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QVariant)),
-                this, SLOT(handleServerEvent(QVariant)));
+            sig, SIGNAL(serverMessage(QVariant)),
+            this, SLOT(handleServerEvent(QVariant)));
 
     Supercast::subscribe(this->channel, sig);
 
 }
 
-
-MonitorChannel::~MonitorChannel()
-{
+MonitorChannel::~MonitorChannel() {
 
     emit this->channelDeleted(this->channel);
 
 }
 
+void MonitorChannel::handleServerEvent(QVariant event_variant) {
 
-void MonitorChannel::handleServerEvent(QVariant event_variant)
-{
-
-    QMap<QString,QVariant> event = event_variant.toMap();
-    if (event.value("type").toString() == "subscribeOk")  return;
+    QMap<QString, QVariant> event = event_variant.toMap();
+    if (event.value("type").toString() == "subscribeOk") return;
     if (event.value("type").toString() == "subscribeErr") return;
 
     /*
@@ -71,10 +76,10 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
         /*
          * get http dump dir and file
          */
-        QString dump_dir  = event.value("value").toMap()
-                                 .value("httpDumpDir").toString();
+        QString dump_dir = event.value("value").toMap()
+                .value("httpDumpDir").toString();
         QString dump_file = event.value("value").toMap()
-                                 .value("rrdFile").toString();
+                .value("rrdFile").toString();
 
         /*
          * build url
@@ -88,8 +93,8 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
          */
         SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
-                    sig,  SIGNAL(serverMessage(QString)),
-                    this, SLOT(handleHttpReplySimple(QString)));
+                sig, SIGNAL(serverMessage(QString)),
+                this, SLOT(handleHttpReplySimple(QString)));
 
 
         /*
@@ -125,15 +130,15 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
         /*
          * Extract update informations
          */
-        QMap<QString,QVariant> content =   event.value("value").toMap();
-        QMap<QString,QVariant> updates = content.value("rrdupdates").toMap();
+        QMap<QString, QVariant> content = event.value("value").toMap();
+        QMap<QString, QVariant> updates = content.value("rrdupdates").toMap();
         int timestamp = content.value("timestamp").toInt();
 
 
         /*
          * Create rrd query message
          */
-        QMap<QString,QVariant> update_query;
+        QMap<QString, QVariant> update_query;
         update_query.insert("type", "update");
         update_query.insert("updates", updates);
         update_query.insert("file", this->simple_file.fileName());
@@ -145,8 +150,8 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
          */
         Rrd4QtSignal* sig = new Rrd4QtSignal();
         QObject::connect(
-                    sig, SIGNAL(serverMessage(QVariant)),
-                    this, SLOT(handleRrdEventSimple(QVariant)));
+                sig, SIGNAL(serverMessage(QVariant)),
+                this, SLOT(handleRrdEventSimple(QVariant)));
 
         /*
          * Call rrd to update rrd
@@ -174,9 +179,9 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
         /*
          * Extract dump informations
          */
-        QMap<QString,QVariant> content = event.value("value").toMap();
-        QString       dump_dir = content.value("httpDumpDir").toString();
-        QMap<QString,QVariant> id_to_file = content.value("elementToFile").toMap();
+        QMap<QString, QVariant> content = event.value("value").toMap();
+        QString dump_dir = content.value("httpDumpDir").toString();
+        QMap<QString, QVariant> id_to_file = content.value("elementToFile").toMap();
 
 
         /*
@@ -187,7 +192,7 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
             /*
              * Extract element id and dump_file
              */
-            QString elem_id   = i.next();
+            QString elem_id = i.next();
             QString dump_file = id_to_file.value(elem_id).toString();
 
 
@@ -220,8 +225,8 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
              */
             SupercastSignal* sig = new SupercastSignal();
             QObject::connect(
-                  sig,  SIGNAL(serverMessage(QString)),
-                  this, SLOT(handleHttpReplyTable(QString)));
+                    sig, SIGNAL(serverMessage(QString)),
+                    this, SLOT(handleHttpReplyTable(QString)));
 
             /*
              * get the file
@@ -249,8 +254,8 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
         /*
          * Extract update informations
          */
-        QMap<QString,QVariant> content = event.value("value").toMap();
-        QMap<QString,QVariant> updates = content.value("rrdupdates").toMap();
+        QMap<QString, QVariant> content = event.value("value").toMap();
+        QMap<QString, QVariant> updates = content.value("rrdupdates").toMap();
         int timestamp = content.value("timestamp").toInt();
 
 
@@ -266,7 +271,7 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
          */
         QStringListIterator i(updates.keys());
         while (i.hasNext()) {
-            QString id       = i.next();
+            QString id = i.next();
 
             /*
              * Add an entry to pending hash
@@ -281,12 +286,12 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
             /*
              * Extract updates as is (jsonObject)
              */
-            QMap<QString,QVariant> up = updates.value(id).toMap();
+            QMap<QString, QVariant> up = updates.value(id).toMap();
 
             /*
              * Build query
              */
-            QMap<QString,QVariant> update_query;
+            QMap<QString, QVariant> update_query;
             update_query.insert("type", "update");
             update_query.insert("updates", up);
             update_query.insert("file", rrd_file);
@@ -298,8 +303,8 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
              */
             Rrd4QtSignal* sig = new Rrd4QtSignal();
             QObject::connect(
-                        sig,  SIGNAL(serverMessage(QVariant)),
-                        this, SLOT(handleRrdEventTable(QVariant)));
+                    sig, SIGNAL(serverMessage(QVariant)),
+                    this, SLOT(handleRrdEventTable(QVariant)));
 
             /*
              * call rrd update
@@ -316,11 +321,9 @@ void MonitorChannel::handleServerEvent(QVariant event_variant)
 
 }
 
+void MonitorChannel::handleRrdEventTable(QVariant event_variant) {
 
-void MonitorChannel::handleRrdEventTable(QVariant event_variant)
-{
-
-    QMap<QString,QVariant> event = event_variant.toMap();
+    QMap<QString, QVariant> event = event_variant.toMap();
     /*
      * Extract opaque set in handlerServerEvent() from event
      */
@@ -340,10 +343,9 @@ void MonitorChannel::handleRrdEventTable(QVariant event_variant)
     bool pending_rrds = false;
     QMap<QString, bool>::iterator i;
     for (
-         i  = this->table_file_rrd_pending.begin();
-         i != this->table_file_rrd_pending.end();
-         ++i)
-    {
+            i = this->table_file_rrd_pending.begin();
+            i != this->table_file_rrd_pending.end();
+            ++i) {
         if (i.value()) {
             pending_rrds = true;
             break;
@@ -357,7 +359,7 @@ void MonitorChannel::handleRrdEventTable(QVariant event_variant)
         /*
          * Emit an update message to the connected widgets
          */
-        QMap<QString,QVariant> update_msg;
+        QMap<QString, QVariant> update_msg;
         update_msg.insert("event", "update");
 
         emit this->channelEvent(update_msg);
@@ -381,16 +383,14 @@ void MonitorChannel::handleRrdEventTable(QVariant event_variant)
 
 }
 
-
-void MonitorChannel::handleRrdEventSimple(QVariant event_variant)
-{
+void MonitorChannel::handleRrdEventSimple(QVariant event_variant) {
 
     Q_UNUSED(event_variant);
 
     /*
      * Emit message of type update
      */
-    QMap<QString,QVariant> update_msg;
+    QMap<QString, QVariant> update_msg;
     update_msg.insert("event", "update");
     emit this->channelEvent(update_msg);
 
@@ -412,9 +412,7 @@ void MonitorChannel::handleRrdEventSimple(QVariant event_variant)
 
 }
 
-
-void MonitorChannel::handleHttpReplySimple(QString rep)
-{
+void MonitorChannel::handleHttpReplySimple(QString rep) {
 
     Q_UNUSED(rep);
 
@@ -441,7 +439,6 @@ void MonitorChannel::handleHttpReplySimple(QString rep)
 
 }
 
-
 void MonitorChannel::handleHttpReplyTable(QString element) {
 
     /*
@@ -457,10 +454,9 @@ void MonitorChannel::handleHttpReplyTable(QString element) {
     bool all_files_ready = true;
     QMap<QString, bool>::iterator i;
     for (
-         i  = this->table_files_update_status.begin();
-         i != this->table_files_update_status.end();
-         ++i)
-    {
+            i = this->table_files_update_status.begin();
+            i != this->table_files_update_status.end();
+            ++i) {
         if (!i.value()) {
             all_files_ready = false;
             break;
@@ -496,12 +492,11 @@ void MonitorChannel::handleHttpReplyTable(QString element) {
 
 }
 
+void MonitorChannel::increaseSubscriberCount() {
+    this->subscriber_count += 1;
+}
 
-void MonitorChannel::increaseSubscriberCount(){this->subscriber_count += 1;}
-
-
-void MonitorChannel::decreaseSubscriberCount()
-{
+void MonitorChannel::decreaseSubscriberCount() {
 
     this->subscriber_count -= 1;
 
@@ -516,44 +511,41 @@ void MonitorChannel::decreaseSubscriberCount()
 
 }
 
-bool        MonitorChannel::hasDumpInfo() {return this->synchronized;}
+bool MonitorChannel::hasDumpInfo() {
+    return this->synchronized;
+}
 
-
-QMap<QString,QVariant> MonitorChannel::getDumpInfo()
-{
+QMap<QString, QVariant> MonitorChannel::getDumpInfo() {
 
     return this->buildDump();
 
 }
 
-
-QMap<QString,QVariant> MonitorChannel::buildDump()
-{
+QMap<QString, QVariant> MonitorChannel::buildDump() {
 
     /*
      * If chan is "simple" the buildDump is simple
      */
     if (this->chan_type == "simple") {
-        QMap<QString,QVariant> dumpEvent;
+        QMap<QString, QVariant> dumpEvent;
         dumpEvent.insert("event", "dump");
         dumpEvent.insert("type", "simple");
         dumpEvent.insert("rrdFile", this->simple_file.fileName());
         return dumpEvent;
     }
     if (this->chan_type == "table") {
-        QMap<QString,QVariant> table_dump;
+        QMap<QString, QVariant> table_dump;
 
         /*
          * If chan is "table", we need to iterate over table_files
          */
-        QMap<QString,QString>::iterator i;
+        QMap<QString, QString>::iterator i;
         for (i = this->table_files.begin();
-                 i != this->table_files.end(); ++i)
-        {
+                i != this->table_files.end(); ++i) {
             table_dump.insert(i.key(), i.value());
         }
 
-        QMap<QString,QVariant> dumpEvent;
+        QMap<QString, QVariant> dumpEvent;
         dumpEvent.insert("event", "dump");
         dumpEvent.insert("type", "table");
         dumpEvent.insert("rrdFiles", table_dump);
@@ -565,7 +557,7 @@ QMap<QString,QVariant> MonitorChannel::buildDump()
      * Should never occur.
      */
     qCritical() <<
-              "buildDump() called with wrong chan_type: " << this->chan_type;
-    return QMap<QString,QVariant>();
-   
+            "buildDump() called with wrong chan_type: " << this->chan_type;
+    return QMap<QString, QVariant>();
+
 }

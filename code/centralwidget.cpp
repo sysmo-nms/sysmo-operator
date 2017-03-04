@@ -17,6 +17,18 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "centralwidget.h"
+#include "ngrid.h"
+#include "ngridcontainer.h"
+#include "sidebutton.h"
+#include "monitor/monitorwidget.h"
+#include "dashboard/dashboardwidget.h"
+
+#include <QObject>
+#include <QWidget>
+#include <QButtonGroup>
+#include <QStackedLayout>
+#include <QSize>
+#include <QIcon>
 
 /**
  * Only UI layout things in this class

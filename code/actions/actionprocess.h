@@ -15,19 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef ACTIONPROCESS_H
 #define ACTIONPROCESS_H
 
-#include "systemtray.h"
-
 #include <QObject>
 #include <QProcess>
-#include <QDebug>
-#include <QSystemTrayIcon>
+#include <QString>
+#include <QStringList>
 
-class ActionProcess : public QProcess
-{
+class ActionProcess : public QProcess {
     Q_OBJECT
 public:
     ActionProcess(QObject *parent = 0);

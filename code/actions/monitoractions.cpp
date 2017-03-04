@@ -15,12 +15,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "monitoractions.h"
+#include "monitor/monitor.h"
 
+#include "monitoractionsdialog.h"
+#include "monitoractionconfig.h"
 
-void MonitorActions::openActionFor(QString target)
-{
+#include <QDebug>
+#include <QSettings>
+#include <QVariant>
+
+void MonitorActions::openActionFor(QString target) {
 
     qDebug() << "open action for" << target;
 
@@ -28,10 +34,9 @@ void MonitorActions::openActionFor(QString target)
     QVariant variant_actions_settings = actions_settings.value("actions/monitoractions");
 
     // if settings is initialized
-    if (variant_actions_settings.isValid())
-    {
+    if (variant_actions_settings.isValid()) {
         QMap<QString, QVariant> dict_actions_settings =
-                                               variant_actions_settings.toMap();
+                variant_actions_settings.toMap();
         QVariant target_actions = dict_actions_settings.value(target);
 
         // if tval is valid hence have at least one action execute it
@@ -44,7 +49,7 @@ void MonitorActions::openActionFor(QString target)
         /*
          * Initialize empty QMap<QString,QVariant>
          */
-        actions_settings.setValue("actions/monitoractions", QMap<QString,QVariant>());
+        actions_settings.setValue("actions/monitoractions", QMap<QString, QVariant>());
         actions_settings.sync();
     }
 
@@ -55,7 +60,7 @@ void MonitorActions::openActionFor(QString target)
      * MonitorWidget instance has parent
      */
     MonitorActionsDialog* dialog =
-       new MonitorActionsDialog(
-                Monitor::getCenterWidget(), target);
+            new MonitorActionsDialog(
+            Monitor::getCenterWidget(), target);
     dialog->open();
 }

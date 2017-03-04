@@ -15,14 +15,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PARSECHECKGETINFOS_H
 #define PARSECHECKGETINFOS_H
 
 #include <QXmlDefaultHandler>
+#include <QString>
+#include <QXmlAttributes>
 
-class ParseCheckGetInfos : public QXmlDefaultHandler
-{
+class ParseCheckGetInfos : public QXmlDefaultHandler {
 public:
     QString name;
     QString require;

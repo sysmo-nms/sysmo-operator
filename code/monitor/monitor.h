@@ -15,25 +15,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MONITOR_H
 #define MONITOR_H
-
-#include "network/supercast.h"
-#include "qjson.h"
-#include "monitorchannel.h"
-
-#include <QObject>
 #include <QWidget>
-#include <QMap>
 #include <QString>
 #include <QVariant>
+#include <QObject>
+#include <QMap>
+#include "monitorchannel.h"
 
-#include <QDebug>
-
-
-class MonitorProxyWidget : public QWidget
-{
+class MonitorProxyWidget : public QWidget {
     Q_OBJECT
 protected:
     QString my_channel;
@@ -51,16 +43,14 @@ signals:
 
 };
 
-
-class Monitor : public QObject
-{
+class Monitor : public QObject {
     Q_OBJECT
 public:
     explicit Monitor(QObject *parent = 0);
     ~Monitor();
     static Monitor* getInstance();
-    QMap<QString, QVariant>*     targets;
-    QMap<QString, QVariant>*     probes;
+    QMap<QString, QVariant>* targets;
+    QMap<QString, QVariant>* probes;
     QMap<QString, MonitorChannel*>* channels;
     static void subscribeToChannel(
             QString channel, MonitorProxyWidget* subscriber);

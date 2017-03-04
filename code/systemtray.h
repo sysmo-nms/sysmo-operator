@@ -15,19 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SYSTEMTRAY_H
 #define SYSTEMTRAY_H
+#include <QSystemTrayIcon>
 
 #include <QObject>
-#include <QWidget>
-#include <QSystemTrayIcon>
-#include <QIcon>
 
-class SystemTray : public QSystemTrayIcon
-{
+class SystemTray : public QSystemTrayIcon {
     Q_OBJECT
-    
+
 public:
     explicit SystemTray(QObject *parent = 0);
 

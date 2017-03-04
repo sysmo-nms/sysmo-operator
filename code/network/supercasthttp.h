@@ -15,29 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SUPERCASTHTTP_H
 #define SUPERCASTHTTP_H
+
+#include <QObject>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 
 #include "supercasthttpreply.h"
 #include "supercasthttprequest.h"
 
-#include <QObject>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QHostAddress>
-#include <QUrl>
-#include <QString>
-#include <QVariant>
-#include <QHash>
-#include <QFile>
-#include <QMetaType>
-
-#include <QDebug>
-
-class SupercastHTTP : public QNetworkAccessManager
-{
+class SupercastHTTP : public QNetworkAccessManager {
     Q_OBJECT
 
 public:

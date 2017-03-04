@@ -15,11 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "nchecks.h"
 
-NChecks* NChecks::singleton = NULL;
+#include "network/supercast.h"
+#include "network/supercastsignal.h"
+#include "xml/parseallchecks.h"
+#include "xml/parsecheckgetid.h"
 
+#include <QDebug>
+#include <QXmlSimpleReader>
+#include <QXmlInputSource>
+
+NChecks* NChecks::singleton = NULL;
 
 QList<QString> NChecks::getCheckList() {
 
@@ -27,45 +35,40 @@ QList<QString> NChecks::getCheckList() {
 
 }
 
-
 QString NChecks::getCheck(QString check) {
 
     return NChecks::singleton->checks->value(check);
 
 }
 
+NChecks::~NChecks() {
+    delete this->checks;
+}
 
-NChecks::~NChecks() {delete this->checks;}
-
-
-NChecks::NChecks(QObject *parent) : QObject(parent)
-{
+NChecks::NChecks(QObject *parent) : QObject(parent) {
 
     NChecks::singleton = this;
     this->checks = new QHash<QString, QString>();
     QObject::connect(
-                Supercast::getInstance(), SIGNAL(connectionStatus(int)),
-                this,                     SLOT(connectionStatus(int)));
+            Supercast::getInstance(), SIGNAL(connectionStatus(int)),
+            this, SLOT(connectionStatus(int)));
 
 }
 
-
-void NChecks::connectionStatus(int status)
-{
+void NChecks::connectionStatus(int status) {
 
     if (status != Supercast::CONNECTION_SUCCESS) return;
 
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig,  SIGNAL(serverMessage(QString)),
-                this, SLOT(handleAllChecksReply(QString)));
+            sig, SIGNAL(serverMessage(QString)),
+            this, SLOT(handleAllChecksReply(QString)));
 
     Supercast::httpGet("/nchecks/NChecksRepository.xml", sig);
 
 }
 
-void NChecks::handleAllChecksReply(QString body)
-{
+void NChecks::handleAllChecksReply(QString body) {
 
     QXmlInputSource* input = new QXmlInputSource();
     input->setData(body);
@@ -81,14 +84,13 @@ void NChecks::handleAllChecksReply(QString body)
 
     QList<QString>::iterator it;
     for (
-         it  = result->begin();
-         it != result->end();
-         ++it)
-    {
+            it = result->begin();
+            it != result->end();
+            ++it) {
         SupercastSignal* sig = new SupercastSignal();
         QObject::connect(
-                    sig,  SIGNAL(serverMessage(QString)),
-                    this, SLOT(handleCheckDefDeply(QString)));
+                sig, SIGNAL(serverMessage(QString)),
+                this, SLOT(handleCheckDefDeply(QString)));
 
         QString path = "/nchecks/%1";
         Supercast::httpGet(path.arg(*it), sig);
@@ -99,12 +101,10 @@ void NChecks::handleAllChecksReply(QString body)
 
 }
 
-
-void NChecks::handleCheckDefDeply(QString body)
-{
+void NChecks::handleCheckDefDeply(QString body) {
 
     ParseCheckGetId* parser = new ParseCheckGetId();
-    QXmlInputSource* input  = new QXmlInputSource();
+    QXmlInputSource* input = new QXmlInputSource();
     QXmlSimpleReader reader;
 
     input->setData(body);
@@ -116,7 +116,7 @@ void NChecks::handleCheckDefDeply(QString body)
 
     delete parser;
     delete input;
-   
+
 }
 
 

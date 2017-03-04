@@ -15,14 +15,31 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "treeview.h"
+
+#include "windows/probewindow.h"
+#include "sysmo.h"
+#include "actions/monitoractions.h"
+#include "delegateprobeprogress.h"
+#include "monitorwidget.h"
+#include <QHeaderView>
+#include <QObject>
+#include <QAbstractItemView>
+#include <Qt>
+#include <QString>
+#include <QSize>
+#include <QModelIndex>
+#include <QFile>
+#include <QIODevice>
+#include <QStandardItem>
+#include <QSettings>
+
+#include <QDebug>
 
 TreeView* TreeView::singleton = NULL;
 
-
-TreeView::TreeView(QWidget* parent) : QTreeView(parent)
-{
+TreeView::TreeView(QWidget* parent) : QTreeView(parent) {
 
     // empty treeview right clic
     this->add_target_action = new QAction("Create a new target...", this);
@@ -32,10 +49,10 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 
     TreeView::singleton = this;
     this->target_menu = new MenuTarget(this);
-    this->probe_menu  = new MenuProbe(this);
+    this->probe_menu = new MenuProbe(this);
     QObject::connect(
-                this,   SIGNAL(doubleClicked(QModelIndex)),
-                this,   SLOT(handleDoubleClicked(QModelIndex)));
+            this, SIGNAL(doubleClicked(QModelIndex)),
+            this, SLOT(handleDoubleClicked(QModelIndex)));
     this->setItemsExpandable(true);
     this->setRootIsDecorated(false);
     this->setWordWrap(true);
@@ -44,10 +61,10 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(
-                this, SIGNAL(customContextMenuRequested(QPoint)),
-                this, SLOT(openContextMenu(QPoint)));
+            this, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(openContextMenu(QPoint)));
     this->setObjectName("MonitorTreeView");
-    this->setIconSize(QSize(22,22));
+    this->setIconSize(QSize(22, 22));
     this->setAnimated(true);
     this->setAlternatingRowColors(true);
     this->setAllColumnsShowFocus(false);
@@ -55,7 +72,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     this->setExpandsOnDoubleClick(false);
 
     this->original_model = new TreeModel(this);
-    this->filter_model   = new QSortFilterProxyModel(this);
+    this->filter_model = new QSortFilterProxyModel(this);
     this->filter_model->setSourceModel(this->original_model);
     this->filter_model->setDynamicSortFilter(true);
     this->filter_model->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -68,22 +85,22 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
     DelegateProbeProgress* progress = new DelegateProbeProgress(this);
 
     QObject::connect(
-                this->original_model, SIGNAL(expandIndex(QModelIndex)),
-                this,                 SLOT(expandIndex(QModelIndex)));
+            this->original_model, SIGNAL(expandIndex(QModelIndex)),
+            this, SLOT(expandIndex(QModelIndex)));
 
     QObject::connect(
-                this->original_model, SIGNAL(selectIndex(QModelIndex)),
-                this,                 SLOT(selectIndex(QModelIndex)));
+            this->original_model, SIGNAL(selectIndex(QModelIndex)),
+            this, SLOT(selectIndex(QModelIndex)));
     /*
      * connect delegate first
      */
     QObject::connect(
-                this->timer, SIGNAL(timeout()),
-                progress,    SLOT(ticTimeout()));
+            this->timer, SIGNAL(timeout()),
+            progress, SLOT(ticTimeout()));
 
     QObject::connect(
-                this->timer,      SIGNAL(timeout()),
-                this->viewport(), SLOT(update()));
+            this->timer, SIGNAL(timeout()),
+            this->viewport(), SLOT(update()));
 
     this->setItemDelegateForColumn(3, progress);
 
@@ -110,9 +127,7 @@ TreeView::TreeView(QWidget* parent) : QTreeView(parent)
 
 }
 
-
-void TreeView::initialSyncEnd()
-{
+void TreeView::initialSyncEnd() {
 
     this->restoreStateFromSettings();
     this->setModel(this->filter_model);
@@ -123,9 +138,7 @@ void TreeView::initialSyncEnd()
 
 }
 
-
-TreeView::~TreeView()
-{
+TreeView::~TreeView() {
 
     QSettings s;
     s.setValue("treeview/header_state", this->header()->saveState());
@@ -133,9 +146,7 @@ TreeView::~TreeView()
 
 }
 
-
-void TreeView::restoreStateFromSettings()
-{
+void TreeView::restoreStateFromSettings() {
 
     QSettings s;
     QVariant hs = s.value("treeview/header_state");
@@ -151,29 +162,27 @@ void TreeView::restoreStateFromSettings()
 
 
 // SLOTS
-void TreeView::expandIndex(QModelIndex index)
-{
+
+void TreeView::expandIndex(QModelIndex index) {
 
     this->expand(this->filter_model->mapFromSource(index));
 
 }
 
-
-void TreeView::selectIndex(QModelIndex index)
-{
+void TreeView::selectIndex(QModelIndex index) {
 
     this->setCurrentIndex(this->filter_model->mapFromSource(index));
 
 }
 
-
-void TreeView::stopTimer() { this->timer->stop(); }
-
+void TreeView::stopTimer() {
+    this->timer->stop();
+}
 
 void TreeView::openContextMenu(const QPoint point) {
 
     qDebug() << "open context menu" << point;
-    QModelIndex    index   = this->filter_model->mapToSource(this->indexAt(point));
+    QModelIndex index = this->filter_model->mapToSource(this->indexAt(point));
     if (!index.isValid()) {
         QPoint at = this->mapToGlobal(point);
         at.setX(at.x() + 12);
@@ -181,38 +190,30 @@ void TreeView::openContextMenu(const QPoint point) {
         return;
     }
 
-    QModelIndex    element = index.sibling(index.row(), 0);
-    QStandardItem* item    = this->original_model->itemFromIndex(element);
+    QModelIndex element = index.sibling(index.row(), 0);
+    QStandardItem* item = this->original_model->itemFromIndex(element);
 
-    if (item->type() == Sysmo::TYPE_PROBE)
-    {
+    if (item->type() == Sysmo::TYPE_PROBE) {
         QString probe = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
         this->probe_menu->showMenuFor(probe, this->mapToGlobal(point));
-    }
-    else if(item->type() == Sysmo::TYPE_TARGET)
-    {
+    } else if (item->type() == Sysmo::TYPE_TARGET) {
         QString target = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
         this->target_menu->showMenuFor(target, this->mapToGlobal(point));
     }
 
 }
 
-
-void TreeView::handleDoubleClicked(const QModelIndex index)
-{
+void TreeView::handleDoubleClicked(const QModelIndex index) {
 
     qDebug() << "double clicked" << index;
     QModelIndex idx_sibling = index.sibling(index.row(), 0);
-    QModelIndex idx_origin  = this->filter_model->mapToSource(idx_sibling);
-    QStandardItem*     item = this->original_model->itemFromIndex(idx_origin);
+    QModelIndex idx_origin = this->filter_model->mapToSource(idx_sibling);
+    QStandardItem* item = this->original_model->itemFromIndex(idx_origin);
 
     QString name = item->data(Sysmo::ROLE_ELEMENT_NAME).toString();
-    if (item->type() == Sysmo::TYPE_PROBE)
-    {
+    if (item->type() == Sysmo::TYPE_PROBE) {
         ProbeWindow::openWindow(name);
-    }
-    else if (item->type() == Sysmo::TYPE_TARGET)
-    {
+    } else if (item->type() == Sysmo::TYPE_TARGET) {
         MonitorActions::openActionFor(name);
     }
 

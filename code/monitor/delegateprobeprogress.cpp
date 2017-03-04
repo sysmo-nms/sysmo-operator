@@ -15,29 +15,35 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "delegateprobeprogress.h"
 
+#include "treemodel.h"
+#include "sysmo.h"
+
+#include <QObject>
+#include <QStyleOptionProgressBar>
+#include <QApplication>
+#include <QStyle>
+#include <QVariant>
+#include <QDateTime>
+
+#include <QDebug>
 
 DelegateProbeProgress::DelegateProbeProgress(QWidget* parent)
-        : QStyledItemDelegate(parent)
-{
+: QStyledItemDelegate(parent) {
 }
 
-
-void DelegateProbeProgress::ticTimeout()
-{
+void DelegateProbeProgress::ticTimeout() {
 
     this->timestamp = QDateTime::currentDateTime().toTime_t();
 
 }
 
-
 void DelegateProbeProgress::paint(
-        QPainter* 					painter,
-        const QStyleOptionViewItem  &option,
-        const QModelIndex 			&index) const
-{
+        QPainter* painter,
+        const QStyleOptionViewItem &option,
+        const QModelIndex &index) const {
 
     QVariant item_type(index.data(Sysmo::ROLE_IS_PROGRESS_ITEM));
 
@@ -54,25 +60,20 @@ void DelegateProbeProgress::paint(
     opts.minimum = 0;
     opts.maximum = step;
 
-    if (in_next <= 0)
-    {
+    if (in_next <= 0) {
         opts.text = QString("Processing...");
         opts.progress = step;
-    }
-    else if (in_next <= step)
-    {
+    } else if (in_next <= step) {
         opts.progress = step - in_next;
         opts.text = QString("Step %1/%2")
-            .arg(QString::number(step - in_next))
-            .arg(QString::number(step));
+                .arg(QString::number(step - in_next))
+                .arg(QString::number(step));
 
-    }
-    else
-    {
+    } else {
         opts.progress = step;
         opts.text = QString("Step %1/%2")
-            .arg(QString::number(step))
-            .arg(QString::number(step));
+                .arg(QString::number(step))
+                .arg(QString::number(step));
     }
 
     opts.textVisible = true;

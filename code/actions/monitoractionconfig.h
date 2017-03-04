@@ -15,25 +15,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MONITORACTIONCONFIG_H
 #define MONITORACTIONCONFIG_H
-
-#include "ngrid.h"
-#include "nframe.h"
-#include "ngridcontainer.h"
-
 #include <QDialog>
 #include <QString>
 #include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QStringList>
-#include <QLabel>
-#include <QDialogButtonBox>
-#include <QPushButton>
+#include <QWidget>
 
-class MonitorActionConfig : public QDialog
-{
+class MonitorActionConfig : public QDialog {
     Q_OBJECT
 
 private:

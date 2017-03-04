@@ -15,40 +15,23 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef TREEVIEW_H
 #define TREEVIEW_H
+#include <QTreeView>
+#include <QWidget>
+#include <QSortFilterProxyModel>
+#include <QAction>
+#include <QMenu>
+#include <QModelIndex>
+#include <QTimer>
+#include <QPoint>
 
-#include "windows/probewindow.h"
-#include "sysmo.h"
-#include "actions/monitoractions.h"
-#include "delegateprobeprogress.h"
 #include "treemodel.h"
 #include "menuprobe.h"
 #include "menutarget.h"
-#include "monitorwidget.h"
 
-#include <QObject>
-#include <QWidget>
-#include <QAbstractItemView>
-#include <Qt>
-#include <QString>
-#include <QSize>
-#include <QTreeView>
-#include <QTimer>
-#include <QSortFilterProxyModel>
-#include <QModelIndex>
-#include <QFile>
-#include <QIODevice>
-#include <QPoint>
-#include <QStandardItem>
-#include <QModelIndex>
-#include <QSettings>
-
-#include <QDebug>
-
-class TreeView : public QTreeView
-{
+class TreeView : public QTreeView {
     Q_OBJECT
 
 public:
@@ -57,11 +40,11 @@ public:
     void stopTimer();
 
     QSortFilterProxyModel* filter_model;
-    TreeModel*             original_model;
-    MenuTarget*            target_menu;
-    MenuProbe*             probe_menu;
-    QAction*               add_target_action;
-    QMenu*                 add_target_menu;
+    TreeModel* original_model;
+    MenuTarget* target_menu;
+    MenuProbe* probe_menu;
+    QAction* add_target_action;
+    QMenu* add_target_menu;
 
 public slots:
     void expandIndex(QModelIndex index);

@@ -15,12 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "newprobe.h"
 
+#include "newprobepage1.h"
+#include "newprobepage2.h"
+#include "newprobepage3.h"
 
-NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent)
-{
+#include <QDebug>
+
+NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent) {
 
     this->setWindowTitle("New probe");
     this->setModal(true);
@@ -38,5 +42,5 @@ NewProbe::NewProbe(QString forTarget, QWidget* parent) : QWizard(parent)
     this->setPage(2, page2);
     //this->setPage(3, page3);
     this->setStartId(1);
-   
+
 }

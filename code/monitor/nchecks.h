@@ -15,31 +15,22 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NCHECKS_H
 #define NCHECKS_H
-
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "xml/parseallchecks.h"
-#include "xml/parsecheckgetid.h"
-
 #include <QObject>
-#include <QString>
-#include <QDebug>
-#include <QXmlSimpleReader>
-#include <QXmlInputSource>
 #include <QList>
+#include <QString>
+#include <QHash>
 
-class NChecks : public QObject
-{
+class NChecks : public QObject {
     Q_OBJECT
 
 public:
     explicit NChecks(QObject *parent = 0);
     ~NChecks();
     static QList<QString> getCheckList();
-    static QString        getCheck(QString check);
+    static QString getCheck(QString check);
 
 private:
     QHash<QString, QString>* checks;

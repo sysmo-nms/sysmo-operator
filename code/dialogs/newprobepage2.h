@@ -15,56 +15,27 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWPROBEPAGE2_H
 #define NEWPROBEPAGE2_H
-
-#include "sysmo.h"
-#include "nframe.h"
-#include "nframecontainer.h"
-#include "ngrid.h"
-#include "ngridcontainer.h"
-#include "monitor/monitor.h"
-#include "monitor/nchecks.h"
-#include "monitor/xml/parsecheckmakedoc.h"
-#include "monitor/xml/parsecheckmakeform.h"
-#include "network/supercastsignal.h"
-#include "network/supercast.h"
-#include "qjson.h"
 #include "lineedit.h"
+#include "nframe.h"
+#include "ngrid.h"
 
-#include "newprobeprogressdialog.h"
-#include "messagebox.h"
-
-#include <QWidget>
-#include <QObject>
-#include <QFormLayout>
-#include <QPushButton>
-#include <QStringList>
-#include <QList>
-#include <QLabel>
 #include <QWizard>
 #include <QWizardPage>
-#include <QXmlInputSource>
-#include <QXmlSimpleReader>
-#include <QTextEdit>
-#include <QProgressDialog>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QAbstractItemView>
-#include <QHeaderView>
-#include <QDialogButtonBox>
-#include <QPushButton>
-#include <QList>
-#include <QVariant>
 #include <QString>
+#include <QMap>
+#include <QTextEdit>
+#include <QList>
+#include <QWidget>
+#include <QObject>
+#include <QProgressDialog>
+#include <QVariant>
+#include <QDialog>
+#include <QTreeWidgetItem>
 
-#include <QDebug>
-
-
-
-class NewProbePage2 : public QWizardPage
-{
+class NewProbePage2 : public QWizardPage {
     Q_OBJECT
 public:
     NewProbePage2(QString forTarget, QWizard* parent = 0);
@@ -75,25 +46,23 @@ public:
     int nextId() const;
 
 private:
-    QString     target;
-    QString     probe_class;
-    QMap<QString,LineEdit*>* args;
-    QTextEdit*  docs;
-    NFrame*     form_frame;
-    NGrid*      grid;
+    QString target;
+    QString probe_class;
+    QMap<QString, LineEdit*>* args;
+    QTextEdit* docs;
+    NFrame* form_frame;
+    NGrid* grid;
     LineEdit *name_line;
     QList<LineEdit*>* mandatory_args;
 };
 
-
-class HelperExec: public QObject
-{
+class HelperExec : public QObject {
     Q_OBJECT
 public:
     HelperExec(LineEdit* line, QWidget *parent = 0);
-    QString    h_class;
-    QString    h_target;
-    QWidget*   w_parent;
+    QString h_class;
+    QString h_target;
+    QWidget* w_parent;
     LineEdit* flag_line;
 
 private:
@@ -106,9 +75,7 @@ private slots:
     void helperReply(QVariant reply);
 };
 
-
-class HelperDialog : public QDialog
-{
+class HelperDialog : public QDialog {
     Q_OBJECT
 public:
     HelperDialog(QVariant helperReply, QWidget* parent = 0);

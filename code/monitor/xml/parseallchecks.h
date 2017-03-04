@@ -15,14 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PARSEALLCHECKS_H
 #define PARSEALLCHECKS_H
 
 #include <QXmlDefaultHandler>
+#include <QString>
+#include <QXmlAttributes>
+#include <QList>
 
-class ParseAllChecks : public QXmlDefaultHandler
-{
+class ParseAllChecks : public QXmlDefaultHandler {
 public:
     ~ParseAllChecks();
     bool startDocument();

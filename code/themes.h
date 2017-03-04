@@ -15,20 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef THEMES_H
 #define THEMES_H
 
-#include <QApplication>
 #include <QPalette>
-#include <QFont>
-#include <QColor>
 #include <QString>
-#include <QFile>
-#include <QIODevice>
 
-class Themes
-{
+class Themes {
 public:
     static QPalette midnight;
     static QPalette inland;

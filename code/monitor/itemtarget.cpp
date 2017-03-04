@@ -15,45 +15,51 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "itemtarget.h"
 
+#include "sysmo.h"
+#include "qjson.h"
 
-int ItemTarget::type() const { return Sysmo::TYPE_TARGET; }
+#include <QPixmap>
+#include <QIcon>
+#include <Qt>
+#include <QMapIterator>
+#include <QStringList>
+#include <QStringListIterator>
 
+#include <QDebug>
 
-ItemTarget::ItemTarget(QMap<QString,QVariant> info_target) : QStandardItem()
-{
+int ItemTarget::type() const {
+    return Sysmo::TYPE_TARGET;
+}
+
+ItemTarget::ItemTarget(QMap<QString, QVariant> info_target) : QStandardItem() {
 
     this->updateInfo(info_target);
     this->updateIconStatus();
 
 }
 
-
-void ItemTarget::updateProbeFilter(QString probe_name, QMap<QString,QVariant> obj)
-{
+void ItemTarget::updateProbeFilter(QString probe_name, QMap<QString, QVariant> obj) {
 
     this->filter_hash.insert(probe_name, QJson::encode(obj));
     this->updateFilter();
 
 }
 
-
-void ItemTarget::deleteProbeFilter(QString probe_name)
-{
+void ItemTarget::deleteProbeFilter(QString probe_name) {
 
     this->filter_hash.remove(probe_name);
     this->updateFilter();
 
 }
 
-
 void ItemTarget::updateFilter() {
 
     QString str = this->orig_filter;
     QMapIterator<QString, QString> i(this->filter_hash);
-    while(i.hasNext()) {
+    while (i.hasNext()) {
         i.next();
         str = str + i.value();
     }
@@ -61,18 +67,16 @@ void ItemTarget::updateFilter() {
 
 }
 
+void ItemTarget::updateInfo(QMap<QString, QVariant> info_target) {
 
-void ItemTarget::updateInfo(QMap<QString,QVariant> info_target)
-{
-
-    this->name              = info_target.value("name").toString();
+    this->name = info_target.value("name").toString();
     this->target_properties = info_target.value("properties").toMap();
 
     this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
 
-    QString hostname   = this->target_properties.value("host").toString();
+    QString hostname = this->target_properties.value("host").toString();
     QString fixed_name = this->target_properties.value("name").toString();
-    QString sys_name   = this->target_properties.value("sysName").toString();
+    QString sys_name = this->target_properties.value("sysName").toString();
 
     QString display;
 
@@ -95,9 +99,7 @@ void ItemTarget::updateInfo(QMap<QString,QVariant> info_target)
 
 }
 
-
-void ItemTarget::updateTooltip()
-{
+void ItemTarget::updateTooltip() {
 
     QString tooltip;
     QStringList keys = this->target_properties.keys();
@@ -114,9 +116,7 @@ void ItemTarget::updateTooltip()
 
 }
 
-
-void ItemTarget::updateIconStatus()
-{
+void ItemTarget::updateIconStatus() {
 
     int status = 0;
     if (this->rowCount() == 0) {
@@ -124,30 +124,22 @@ void ItemTarget::updateIconStatus()
         return;
     }
 
-    for (int i = 0; i < this->rowCount(); i ++)
-    {
+    for (int i = 0; i < this->rowCount(); i++) {
         int pstatus = this->child(i, 0)->data(Sysmo::ROLE_PROBE_STATUS)
-                                                     .toInt(NULL);
-        if (pstatus > status) {status = pstatus;}
+                .toInt(NULL);
+        if (pstatus > status) {
+            status = pstatus;
+        }
     }
-    if (status == Sysmo::STATUS_OK)
-    {
+    if (status == Sysmo::STATUS_OK) {
         this->setData(QPixmap(":/pixmaps/weather-clear.png"), Qt::DecorationRole);
-    }
-    else if (status == Sysmo::STATUS_UNKNOWN)
-    {
+    } else if (status == Sysmo::STATUS_UNKNOWN) {
         this->setData(QPixmap(":/pixmaps/weather-clear-night.png"), Qt::DecorationRole);
-    }
-    else if (status == Sysmo::STATUS_ERROR)
-    {
+    } else if (status == Sysmo::STATUS_ERROR) {
         this->setData(QPixmap(":/pixmaps/weather-few-clouds-night.png"), Qt::DecorationRole);
-    }
-    else if (status == Sysmo::STATUS_WARNING)
-    {
+    } else if (status == Sysmo::STATUS_WARNING) {
         this->setData(QPixmap(":/pixmaps/weather-showers.png"), Qt::DecorationRole);
-    }
-    else if (status == Sysmo::STATUS_CRITICAL)
-    {
+    } else if (status == Sysmo::STATUS_CRITICAL) {
         this->setData(QPixmap(":/pixmaps/weather-severe-alert.png"), Qt::DecorationRole);
     }
 

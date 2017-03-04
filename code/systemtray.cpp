@@ -18,13 +18,15 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "systemtray.h"
 
+#include <QWidget>
+#include <QIcon>
 /**
  * Custom QSystemTrayIcon. Use singleton to be accessible from anywere
  */
 SystemTray* SystemTray::singleton = NULL;
 
 SystemTray::SystemTray(QObject *parent)
-    : QSystemTrayIcon(parent) {
+: QSystemTrayIcon(parent) {
 
     SystemTray::singleton = this;
     //this->setContextMenu(new QMenu());

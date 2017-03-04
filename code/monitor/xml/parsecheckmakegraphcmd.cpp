@@ -15,8 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "parsecheckmakegraphcmd.h"
+
+#include <QDebug>
 
 bool ParseCheckMakeGraphCMD::startDocument() {
     this->char_element = "undefined";
@@ -24,19 +26,21 @@ bool ParseCheckMakeGraphCMD::startDocument() {
     this->prop_suffix = "unefined";
     return true;
 }
-bool ParseCheckMakeGraphCMD::endDocument()   {return true;}
+
+bool ParseCheckMakeGraphCMD::endDocument() {
+    return true;
+}
 
 bool ParseCheckMakeGraphCMD::startElement(
-        const QString        &namespaceURI,
-        const QString        &localName,
-        const QString        &qName,
-        const QXmlAttributes &atts)
-{
+        const QString &namespaceURI,
+        const QString &localName,
+        const QString &qName,
+        const QXmlAttributes &atts) {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
     if (qName == "Performances") {
         this->config.clear();
-        this->config.insert("type",   atts.value("Type"));
+        this->config.insert("type", atts.value("Type"));
         return true;
     }
 
@@ -46,11 +50,11 @@ bool ParseCheckMakeGraphCMD::startElement(
         this->current_graph_id = atts.value("Id");
         this->current_graph.insert("minimum", atts.value("Minimum"));
         this->current_graph.insert("maximum", atts.value("Maximum"));
-        this->current_graph.insert("rigid",   atts.value("Rigid"));
-        this->current_graph.insert("base",    atts.value("Base"));
-        this->current_graph.insert("unit",    atts.value("Unit"));
+        this->current_graph.insert("rigid", atts.value("Rigid"));
+        this->current_graph.insert("base", atts.value("Base"));
+        this->current_graph.insert("unit", atts.value("Unit"));
         this->current_graph.insert("unitExponent",
-                                      atts.value("UnitExponent"));
+                atts.value("UnitExponent"));
         return true;
     }
 
@@ -68,15 +72,15 @@ bool ParseCheckMakeGraphCMD::startElement(
     if (qName == "Draw") {
         this->current_draw.clear();
         this->current_draw.insert("type",
-                                  atts.value("Type"));
+                atts.value("Type"));
         this->current_draw.insert("color",
-                                  atts.value("Color"));
+                atts.value("Color"));
         this->current_draw.insert("dataSource",
-                                  atts.value("DataSource"));
+                atts.value("DataSource"));
         this->current_draw.insert("consolidation",
-                                  atts.value("Consolidation"));
+                atts.value("Consolidation"));
         this->current_draw.insert("calculation",
-                                  atts.value("Calculation"));
+                atts.value("Calculation"));
 
         this->current_draw.insert("legend", "none");
         this->char_element = "draw";
@@ -97,8 +101,7 @@ bool ParseCheckMakeGraphCMD::startElement(
 bool ParseCheckMakeGraphCMD::endElement(
         const QString &namespaceURI,
         const QString &localName,
-        const QString &qName)
-{
+        const QString &qName) {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
     if (qName == "PropertySuffix") {
@@ -134,8 +137,7 @@ bool ParseCheckMakeGraphCMD::endElement(
     return true;
 }
 
-bool ParseCheckMakeGraphCMD::characters(const QString &ch)
-{
+bool ParseCheckMakeGraphCMD::characters(const QString &ch) {
     if (this->char_element == "undefined") return true;
     if (this->char_element == "propertySuffix") {
         this->config.insert("propertySuffix", ch.simplified());
@@ -158,6 +160,6 @@ bool ParseCheckMakeGraphCMD::characters(const QString &ch)
         return true;
     }
     qWarning() <<
-         "parse graph xml nchecks unknown charcter read:" << this->char_element;
+            "parse graph xml nchecks unknown charcter read:" << this->char_element;
     return true;
 }

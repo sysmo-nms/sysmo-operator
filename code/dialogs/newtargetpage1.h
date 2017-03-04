@@ -15,44 +15,20 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWTARGETPAGE1_H
 #define NEWTARGETPAGE1_H
-
-#include "messagebox.h"
-
-#include "sysmo.h"
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "monitor/treeview.h"
 #include "lineedit.h"
 
-#include <QObject>
-#include <QWidget>
-#include <QWizard>
-#include <QDialog>
 #include <QList>
-#include <QListIterator>
+#include <QWidget>
 #include <QWizardPage>
-#include <QFormLayout>
+#include <QVariant>
 #include <QSpinBox>
 #include <QComboBox>
 #include <QCheckBox>
-#include <QDoubleSpinBox>
-#include <QFrame>
-#include <QLabel>
-#include <QString>
-#include <QAbstractButton>
-#include <QMessageBox>
-#include <QVariant>
-#include <QMap>
 
-#include <QDebug>
-
-class NewTargetPage1 : public QWizardPage
-{
+class NewTargetPage1 : public QWizardPage {
     Q_OBJECT
 
 public:
@@ -91,12 +67,12 @@ private:
     QList<QWidget*>* snmp_v3_priv_widgets;
 
     void disableUnusedWidgets() const;
-    int  configType() const;
-    static int const NO_SNMP              = 0;
-    static int const SNMP_V1              = 1;
-    static int const SNMP_V2              = 2;
-    static int const SNMP_V3_AUTHPRIV     = 3;
-    static int const SNMP_V3_AUTHNOPRIV   = 4;
+    int configType() const;
+    static int const NO_SNMP = 0;
+    static int const SNMP_V1 = 1;
+    static int const SNMP_V2 = 2;
+    static int const SNMP_V3_AUTHPRIV = 3;
+    static int const SNMP_V3_AUTHNOPRIV = 4;
     static int const SNMP_V3_NOAUTHNOPRIV = 5;
 };
 

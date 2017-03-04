@@ -15,34 +15,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef LOGIN_H
 #define LOGIN_H
-
-#include "nframecontainer.h"
 #include "lineedit.h"
-
-#include <QObject>
-#include <QWidget>
 #include <QDialog>
+#include <QString>
+#include <QWidget>
 #include <QSpinBox>
-#include <QFrame>
-#include <QGridLayout>
-#include <QFormLayout>
 #include <QPushButton>
-#include <QLabel>
-#include <QDialogButtonBox>
-#include <QPixmap>
-#include <QRect>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QSettings>
-#include <QVariant>
-#include <QHash>
-#include <QDebug>
 
-class LogIn : public QDialog
-{
+class LogIn : public QDialog {
     Q_OBJECT
 
 public:
@@ -50,14 +33,14 @@ public:
     QString getUserName();
     QString getPassword();
     QString getServerName();
-    qint16  getServerPort();
+    qint16 getServerPort();
     void saveLoginState();
 
 private:
-    LineEdit*	 user_name;
-    LineEdit*	 user_pass;
-    LineEdit*	 server_name;
-    QSpinBox*    server_port;
+    LineEdit* user_name;
+    LineEdit* user_pass;
+    LineEdit* server_name;
+    QSpinBox* server_port;
     QPushButton* ok_but;
     void restoreForm();
 

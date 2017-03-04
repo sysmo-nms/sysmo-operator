@@ -15,43 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWPROBEPAGE1_H
 #define NEWPROBEPAGE1_H
-
-#include "ngrid.h"
-#include "monitor/nchecks.h"
-#include "monitor/xml/parsecheckgetinfos.h"
-#include "monitor/monitor.h"
+#include <QWizardPage>
+#include <QString>
+#include <QWizard>
+#include <QTreeView>
 #include "lineedit.h"
 
-#include <Qt>
-#include <QObject>
-#include <QWidget>
-#include <QWizard>
-#include <QWizardPage>
-#include <QPushButton>
-#include <QTreeView>
-#include <QAbstractItemView>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QSortFilterProxyModel>
-#include <QModelIndex>
-#include <QList>
-#include <QStringList>
-#include <QXmlInputSource>
-#include <QXmlSimpleReader>
-#include <QVariant>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QMap>
-
-#include <QDebug>
-
-
-class NewProbePage1 : public QWizardPage
-{
-
+class NewProbePage1 : public QWizardPage {
     Q_OBJECT
 
 public:
@@ -60,7 +33,7 @@ public:
      */
     NewProbePage1(QString forTarget, QWizard* parent = 0);
     bool isComplete() const;
-    int  nextId()     const;
+    int nextId() const;
 
 private:
     QTreeView* treeview;

@@ -15,12 +15,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "messagebox.h"
 
+#include "sysmo.h"
 
-MessageBox::MessageBox(QWidget* parent) : QMessageBox(parent)
-{
+#include <QObject>
+#include <QString>
+#include <QPixmap>
+#include <QTimer>
+
+MessageBox::MessageBox(QWidget* parent) : QMessageBox(parent) {
 
     /*
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
@@ -30,15 +35,12 @@ MessageBox::MessageBox(QWidget* parent) : QMessageBox(parent)
     QObject::connect(
                 timer, SIGNAL(timeout()),
                 this, SLOT(raise()));
-                */
+     */
     this->setModal(true);
 
 }
 
-
-
-void MessageBox::setIconType(int icon_type)
-{
+void MessageBox::setIconType(int icon_type) {
 
     if (icon_type == Sysmo::MESSAGE_ERROR) {
         this->setIconPixmap(QPixmap(":/box_icons/dialog-error.png"));
@@ -54,6 +56,6 @@ void MessageBox::setIconType(int icon_type)
         this->setIconPixmap(QPixmap(":/box_icons/dialog-information.png"));
         return;
     }
-   
+
 }
 

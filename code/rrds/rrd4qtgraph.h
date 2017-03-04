@@ -15,37 +15,30 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef RRD4QTGRAPH_H
 #define RRD4QTGRAPH_H
-
-#include "rrd4qt.h"
-#include "rrd4qtsignal.h"
-
-#include <QObject>
-#include <QWidget>
 #include <QLabel>
-#include <QTemporaryFile>
-#include <QPixmap>
-#include <QDebug>
-#include <QVariant>
+#include <QString>
 #include <QMap>
+#include <QVariant>
+#include <QWidget>
+#include <QPixmap>
 
-class Rrd4QtGraph : public QLabel
-{
+class Rrd4QtGraph : public QLabel {
     Q_OBJECT
 public:
     explicit Rrd4QtGraph(
-            QString     rrd_db_file,
-            QMap<QString,QVariant> rrd_graph_config,
-            int         initial_height,
-            QWidget*    parent = 0);
+            QString rrd_db_file,
+            QMap<QString, QVariant> rrd_graph_config,
+            int initial_height,
+            QWidget* parent = 0);
 
 private:
-    QMap<QString,QVariant> graph_config;
-    QString       graph_id;
-    QString       pixmap_file;
-    QPixmap       pixmap_obj;
+    QMap<QString, QVariant> graph_config;
+    QString graph_id;
+    QString pixmap_file;
+    QPixmap pixmap_obj;
 
 public slots:
     void handleRrdReply(QVariant reply);

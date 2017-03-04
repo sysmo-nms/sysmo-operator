@@ -15,14 +15,24 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "monitoractioncreate.h"
+#include "ngrid.h"
+#include "nframecontainer.h"
+#include "ngridcontainer.h"
 
+#include <QObject>
+#include <QLabel>
+#include <QFormLayout>
+#include <QFileDialog>
+#include <QDebug>
+#include <QStringList>
+#include <QDialogButtonBox>
+#include <QIcon>
 
 MonitorActionCreate::MonitorActionCreate(
         QString name, QHash<QString, QVariant> conf, QWidget *parent)
-                : QDialog(parent)
-{
+: QDialog(parent) {
 
     this->initLayout();
     this->name->setText(name);
@@ -31,18 +41,14 @@ MonitorActionCreate::MonitorActionCreate(
 
 }
 
-
 MonitorActionCreate::MonitorActionCreate(QWidget *parent)
-    : QDialog(parent)
-{
+: QDialog(parent) {
 
     this->initLayout();
 
 }
 
-
-void MonitorActionCreate::initLayout()
-{
+void MonitorActionCreate::initLayout() {
 
     NFrameContainer *fr = new NFrameContainer(this);
 
@@ -55,11 +61,11 @@ void MonitorActionCreate::initLayout()
     this->args = new LineEdit(this);
 
     QObject::connect(
-                this->name, SIGNAL(textChanged(QString)),
-                this, SLOT(handleEditOk()));
+            this->name, SIGNAL(textChanged(QString)),
+            this, SLOT(handleEditOk()));
     QObject::connect(
-                this->cmd, SIGNAL(textChanged(QString)),
-                this, SLOT(handleEditOk()));
+            this->cmd, SIGNAL(textChanged(QString)),
+            this, SLOT(handleEditOk()));
 
 
     QFormLayout* form = new QFormLayout();
@@ -73,18 +79,18 @@ void MonitorActionCreate::initLayout()
      */
     NFrameContainer *cmdFrame = new NFrameContainer(this);
     NGridContainer *cmdGrid = new NGridContainer();
-    cmdGrid->setColumnStretch(0,1);
-    cmdGrid->setColumnStretch(1,0);
+    cmdGrid->setColumnStretch(0, 1);
+    cmdGrid->setColumnStretch(1, 0);
     cmdFrame->setLayout(cmdGrid);
 
     QPushButton *cmdButton = new QPushButton(this);
     cmdButton->setIcon(QIcon(":/icons/system-search.png"));
     QObject::connect(
-                cmdButton, SIGNAL(clicked(bool)),
-                this, SLOT(handleSearchExe()));
+            cmdButton, SIGNAL(clicked(bool)),
+            this, SLOT(handleSearchExe()));
 
-    cmdGrid->addWidget(this->cmd, 0,0);
-    cmdGrid->addWidget(cmdButton, 0,1);
+    cmdGrid->addWidget(this->cmd, 0, 0);
+    cmdGrid->addWidget(cmdButton, 0, 1);
     form->addRow("Executable", cmdFrame);
     // Command row END
 
@@ -101,28 +107,26 @@ void MonitorActionCreate::initLayout()
     this->apply->setDisabled(true);
 
     QObject::connect(
-                cancel, SIGNAL(clicked(bool)),
-                this, SLOT(reject()));
+            cancel, SIGNAL(clicked(bool)),
+            this, SLOT(reject()));
     QObject::connect(
-                this->apply, SIGNAL(clicked(bool)),
-                this, SLOT(accept()));
+            this->apply, SIGNAL(clicked(bool)),
+            this, SLOT(accept()));
 
 
     QLabel *header = new QLabel(this);
     header->setText("Edit action configuration");
 
-    grid->addWidget(header, 0,0);
-    grid->addWidget(fr, 1,0);
-    grid->addWidget(buttonBox, 2,0);
-    grid->setRowStretch(0,0);
-    grid->setRowStretch(1,1);
-    grid->setRowStretch(2,0);
+    grid->addWidget(header, 0, 0);
+    grid->addWidget(fr, 1, 0);
+    grid->addWidget(buttonBox, 2, 0);
+    grid->setRowStretch(0, 0);
+    grid->setRowStretch(1, 1);
+    grid->setRowStretch(2, 0);
 
 }
 
-
-void MonitorActionCreate::handleSearchExe()
-{
+void MonitorActionCreate::handleSearchExe() {
 
     QFileDialog fdiag(this);
     fdiag.setFileMode(QFileDialog::ExistingFile);
@@ -133,8 +137,7 @@ void MonitorActionCreate::handleSearchExe()
 
 }
 
-void MonitorActionCreate::handleEditOk()
-{
+void MonitorActionCreate::handleEditOk() {
 
     if (this->name->text() == "") {
         this->apply->setDisabled(true);

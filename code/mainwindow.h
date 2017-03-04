@@ -19,32 +19,19 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "centralwidget.h"
-#include "dialogs/login.h"
+#include <QMainWindow>
+#include <QActionGroup>
+#include <QSystemTrayIcon>
+#include <QCloseEvent>
+#include <QWidget>
+#include <QSize>
+#include <QAction>
+
 #include "network/supercast.h"
+#include "dialogs/login.h"
 #include "rrds/rrd4qt.h"
-#include "dialogs/messagebox.h"
 #include "systemtray.h"
 #include "updates/updates.h"
-
-#include <QMainWindow>
-#include <QIcon>
-#include <QWidget>
-#include <QAction>
-#include <QActionGroup>
-#include <QMenuBar>
-#include <QMenu>
-#include <QKeySequence>
-#include <QObject>
-#include <QHostAddress>
-#include <QMessageBox>
-#include <QAbstractSocket>
-#include <QSize>
-#include <QCoreApplication>
-#include <QDesktopServices>
-#include <QSystemTrayIcon>
-#include <QUrl>
-#include <QFile>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

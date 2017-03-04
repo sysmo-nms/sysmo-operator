@@ -15,46 +15,29 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef RRD4QT_H
 #define RRD4QT_H
+#include <QObject>
+#include <QMap>
+#include <QVariant>
+#include <QString>
+#include <QProcess>
+#include <QByteArray>
 
 #include "rrd4qtsignal.h"
+#include "temporarydir.h"
 #include "rrd4qtproc.h"
 
-#include "qjson.h"
-#include "temporarydir.h"
-
-#include <QObject>
-#include <QThread>
-#include <QAbstractSocket>
-#include <QStringList>
-#include <QMap>
-#include <QDir>
-#include <QFile>
-#include <QProcess>
-#include <QProcessEnvironment>
-#include <QByteArray>
-#include <QIODevice>
-#include <QDataStream>
-#include <QApplication>
-#include <QPalette>
-#include <QColor>
-#include <QVariant>
-
-#include <QDebug>
-
-
-class Rrd4Qt : public QObject
-{
+class Rrd4Qt : public QObject {
     Q_OBJECT
 
 public:
     explicit Rrd4Qt(QObject* parent = 0);
     ~Rrd4Qt();
     static Rrd4Qt* getInstance();
-    static void callRrd(QMap<QString,QVariant> msg, Rrd4QtSignal* sig);
-    static void callRrd(QMap<QString,QVariant> msg);
+    static void callRrd(QMap<QString, QVariant> msg, Rrd4QtSignal* sig);
+    static void callRrd(QMap<QString, QVariant> msg);
 
 public slots:
     void procStarted();
@@ -69,15 +52,15 @@ private:
     static Rrd4Qt* singleton;
     static const int HEADER_LEN = 4;
 
-    qint32        block_size;
+    qint32 block_size;
     TemporaryDir temporary_dir;
     //QTemporaryDir temporary_dir; // Qt4 incompatible
 
     Rrd4QtProc* proc;
     QMap<int, Rrd4QtSignal*>* queries;
 
-    static qint32     arrayToInt32(QByteArray source);
-    static QByteArray int32ToArray(qint32     source);
+    static qint32 arrayToInt32(QByteArray source);
+    static QByteArray int32ToArray(qint32 source);
 
 };
 
