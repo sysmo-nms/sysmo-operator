@@ -15,28 +15,21 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef STATUSBUTTONWIDGET_H
 #define STATUSBUTTONWIDGET_H
 
 #include "nframecontainer.h"
-#include "ngridcontainer.h"
 #include "statusbutton.h"
-#include "monitor/monitor.h"
 
 #include <QWidget>
-#include <QPixmap>
-#include <QMap>
-#include <QDebug>
-#include <QTimer>
+#include <QString>
 #include <QVariant>
 
-class StatusButtonWidget : public NFrameContainer
-{
+class StatusButtonWidget : public NFrameContainer {
     Q_OBJECT
 public:
     StatusButtonWidget(QWidget* parent);
-    StatusButton* ok;
     StatusButton* warn;
     StatusButton* crit;
     StatusButton* err;

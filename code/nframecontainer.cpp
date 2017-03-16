@@ -15,14 +15,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "nframecontainer.h"
 
 NFrameContainer::NFrameContainer(QWidget* parent)
-        : QFrame(parent)
-{
-    
-    this->setContentsMargins(0,0,0,0);
-    
+: QFrame(parent) {
+
+    this->setContentsMargins(0, 0, 0, 0);
+
 }
 

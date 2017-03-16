@@ -15,47 +15,23 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MONITORWIDGET_H
 #define MONITORWIDGET_H
-
-#include "nframe.h"
 #include "nframecontainer.h"
-#include "ngrid.h"
-#include "ngridcontainer.h"
-#include "dialogs/newtarget.h"
 #include "dialogs/newprobe.h"
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "treeview.h"
-#include "nchecks.h"
 #include "monitor.h"
-#include "monitorlogs.h"
-#include "statusbuttonwidget.h"
-#include "lineedit.h"
 
-#include <QObject>
 #include <QWidget>
-#include <QLabel>
-#include <QFrame>
-#include <QPushButton>
-#include <QIcon>
-#include <QMap>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QPalette>
-#include <QPixmap>
+#include <QString>
 
-#include <QDebug>
-
-class MonitorWidget : public NFrameContainer
-{
+class MonitorWidget : public NFrameContainer {
     Q_OBJECT
 
 public:
     explicit MonitorWidget(QWidget* parent = 0);
     ~MonitorWidget();
-    NewProbe*  add_probe_dialog;
+    NewProbe* add_probe_dialog;
     static MonitorWidget* getInstance();
 
 public slots:

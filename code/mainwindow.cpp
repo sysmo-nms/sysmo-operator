@@ -17,6 +17,23 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mainwindow.h"
+#include "centralwidget.h"
+#include "dialogs/messagebox.h"
+
+#include <QIcon>
+#include <QMenuBar>
+#include <QMenu>
+#include <QKeySequence>
+#include <QObject>
+#include <QHostAddress>
+#include <QMessageBox>
+#include <QAbstractSocket>
+#include <QCoreApplication>
+#include <QDesktopServices>
+#include <QSystemTrayIcon>
+#include <QUrl>
+#include <QFile>
+#include <QStatusBar>
 
 /**
  * Lot of logic in this class. Most of the UI and network is initialized

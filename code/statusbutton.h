@@ -15,28 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef STATUSBUTTON_H
 #define STATUSBUTTON_H
 
-#include "ngridcontainer.h"
-#include "ngrid.h"
-
-#include <QObject>
-#include <QWidget>
-#include <QLCDNumber>
 #include <QPushButton>
-#include <QPixmap>
-#include <QLabel>
-#include <QFrame>
-#include <QPalette>
-#include <QDebug>
+#include <QWidget>
+#include <QString>
+#include <QIcon>
 
-class StatusButton : public QPushButton
-{
+class StatusButton : public QPushButton {
     Q_OBJECT
 public:
-    StatusButton(QWidget* parent, QString type, QPixmap pixmap);
+    StatusButton(QWidget* parent, QString type, QIcon icon);
     void increment();
     void decrement();
 
@@ -50,7 +41,6 @@ private slots:
     void updateText();
 
 private:
-    QLCDNumber*  lcd;
     int counter;
     QString type;
     bool red;
