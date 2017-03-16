@@ -15,37 +15,25 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MONITORACTIONCREATE_H
 #define MONITORACTIONCREATE_H
 
-#include "ngrid.h"
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
 #include "lineedit.h"
 
-#include <QObject>
-#include <QWidget>
 #include <QDialog>
-#include <QLabel>
-#include <QFormLayout>
-#include <QPushButton>
-#include <QFileDialog>
-#include <QDebug>
-#include <QStringList>
-#include <QDialogButtonBox>
-#include <QIcon>
-#include <QVariant>
+#include <QWidget>
 #include <QHash>
+#include <QString>
+#include <QVariant>
+#include <QPushButton>
 
-
-class MonitorActionCreate : public QDialog
-{
+class MonitorActionCreate : public QDialog {
     Q_OBJECT
 public:
     explicit MonitorActionCreate(QWidget *parent = 0);
     explicit MonitorActionCreate(
-            QString name,QHash<QString, QVariant> conf, QWidget *parent = 0);
+            QString name, QHash<QString, QVariant> conf, QWidget *parent = 0);
 
     LineEdit *name;
     LineEdit *cmd;

@@ -15,55 +15,33 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PROBEWINDOW_H
 #define PROBEWINDOW_H
-
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
-#include "ngrid.h"
-#include "nframe.h"
 #include "monitor/monitor.h"
-#include "monitor/nchecks.h"
-#include "monitor/xml/parsecheckmakegraphcmd.h"
-#include "rrds/rrd4qtgraph.h"
 #include "nowheelcombobox.h"
-#include "themes.h"
 
-#include <QObject>
-#include <QWidget>
-#include <QLabel>
-#include <QFrame>
-#include <QCloseEvent>
+#include <QString>
 #include <QMap>
-#include <QCoreApplication>
-#include <QApplication>
+#include <QVariant>
 #include <QStatusBar>
 #include <QScrollArea>
-#include <QPalette>
-#include <QXmlInputSource>
-#include <QXmlSimpleReader>
-#include <QStringListIterator>
 #include <QTimer>
-#include <QPalette>
-#include <QSettings>
-#include <QVariant>
+#include <QResizeEvent>
+#include <QCloseEvent>
 
-#include <QDebug>
-
-class ProbeWindow : public MonitorProxyWidget
-{
+class ProbeWindow : public MonitorProxyWidget {
     Q_OBJECT
 private:
     ProbeWindow(QString probeName);
     ~ProbeWindow();
 
-    QString     name;
-    QMap<QString,QVariant> rrd_config;
-    QMap<QString,QVariant> target;
+    QString name;
+    QMap<QString, QVariant> rrd_config;
+    QMap<QString, QVariant> target;
 
-    QStatusBar*    status_bar;
-    QScrollArea*  scroll_area;
+    QStatusBar* status_bar;
+    QScrollArea* scroll_area;
     NoWheelComboBox* height_cbox;
     QTimer* timer;
     int divider;
@@ -78,22 +56,22 @@ public:
     void handleEvent(QVariant event);
 
     static int getSpanFor(int value);
-    static const int SPAN_TWO_HOURS     = 0;
-    static const int SPAN_TWELVE_HOURS  = 1;
-    static const int SPAN_TWO_DAYS      = 2;
-    static const int SPAN_SEVEN_DAYS    = 3;
-    static const int SPAN_TWO_WEEKS     = 4;
-    static const int SPAN_ONE_MONTH     = 5;
-    static const int SPAN_SIX_MONTH     = 6;
-    static const int SPAN_ONE_YEAR      = 7;
-    static const int SPAN_THREE_YEARS   = 8;
-    static const int SPAN_TEN_YEARS     = 9;
+    static const int SPAN_TWO_HOURS = 0;
+    static const int SPAN_TWELVE_HOURS = 1;
+    static const int SPAN_TWO_DAYS = 2;
+    static const int SPAN_SEVEN_DAYS = 3;
+    static const int SPAN_TWO_WEEKS = 4;
+    static const int SPAN_ONE_MONTH = 5;
+    static const int SPAN_SIX_MONTH = 6;
+    static const int SPAN_ONE_YEAR = 7;
+    static const int SPAN_THREE_YEARS = 8;
+    static const int SPAN_TEN_YEARS = 9;
 
     static bool isThumbnail(int value);
     static int getHeightFor(int value);
-    static const int HEIGHT_SMALL       = 0;
-    static const int HEIGHT_NORMAL      = 1;
-    static const int HEIGHT_LARGE       = 2;
+    static const int HEIGHT_SMALL = 0;
+    static const int HEIGHT_NORMAL = 1;
+    static const int HEIGHT_LARGE = 2;
 
 
 public slots:

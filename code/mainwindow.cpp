@@ -18,7 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mainwindow.h"
 #include "centralwidget.h"
+#include "monitor/monitorwidget.h"
 #include "dialogs/messagebox.h"
+#include "sysmo.h"
 
 #include <QIcon>
 #include <QMenuBar>
@@ -34,6 +36,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUrl>
 #include <QFile>
 #include <QStatusBar>
+#include <QSettings>
+#include <QVariant>
 
 /**
  * Lot of logic in this class. Most of the UI and network is initialized

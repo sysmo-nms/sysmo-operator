@@ -15,35 +15,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MONITORACTIONSDIALOG_H
 #define MONITORACTIONSDIALOG_H
-
-#include "ngrid.h"
-#include "nframe.h"
-#include "dialogs/messagebox.h"
-
-#include "monitoractioncreate.h"
-#include "actionprocess.h"
-
-#include <QDialog>
 #include <QWidget>
-#include <QObject>
-#include <QLabel>
-#include <QSettings>
-#include <QVariant>
-#include <QHash>
-#include <QDebug>
-#include <QPushButton>
+#include <QDialog>
+#include <QString>
 #include <QListWidget>
-#include <QIcon>
-#include <QDialogButtonBox>
-#include <QHashIterator>
 #include <QListWidgetItem>
-#include <QStringList>
+#include <QPushButton>
 
-class MonitorActionsDialog : public QDialog
-{
+class MonitorActionsDialog : public QDialog {
     Q_OBJECT
 public:
     explicit MonitorActionsDialog(QWidget* parent, QString target);

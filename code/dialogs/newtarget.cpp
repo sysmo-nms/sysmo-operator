@@ -15,12 +15,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "newtarget.h"
 
+#include "newtargetpage1.h"
+#include "sysmo.h"
 
-NewTarget::NewTarget(QWidget* parent) : QWizard(parent)
-{
+#include <QObject>
+
+NewTarget::NewTarget(QWidget* parent) : QWizard(parent) {
 
     this->setWindowTitle("New target");
     this->setModal(true);
@@ -33,5 +36,5 @@ NewTarget::NewTarget(QWidget* parent) : QWizard(parent)
     this->setPage(1, page1);
     this->setStartId(1);
     this->setFixedWidth(525);
-   
+
 }

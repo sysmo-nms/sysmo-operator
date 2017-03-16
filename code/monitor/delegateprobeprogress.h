@@ -15,29 +15,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DELEGATEPROBEPROGRESS_H
 #define DELEGATEPROBEPROGRESS_H
-
-#include "treemodel.h"
-
-#include <QObject>
-#include <QWidget>
 #include <QStyledItemDelegate>
+#include <QWidget>
 #include <QPainter>
-#include <QModelIndex>
 #include <QStyleOptionViewItem>
-#include <QStyleOptionProgressBar>
-#include <QApplication>
-#include <QStyle>
-#include <QVariant>
+#include <QModelIndex>
 #include <QFont>
-#include <QDateTime>
 
-#include <QDebug>
-
-class DelegateProbeProgress : public QStyledItemDelegate
-{
+class DelegateProbeProgress : public QStyledItemDelegate {
     Q_OBJECT
 
 public:
@@ -50,7 +38,7 @@ public slots:
     void ticTimeout();
 
 private:
-    int   timestamp;
+    int timestamp;
     QFont font;
 
 };

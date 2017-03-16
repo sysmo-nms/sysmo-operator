@@ -15,15 +15,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "temporarydir.h"
+#include <stdlib.h>
+
+#include <QDir>
 
 /**
  * Portable (Qt X.X) temporary directory.
  */
-TemporaryDir::TemporaryDir(QObject *parent) : QObject(parent)
-{
-    
+TemporaryDir::TemporaryDir(QObject *parent) : QObject(parent) {
+
     QString tempDir = QDir::tempPath();
     QString tempPath = QDir(tempDir).filePath("sysmo-tmpdir-");
     QDir dir;
@@ -34,44 +36,38 @@ TemporaryDir::TemporaryDir(QObject *parent) : QObject(parent)
             break;
         }
     }
-    
+
 }
 
+QString TemporaryDir::path() {
 
-QString TemporaryDir::path()
-{
-    
     return this->directoryName;
-    
+
 }
 
+TemporaryDir::~TemporaryDir() {
 
-TemporaryDir::~TemporaryDir()
-{
-    
     TemporaryDir::removeDir(this->directoryName);
-    
+
 }
 
+bool TemporaryDir::removeDir(QString dirName) {
 
-bool TemporaryDir::removeDir(QString dirName)
-{
-    
     bool result = true;
     QDir dir(dirName);
 
     if (dir.exists(dirName)) {
+
         Q_FOREACH(QFileInfo info, dir.entryInfoList(
-                      QDir::NoDotAndDotDot |
-                      QDir::System |
-                      QDir::Hidden  |
-                      QDir::AllDirs |
-                      QDir::Files,
-                      QDir::DirsFirst)) {
+                QDir::NoDotAndDotDot |
+                QDir::System |
+                QDir::Hidden |
+                QDir::AllDirs |
+                QDir::Files,
+                QDir::DirsFirst)) {
             if (info.isDir()) {
                 result = removeDir(info.absoluteFilePath());
-            }
-            else {
+            } else {
                 result = QFile::remove(info.absoluteFilePath());
             }
 
@@ -82,23 +78,20 @@ bool TemporaryDir::removeDir(QString dirName)
         result = dir.rmdir(dirName);
     }
     return result;
-    
+
 }
 
+QString TemporaryDir::getRandomString() {
 
-QString TemporaryDir::getRandomString()
-{
-    
     const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
     const int randomStringLength = 12;
 
     QString randomString;
-    for(int i=0; i<randomStringLength; ++i)
-    {
+    for (int i = 0; i < randomStringLength; ++i) {
         int index = qrand() % possibleCharacters.length();
         QChar nextChar = possibleCharacters.at(index);
         randomString.append(nextChar);
     }
     return randomString;
-    
+
 }

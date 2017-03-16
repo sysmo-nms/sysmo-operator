@@ -15,12 +15,27 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "login.h"
 
+#include "nframecontainer.h"
 
-LogIn::LogIn(QWidget* parent) : QDialog(parent)
-{
+#include <QObject>
+#include <QFrame>
+#include <QGridLayout>
+#include <QFormLayout>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QPixmap>
+#include <QRect>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QSettings>
+#include <QVariant>
+#include <QHash>
+#include <QDebug>
+
+LogIn::LogIn(QWidget* parent) : QDialog(parent) {
 
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 
@@ -32,36 +47,36 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     this->setFixedWidth(470);
     this->setWindowTitle("Log in");
 
-    this->user_name   = new LineEdit(this);
-    this->user_pass   = new LineEdit(this);
+    this->user_name = new LineEdit(this);
+    this->user_pass = new LineEdit(this);
     this->user_pass->setEchoMode(LineEdit::Password);
     this->server_name = new LineEdit(this);
     this->server_port = new QSpinBox(this);
     this->server_port->setRange(1, 65535);
 
-    QFrame*      srv_frame = new QFrame(this);
-    QGridLayout* srv_lay   = new QGridLayout();
+    QFrame* srv_frame = new QFrame(this);
+    QGridLayout* srv_lay = new QGridLayout();
     srv_frame->setLayout(srv_lay);
-    srv_lay->setContentsMargins(0,0,0,0);
-    srv_lay->addWidget(this->server_name, 0,0);
+    srv_lay->setContentsMargins(0, 0, 0, 0);
+    srv_lay->addWidget(this->server_name, 0, 0);
 #ifdef USE_WEBSOCKET
     this->default_port = 8080;
-    srv_lay->addWidget(new QLabel("HTTP Port",this), 0,1);
+    srv_lay->addWidget(new QLabel("HTTP Port", this), 0, 1);
 #else
-    srv_lay->addWidget(new QLabel("TCP Port",this), 0,1);
+    srv_lay->addWidget(new QLabel("TCP Port", this), 0, 1);
 #endif
-    srv_lay->addWidget(this->server_port, 0,2);
-    srv_lay->setColumnStretch(0,1);
-    srv_lay->setColumnStretch(1,0);
-    srv_lay->setColumnStretch(2,0);
+    srv_lay->addWidget(this->server_port, 0, 2);
+    srv_lay->setColumnStretch(0, 1);
+    srv_lay->setColumnStretch(1, 0);
+    srv_lay->setColumnStretch(2, 0);
 
     QFrame* separator = new QFrame(this);
     separator->setFixedHeight(15);
 
-    QFrame*      form_frame = new QFrame(this);
-    QFormLayout* form_lay   = new QFormLayout();
+    QFrame* form_frame = new QFrame(this);
+    QFormLayout* form_lay = new QFormLayout();
     form_frame->setLayout(form_lay);
-    form_lay->setContentsMargins(0,0,0,0);
+    form_lay->setContentsMargins(0, 0, 0, 0);
     form_lay->addRow("&User Name:", this->user_name);
     form_lay->addRow("&Password:", this->user_pass);
     form_lay->addRow(separator);
@@ -71,14 +86,14 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     ok_but = new QPushButton("&Log In", this);
     QPushButton* cancel_but = new QPushButton("&Cancel", this);
     QObject::connect(
-                ok_but, SIGNAL(clicked(bool)),
-                this,	SIGNAL(tryValidate()));
+            ok_but, SIGNAL(clicked(bool)),
+            this, SIGNAL(tryValidate()));
     QObject::connect(
-                cancel_but, SIGNAL(clicked(bool)),
-                this, 		SLOT(reject()));
+            cancel_but, SIGNAL(clicked(bool)),
+            this, SLOT(reject()));
 
     QDialogButtonBox* but_box = new QDialogButtonBox(this);
-    but_box->addButton(ok_but, 	   QDialogButtonBox::AcceptRole);
+    but_box->addButton(ok_but, QDialogButtonBox::AcceptRole);
     but_box->addButton(cancel_but, QDialogButtonBox::RejectRole);
     ok_but->setDefault(true);
 
@@ -86,70 +101,60 @@ LogIn::LogIn(QWidget* parent) : QDialog(parent)
     QLabel* banner = new QLabel(this);
     banner->setPixmap(QPixmap(":/images/login-banner.png"));
     QObject::connect(
-                this->user_name, SIGNAL(textChanged(QString)),
-                this,			 SLOT(isValid()));
+            this->user_name, SIGNAL(textChanged(QString)),
+            this, SLOT(isValid()));
     QObject::connect(
-                this->user_pass, SIGNAL(textChanged(QString)),
-                this,			 SLOT(isValid()));
+            this->user_pass, SIGNAL(textChanged(QString)),
+            this, SLOT(isValid()));
     QObject::connect(
-                this->server_name, SIGNAL(textChanged(QString)),
-                this,			   SLOT(isValid()));
+            this->server_name, SIGNAL(textChanged(QString)),
+            this, SLOT(isValid()));
     // initialize isValid
     this->restoreForm();
     this->isValid();
 
 
-    QGridLayout* main_grid  = new QGridLayout();
+    QGridLayout* main_grid = new QGridLayout();
     main_grid->setHorizontalSpacing(14);
     main_grid->setVerticalSpacing(22);
 
-    main_grid->addWidget(banner, 0,0,2,1);
-    main_grid->addWidget(form_frame, 0,1);
-    main_grid->addWidget(but_box, 1,1);
-    main_grid->setRowStretch(0,1);
-    main_grid->setRowStretch(1,1);
-    main_grid->setRowStretch(2,0);
+    main_grid->addWidget(banner, 0, 0, 2, 1);
+    main_grid->addWidget(form_frame, 0, 1);
+    main_grid->addWidget(but_box, 1, 1);
+    main_grid->setRowStretch(0, 1);
+    main_grid->setRowStretch(1, 1);
+    main_grid->setRowStretch(2, 0);
     this->setLayout(main_grid);
     QRect screen = QApplication::desktop()->screenGeometry();
     this->move(screen.center() - rect().center());
 
 }
 
-
-QString LogIn::getUserName()
-{
+QString LogIn::getUserName() {
 
     return this->user_name->text();
 
 }
 
-
-QString LogIn::getPassword()
-{
+QString LogIn::getPassword() {
 
     return this->user_pass->text();
 
 }
 
-
-QString LogIn::getServerName()
-{
+QString LogIn::getServerName() {
 
     return this->server_name->text();
 
 }
 
-
-qint16 LogIn::getServerPort()
-{
+qint16 LogIn::getServerPort() {
 
     return this->server_port->value();
 
 }
 
-
-void LogIn::restoreForm()
-{
+void LogIn::restoreForm() {
 
     QSettings s;
 
@@ -171,9 +176,7 @@ void LogIn::restoreForm()
 
 }
 
-
-void LogIn::saveLoginState()
-{
+void LogIn::saveLoginState() {
 
     qDebug() << "save login state" << this->server_name->text();
     qDebug() << "save login state" << this->server_port->value();
@@ -187,19 +190,23 @@ void LogIn::saveLoginState()
 
 }
 
-
 /*
  * SLOTS
  */
-void LogIn::isValid()
-{
+void LogIn::isValid() {
 
-    if (this->user_name->text().isEmpty())
-        {this->ok_but->setEnabled(false); return;}
-    if (this->user_pass->text().isEmpty())
-        {this->ok_but->setEnabled(false); return;}
-    if (this->server_name->text().isEmpty())
-        {this->ok_but->setEnabled(false); return;}
+    if (this->user_name->text().isEmpty()) {
+        this->ok_but->setEnabled(false);
+        return;
+    }
+    if (this->user_pass->text().isEmpty()) {
+        this->ok_but->setEnabled(false);
+        return;
+    }
+    if (this->server_name->text().isEmpty()) {
+        this->ok_but->setEnabled(false);
+        return;
+    }
     this->ok_but->setEnabled(true);
 
 }

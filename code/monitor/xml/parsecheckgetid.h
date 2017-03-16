@@ -15,14 +15,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PARSECHECKGETID_H
 #define PARSECHECKGETID_H
 
 #include <QXmlDefaultHandler>
+#include <QString>
+#include <QXmlAttributes>
 
-class ParseCheckGetId : public QXmlDefaultHandler
-{
+class ParseCheckGetId : public QXmlDefaultHandler {
 public:
     bool startElement(
             const QString &namespaceURI,

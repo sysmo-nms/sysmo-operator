@@ -15,16 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef UPDATES_H
 #define UPDATES_H
 
 #include <QObject>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QString>
 
-class Updates : public QObject
-{
+class Updates : public QObject {
     Q_OBJECT
 
 public:

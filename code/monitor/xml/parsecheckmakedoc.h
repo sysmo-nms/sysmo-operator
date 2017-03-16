@@ -15,20 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PARSECHECKMAKEDOC_H
 #define PARSECHECKMAKEDOC_H
 
 #include <QXmlDefaultHandler>
+#include <QString>
+#include <QXmlAttributes>
 
-#include <QDebug>
-
-class ParseCheckMakeDoc : public QXmlDefaultHandler
-{
+class ParseCheckMakeDoc : public QXmlDefaultHandler {
 public:
-    QString  doc;
-    QString  flags;
-    QString  char_type;
+    QString doc;
+    QString flags;
+    QString char_type;
     bool startDocument();
     bool startElement(
             const QString &namespaceURI,

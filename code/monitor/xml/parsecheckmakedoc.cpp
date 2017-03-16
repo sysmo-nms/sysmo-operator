@@ -15,11 +15,12 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "parsecheckmakedoc.h"
 
-bool ParseCheckMakeDoc::startDocument()
-{
+#include <QDebug>
+
+bool ParseCheckMakeDoc::startDocument() {
     this->doc = "";
     this->flags = "";
     this->char_type = "";
@@ -28,10 +29,7 @@ bool ParseCheckMakeDoc::startDocument()
     return true;
 }
 
-
-
-bool ParseCheckMakeDoc::endDocument()
-{
+bool ParseCheckMakeDoc::endDocument() {
     this->flags.append("</ul></p>");
     this->doc.append(this->flags);
     this->doc.append("</ul></p>");
@@ -43,8 +41,7 @@ bool ParseCheckMakeDoc::startElement(
         const QString &namespaceURI,
         const QString &localName,
         const QString &qName,
-        const QXmlAttributes &atts)
-{
+        const QXmlAttributes &atts) {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
     if (qName == "Check") {
@@ -106,8 +103,7 @@ bool ParseCheckMakeDoc::startElement(
 bool ParseCheckMakeDoc::endElement(
         const QString &namespaceURI,
         const QString &localName,
-        const QString &qName)
-{
+        const QString &qName) {
     Q_UNUSED(namespaceURI);
     Q_UNUSED(localName);
     if (qName == "UpdatesUrl") {
@@ -146,8 +142,7 @@ bool ParseCheckMakeDoc::endElement(
     return true;
 }
 
-bool ParseCheckMakeDoc::characters(const QString &ch)
-{
+bool ParseCheckMakeDoc::characters(const QString &ch) {
     if (this->char_type == "UpdatesUrl") {
         this->doc.append(ch);
         return true;

@@ -18,6 +18,32 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "newprobepage1.h"
 
+
+#include "ngrid.h"
+#include "monitor/nchecks.h"
+#include "monitor/xml/parsecheckgetinfos.h"
+#include "monitor/monitor.h"
+
+#include <Qt>
+#include <QObject>
+#include <QWidget>
+#include <QPushButton>
+#include <QAbstractItemView>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QSortFilterProxyModel>
+#include <QModelIndex>
+#include <QList>
+#include <QStringList>
+#include <QXmlInputSource>
+#include <QXmlSimpleReader>
+#include <QVariant>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QMap>
+
+#include <QDebug>
+
 NewProbePage1::NewProbePage1(QString forTarget, QWizard* parent)
 : QWizardPage(parent) {
 

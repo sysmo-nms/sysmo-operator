@@ -15,30 +15,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWPROBEPROGRESSDIALOG_H
 #define NEWPROBEPROGRESSDIALOG_H
-
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "systemtray.h"
 #include "lineedit.h"
 
-#include "messagebox.h"
-
-#include <QObject>
-#include <QWidget>
 #include <QProgressDialog>
 #include <QMap>
-#include <QMapIterator>
-#include <QPushButton>
+#include <QString>
+#include <QWidget>
 #include <QVariant>
 
-#include <QDebug>
-
-class NewProbeProgressDialog : public QProgressDialog
-{
-
+class NewProbeProgressDialog : public QProgressDialog {
     Q_OBJECT
 
 public:

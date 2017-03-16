@@ -15,33 +15,21 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SUPERCAST_H
 #define SUPERCAST_H
+#include <QThread>
+#include <QObject>
+#include <QHostAddress>
+#include <QString>
+#include <QVariant>
+#include <QMap>
 
 #include "supercastsignal.h"
-#include "supercasthttp.h"
-#include "supercasthttprequest.h"
 #include "supercasthttpreply.h"
+#include "supercasthttprequest.h"
 
-#ifdef USE_WEBSOCKET
-#include "supercastwebsocket.h"
-#else
-#include "supercastsocket.h"
-#endif
-
-#include <QObject>
-#include <QThread>
-#include <QAbstractSocket>
-#include <QStringList>
-#include <QMap>
-#include <QVariant>
-
-#include <QDebug>
-
-
-class Supercast : public QObject
-{
+class Supercast : public QObject {
     Q_OBJECT
 
     QThread socket_thread;
@@ -52,16 +40,16 @@ public:
     ~Supercast();
     void tryConnect(
             QHostAddress host,
-            qint16       port,
-            QString      user_name,
-            QString      user_pass);
-    static const int CONNECTION_SUCCESS   = 100;
+            qint16 port,
+            QString user_name,
+            QString user_pass);
+    static const int CONNECTION_SUCCESS = 100;
     static const int AUTHENTICATION_ERROR = 101;
 
     // API
     static void subscribe(QString channel, SupercastSignal* subscriber);
     static void unsubscribe(QString channel);
-    static void sendQuery(QVariant query,   SupercastSignal* reply);
+    static void sendQuery(QVariant query, SupercastSignal* reply);
     static void httpGet(QString path, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply);
     static void httpGet(QString path, QString dst_file, SupercastSignal* reply, QString opaque);
@@ -79,10 +67,10 @@ private:
     static const int QUERYID_UNDEF = 100;
     QString user_name;
     QString user_pass;
-    QUrl    data_base_url;
+    QUrl data_base_url;
     QMap<QString, SupercastSignal*>* channels;
-    QMap<int,     SupercastSignal*>* queries;
-    QMap<int,     SupercastSignal*>* http_requests;
+    QMap<int, SupercastSignal*>* queries;
+    QMap<int, SupercastSignal*>* http_requests;
 
 private slots:
     void handleSupercastMessage(QVariant message);

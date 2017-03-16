@@ -15,20 +15,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWTARGET_H
 #define NEWTARGET_H
-
-#include "newtargetpage1.h"
-
-#include "sysmo.h"
-
-#include <QObject>
-#include <QWidget>
 #include <QWizard>
+#include <QWidget>
 
-class NewTarget : public QWizard
-{
+class NewTarget : public QWizard {
     Q_OBJECT
 
 public:

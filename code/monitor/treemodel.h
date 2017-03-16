@@ -15,30 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
+#include <QStandardItemModel>
+#include <QWidget>
+#include <QVariant>
+#include <QMap>
+#include <QModelIndex>
 
-#include "monitor.h"
 #include "itemtarget.h"
 #include "itemprobe.h"
 
-#include <QObject>
-#include <QWidget>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QStringList>
-#include <QMap>
-#include <QList>
-#include <QTimer>
-#include <QModelIndex>
-#include <QTreeView>
-#include <QVariant>
-
-#include <QDebug>
-
-class TreeModel : public QStandardItemModel
-{
+class TreeModel : public QStandardItemModel {
     Q_OBJECT
 
 public:
@@ -54,7 +43,7 @@ public slots:
 
 private:
     QMap<QString, ItemTarget*>* targets;
-    QMap<QString, ItemProbe*>*  probes;
+    QMap<QString, ItemProbe*>* probes;
 
 signals:
     void expandIndex(QModelIndex index);

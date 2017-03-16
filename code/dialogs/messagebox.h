@@ -15,21 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MESSAGEBOX_H
 #define MESSAGEBOX_H
 
-#include "sysmo.h"
-
-#include <QObject>
-#include <QWidget>
 #include <QMessageBox>
-#include <QString>
-#include <QPixmap>
-#include <QTimer>
+#include <QWidget>
 
-class MessageBox : public QMessageBox
-{
+class MessageBox : public QMessageBox {
 public:
     explicit MessageBox(QWidget* parent = 0);
     void setIconType(int icon_type);

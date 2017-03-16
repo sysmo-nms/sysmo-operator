@@ -15,21 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef NEWPROBE_H
 #define NEWPROBE_H
-
-#include "newprobepage1.h"
-#include "newprobepage2.h"
-#include "newprobepage3.h"
-
 #include <QWizard>
+#include <QString>
 #include <QWidget>
 
-#include <QDebug>
-
-class NewProbe : public QWizard
-{
+class NewProbe : public QWizard {
 public:
     NewProbe(QString forTarget, QWidget* parent = 0);
 };

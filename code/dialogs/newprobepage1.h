@@ -18,36 +18,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef NEWPROBEPAGE1_H
 #define NEWPROBEPAGE1_H
-
-#include "ngrid.h"
-#include "monitor/nchecks.h"
-#include "monitor/xml/parsecheckgetinfos.h"
-#include "monitor/monitor.h"
-#include "lineedit.h"
-
-#include <Qt>
-#include <QObject>
-#include <QWidget>
-#include <QWizard>
 #include <QWizardPage>
-#include <QPushButton>
-#include <QTreeView>
-#include <QAbstractItemView>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QSortFilterProxyModel>
-#include <QModelIndex>
-#include <QList>
-#include <QStringList>
-#include <QXmlInputSource>
-#include <QXmlSimpleReader>
-#include <QVariant>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QMap>
+#include <QString>
 #include <QWizard>
-
-#include <QDebug>
+#include <QTreeView>
+#include "lineedit.h"
 
 class NewProbePage1 : public QWizardPage {
     Q_OBJECT

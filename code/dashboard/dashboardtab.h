@@ -15,21 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DASHBOARDTAB_H
 #define DASHBOARDTAB_H
 
 #include "nframecontainer.h"
-#include "ngridcontainer.h"
-#include "ngrid.h"
-
 #include <QWidget>
-#include <QPushButton>
-#include <QMdiArea>
-#include <QIcon>
 
-class DashboardTab : public NFrameContainer
-{
+class DashboardTab : public NFrameContainer {
 public:
     explicit DashboardTab(QWidget* parent = 0);
 };

@@ -15,16 +15,21 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "rrd4qtgraph.h"
 
+#include "rrd4qt.h"
+#include "rrd4qtsignal.h"
+
+#include <QObject>
+#include <QTemporaryFile>
+#include <QDebug>
 
 Rrd4QtGraph::Rrd4QtGraph(
-        QString     rrd_db_file,
-        QMap<QString,QVariant> rrd_graph_config,
-        int         initial_height,
-        QWidget*    parent) : QLabel(parent)
-{
+        QString rrd_db_file,
+        QMap<QString, QVariant> rrd_graph_config,
+        int initial_height,
+        QWidget* parent) : QLabel(parent) {
 
     /*
      * Open and close temporary file to generate fileName()
@@ -41,14 +46,14 @@ Rrd4QtGraph::Rrd4QtGraph(
      */
     this->graph_config = rrd_graph_config;
 
-    this->graph_config.insert("rrdFile",   rrd_db_file);
-    this->graph_config.insert("pngFile",   this->pixmap_file);
-    this->graph_config.insert("height",    initial_height);
-    this->graph_config.insert("width",     400);
-    this->graph_config.insert("type",      "graph");
-    this->graph_config.insert("opaque",    "");
+    this->graph_config.insert("rrdFile", rrd_db_file);
+    this->graph_config.insert("pngFile", this->pixmap_file);
+    this->graph_config.insert("height", initial_height);
+    this->graph_config.insert("width", 400);
+    this->graph_config.insert("type", "graph");
+    this->graph_config.insert("opaque", "");
     this->graph_config.insert("spanBegin", -300000);
-    this->graph_config.insert("spanEnd",   0);
+    this->graph_config.insert("spanEnd", 0);
 
 
     /*
@@ -64,20 +69,17 @@ Rrd4QtGraph::Rrd4QtGraph(
      */
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QVariant)),
-                this,  SLOT(handleRrdReply(QVariant)));
+            sig, SIGNAL(serverMessage(QVariant)),
+            this, SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 
 }
 
+void Rrd4QtGraph::handleRrdReply(QVariant reply_var) {
 
-void Rrd4QtGraph::handleRrdReply(QVariant reply_var)
-{
-
-    QMap<QString,QVariant> reply = reply_var.toMap();
-    if (reply.value("reply") == "success")
-    {
+    QMap<QString, QVariant> reply = reply_var.toMap();
+    if (reply.value("reply") == "success") {
         this->pixmap_obj.load(this->pixmap_file);
         this->setPixmap(this->pixmap_obj);
         return;
@@ -87,38 +89,32 @@ void Rrd4QtGraph::handleRrdReply(QVariant reply_var)
 
 }
 
-
-void Rrd4QtGraph::setTimeSpan(int time_span)
-{
+void Rrd4QtGraph::setTimeSpan(int time_span) {
 
     qDebug() << "set time span";
     this->graph_config.insert("spanBegin", 0 - time_span);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QVariant)),
-                this,  SLOT(handleRrdReply(QVariant)));
+            sig, SIGNAL(serverMessage(QVariant)),
+            this, SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 
 }
 
-
-void Rrd4QtGraph::setGraphHeight(int height)
-{
+void Rrd4QtGraph::setGraphHeight(int height) {
 
     this->graph_config.insert("height", height);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QVariant)),
-                this,  SLOT(handleRrdReply(QVariant)));
+            sig, SIGNAL(serverMessage(QVariant)),
+            this, SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
 
 }
 
-
-void Rrd4QtGraph::setGraphWidth(int width)
-{
+void Rrd4QtGraph::setGraphWidth(int width) {
 
     if (width < 250) {
         qDebug() << "is min than 250";
@@ -129,9 +125,9 @@ void Rrd4QtGraph::setGraphWidth(int width)
     this->graph_config.insert("width", width);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
-                sig,   SIGNAL(serverMessage(QVariant)),
-                this,  SLOT(handleRrdReply(QVariant)));
+            sig, SIGNAL(serverMessage(QVariant)),
+            this, SLOT(handleRrdReply(QVariant)));
 
     Rrd4Qt::callRrd(this->graph_config, sig);
-   
+
 }

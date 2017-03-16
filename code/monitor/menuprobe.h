@@ -15,28 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MENUPROBE_H
 #define MENUPROBE_H
-
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "windows/probewindow.h"
-#include "dialogs/messagebox.h"
-
 #include <QMenu>
 #include <QWidget>
 #include <QString>
 #include <QPoint>
-#include <QAction>
 #include <QVariant>
-#include <QMap>
 
-#include <QDebug>
-
-
-class MenuProbe : public QMenu
-{
+class MenuProbe : public QMenu {
     Q_OBJECT
 
 public:

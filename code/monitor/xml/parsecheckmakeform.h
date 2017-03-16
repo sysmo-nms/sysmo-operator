@@ -15,17 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PARSECHECKMAKEFORM_H
 #define PARSECHECKMAKEFORM_H
 
 #include <QXmlDefaultHandler>
 #include <QList>
+#include <QString>
+#include <QXmlAttributes>
 
-#include <QDebug>
-
-class FormConfig
-{
+class FormConfig {
 public:
     FormConfig(FormConfig* other);
     FormConfig();
@@ -34,14 +33,12 @@ public:
     QString flag_name;
     QString hint;
     QString defaults;
-    bool    has_helper;
+    bool has_helper;
     QString helper_descr;
     QString helper_class;
 };
 
-
-class ParseCheckMakeForm : public QXmlDefaultHandler
-{
+class ParseCheckMakeForm : public QXmlDefaultHandler {
 public:
     ParseCheckMakeForm();
     ~ParseCheckMakeForm();
@@ -69,10 +66,10 @@ private:
     QString helper_class;
     QString defaults;
 
-    bool    has_helper;
-    bool    is_hint;
-    bool    is_defaults;
-    bool    is_mandatory;
+    bool has_helper;
+    bool is_hint;
+    bool is_defaults;
+    bool is_mandatory;
 
 };
 

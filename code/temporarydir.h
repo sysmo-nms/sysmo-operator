@@ -15,20 +15,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef TEMPORARYDIR_H
 #define TEMPORARYDIR_H
-
-#include <stdlib.h>
-
 #include <QObject>
 #include <QString>
-#include <QDir>
 
-
-class TemporaryDir : public QObject
-{
-
+class TemporaryDir : public QObject {
 public:
     explicit TemporaryDir(QObject *parent = 0);
     ~TemporaryDir();

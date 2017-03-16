@@ -15,12 +15,32 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "monitorlogs.h"
 
 
-MonitorLogs::MonitorLogs(QWidget* parent) : QTabWidget(parent)
-{
+#include "nframecontainer.h"
+#include "nframe.h"
+#include "ngrid.h"
+#include "ngridcontainer.h"
+#include "network/supercastsignal.h"
+#include "network/supercast.h"
+#include "monitor.h"
+#include "qjson.h"
+
+#include <QIcon>
+#include <QTextEdit>
+#include <Qt>
+#include <QByteArray>
+#include <QList>
+#include <QHeaderView>
+#include <QDateTime>
+#include <QBrush>
+#include <QMap>
+
+#include <QDebug>
+
+MonitorLogs::MonitorLogs(QWidget* parent) : QTabWidget(parent) {
 
     this->table = new MonitorTableLogs(this);
     this->table->setColumnCount(5);
@@ -40,19 +60,17 @@ MonitorLogs::MonitorLogs(QWidget* parent) : QTabWidget(parent)
     this->insertTab(1, f2, QIcon(":/icons/appointment-new.png"), "Timeline logs");
     this->setTabEnabled(1, false);
     QObject::connect(
-                Monitor::getInstance(), SIGNAL(initialSyncBegin(QVariant)),
-                this, SLOT(handleInitialSyncBegin(QVariant)));
+            Monitor::getInstance(), SIGNAL(initialSyncBegin(QVariant)),
+            this, SLOT(handleInitialSyncBegin(QVariant)));
     QObject::connect(
-                Monitor::getInstance(), SIGNAL(dbNotification(QVariant)),
-                this, SLOT(handleDbNotif(QVariant)));
+            Monitor::getInstance(), SIGNAL(dbNotification(QVariant)),
+            this, SLOT(handleDbNotif(QVariant)));
 
 }
 
+void MonitorLogs::handleInitialSyncBegin(QVariant message_var) {
 
-void MonitorLogs::handleInitialSyncBegin(QVariant message_var)
-{
-
-    QMap<QString,QVariant> message = message_var.toMap();
+    QMap<QString, QVariant> message = message_var.toMap();
     QString syncDir = "sync";
     QString dumpDir = message.value("dumpDir").toString();
     QString evtFile = message.value("latestEventsFile").toString();
@@ -60,12 +78,11 @@ void MonitorLogs::handleInitialSyncBegin(QVariant message_var)
     QString http_url = http_tmp.arg(syncDir).arg(dumpDir).arg(evtFile);
     SupercastSignal* sig = new SupercastSignal();
     QObject::connect(
-                sig, SIGNAL(serverMessage(QString)),
-                this, SLOT(handleHttpReply(QString)));
+            sig, SIGNAL(serverMessage(QString)),
+            this, SLOT(handleHttpReply(QString)));
     Supercast::httpGet(http_url, sig);
 
 }
-
 
 void MonitorLogs::handleHttpReply(QString body) {
 
@@ -75,31 +92,29 @@ void MonitorLogs::handleHttpReply(QString body) {
 
     int j = 0;
     for (int i = 0; i < json_array.size(); i++) {
-       QMap<QString,QVariant> obj = json_array.at(i).toMap();
-       int timestamp = obj.value("DATE_CREATED").toInt();
-       QDateTime date = QDateTime::fromTime_t(timestamp);
-       CustomTableItem* created = new CustomTableItem(date.toString("yyyy-MM-d hh:mm:ss"));
-       CustomTableItem* target = new CustomTableItem(obj.value("HOST_DISPLAY").toString());
-       CustomTableItem* probe = new CustomTableItem(obj.value("PROBE_DISPLAY").toString());
-       StatusTableItem* status = new StatusTableItem(obj.value("STATUS").toString());
-       CustomTableItem* message = new CustomTableItem(obj.value("RETURN_STRING").toString());
-       this->table->setItem(j, 0, created);
-       this->table->setItem(j, 1, target);
-       this->table->setItem(j, 2, probe);
-       this->table->setItem(j, 3, status);
-       this->table->setItem(j, 4, message);
-       this->table->setRowHeight(j, 20);
-       j++;
-       qDebug() << obj;
+        QMap<QString, QVariant> obj = json_array.at(i).toMap();
+        int timestamp = obj.value("DATE_CREATED").toInt();
+        QDateTime date = QDateTime::fromTime_t(timestamp);
+        CustomTableItem* created = new CustomTableItem(date.toString("yyyy-MM-d hh:mm:ss"));
+        CustomTableItem* target = new CustomTableItem(obj.value("HOST_DISPLAY").toString());
+        CustomTableItem* probe = new CustomTableItem(obj.value("PROBE_DISPLAY").toString());
+        StatusTableItem* status = new StatusTableItem(obj.value("STATUS").toString());
+        CustomTableItem* message = new CustomTableItem(obj.value("RETURN_STRING").toString());
+        this->table->setItem(j, 0, created);
+        this->table->setItem(j, 1, target);
+        this->table->setItem(j, 2, probe);
+        this->table->setItem(j, 3, status);
+        this->table->setItem(j, 4, message);
+        this->table->setRowHeight(j, 20);
+        j++;
+        qDebug() << obj;
     }
 
 }
 
+void MonitorLogs::handleDbNotif(QVariant obj_var) {
 
-void MonitorLogs::handleDbNotif(QVariant obj_var)
-{
-
-    QMap<QString,QVariant> obj = obj_var.toMap();
+    QMap<QString, QVariant> obj = obj_var.toMap();
     int timestamp = obj.value("DATE_CREATED").toInt();
     QDateTime date = QDateTime::fromTime_t(timestamp);
     CustomTableItem* created = new CustomTableItem(date.toString("yyyy-MM-d hh:mm:ss"));
@@ -120,29 +135,23 @@ void MonitorLogs::handleDbNotif(QVariant obj_var)
 
 }
 
-
-MonitorTableLogs::MonitorTableLogs(QWidget *parent) : QTableWidget(parent)
-{
+MonitorTableLogs::MonitorTableLogs(QWidget *parent) : QTableWidget(parent) {
 }
 
-CustomTableItem::CustomTableItem(QString text) : QTableWidgetItem(text)
-{
+CustomTableItem::CustomTableItem(QString text) : QTableWidgetItem(text) {
 
     this->setFlags(Qt::ItemIsEnabled);
 
 }
 
 
-QColor StatusTableItem::red = QColor(239,41,41);
-QColor StatusTableItem::yellow = QColor(237,212,0);
-QColor StatusTableItem::green = QColor(237,212,0);
-QColor StatusTableItem::white = QColor(254,254,254);
-QColor StatusTableItem::dark = QColor(40,40,40);
+QColor StatusTableItem::red = QColor(239, 41, 41);
+QColor StatusTableItem::yellow = QColor(237, 212, 0);
+QColor StatusTableItem::green = QColor(237, 212, 0);
+QColor StatusTableItem::white = QColor(254, 254, 254);
+QColor StatusTableItem::dark = QColor(40, 40, 40);
 
-
-StatusTableItem::StatusTableItem(QString text) : CustomTableItem(text)
-
-{
+StatusTableItem::StatusTableItem(QString text) : CustomTableItem(text) {
     if (text == "CRITICAL") {
         this->setBackground(QBrush(StatusTableItem::red));
         this->setForeground(QBrush(StatusTableItem::white));
@@ -152,5 +161,5 @@ StatusTableItem::StatusTableItem(QString text) : CustomTableItem(text)
         this->setBackground(QBrush(StatusTableItem::dark));
         this->setForeground(QBrush(StatusTableItem::white));
     }
-   
+
 }

@@ -15,21 +15,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MONITORACTIONS_H
 #define MONITORACTIONS_H
 
-#include "monitor/monitor.h"
+#include <QString>
 
-#include "monitoractionsdialog.h"
-#include "monitoractionconfig.h"
-
-#include <QDebug>
-#include <QSettings>
-#include <QVariant>
-
-class MonitorActions
-{
+class MonitorActions {
 public:
     static void openActionFor(QString target);
 

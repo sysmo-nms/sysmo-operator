@@ -15,15 +15,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "sidebutton.h"
+#include <QSizePolicy>
 
 /**
  * Special vertical button on the left of the UI
  */
-SideButton::SideButton(QWidget* parent) : QPushButton(parent)
-{
-    
-    this->setSizePolicy(QSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored));
-    
+SideButton::SideButton(QWidget* parent) : QPushButton(parent) {
+
+    this->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored));
+
 }

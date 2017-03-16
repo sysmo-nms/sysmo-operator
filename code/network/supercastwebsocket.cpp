@@ -15,12 +15,20 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "supercastwebsocket.h"
 
+#include "sysmo.h"
+#include "qjson.h"
 
-SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject()
-{
+#include <QStringList>
+#include <QTcpSocket>
+#include <QDataStream>
+#include <QIODevice>
+#include <Qt>
+#include <QUrl>
+
+SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject() {
 
     this->socket = new QWebSocket();
     this->socket->setParent(this);
@@ -32,24 +40,22 @@ SupercastWebSocket::SupercastWebSocket(QHostAddress host, qint16 port) : QObject
     this->timer->setInterval(Sysmo::SUPERCAST_SOCKET_TIMEOUT);
 
     QObject::connect(
-                this->timer, SIGNAL(timeout()),
-                this, SLOT(timerTimeout()),
-                Qt::QueuedConnection);
+            this->timer, SIGNAL(timeout()),
+            this, SLOT(timerTimeout()),
+            Qt::QueuedConnection);
     qRegisterMetaType<QAbstractSocket::SocketError>();
     qRegisterMetaType<QAbstractSocket::SocketState>();
     QObject::connect(
-                this->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-                this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
+            this->socket, SIGNAL(error(QAbstractSocket::SocketError)),
+            this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
 
     QObject::connect(
-                this->socket, SIGNAL(textMessageReceived(QString)),
-                this,         SLOT(handleTextMessage(QString)));
+            this->socket, SIGNAL(textMessageReceived(QString)),
+            this, SLOT(handleTextMessage(QString)));
 
 }
 
-
-void SupercastWebSocket::threadStarted()
-{
+void SupercastWebSocket::threadStarted() {
 
     QString urlStr = "ws://%1:%2/websocket";
     QUrl url(urlStr.arg(this->host.toString()).arg(this->port));
@@ -59,17 +65,13 @@ void SupercastWebSocket::threadStarted()
 
 }
 
-
-SupercastWebSocket::~SupercastWebSocket()
-{
+SupercastWebSocket::~SupercastWebSocket() {
 
     this->socket->close();
 
 }
 
-
-void SupercastWebSocket::timerTimeout()
-{
+void SupercastWebSocket::timerTimeout() {
 
     if (this->socket->state() == QAbstractSocket::UnconnectedState) return;
     if (this->socket->state() != QAbstractSocket::ConnectedState) {
@@ -79,26 +81,21 @@ void SupercastWebSocket::timerTimeout()
 
 }
 
-
-void SupercastWebSocket::handleTextMessage(const QString &message)
-{
+void SupercastWebSocket::handleTextMessage(const QString &message) {
 
     QVariant json_obj = QJson::decode(message);
     emit this->serverMessage(json_obj);
 
 }
 
-
-void SupercastWebSocket::handleClientMessage(QVariant msg)
-{
+void SupercastWebSocket::handleClientMessage(QVariant msg) {
 
     //QByteArray json_array = QJson::encode(msg).toLatin1();
     this->socket->sendTextMessage(QJson::encode(msg));
 
 }
 
-qint32 SupercastWebSocket::arrayToInt32(QByteArray source)
-{
+qint32 SupercastWebSocket::arrayToInt32(QByteArray source) {
 
     qint32 temp;
     QDataStream data(&source, QIODevice::ReadWrite);
@@ -107,8 +104,7 @@ qint32 SupercastWebSocket::arrayToInt32(QByteArray source)
 
 }
 
-QByteArray SupercastWebSocket::int32ToArray(qint32 source)
-{
+QByteArray SupercastWebSocket::int32ToArray(qint32 source) {
 
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);
@@ -120,7 +116,7 @@ QByteArray SupercastWebSocket::int32ToArray(qint32 source)
 void SupercastWebSocket::handleSocketError(QAbstractSocket::SocketError error) {
 
     emit this->socketError((int) error);
-   
+
 }
 
 

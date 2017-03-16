@@ -15,21 +15,28 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "supercastsocket.h"
 
+#include "sysmo.h"
+#include "qjson.h"
 
-SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
-{
+#include <QStringList>
+#include <QDataStream>
+#include <QIODevice>
+#include <Qt>
+#include <QTimer>
+
+SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject() {
 
     this->block_size = 0;
-    this->socket     = new SupercastTcpSocket(this);
+    this->socket = new SupercastTcpSocket(this);
     this->host = host;
     this->port = port;
 
     QObject::connect(
-                this->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-                this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
+            this->socket, SIGNAL(error(QAbstractSocket::SocketError)),
+            this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
 
 
     /*
@@ -37,41 +44,35 @@ SupercastSocket::SupercastSocket(QHostAddress host, qint16 port) : QObject()
      * connected to.
      */
     QObject::connect(
-                this->socket, SIGNAL(readyRead()),
-                this,         SLOT(socketReadyRead()),
-                Qt::QueuedConnection);
+            this->socket, SIGNAL(readyRead()),
+            this, SLOT(socketReadyRead()),
+            Qt::QueuedConnection);
 
 }
 
-
-void SupercastSocket::threadStarted()
-{
+void SupercastSocket::threadStarted() {
 
     QTimer *timer = new QTimer(this);
     timer->setSingleShot(true);
     timer->setInterval(Sysmo::SUPERCAST_SOCKET_TIMEOUT);
 
     QObject::connect(
-                timer, SIGNAL(timeout()),
-                this, SLOT(timerTimeout()),
-                Qt::QueuedConnection);
+            timer, SIGNAL(timeout()),
+            this, SLOT(timerTimeout()),
+            Qt::QueuedConnection);
 
     timer->start();
     this->socket->connectToHost(this->host, this->port);
 
 }
 
-
-SupercastSocket::~SupercastSocket()
-{
+SupercastSocket::~SupercastSocket() {
 
     this->socket->close();
 
 }
 
-
-void SupercastSocket::timerTimeout()
-{
+void SupercastSocket::timerTimeout() {
 
     if (this->socket->state() == QAbstractSocket::UnconnectedState) return;
     if (this->socket->state() != QAbstractSocket::ConnectedState) {
@@ -81,16 +82,13 @@ void SupercastSocket::timerTimeout()
 
 }
 
-
-void SupercastSocket::socketReadyRead()
-{
+void SupercastSocket::socketReadyRead() {
 
     /*
      * read header to set block_size. Only read when the header is
      * complete.
      */
-    if (this->block_size == 0)
-    {
+    if (this->block_size == 0) {
         if (this->socket->bytesAvailable() < HEADER_LEN) return;
 
         QByteArray header = this->socket->read(HEADER_LEN);
@@ -108,7 +106,7 @@ void SupercastSocket::socketReadyRead()
      * Read and decode the payload.
      */
     QByteArray payload = this->socket->read(this->block_size);
-    QVariant   json_obj = QJson::decode(QString(payload));
+    QVariant json_obj = QJson::decode(QString(payload));
 
 
     /*
@@ -132,13 +130,11 @@ void SupercastSocket::socketReadyRead()
 
 }
 
-
-void SupercastSocket::handleClientMessage(QVariant msg)
-{
+void SupercastSocket::handleClientMessage(QVariant msg) {
 
     QByteArray json_array = QJson::encode(msg).toLatin1();
     qDebug() << "will sed:" << json_array;
-    qint32     json_size(json_array.size());
+    qint32 json_size(json_array.size());
     qDebug() << "will send size:" << json_array.size();
     this->socket->write(SupercastSocket::int32ToArray(json_size));
     this->socket->write(json_array.data(), json_size);
@@ -146,9 +142,7 @@ void SupercastSocket::handleClientMessage(QVariant msg)
 
 }
 
-
-qint32 SupercastSocket::arrayToInt32(QByteArray source)
-{
+qint32 SupercastSocket::arrayToInt32(QByteArray source) {
 
     qint32 temp;
     QDataStream data(&source, QIODevice::ReadWrite);
@@ -157,9 +151,7 @@ qint32 SupercastSocket::arrayToInt32(QByteArray source)
 
 }
 
-
-QByteArray SupercastSocket::int32ToArray(qint32 source)
-{
+QByteArray SupercastSocket::int32ToArray(qint32 source) {
 
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);
@@ -168,22 +160,18 @@ QByteArray SupercastSocket::int32ToArray(qint32 source)
 
 }
 
-
 void SupercastSocket::handleSocketError(QAbstractSocket::SocketError error) {
 
     emit this->socketError((int) error);
 
 }
 
-
-SupercastTcpSocket::SupercastTcpSocket(QObject *parent) : QTcpSocket(parent)
-{
+SupercastTcpSocket::SupercastTcpSocket(QObject *parent) : QTcpSocket(parent) {
 
 }
 
-void SupercastTcpSocket::emitReadyRead()
-{
+void SupercastTcpSocket::emitReadyRead() {
 
     emit this->readyRead();
-   
+
 }
