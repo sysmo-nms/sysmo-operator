@@ -11,9 +11,9 @@ This file is an action remainder for the core development team. It is of no inte
 
 The only file modified on OBS that is elligible for revision, is the "_service" file wich describe how to download (git clone) patch and build the source. The OBS "_service" file is located at "support/packages/obs/_service" wich is build with "./configure" from "support/packages/obs/_service.in". It will allways contains the "${OPERATOR_VERSION}" defined in "CMakeLists.txt".
 
+* A call to "make packages" will force a rebuild on OBS "unstable" with the latest repo commit. Typicaly used to publish the latest commit to the "unstable" repository.
 * A call to "support/packages/obs/update_unstable.sh" will commit and push the actual "support/packages/obs/_service" to the OBS "unstable" repository. Typicaly used after an OPERATOR_VERSION bump.
 * A call to "support/packages/obs/update_stable.sh" will commit and push the actual "support/packages/obs/_service" to the OBS "stable" repository. Typicaly used for publishing the actual OPERATOR_VERSION release.
-* A call to "make packages" will force a rebuild on OBS "unstable" with the latest repo commit. Typicaly used to publish the latest commit to the "unstable" repository.
 
 ### Where is the current "unstable" release
 
