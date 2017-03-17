@@ -8,6 +8,8 @@ This file is an action remainder for the core development team. It is of no inte
 - Linux repositories are filled with OpenSuse OpenBuildService (see support/packages/obs/*). Linux "unstable" builds must be manualy triggered by "make packages".
 
 ## About OBS builds
+- obs instable [admin interface](https://build.opensuse.org/project/show/home:sysmo:unstable)
+- obs stable [admin interface](https://build.opensuse.org/project/show/home:sysmo)
 
 The only file modified on OBS that is elligible for revision, is the "_service" file wich describe how to download (git clone) patch and build the source. The OBS "_service" file is located at "support/packages/obs/_service" wich is build with "./configure" from "support/packages/obs/_service.in". It will allways contains the "${OPERATOR_VERSION}" defined in "CMakeLists.txt".
 
