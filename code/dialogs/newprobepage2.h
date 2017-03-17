@@ -18,9 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef NEWPROBEPAGE2_H
 #define NEWPROBEPAGE2_H
-#include "lineedit.h"
-#include "nframe.h"
-#include "ngrid.h"
+#include <widgets/lineedit.h>
+#include <widgets/nframe.h>
+#include <widgets/ngrid.h>
 
 #include <QWizard>
 #include <QWizardPage>

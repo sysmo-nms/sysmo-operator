@@ -27,10 +27,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QCloseEvent>
 #include <QSystemTrayIcon>
 
+#include <widgets/systemtray.h>
+
 #include "network/supercast.h"
 #include "dialogs/login.h"
 #include "rrds/rrd4qt.h"
-#include "systemtray.h"
 #include "updates/updates.h"
 
 class MainWindow : public QMainWindow {

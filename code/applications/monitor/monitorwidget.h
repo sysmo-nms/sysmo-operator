@@ -18,8 +18,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef MONITORWIDGET_H
 #define MONITORWIDGET_H
-#include "nframecontainer.h"
-#include "dialogs/newprobe.h"
+#include <widgets/nframecontainer.h>
+#include <dialogs/newprobe.h>
 #include "monitor.h"
 
 #include <QWidget>

@@ -18,9 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "centralwidget.h"
 
-#include <ngrid.h>
-#include <ngridcontainer.h>
-#include <sidebutton.h>
+#include <widgets/ngrid.h>
+#include <widgets/ngridcontainer.h>
+#include <widgets/sidebutton.h>
 #include <applications/monitor/monitorwidget.h>
 #include <applications/dashboard/dashboardwidget.h>
 #include <applications/logs/logswidget.h>

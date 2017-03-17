@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "actionprocess.h"
-#include "systemtray.h"
+#include <widgets/systemtray.h>
 
 #include <QDebug>
 #include <QSystemTrayIcon>

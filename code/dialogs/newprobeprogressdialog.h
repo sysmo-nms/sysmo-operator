@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef NEWPROBEPROGRESSDIALOG_H
 #define NEWPROBEPROGRESSDIALOG_H
-#include "lineedit.h"
+#include <widgets/lineedit.h>
 
 #include <QProgressDialog>
 #include <QMap>

@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "monitoractionsdialog.h"
-#include "sysmo.h"
-#include "ngrid.h"
-#include "nframe.h"
+#include <sysmo.h>
+#include <widgets/ngrid.h>
+#include <widgets/nframe.h>
 #include "dialogs/messagebox.h"
 
 #include "monitoractioncreate.h"

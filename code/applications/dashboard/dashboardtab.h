@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DASHBOARDTAB_H
 #define DASHBOARDTAB_H
 
-#include "nframecontainer.h"
+#include <widgets/nframecontainer.h>
 #include <QWidget>
 
 class DashboardTab : public NFrameContainer {

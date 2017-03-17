@@ -20,8 +20,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "messagebox.h"
 
 #include <sysmo.h>
-#include <nframecontainer.h>
-#include <ngridcontainer.h>
+#include <widgets/nframecontainer.h>
+#include <widgets/ngridcontainer.h>
 #include <network/supercast.h>
 #include <network/supercastsignal.h>
 #include <applications/monitor/treeview.h>

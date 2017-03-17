@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "login.h"
 
-#include "nframecontainer.h"
+#include <widgets/nframecontainer.h>
 
 #include <QObject>
 #include <QFrame>

@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DASHBOARDWIDGET_H
 #define DASHBOARDWIDGET_H
 
-#include "nframe.h"
+#include <widgets/nframe.h>
 #include <QWidget>
 
 class DashboardWidget : public NFrame {

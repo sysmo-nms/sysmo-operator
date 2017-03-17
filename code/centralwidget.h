@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CENTRALWIDGET_H
 #define CENTRALWIDGET_H
 
-#include "nframecontainer.h"
+#include <widgets/nframecontainer.h>
 
 class CentralWidget : public NFrameContainer {
 private:

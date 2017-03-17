@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef PROBEWINDOW_H
 #define PROBEWINDOW_H
-#include "nowheelcombobox.h"
+#include <widgets/nowheelcombobox.h>
 
 #include <applications/monitor/monitor.h>
 

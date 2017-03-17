@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef LOGIN_H
 #define LOGIN_H
-#include "lineedit.h"
+#include <widgets/lineedit.h>
 #include <QDialog>
 #include <QString>
 #include <QWidget>

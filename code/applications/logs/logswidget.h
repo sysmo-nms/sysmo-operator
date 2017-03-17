@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef LOGSWIDGET_H
 #define LOGSWIDGET_H
 
-#include <nframe.h>
+#include <widgets/nframe.h>
 #include <QWidget>
 
 class LogsWidget : public NFrame {

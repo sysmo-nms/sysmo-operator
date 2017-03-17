@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MONITORACTIONCREATE_H
 #define MONITORACTIONCREATE_H
 
-#include "lineedit.h"
+#include <widgets/lineedit.h>
 
 #include <QDialog>
 #include <QWidget>

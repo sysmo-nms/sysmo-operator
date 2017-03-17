@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "dashboardwidget.h"
 #include "dashboardtab.h"
 
-#include <ngridcontainer.h>
+#include <widgets/ngridcontainer.h>
 #include <QObject>
 #include <QTabWidget>
 #include <QTabBar>

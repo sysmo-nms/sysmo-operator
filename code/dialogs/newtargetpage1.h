@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef NEWTARGETPAGE1_H
 #define NEWTARGETPAGE1_H
-#include "lineedit.h"
+#include <widgets/lineedit.h>
 
 #include <QList>
 #include <QWidget>

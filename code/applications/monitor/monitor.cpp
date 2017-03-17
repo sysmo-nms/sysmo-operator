@@ -18,8 +18,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "monitor.h"
 
-#include "network/supercast.h"
-#include "qjson.h"
+#include <network/supercast.h>
+#include <network/qjson.h>
 
 
 #include <QDebug>

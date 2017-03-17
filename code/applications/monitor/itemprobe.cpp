@@ -19,9 +19,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "itemprobe.h"
 
 
-#include "sysmo.h"
-#include "systemtray.h"
-#include "qjson.h"
+#include <sysmo.h>
+#include <widgets/systemtray.h>
+#include <network/qjson.h>
 
 #include <QObject>
 #include <QList>

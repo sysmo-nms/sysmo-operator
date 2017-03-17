@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "monitoractionconfig.h"
-#include "ngrid.h"
-#include "nframe.h"
-#include "ngridcontainer.h"
+#include <widgets/ngrid.h>
+#include <widgets/nframe.h>
+#include <widgets/ngridcontainer.h>
 
 #include <QTreeWidgetItem>
 #include <QStringList>

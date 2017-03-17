@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "itemtarget.h"
 
 #include "sysmo.h"
-#include "qjson.h"
+#include "network/qjson.h"
 
 #include <QPixmap>
 #include <QIcon>

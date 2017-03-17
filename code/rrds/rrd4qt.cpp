@@ -20,7 +20,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "rrd4qt_config.h"
 
 
-#include "qjson.h"
+#include <network/qjson.h>
 
 #include <QThread>
 #include <QAbstractSocket>

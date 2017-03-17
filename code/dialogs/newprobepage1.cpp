@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "newprobepage1.h"
 
-#include <ngrid.h>
+#include <widgets/ngrid.h>
 #include <applications/monitor/nchecks.h>
 #include <applications/monitor/xml/parsecheckgetinfos.h>
 #include <applications/monitor/monitor.h>

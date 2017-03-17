@@ -71,8 +71,6 @@ set (OPERATOR_SRC
     code/dialogs/newtarget.h
     code/dialogs/newtargetpage1.cpp
     code/dialogs/newtargetpage1.h
-    code/lineedit.cpp
-    code/lineedit.h
     code/mainwindow.cpp
     code/applications/monitor/delegateprobeprogress.cpp
     code/applications/monitor/delegateprobeprogress.h
@@ -120,16 +118,28 @@ set (OPERATOR_SRC
     code/network/supercasthttprequest.h
     code/network/supercastsignal.cpp
     code/network/supercastsignal.h
-    code/nframecontainer.cpp
-    code/nframecontainer.h
-    code/nframe.cpp
-    code/nframe.h
-    code/ngridcontainer.cpp
-    code/ngridcontainer.h
-    code/ngrid.cpp
-    code/ngrid.h
-    code/nowheelcombobox.cpp
-    code/nowheelcombobox.h
+    code/network/qjson.h
+    code/network/qjson.cpp
+    code/widgets/nframecontainer.cpp
+    code/widgets/nframecontainer.h
+    code/widgets/nframe.cpp
+    code/widgets/nframe.h
+    code/widgets/ngridcontainer.cpp
+    code/widgets/ngridcontainer.h
+    code/widgets/ngrid.cpp
+    code/widgets/ngrid.h
+    code/widgets/nowheelcombobox.cpp
+    code/widgets/nowheelcombobox.h
+    code/widgets/sidebutton.cpp
+    code/widgets/sidebutton.h
+    code/widgets/statusbutton.cpp
+    code/widgets/statusbutton.h
+    code/widgets/statusbuttonwidget.cpp
+    code/widgets/statusbuttonwidget.h
+    code/widgets/systemtray.cpp
+    code/widgets/systemtray.h
+    code/widgets/lineedit.cpp
+    code/widgets/lineedit.h
     code/rrds/rrd4qt.cpp
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h
@@ -139,23 +149,13 @@ set (OPERATOR_SRC
     code/rrds/rrd4qtproc.h
     code/rrds/rrd4qtsignal.cpp
     code/rrds/rrd4qtsignal.h
-    code/sidebutton.cpp
-    code/sidebutton.h
-    code/statusbutton.cpp
-    code/statusbutton.h
-    code/statusbuttonwidget.cpp
-    code/statusbuttonwidget.h
     code/sysmo.h
-    code/systemtray.cpp
-    code/systemtray.h
     code/temporarydir.cpp
     code/temporarydir.h
     code/themes.cpp
     code/themes.h
     code/windows/probewindow.cpp
-    code/windows/probewindow.h
-    code/qjson.h
-    code/qjson.cpp)
+    code/windows/probewindow.h)
 
 set (OPERATOR_QRC
     qrcs/icons.qrc

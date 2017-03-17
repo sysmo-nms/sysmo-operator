@@ -17,16 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "monitorlogs.h"
-
-
-#include "nframecontainer.h"
-#include "nframe.h"
-#include "ngrid.h"
-#include "ngridcontainer.h"
-#include "network/supercastsignal.h"
-#include "network/supercast.h"
 #include "monitor.h"
-#include "qjson.h"
+
+
+#include <widgets/nframecontainer.h>
+#include <widgets/nframe.h>
+#include <widgets/ngrid.h>
+#include <widgets/ngridcontainer.h>
+#include <network/supercastsignal.h>
+#include <network/supercast.h>
+#include <network/qjson.h>
 
 #include <QIcon>
 #include <QTextEdit>

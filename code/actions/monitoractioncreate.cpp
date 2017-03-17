@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "monitoractioncreate.h"
-#include "ngrid.h"
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
+#include <widgets/ngrid.h>
+#include <widgets/nframecontainer.h>
+#include <widgets/ngridcontainer.h>
 
 #include <QObject>
 #include <QLabel>

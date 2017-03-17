@@ -18,11 +18,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef NEWPROBEPAGE1_H
 #define NEWPROBEPAGE1_H
+
+#include <widgets/lineedit.h>
+
 #include <QWizardPage>
 #include <QString>
 #include <QWizard>
 #include <QTreeView>
-#include "lineedit.h"
 
 class NewProbePage1 : public QWizardPage {
     Q_OBJECT
