@@ -3,7 +3,7 @@
 
 # dynamicaly configured files
 /Makefile
-/code/operator_version.h
+/code/config.h
 /code/rrds/rrd4qt_config.h
 /support/packages/obs/_service
 /qrcs/rrdio.qrc

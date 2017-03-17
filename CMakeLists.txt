@@ -22,8 +22,8 @@ set (OPERATOR_VERSION_MINOR "0")
 set (OPERATOR_VERSION_PATCH "9")
 set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPERATOR_VERSION_PATCH}")
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)

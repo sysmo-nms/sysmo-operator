@@ -24,7 +24,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "mainwindow.h"
 #include "themes.h"
 #include "sysmo.h"
-#include "operator_version.h"
+#include "config.h"
 
 #include <QApplication>
 #include <QSettings>
