@@ -15,13 +15,24 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef OPERATOR_VERSION
-#define OPERATOR_VERSION
+ */
+#include "logswidget.h"
 
-#define OPERATOR_VERSION_STR "@OPERATOR_VERSION_MAJOR@.@OPERATOR_VERSION_MINOR@.@OPERATOR_VERSION_PATCH@"
-#define OPERATOR_VERSION_MAJOR @OPERATOR_VERSION_MAJOR@
-#define OPERATOR_VERSION_MINOR @OPERATOR_VERSION_MINOR@
-#define OPERATOR_VERSION_PATCH @OPERATOR_VERSION_PATCH@
+#include <ngridcontainer.h>
 
-#endif // OPERATOR_VERSION
+#include <QObject>
+#include <QLabel>
+
+// TODO
+
+LogsWidget::LogsWidget(QWidget *parent) : NFrame(parent) {
+
+    NGridContainer* grid = new NGridContainer();
+    this->setLayout(grid);
+    grid->addWidget(new QLabel("hello", this), 0, 0);
+
+}
+
+LogsWidget::~LogsWidget() {
+
+}

@@ -50,7 +50,7 @@ $ brew install git qt java cmake
 ```sh
 $ git clone https://github.com/sysmo-nms/sysmo-operator.git
 $ cd sysmo-operator
-$ ./configure
+$ ./bootstrap
 $ make
 ```
 

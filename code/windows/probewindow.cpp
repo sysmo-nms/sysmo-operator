@@ -18,14 +18,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "probewindow.h"
 
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
-#include "ngrid.h"
-#include "nframe.h"
-#include "monitor/nchecks.h"
-#include "monitor/xml/parsecheckmakegraphcmd.h"
-#include "rrds/rrd4qtgraph.h"
-#include "themes.h"
+#include <nframecontainer.h>
+#include <ngridcontainer.h>
+#include <ngrid.h>
+#include <nframe.h>
+#include <applications/monitor/nchecks.h>
+#include <applications/monitor/xml/parsecheckmakegraphcmd.h>
+#include <rrds/rrd4qtgraph.h>
+#include <themes.h>
 
 #include <QObject>
 #include <QWidget>

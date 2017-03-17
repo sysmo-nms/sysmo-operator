@@ -19,11 +19,11 @@ endif(UNIX)
 
 set (OPERATOR_VERSION_MAJOR "2")
 set (OPERATOR_VERSION_MINOR "0")
-set (OPERATOR_VERSION_PATCH "8")
+set (OPERATOR_VERSION_PATCH "9")
 set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPERATOR_VERSION_PATCH}")
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/operator_version.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
@@ -47,10 +47,12 @@ set (OPERATOR_SRC
     code/actions/monitoractions.h
     code/centralwidget.cpp
     code/centralwidget.h
-    code/dashboard/dashboardtab.cpp
-    code/dashboard/dashboardtab.h
-    code/dashboard/dashboardwidget.cpp
-    code/dashboard/dashboardwidget.h
+    code/applications/dashboard/dashboardtab.cpp
+    code/applications/dashboard/dashboardtab.h
+    code/applications/dashboard/dashboardwidget.cpp
+    code/applications/dashboard/dashboardwidget.h
+    code/applications/logs/logswidget.cpp
+    code/applications/logs/logswidget.h
     code/dialogs/login.cpp
     code/dialogs/login.h
     code/dialogs/messagebox.cpp
@@ -72,42 +74,42 @@ set (OPERATOR_SRC
     code/lineedit.cpp
     code/lineedit.h
     code/mainwindow.cpp
-    code/monitor/delegateprobeprogress.cpp
-    code/monitor/delegateprobeprogress.h
-    code/monitor/itemprobe.cpp
-    code/monitor/itemprobe.h
-    code/monitor/itemtarget.cpp
-    code/monitor/itemtarget.h
-    code/monitor/menuprobe.cpp
-    code/monitor/menuprobe.h
-    code/monitor/menutarget.cpp
-    code/monitor/menutarget.h
-    code/monitor/monitorchannel.cpp
-    code/monitor/monitorchannel.h
-    code/monitor/monitor.cpp
-    code/monitor/monitor.h
-    code/monitor/monitorlogs.cpp
-    code/monitor/monitorlogs.h
-    code/monitor/monitorwidget.cpp
-    code/monitor/monitorwidget.h
-    code/monitor/nchecks.cpp
-    code/monitor/nchecks.h
-    code/monitor/treemodel.cpp
-    code/monitor/treemodel.h
-    code/monitor/treeview.cpp
-    code/monitor/treeview.h
-    code/monitor/xml/parseallchecks.cpp
-    code/monitor/xml/parseallchecks.h
-    code/monitor/xml/parsecheckgetid.cpp
-    code/monitor/xml/parsecheckgetid.h
-    code/monitor/xml/parsecheckgetinfos.cpp
-    code/monitor/xml/parsecheckgetinfos.h
-    code/monitor/xml/parsecheckmakedoc.cpp
-    code/monitor/xml/parsecheckmakedoc.h
-    code/monitor/xml/parsecheckmakeform.cpp
-    code/monitor/xml/parsecheckmakeform.h
-    code/monitor/xml/parsecheckmakegraphcmd.cpp
-    code/monitor/xml/parsecheckmakegraphcmd.h
+    code/applications/monitor/delegateprobeprogress.cpp
+    code/applications/monitor/delegateprobeprogress.h
+    code/applications/monitor/itemprobe.cpp
+    code/applications/monitor/itemprobe.h
+    code/applications/monitor/itemtarget.cpp
+    code/applications/monitor/itemtarget.h
+    code/applications/monitor/menuprobe.cpp
+    code/applications/monitor/menuprobe.h
+    code/applications/monitor/menutarget.cpp
+    code/applications/monitor/menutarget.h
+    code/applications/monitor/monitorchannel.cpp
+    code/applications/monitor/monitorchannel.h
+    code/applications/monitor/monitor.cpp
+    code/applications/monitor/monitor.h
+    code/applications/monitor/monitorlogs.cpp
+    code/applications/monitor/monitorlogs.h
+    code/applications/monitor/monitorwidget.cpp
+    code/applications/monitor/monitorwidget.h
+    code/applications/monitor/nchecks.cpp
+    code/applications/monitor/nchecks.h
+    code/applications/monitor/treemodel.cpp
+    code/applications/monitor/treemodel.h
+    code/applications/monitor/treeview.cpp
+    code/applications/monitor/treeview.h
+    code/applications/monitor/xml/parseallchecks.cpp
+    code/applications/monitor/xml/parseallchecks.h
+    code/applications/monitor/xml/parsecheckgetid.cpp
+    code/applications/monitor/xml/parsecheckgetid.h
+    code/applications/monitor/xml/parsecheckgetinfos.cpp
+    code/applications/monitor/xml/parsecheckgetinfos.h
+    code/applications/monitor/xml/parsecheckmakedoc.cpp
+    code/applications/monitor/xml/parsecheckmakedoc.h
+    code/applications/monitor/xml/parsecheckmakeform.cpp
+    code/applications/monitor/xml/parsecheckmakeform.h
+    code/applications/monitor/xml/parsecheckmakegraphcmd.cpp
+    code/applications/monitor/xml/parsecheckmakegraphcmd.h
     code/network/supercast.cpp
     code/network/supercast.h
     code/network/supercasthttp.cpp

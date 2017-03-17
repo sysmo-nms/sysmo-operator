@@ -17,15 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "newtargetpage1.h"
-
-
 #include "messagebox.h"
-#include "sysmo.h"
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
-#include "monitor/treeview.h"
+
+#include <sysmo.h>
+#include <nframecontainer.h>
+#include <ngridcontainer.h>
+#include <network/supercast.h>
+#include <network/supercastsignal.h>
+#include <applications/monitor/treeview.h>
 
 #include <QObject>
 #include <QWizard>

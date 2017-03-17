@@ -17,10 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dashboardwidget.h"
+#include "dashboardtab.h"
 
-#include "ngridcontainer.h"
-#include "dashboard/dashboardtab.h"
-
+#include <ngridcontainer.h>
 #include <QObject>
 #include <QTabWidget>
 #include <QTabBar>

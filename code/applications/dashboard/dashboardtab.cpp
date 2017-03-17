@@ -18,8 +18,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dashboardtab.h"
 
-#include "ngridcontainer.h"
-#include "ngrid.h"
+#include <ngridcontainer.h>
+#include <ngrid.h>
 
 #include <QPushButton>
 #include <QMdiArea>
