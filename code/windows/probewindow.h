@@ -18,8 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef PROBEWINDOW_H
 #define PROBEWINDOW_H
-#include "monitor/monitor.h"
 #include "nowheelcombobox.h"
+
+#include <applications/monitor/monitor.h>
 
 #include <QString>
 #include <QMap>

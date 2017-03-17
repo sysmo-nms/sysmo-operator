@@ -17,20 +17,20 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "newprobepage2.h"
-
-#include "sysmo.h"
-#include "nframecontainer.h"
-#include "ngridcontainer.h"
-#include "monitor/monitor.h"
-#include "monitor/nchecks.h"
-#include "monitor/xml/parsecheckmakedoc.h"
-#include "monitor/xml/parsecheckmakeform.h"
-#include "network/supercastsignal.h"
-#include "network/supercast.h"
-#include "qjson.h"
-
 #include "newprobeprogressdialog.h"
 #include "messagebox.h"
+
+#include <sysmo.h>
+#include <nframecontainer.h>
+#include <ngridcontainer.h>
+#include <applications/monitor/monitor.h>
+#include <applications/monitor/nchecks.h>
+#include <applications/monitor/xml/parsecheckmakedoc.h>
+#include <applications/monitor/xml/parsecheckmakeform.h>
+#include <network/supercastsignal.h>
+#include <network/supercast.h>
+#include <qjson.h>
+
 
 #include <QFormLayout>
 #include <QPushButton>

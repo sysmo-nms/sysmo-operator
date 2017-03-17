@@ -18,8 +18,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "statusbuttonwidget.h"
 
-#include "ngridcontainer.h"
-#include "monitor/monitor.h"
+#include <ngridcontainer.h>
+#include <applications/monitor/monitor.h>
 
 #include <QPixmap>
 #include <QMap>

@@ -17,10 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "monitoractions.h"
-#include "monitor/monitor.h"
-
 #include "monitoractionsdialog.h"
 #include "monitoractionconfig.h"
+
+#include <applications/monitor/monitor.h>
 
 #include <QDebug>
 #include <QSettings>

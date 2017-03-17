@@ -16,19 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CENTRALWIDGET_H
-#define CENTRALWIDGET_H
+#ifndef LOGSWIDGET_H
+#define LOGSWIDGET_H
 
-#include "nframecontainer.h"
+#include <nframe.h>
+#include <QWidget>
 
-class CentralWidget : public NFrameContainer {
-private:
-    static const int APP_MONITOR = 0;
-    static const int APP_LOGS = 1;
-    static const int APP_DASHBOARD = 2;
+class LogsWidget : public NFrame {
+    Q_OBJECT
 
 public:
-    explicit CentralWidget(QWidget* parent = 0);
+    explicit LogsWidget(QWidget* parent = 0);
+    ~LogsWidget();
 };
 
-#endif // CENTRALWIDGET_H
+#endif // LOGSWIDGET_H

@@ -16,19 +16,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CENTRALWIDGET_H
-#define CENTRALWIDGET_H
+#include "logswidget.h"
 
-#include "nframecontainer.h"
+#include <ngridcontainer.h>
 
-class CentralWidget : public NFrameContainer {
-private:
-    static const int APP_MONITOR = 0;
-    static const int APP_LOGS = 1;
-    static const int APP_DASHBOARD = 2;
+#include <QObject>
+#include <QLabel>
 
-public:
-    explicit CentralWidget(QWidget* parent = 0);
-};
+// TODO
 
-#endif // CENTRALWIDGET_H
+LogsWidget::LogsWidget(QWidget *parent) : NFrame(parent) {
+
+    NGridContainer* grid = new NGridContainer();
+    this->setLayout(grid);
+    grid->addWidget(new QLabel("hello", this), 0, 0);
+
+}
+
+LogsWidget::~LogsWidget() {
+
+}
