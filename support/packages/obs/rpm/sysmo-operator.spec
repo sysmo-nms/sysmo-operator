@@ -53,7 +53,7 @@ Sysmo-Operator is the main UI for interacting with Sysmo-Core server.
 %setup
 
 %build
-./configure
+./bootstrap
 make
 
 # install

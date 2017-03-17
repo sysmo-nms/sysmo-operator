@@ -21,7 +21,7 @@ build-stamp:
 
 	# Add here commands to compile the package.
 	cat /etc/debian_version
-	./configure
+	./bootstrap
 	make
 	# --- end custom part for compiling
 
