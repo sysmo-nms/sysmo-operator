@@ -19,7 +19,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "mainwindow.h"
 #include <centralwidget.h>
 #include <applications/monitor/monitorwidget.h>
-#include <dialogs/messagebox.h>
+#include <widgets/messagebox.h>
 #include <sysmo.h>
 
 #include <QIcon>
@@ -56,14 +56,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
      * Initialize supercast.
      */
     this->supercast = new Supercast(this);
-
-    /*
-     * Initialize windows updates system if relevant
-     */
-    /* #ifdef _WIN32 */
-    this->updates = new Updates(this);
-    this->updates->check();
-    /* #endif */
 
     /*
      * Initialize rrd4c-> Will effectively start the java rrd4qt process.

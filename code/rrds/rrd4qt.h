@@ -26,7 +26,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QByteArray>
 
 #include "rrd4qtsignal.h"
-#include "temporarydir.h"
+#include <widgets/temporarydir.h>
 #include "rrd4qtproc.h"
 
 class Rrd4Qt : public QObject {

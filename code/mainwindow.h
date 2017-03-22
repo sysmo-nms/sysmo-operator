@@ -29,10 +29,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <widgets/systemtray.h>
 
-#include "network/supercast.h"
-#include "dialogs/login.h"
-#include "rrds/rrd4qt.h"
-#include "updates/updates.h"
+#include <network/supercast.h>
+#include <login.h>
+#include <rrds/rrd4qt.h>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -54,7 +53,6 @@ private:
     QActionGroup* color_group;
     SystemTray* system_tray;
     QSize default_size;
-    Updates* updates;
     bool should_close;
 
 private slots:

@@ -1,23 +1,4 @@
 #
-# CLOG is header only
-#
-set(DEPS_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/clog/")
-
-
-#
-# CARGO is header only
-#
-set(DEPS_INCLUDES ${DEPS_INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/cargo/")
-
-#
-# MD5
-#
-include_directories(md5/)
-add_library(md5 md5/md5.h md5/md5.c)
-set(DEPS_INCLUDES ${DEPS_INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/md5/")
-set(DEPS_LIBRARIES ${DEPS_LIBARRIES} md5)
-
-#
 # RRDIO is a Java project built with Gradle
 # Get all dependencies
 file(GLOB RRD4J_JAR_FULL rrdio/build/install/rrdio/lib/rrd4j*.jar)
@@ -29,12 +10,7 @@ get_filename_component(RRDIO_JAR ${RRDIO_JAR_FULL} NAME)
 file(GLOB JSON_JAR_FULL  rrdio/build/install/rrdio/lib/javax.json*.jar)
 get_filename_component(JSON_JAR ${JSON_JAR_FULL} NAME)
 
-#
-# return
-#
-set(OPERATOR_DEPS_INCLUDES  ${DEPS_INCLUDES} PARENT_SCOPE)
-set(OPERATOR_DEPS_LIBRARIES ${DEPS_LIBRARIES} PARENT_SCOPE)
-set(RRDIO_JAR       ${RRDIO_JAR} PARENT_SCOPE)
-set(RRDIO_RRD4J_JAR ${RRD4J_JAR} PARENT_SCOPE)
-set(RRDIO_JSON_JAR  ${JSON_JAR} PARENT_SCOPE)
+set(RRDIO_JAR       ${RRDIO_JAR} CACHE INTERNAL STRING)
+set(RRDIO_RRD4J_JAR ${RRD4J_JAR} CACHE INTERNAL STRING)
+set(RRDIO_JSON_JAR  ${JSON_JAR}  CACHE INTERNAL STRING)
 

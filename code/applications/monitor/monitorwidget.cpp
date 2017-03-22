@@ -23,14 +23,13 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <widgets/ngridcontainer.h>
 #include <widgets/statusbuttonwidget.h>
 #include <widgets/lineedit.h>
-#include <dialogs/newtarget.h>
 #include <network/supercast.h>
 #include <network/supercastsignal.h>
 
 #include "treeview.h"
 #include "nchecks.h"
 #include "monitorlogs.h"
-
+#include "dialogs/newtarget.h"
 
 #include <QObject>
 #include <QLabel>

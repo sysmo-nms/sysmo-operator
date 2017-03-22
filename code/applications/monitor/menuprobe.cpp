@@ -21,7 +21,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/supercast.h"
 #include "network/supercastsignal.h"
 #include "windows/probewindow.h"
-#include "dialogs/messagebox.h"
+#include <widgets/messagebox.h>
 #include "sysmo.h"
 
 #include <QAction>

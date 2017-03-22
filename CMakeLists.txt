@@ -28,50 +28,46 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
 
-
-message("flags are" ${CMAKE_C_FLAGS})
-
 set (OPERATOR_SRC
     code/main.cpp
-    code/updates/updates.cpp
-    code/updates/updates.h
-    code/actions/actionprocess.cpp
-    code/actions/actionprocess.h
-    code/actions/monitoractionconfig.cpp
-    code/actions/monitoractionconfig.h
-    code/actions/monitoractioncreate.cpp
-    code/actions/monitoractioncreate.h
-    code/actions/monitoractions.cpp
-    code/actions/monitoractionsdialog.cpp
-    code/actions/monitoractionsdialog.h
-    code/actions/monitoractions.h
+    code/sysmo.h
+    code/mainwindow.cpp
+    code/login.cpp
+    code/login.h
     code/centralwidget.cpp
     code/centralwidget.h
+    code/themes.cpp
+    code/themes.h
     code/applications/dashboard/dashboardtab.cpp
     code/applications/dashboard/dashboardtab.h
     code/applications/dashboard/dashboardwidget.cpp
     code/applications/dashboard/dashboardwidget.h
     code/applications/logs/logswidget.cpp
     code/applications/logs/logswidget.h
-    code/dialogs/login.cpp
-    code/dialogs/login.h
-    code/dialogs/messagebox.cpp
-    code/dialogs/messagebox.h
-    code/dialogs/newprobe.cpp
-    code/dialogs/newprobe.h
-    code/dialogs/newprobepage1.cpp
-    code/dialogs/newprobepage1.h
-    code/dialogs/newprobepage2.cpp
-    code/dialogs/newprobepage2.h
-    code/dialogs/newprobepage3.cpp
-    code/dialogs/newprobepage3.h
-    code/dialogs/newprobeprogressdialog.cpp
-    code/dialogs/newprobeprogressdialog.h
-    code/dialogs/newtarget.cpp
-    code/dialogs/newtarget.h
-    code/dialogs/newtargetpage1.cpp
-    code/dialogs/newtargetpage1.h
-    code/mainwindow.cpp
+    code/applications/monitor/dialogs/newprobe.cpp
+    code/applications/monitor/dialogs/newprobe.h
+    code/applications/monitor/dialogs/newprobepage1.cpp
+    code/applications/monitor/dialogs/newprobepage1.h
+    code/applications/monitor/dialogs/newprobepage2.cpp
+    code/applications/monitor/dialogs/newprobepage2.h
+    code/applications/monitor/dialogs/newprobepage3.cpp
+    code/applications/monitor/dialogs/newprobepage3.h
+    code/applications/monitor/dialogs/newprobeprogressdialog.cpp
+    code/applications/monitor/dialogs/newprobeprogressdialog.h
+    code/applications/monitor/dialogs/newtarget.cpp
+    code/applications/monitor/dialogs/newtarget.h
+    code/applications/monitor/dialogs/newtargetpage1.cpp
+    code/applications/monitor/dialogs/newtargetpage1.h
+    code/applications/monitor/actions/actionprocess.cpp
+    code/applications/monitor/actions/actionprocess.h
+    code/applications/monitor/actions/monitoractionconfig.cpp
+    code/applications/monitor/actions/monitoractionconfig.h
+    code/applications/monitor/actions/monitoractioncreate.cpp
+    code/applications/monitor/actions/monitoractioncreate.h
+    code/applications/monitor/actions/monitoractions.cpp
+    code/applications/monitor/actions/monitoractionsdialog.cpp
+    code/applications/monitor/actions/monitoractionsdialog.h
+    code/applications/monitor/actions/monitoractions.h
     code/applications/monitor/delegateprobeprogress.cpp
     code/applications/monitor/delegateprobeprogress.h
     code/applications/monitor/itemprobe.cpp
@@ -108,6 +104,8 @@ set (OPERATOR_SRC
     code/applications/monitor/xml/parsecheckmakeform.h
     code/applications/monitor/xml/parsecheckmakegraphcmd.cpp
     code/applications/monitor/xml/parsecheckmakegraphcmd.h
+    code/applications/monitor/windows/probewindow.cpp
+    code/applications/monitor/windows/probewindow.h
     code/network/supercast.cpp
     code/network/supercast.h
     code/network/supercasthttp.cpp
@@ -120,26 +118,6 @@ set (OPERATOR_SRC
     code/network/supercastsignal.h
     code/network/qjson.h
     code/network/qjson.cpp
-    code/widgets/nframecontainer.cpp
-    code/widgets/nframecontainer.h
-    code/widgets/nframe.cpp
-    code/widgets/nframe.h
-    code/widgets/ngridcontainer.cpp
-    code/widgets/ngridcontainer.h
-    code/widgets/ngrid.cpp
-    code/widgets/ngrid.h
-    code/widgets/nowheelcombobox.cpp
-    code/widgets/nowheelcombobox.h
-    code/widgets/sidebutton.cpp
-    code/widgets/sidebutton.h
-    code/widgets/statusbutton.cpp
-    code/widgets/statusbutton.h
-    code/widgets/statusbuttonwidget.cpp
-    code/widgets/statusbuttonwidget.h
-    code/widgets/systemtray.cpp
-    code/widgets/systemtray.h
-    code/widgets/lineedit.cpp
-    code/widgets/lineedit.h
     code/rrds/rrd4qt.cpp
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h
@@ -148,14 +126,7 @@ set (OPERATOR_SRC
     code/rrds/rrd4qtproc.cpp
     code/rrds/rrd4qtproc.h
     code/rrds/rrd4qtsignal.cpp
-    code/rrds/rrd4qtsignal.h
-    code/sysmo.h
-    code/temporarydir.cpp
-    code/temporarydir.h
-    code/themes.cpp
-    code/themes.h
-    code/windows/probewindow.cpp
-    code/windows/probewindow.h)
+    code/rrds/rrd4qtsignal.h)
 
 set (OPERATOR_QRC
     qrcs/icons.qrc
@@ -168,25 +139,11 @@ set (OPERATOR_QRC
     qrcs/darcula.qrc
     qrcs/operator-ui.qrc)
 
+set (OPERATOR_DEPS_LIBRARIES "")
+
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 
-# dependencies
-set (OPERATOR_DEPS_INCLUDES  "")
-set (OPERATOR_DEPS_LIBRARIES "")
-
-# add deps will build rrdio
-add_subdirectory(deps/)
-
-# configure rrdio.qrc
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
-
-# configure rrd4qt
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
 
 # qt
 set (OPERATOR_QT_LIBRARIES "")
@@ -270,6 +227,22 @@ endif(QT4_FOUND)
 set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
 
+
+# add deps
+add_subdirectory(deps/)
+add_subdirectory(code/)
+
+# configure rrdio.qrc
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
+
+# configure rrd4qt
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
+
+
 add_executable(sysmo-operator
     ${OPERATOR_SRC}
     ${OPERATOR_QT_RESSOURCES})
@@ -301,13 +274,13 @@ endif(WIN32)
 
 include_directories (
     code/
-    deps/md5/
-    ${OPERATOR_QT_INCLUDES}
-    ${OPERATOR_DEPS_INCLUDES})
+    deps/clog/
+    deps/cargo/
+    ${OPERATOR_QT_INCLUDES})
 
 target_link_libraries(sysmo-operator
     ${OPERATOR_QT_LIBRARIES}
-    ${OPERATOR_DEPS_LIBRARIES} md5)
+    ${OPERATOR_DEPS_LIBRARIES} s_widgets)
 
 # WIN32 Install...
 if (WIN32)

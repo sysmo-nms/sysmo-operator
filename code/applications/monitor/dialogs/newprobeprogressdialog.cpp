@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "newprobeprogressdialog.h"
-#include "messagebox.h"
 
 #include <network/supercast.h>
 #include <network/supercastsignal.h>
 #include <widgets/systemtray.h>
+#include <widgets/messagebox.h>
 
 
 #include <QObject>

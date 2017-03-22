@@ -20,10 +20,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "sysmo.h"
 #include "monitor.h"
-#include "dialogs/messagebox.h"
-#include "network/supercast.h"
-#include "network/supercastsignal.h"
 #include "actions/monitoractions.h"
+#include <widgets/messagebox.h>
+#include <network/supercast.h>
+#include <network/supercastsignal.h>
 
 #include <QObject>
 #include <QAction>

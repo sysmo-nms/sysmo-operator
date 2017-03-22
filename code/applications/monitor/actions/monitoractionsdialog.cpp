@@ -20,7 +20,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <sysmo.h>
 #include <widgets/ngrid.h>
 #include <widgets/nframe.h>
-#include "dialogs/messagebox.h"
+#include <widgets/messagebox.h>
 
 #include "monitoractioncreate.h"
 #include "actionprocess.h"

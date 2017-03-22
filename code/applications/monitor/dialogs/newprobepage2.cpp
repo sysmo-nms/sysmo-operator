@@ -18,7 +18,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "newprobepage2.h"
 #include "newprobeprogressdialog.h"
-#include "messagebox.h"
+#include <widgets/messagebox.h>
 
 #include <sysmo.h>
 #include <widgets/nframecontainer.h>
