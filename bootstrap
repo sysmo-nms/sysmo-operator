@@ -16,6 +16,7 @@ for var in "$@"; do
 done
 
 # cleanup build dir if exist
+git submodule update --init
 rm -rf _build
 
 # create Unix Makefiles project
