@@ -4,8 +4,11 @@
 project(Sysmo-Operator)
 enable_language(CXX)
 
+
+#
 # cmake_minimum_required(VERSION 2.8.11)
 # 2.8.11 required for Qt5 build but travis uses 2.8.7 on osx
+#
 cmake_minimum_required(VERSION 2.8)
 if (CMAKE_VERSION VERSION_LESS 2.8.11)
     # WARNING
@@ -13,10 +16,10 @@ else()
     cmake_policy(SET CMP0020 NEW)
 endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
-if(UNIX)
-    configure_file(${CMAKE_SOURCE_DIR}/Makefile.in ${CMAKE_SOURCE_DIR}/Makefile)
-endif(UNIX)
 
+#
+# Set build version, and configure files
+#
 set (OPERATOR_VERSION_MAJOR "2")
 set (OPERATOR_VERSION_MINOR "0")
 set (OPERATOR_VERSION_PATCH "9")
@@ -28,6 +31,22 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
 
+
+#
+# get rrdio libraries versions and configure files
+#
+add_subdirectory(qrcs/)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
+
+
+#
+# Operator SRC in one CMakeLists.txt file is simpler
+#
 set (OPERATOR_SRC
     code/main.cpp
     code/sysmo.h
@@ -38,6 +57,8 @@ set (OPERATOR_SRC
     code/centralwidget.h
     code/themes.cpp
     code/themes.h
+    code/cargo.h
+    code/clog.h
     code/widgets/lineedit.cpp
     code/widgets/lineedit.h
     code/widgets/messagebox.cpp
@@ -152,6 +173,10 @@ set (OPERATOR_SRC
     code/rrds/rrd4qtsignal.cpp
     code/rrds/rrd4qtsignal.h)
 
+
+#
+# Every sysmo-operator Qt ressources
+#
 set (OPERATOR_QRC
     qrcs/icons.qrc
     qrcs/box_icons.qrc
@@ -163,112 +188,82 @@ set (OPERATOR_QRC
     qrcs/darcula.qrc
     qrcs/operator-ui.qrc)
 
-set (OPERATOR_DEPS_LIBRARIES "")
+
+set (OPERATOR_LIBS "")
 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 
-
-# qt
-set (OPERATOR_QT_LIBRARIES "")
-set (OPERATOR_QT_INCLUDES "")
-set (OPERATOR_QT_RESSOURCES "")
+#
+# Find Qt (4 or 5), and set correct libs/includes/ressources
+#
+set (OPERATOR_LIBS "")
+set (OPERATOR_QRCS "")
+set (OPERATOR_INCLUDES "")
 find_package(Qt4 QUIET)
 if (QT4_FOUND)
-
     message(STATUS "QtWebsockets not supported. Fallback to TCP.")
     find_package (Qt4 REQUIRED QtCore QtGui QtNetwork QtXml)
     include (${QT_USE_FILE})
-    set (OPERATOR_QT_INCLUDES
+    set (OPERATOR_INCLUDES
         ${Qt4Core_INCLUDE_DIRS}
         ${Qt4Gui_INCLUDE_DIRS}
         ${Qt4Network_INCLUDE_DIRS}
         ${Qt4Xml_INCLUDE_DIRS})
-
     set (OPERATOR_SRC ${OPERATOR_SRC}
         code/network/supercastsocket.cpp
         code/network/supercastsocket.h)
-
-    set (OPERATOR_QT_LIBRARIES ${QT_LIBRARIES})
-    QT4_ADD_RESOURCES(OPERATOR_QT_RESSOURCES ${OPERATOR_QRC})
-
+    set (OPERATOR_LIBS ${QT_LIBRARIES})
+    QT4_ADD_RESOURCES(OPERATOR_QRCS ${OPERATOR_QRC})
 else()
-
     find_package(Qt5Widgets REQUIRED)
     find_package(Qt5Core REQUIRED)
     find_package(Qt5Gui REQUIRED)
     find_package(Qt5Xml REQUIRED)
     find_package(Qt5Network REQUIRED)
-    set (OPERATOR_QT_INCLUDES
+    set (OPERATOR_INCLUDES
         ${Qt5Widgets_INCLUDE_DIRS}
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
         ${Qt5Network_INCLUDE_DIRS}
         ${Qt5Xml_INCLUDE_DIRS})
-    set (OPERATOR_QT_LIBRARIES
+    set (OPERATOR_LIBS
         Qt5::Core
         Qt5::Gui
         Qt5::Network
         Qt5::Xml
         Qt5::Widgets)
-
     # Use websocket if available
     find_package(Qt5WebSockets QUIET)
-
     if (Qt5WebSockets_FOUND)
-
         message(STATUS "QtWebsockets found.")
         add_definitions(-DUSE_WEBSOCKET)
         find_package(Qt5Websockets REQUIRED)
-        set (OPERATOR_QT_INCLUDES
-            ${OPERATOR_QT_INCLUDES}
+        set (OPERATOR_INCLUDES
+            ${OPERATOR_INCLUDES}
             ${Qt5WebSockets_INCLUDE_DIRS})
-        set(OPERATOR_QT_LIBRARIES
-            ${OPERATOR_QT_LIBRARIES}
+        set(OPERATOR_LIBS
+            ${OPERATOR_LIBS}
             Qt5::WebSockets)
         set (OPERATOR_SRC
             ${OPERATOR_SRC}
             code/network/supercastwebsocket.cpp
             code/network/supercastwebsocket.h)
-
     else()
-
         message(STATUS "QtWebsockets not supported. Fallback to TCP.")
         set (OPERATOR_SRC
             ${OPERATOR_SRC}
             code/network/supercastsocket.cpp
             code/network/supercastsocket.h)
-
     endif (Qt5WebSockets_FOUND)
-
-    QT5_ADD_RESOURCES(OPERATOR_QT_RESSOURCES ${OPERATOR_QRC})
-
-
+    QT5_ADD_RESOURCES(OPERATOR_QRCS ${OPERATOR_QRC})
 endif(QT4_FOUND)
 
 
-# finally
-set (CMAKE_AUTORCC ON)
-set (CMAKE_AUTOMOC ON)
-
-# add deps
-add_subdirectory(deps/)
-
-# configure rrdio.qrc
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
-
-# configure rrd4qt
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
-
-
-add_executable(sysmo-operator
-    ${OPERATOR_SRC}
-    ${OPERATOR_QT_RESSOURCES})
-
+#
+# If WIN32, we must set an executable icon (MSVC ressource system),
+# and link with SUBSYSTEM:WINDOWS to avoid CMD window.
+#
 if (WIN32)
     if(MSVC)
 
@@ -278,7 +273,7 @@ if (WIN32)
         # Needed for windowed applications
         set_target_properties(sysmo-operator PROPERTIES
             LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-        set(OPERATOR_QT_LIBRARIES ${OPERATOR_QT_LIBRARIES} Qt5::WinMain)
+        set(OPERATOR_LIBS ${OPERATOR_LIBS} Qt5::WinMain)
 
         # Icon for executable
         configure_file(
@@ -287,22 +282,23 @@ if (WIN32)
         add_custom_command(
             TARGET sysmo-operator PRE_BUILD
             COMMAND rc /fo ${CMAKE_BINARY_DIR}/icon-ressource.res ${CMAKE_BINARY_DIR}/icon-ressource.rc)
-        set(OPERATOR_DEPS_LIBRARIES
-            ${OPERATOR_DEPS_LIBRARIES}
+        set(OPERATOR_LIBS
+            ${OPERATOR_LIBS}
             ${CMAKE_BINARY_DIR}/icon-ressource.res)
 
     endif(MSVC)
 endif(WIN32)
 
-include_directories (
-    code/
-    deps/clog/
-    deps/cargo/
-    ${OPERATOR_QT_INCLUDES})
 
-target_link_libraries(sysmo-operator
-    ${OPERATOR_QT_LIBRARIES}
-    ${OPERATOR_DEPS_LIBRARIES})
+#
+# This is it!
+#
+set (CMAKE_AUTORCC ON)
+set (CMAKE_AUTOMOC ON)
+include_directories(code ${OPERATOR_INCLUDES})
+add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_QRCS})
+target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
+
 
 # WIN32 Install...
 if (WIN32)

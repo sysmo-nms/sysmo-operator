@@ -17,10 +17,32 @@ done
 
 # cleanup build dir if exist
 rm -rf _build
-git submodule update --init --recursive
 
 # create Unix Makefiles project
-mkdir _build && cd _build && cmake -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_C_FLAGS="${CFLAGS}" ..
+mkdir _build && cd _build && cmake -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_C_FLAGS="${CFLAGS}" ..; cd ..
+
+echo -n "
+.PHONY: all clean_all packages
+
+all:
+	make -C _build all
+
+clean_all:
+	rm -rf _build; rm Makefile
+	rm -f Makefile
+	rm -f code/config.h
+	rm -f code/rrds/rrd4qt_config.h
+	rm -f support/packages/obs/_service
+	rm -f qrcs/rrdio.qrc
+
+%:
+	make -C /home/seb/src/sysmo-operator/_build $@
+
+packages:
+	@echo "Trigger linux packages build from the current git repository revision"
+	osc service remoterun home:sysmo:unstable sysmo-operator
+	@echo "See result at: https://build.opensuse.org/package/show/home:sysmo:unstable/sysmo-operator"
+" > Makefile
 
 echo "You can now run \"make\""
 

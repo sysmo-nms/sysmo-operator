@@ -1,9 +1,3 @@
-[submodule "deps/clog"]
-	path = deps/clog
-	url = https://github.com/funlibs/clog.git
-[submodule "deps/cargo"]
-	path = deps/cargo
-	url = https://github.com/funlibs/cargo.git
-[submodule "deps/rrdio"]
-	path = deps/rrdio
+[submodule "qrcs/rrdio"]
+	path = qrcs/rrdio
 	url = https://github.com/sysmo-nms/rrdio.git
