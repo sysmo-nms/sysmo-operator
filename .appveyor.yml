@@ -13,6 +13,7 @@ build_script:
     - support\packages\win\bin\make.cmd
 
 after_build:
+    - set PATH=C:\Program Files\Git\mingw64\bin;%PATH%
     - _build\generate_bundle.cmd
 
 artifacts:
