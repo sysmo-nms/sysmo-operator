@@ -38,6 +38,30 @@ set (OPERATOR_SRC
     code/centralwidget.h
     code/themes.cpp
     code/themes.h
+    code/widgets/lineedit.cpp
+    code/widgets/lineedit.h
+    code/widgets/messagebox.cpp
+    code/widgets/messagebox.h
+    code/widgets/nframecontainer.cpp
+    code/widgets/nframecontainer.h
+    code/widgets/nframe.cpp
+    code/widgets/nframe.h
+    code/widgets/ngridcontainer.cpp
+    code/widgets/ngridcontainer.h
+    code/widgets/ngrid.cpp
+    code/widgets/ngrid.h
+    code/widgets/nowheelcombobox.cpp
+    code/widgets/nowheelcombobox.h
+    code/widgets/sidebutton.cpp
+    code/widgets/sidebutton.h
+    code/widgets/statusbutton.cpp
+    code/widgets/statusbutton.h
+    code/widgets/statusbuttonwidget.cpp
+    code/widgets/statusbuttonwidget.h
+    code/widgets/systemtray.cpp
+    code/widgets/systemtray.h
+    code/widgets/temporarydir.cpp
+    code/widgets/temporarydir.h
     code/applications/dashboard/dashboardtab.cpp
     code/applications/dashboard/dashboardtab.h
     code/applications/dashboard/dashboardwidget.cpp
@@ -227,10 +251,8 @@ endif(QT4_FOUND)
 set (CMAKE_AUTORCC ON)
 set (CMAKE_AUTOMOC ON)
 
-
 # add deps
 add_subdirectory(deps/)
-add_subdirectory(code/)
 
 # configure rrdio.qrc
 configure_file(
@@ -280,7 +302,7 @@ include_directories (
 
 target_link_libraries(sysmo-operator
     ${OPERATOR_QT_LIBRARIES}
-    ${OPERATOR_DEPS_LIBRARIES} s_widgets)
+    ${OPERATOR_DEPS_LIBRARIES})
 
 # WIN32 Install...
 if (WIN32)
@@ -345,3 +367,5 @@ if (WIN32)
 
     include(CPack)
 endif(WIN32)
+
+
