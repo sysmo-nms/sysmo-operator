@@ -18,15 +18,23 @@ endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 
 
 #
+# For more interesing log messages (qDebug)
+#
+add_definitions(-DQT_MESSAGELOGCONTEXT)
+
+
+#
 # Set build version, and configure files
 #
 set (OPERATOR_VERSION_MAJOR "2")
 set (OPERATOR_VERSION_MINOR "0")
 set (OPERATOR_VERSION_PATCH "9")
 set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPERATOR_VERSION_PATCH}")
+message("-- Configure code/config.h")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h)
+message("-- Configure support/packages/obs/_service")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
@@ -36,9 +44,11 @@ configure_file(
 # get rrdio libraries versions and configure files
 #
 add_subdirectory(qrcs/)
+message("-- Configure qrcs/rrdio.qrc")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
     ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
+message("-- Configure code/rrds/rrd4qt_config.h")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
@@ -189,10 +199,6 @@ set (OPERATOR_QRC
     qrcs/operator-ui.qrc)
 
 
-set (OPERATOR_LIBS "")
-
-add_definitions(-DQT_MESSAGELOGCONTEXT)
-
 
 #
 # Find Qt (4 or 5), and set correct libs/includes/ressources
@@ -261,6 +267,15 @@ endif(QT4_FOUND)
 
 
 #
+# This is allmost it!
+#
+set (CMAKE_AUTORCC ON)
+set (CMAKE_AUTOMOC ON)
+include_directories(code ${OPERATOR_INCLUDES})
+add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_QRCS})
+
+
+#
 # If WIN32, we must set an executable icon (MSVC ressource system),
 # and link with SUBSYSTEM:WINDOWS to avoid CMD window.
 #
@@ -276,6 +291,7 @@ if (WIN32)
         set(OPERATOR_LIBS ${OPERATOR_LIBS} Qt5::WinMain)
 
         # Icon for executable
+        message("-- Configure support/packages/win/icon-ressource.rc")
         configure_file(
             ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/icon-ressource.rc.in
             ${CMAKE_BINARY_DIR}/icon-ressource.rc)
@@ -291,16 +307,14 @@ endif(WIN32)
 
 
 #
-# This is it!
+# The END
 #
-set (CMAKE_AUTORCC ON)
-set (CMAKE_AUTOMOC ON)
-include_directories(code ${OPERATOR_INCLUDES})
-add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_QRCS})
 target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
 
 
-# WIN32 Install...
+#
+# WIN32 Dependency scan section, we use QT5_WINDEPOYQT:
+#
 if (WIN32)
     set(WIX_SOURCE_DIR $<TARGET_FILE_DIR:sysmo-operator>)
     get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
@@ -314,7 +328,10 @@ if (WIN32)
     install (DIRECTORY $<TARGET_FILE_DIR:sysmo-operator>/ DESTINATION .)
 endif(WIN32)
 
-# Windows package
+
+#
+# Windows package with CPack. The bundle is generated from the build.cmd command.
+#
 if (WIN32)
     set (CPACK_PACKAGE_NAME "Sysmo-Operator")
     set (CPACK_PACKAGE_VENDOR "Sysmo NMS")
@@ -352,10 +369,12 @@ if (WIN32)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
     set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/logo.png")
 
+    message("-- Configure support/package/win/bindle.wxs")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bundle.wxs.in
         ${CMAKE_BINARY_DIR}/bundle.wxs)
 
+    message("-- Configure support/package/win/bin/generate_bundle.cmd")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bin/generate_bundle.cmd.in
         ${CMAKE_BINARY_DIR}/generate_bundle.cmd)
