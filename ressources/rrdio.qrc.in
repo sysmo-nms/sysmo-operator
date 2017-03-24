@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/rrdio">
+        <file alias="rrdio.sh">@CMAKE_CURRENT_SOURCE_DIR@/ressources/rrdio/build/install/rrdio/bin/rrdio</file>
+        <file alias="rrdio.bat">@CMAKE_CURRENT_SOURCE_DIR@/ressources/rrdio/build/install/rrdio/bin/rrdio.bat</file>
+        <file alias="rrdio.jar">@CMAKE_CURRENT_SOURCE_DIR@/ressources/rrdio/build/install/rrdio/lib/@RRDIO_JAR@</file>
+        <file alias="rrd4j.jar">@CMAKE_CURRENT_SOURCE_DIR@/ressources/rrdio/build/install/rrdio/lib/@RRDIO_RRD4J_JAR@</file>
+        <file alias="json.jar">@CMAKE_CURRENT_SOURCE_DIR@/ressources/rrdio/build/install/rrdio/lib/@RRDIO_JSON_JAR@</file>
+    </qresource>
+</RCC>

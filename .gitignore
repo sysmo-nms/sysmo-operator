@@ -6,7 +6,7 @@
 /code/config.h
 /code/rrds/rrd4qt_config.h
 /support/packages/obs/_service
-/qrcs/rrdio.qrc
+/ressources/rrdio.qrc
 
 # In source build
 /*.cpp
@@ -20,11 +20,11 @@
 /deps/cmake_install.cmake
 /deps/libmd5.a
 /nbproject/
-/qrcs/box_icons.qrc.depends
-/qrcs/cssressource.qrc.depends
-/qrcs/icons.qrc.depends
-/qrcs/images.qrc.depends
-/qrcs/pixmaps.qrc.depends
-/qrcs/rrdio.qrc.depends
-/qrcs/tree.qrc.depends
+/ressources/box_icons.qrc.depends
+/ressources/cssressource.qrc.depends
+/ressources/icons.qrc.depends
+/ressources/images.qrc.depends
+/ressources/pixmaps.qrc.depends
+/ressources/rrdio.qrc.depends
+/ressources/tree.qrc.depends
 /sysmo-operator

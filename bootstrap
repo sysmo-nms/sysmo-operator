@@ -34,7 +34,7 @@ clean_all:
 	rm -f code/config.h
 	rm -f code/rrds/rrd4qt_config.h
 	rm -f support/packages/obs/_service
-	rm -f qrcs/rrdio.qrc
+	rm -f ressources/rrdio.qrc
 
 %:
 	make -C /home/seb/src/sysmo-operator/_build $@

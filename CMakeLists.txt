@@ -43,11 +43,11 @@ configure_file(
 #
 # get rrdio libraries versions and configure files
 #
-add_subdirectory(qrcs/)
-message("-- Configure qrcs/rrdio.qrc")
+add_subdirectory(ressources/)
+message("-- Configure ressources/rrdio.qrc")
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/qrcs/rrdio.qrc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc)
 message("-- Configure code/rrds/rrd4qt_config.h")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
@@ -55,7 +55,8 @@ configure_file(
 
 
 #
-# Operator SRC in one CMakeLists.txt file is simpler
+# Operator SRC in one CMakeLists.txt file is simpler. CMake automaticaly
+# handle headers dependencies.
 #
 set (OPERATOR_SRC
     code/main.cpp
@@ -188,15 +189,15 @@ set (OPERATOR_SRC
 # Every sysmo-operator Qt ressources
 #
 set (OPERATOR_QRC
-    qrcs/icons.qrc
-    qrcs/box_icons.qrc
-    qrcs/images.qrc
-    qrcs/pixmaps.qrc
-    qrcs/tree.qrc
-    qrcs/rrdio.qrc
-    qrcs/cssressource.qrc
-    qrcs/darcula.qrc
-    qrcs/operator-ui.qrc)
+    ressources/icons.qrc
+    ressources/box_icons.qrc
+    ressources/images.qrc
+    ressources/pixmaps.qrc
+    ressources/tree.qrc
+    ressources/rrdio.qrc
+    ressources/cssressource.qrc
+    ressources/darcula.qrc
+    ressources/operator-ui.qrc)
 
 
 
