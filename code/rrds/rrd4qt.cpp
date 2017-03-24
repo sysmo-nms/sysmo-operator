@@ -93,7 +93,6 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent) {
     proc_path = sh_path;
 #endif
 
-    // TODO jar versions should not be hard coded
     QFile rrdio(":/rrdio/rrdio.jar");
     QString rrdio_jar_path =
             QDir(lib_dir).absoluteFilePath(RRDIO_JAR);

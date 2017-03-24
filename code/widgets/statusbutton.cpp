@@ -58,6 +58,10 @@ void StatusButton::increment() {
 void StatusButton::decrement() {
 
     this->counter -= 1;
+    if (this->counter == 0) {
+        this->setStyleSheet("QPushButton {border: 2px solid rgba(0,0,0,0);}");
+        this->red = false;
+    }
 
 }
 

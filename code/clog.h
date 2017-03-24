@@ -12,7 +12,7 @@
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- 
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -90,89 +90,86 @@
 #define clogDebug(format, ...) {}
 #endif
 
-FILE* CLOG_OUT;
+extern FILE* CLOG_OUTPUT;
+FILE *CLOG_OUTPUT = NULL;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
-/**
- * @brief For internal use only.
- */
-static void clogTerminate()
-{
+    /**
+     * @brief For internal use only.
+     */
+    static void clogTerminate() {
 
-    if (NULL != CLOG_OUT) fclose(CLOG_OUT);
-
-}
-
-
-/**
- * @brief Specify a file insteed of STDOUT to log messages.
- * Set filePath as the destination for logs.
- * @param filepath the full file name to write on.
- * @returns 0 if succeed, 1 if the file cannot be opened.
- */
-static int clogConfigure(const char* filepath)
-{
-
-    atexit(clogTerminate);
-
-    if (NULL != CLOG_OUT) fclose(CLOG_OUT);
-
-    FILE* logFile = fopen(filepath, "a");
-
-    if (NULL == logFile)
-        return 1;
-    else
-        CLOG_OUT = logFile;
-
-    return 0;
-
-}
-
-/**
- * @brief For internal use only.
- */
-static int clogLog(
-        char* level,
-        char* file,
-        int   line,
-        const char* format, ...)
-{
-
-
-    FILE* out;
-    if (NULL != CLOG_OUT) {
-
-        out = CLOG_OUT;
-
-    } else {
-
-        out = stdout;
+        if (NULL != CLOG_OUTPUT) fclose(CLOG_OUTPUT);
 
     }
 
-    time_t timer;
-    time(&timer);
+    /**
+     * @brief Specify a file insteed of STDOUT to log messages.
+     * Set filePath as the destination for logs.
+     * @param filepath the full file name to write on.
+     * @returns 0 if succeed, 1 if the file cannot be opened.
+     */
+    static int clogConfigure(const char* filepath) {
 
-    char timeBuffer[30];
-    strftime(timeBuffer, 30, "%Y/%m/%d %H:%M:%S", localtime(&timer));
+        atexit(clogTerminate);
 
-    fprintf(out, "\n\n%s\t%s\t%s:%d\n", timeBuffer, level, file, line); 
+        if (NULL != CLOG_OUTPUT) fclose(CLOG_OUTPUT);
+
+        FILE* logFile = fopen(filepath, "a");
+
+        if (NULL == logFile)
+            return 1;
+        else
+            CLOG_OUTPUT = logFile;
+
+        return 0;
+
+    }
+
+    /**
+     * @brief For internal use only.
+     */
+    static int clogLog(
+            char* level,
+            char* file,
+            int line,
+            const char* format, ...) {
 
 
-    va_list args;
-    int ret;
+        FILE* out;
+        if (NULL != CLOG_OUTPUT) {
 
-    va_start(args, format);
-    ret = vfprintf(out, format, args);
-    va_end(args);
+            out = CLOG_OUTPUT;
 
-    return ret;
+        } else {
 
-}
+            out = stdout;
+
+        }
+
+        time_t timer;
+        time(&timer);
+
+        char timeBuffer[30];
+        strftime(timeBuffer, 30, "%Y/%m/%d %H:%M:%S", localtime(&timer));
+
+        fprintf(out, "\n\n%s\t%s\t%s:%d\n", timeBuffer, level, file, line);
+
+
+        va_list args;
+        int ret;
+
+        va_start(args, format);
+        ret = vfprintf(out, format, args);
+        va_end(args);
+
+        return ret;
+
+    }
 
 #ifdef __cplusplus
 }
