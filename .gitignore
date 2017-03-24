@@ -20,6 +20,9 @@
 /deps/cmake_install.cmake
 /deps/libmd5.a
 /nbproject/
+/ressources/CMakeFiles
+/ressources/Makefile
+/ressources/cmake_install.cmake
 /ressources/box_icons.qrc.depends
 /ressources/cssressource.qrc.depends
 /ressources/icons.qrc.depends
@@ -27,4 +30,6 @@
 /ressources/pixmaps.qrc.depends
 /ressources/rrdio.qrc.depends
 /ressources/tree.qrc.depends
+/ressources/darcula.qrc.depends
+/ressources/operator-ui.qrc.depends
 /sysmo-operator
