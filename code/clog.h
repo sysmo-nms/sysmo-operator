@@ -31,10 +31,6 @@
 #define CLOG_H
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <time.h>
 
 /**
  * @mainpage
@@ -91,85 +87,35 @@
 #endif
 
 extern FILE* CLOG_OUTPUT;
-FILE *CLOG_OUTPUT = NULL;
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
     /**
-     * @brief For internal use only.
-     */
-    static void clogTerminate() {
-
-        if (NULL != CLOG_OUTPUT) fclose(CLOG_OUTPUT);
-
-    }
-
-    /**
-     * @brief Specify a file insteed of STDOUT to log messages.
+     * @brief Specify a file to log messages.
      * Set filePath as the destination for logs.
      * @param filepath the full file name to write on.
-     * @returns 0 if succeed, 1 if the file cannot be opened.
+     * @returns the file descriptor or NULL if failed (see errno).
      */
-    static int clogConfigure(const char* filepath) {
+    void* clogSetOutput(const char* filepath);
 
-        atexit(clogTerminate);
+    /**
+     * @brief Specify a file descriptor to log messages, or NULL to disable
+     * logs.
+     * @param fd a FILE*
+     */
+    void clogSetOutputFd(FILE *fd);
 
-        if (NULL != CLOG_OUTPUT) fclose(CLOG_OUTPUT);
-
-        FILE* logFile = fopen(filepath, "a");
-
-        if (NULL == logFile)
-            return 1;
-        else
-            CLOG_OUTPUT = logFile;
-
-        return 0;
-
-    }
 
     /**
      * @brief For internal use only.
      */
-    static int clogLog(
-            char* level,
-            char* file,
+    int clogLog(
+            const char* level,
+            const char* file,
             int line,
-            const char* format, ...) {
-
-
-        FILE* out;
-        if (NULL != CLOG_OUTPUT) {
-
-            out = CLOG_OUTPUT;
-
-        } else {
-
-            out = stdout;
-
-        }
-
-        time_t timer;
-        time(&timer);
-
-        char timeBuffer[30];
-        strftime(timeBuffer, 30, "%Y/%m/%d %H:%M:%S", localtime(&timer));
-
-        fprintf(out, "\n\n%s\t%s\t%s:%d\n", timeBuffer, level, file, line);
-
-
-        va_list args;
-        int ret;
-
-        va_start(args, format);
-        ret = vfprintf(out, format, args);
-        va_end(args);
-
-        return ret;
-
-    }
+            const char* format, ...);
 
 #ifdef __cplusplus
 }

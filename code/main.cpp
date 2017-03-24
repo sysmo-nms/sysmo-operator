@@ -18,9 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <clog.h>
-#include <cargo.h>
+#include <errno.h>
 
+#include "clog.h"
 #include "mainwindow.h"
 #include "themes.h"
 #include "sysmo.h"
@@ -38,6 +38,11 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 int
 main(int argc, char** argv) {
+
+    if (NULL == clogSetOutput("mylog.log")) {
+        fprintf(stderr, "Failed to open log file: %s\n", strerror(errno));
+        exit(1);
+    }
 
     int RETURN_CODE;
     do {
