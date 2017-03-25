@@ -2,6 +2,7 @@
 /_build
 
 # dynamicaly configured files
+/make.cmd
 /Makefile
 /code/config.h
 /code/rrds/rrd4qt_config.h
