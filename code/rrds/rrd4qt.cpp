@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rrd4qt.h"
-#include "rrd4qt_config.h"
+#include <config.h>
 
 
 #include <network/qjson.h>

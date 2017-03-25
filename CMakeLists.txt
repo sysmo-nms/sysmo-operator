@@ -23,13 +23,21 @@ endif (CMAKE_VERSION VERSION_LESS 2.8.11)
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 
-#
-# Set build version, and configure files
-#
 set (OPERATOR_VERSION_MAJOR "2")
 set (OPERATOR_VERSION_MINOR "0")
 set (OPERATOR_VERSION_PATCH "9")
 set (OPERATOR_VERSION "${OPERATOR_VERSION_MAJOR}.${OPERATOR_VERSION_MINOR}.${OPERATOR_VERSION_PATCH}")
+
+
+#
+# Get rrdio libraries names and versions for rrdio.qrc.in and config.h.in
+#
+add_subdirectory(ressources/)
+
+
+#
+# Configure files
+#
 message("-- Configure code/config.h")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in
@@ -38,20 +46,10 @@ message("-- Configure support/packages/obs/_service")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service.in
     ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/obs/_service)
-
-
-#
-# get rrdio libraries versions and configure files
-#
-add_subdirectory(ressources/)
 message("-- Configure ressources/rrdio.qrc")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc.in
     ${CMAKE_CURRENT_SOURCE_DIR}/ressources/rrdio.qrc)
-message("-- Configure code/rrds/rrd4qt_config.h")
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/code/rrds/rrd4qt_config.h)
 
 
 #
@@ -61,6 +59,7 @@ configure_file(
 set (OPERATOR_SRC
     code/main.cpp
     code/sysmo.h
+    code/config.h
     code/mainwindow.cpp
     code/login.cpp
     code/login.h
@@ -178,7 +177,6 @@ set (OPERATOR_SRC
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h
     code/rrds/rrd4qt.h
-    code/rrds/rrd4qt_config.h
     code/rrds/rrd4qtproc.cpp
     code/rrds/rrd4qtproc.h
     code/rrds/rrd4qtsignal.cpp
@@ -370,7 +368,7 @@ if (WIN32)
     set (CPACK_WIX_UPGRADE_GUID "8999771C-F49B-462C-AB3D-CD84432DD585")
     set (CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/logo.png")
 
-    message("-- Configure support/package/win/bindle.wxs")
+    message("-- Configure support/package/win/bundle.wxs")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/support/packages/win/bundle.wxs.in
         ${CMAKE_BINARY_DIR}/bundle.wxs)

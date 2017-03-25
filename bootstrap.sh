@@ -32,7 +32,6 @@ clean_all:
 	rm -rf _build; rm Makefile
 	rm -f Makefile
 	rm -f code/config.h
-	rm -f code/rrds/rrd4qt_config.h
 	rm -f support/packages/obs/_service
 	rm -f ressources/rrdio.qrc
 

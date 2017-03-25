@@ -5,7 +5,6 @@
 /make.cmd
 /Makefile
 /code/config.h
-/code/rrds/rrd4qt_config.h
 /support/packages/obs/_service
 /ressources/rrdio.qrc
 

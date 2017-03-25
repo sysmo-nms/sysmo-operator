@@ -1,9 +1,12 @@
 :: Build CMake project
 
+@if exist make.cmd del make.cmd
+@if exist code\config.h del code\config.h
+@if exist support\packages\obs\_service del support\packages\obs\_service
+@if exist ressources\rrdio.qrc del ressources\rrdio.qrc
 @if exist _build rmdir _build /s /q
-@if exist make.cmd rm make.cmd /s /q
 
-git submodule update --init --recursive
+@git submodule update --init
 
 @if not DEFINED PLATFORM (
     set qt_path=C:\Qt\Qt5.7.0\5.7\msvc2015_64
@@ -20,7 +23,9 @@ git submodule update --init --recursive
 
 @set PATH=%qt_path%\bin;%PATH%
 
-cmake -H. -B_build -G %cmake_gen% -DCMAKE_PREFIX_PATH=%qt_path%
+@cmake -H. -B_build -G %cmake_gen% -DCMAKE_PREFIX_PATH=%qt_path%
 
-cp support\packages\win\bin\make.cmd .
+@cp support\packages\win\bin\make.cmd .
 
+@echo.
+@echo Now you can run make.cmd

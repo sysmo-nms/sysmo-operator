@@ -24,4 +24,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #define OPERATOR_VERSION_MINOR @OPERATOR_VERSION_MINOR@
 #define OPERATOR_VERSION_PATCH @OPERATOR_VERSION_PATCH@
 
+#define RRDIO_JAR       "@RRDIO_JAR@"
+#define RRDIO_RRD4J_JAR "@RRDIO_RRD4J_JAR@"
+#define RRDIO_JSON_JAR  "@RRDIO_JSON_JAR@"
+
 #endif // OPERATOR_CONFIG
+
