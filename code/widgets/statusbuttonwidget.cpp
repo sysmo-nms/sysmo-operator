@@ -23,7 +23,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QPixmap>
 #include <QMap>
-#include <QDebug>
 #include <QTimer>
 
 /**

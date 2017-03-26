@@ -25,7 +25,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLabel>
 #include <QFrame>
 #include <QPalette>
-#include <QDebug>
 
 /**
  * Status button including a layout to show an image status,
