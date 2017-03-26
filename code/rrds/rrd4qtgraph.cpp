@@ -21,9 +21,10 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "rrd4qt.h"
 #include "rrd4qtsignal.h"
 
+#include <clog.h>
+
 #include <QObject>
 #include <QTemporaryFile>
-#include <QDebug>
 
 Rrd4QtGraph::Rrd4QtGraph(
         QString rrd_db_file,
@@ -41,7 +42,7 @@ Rrd4QtGraph::Rrd4QtGraph(
 
 
     /*
-     * User the allready created json object but complete it
+     * Use the allready created json object but complete it
      * with values needed to graph.
      */
     this->graph_config = rrd_graph_config;
@@ -85,13 +86,11 @@ void Rrd4QtGraph::handleRrdReply(QVariant reply_var) {
         return;
     }
 
-    qWarning() << "callRrd graph returned:" << reply;
-
 }
 
 void Rrd4QtGraph::setTimeSpan(int time_span) {
 
-    qDebug() << "set time span";
+    clogInfo("Rrd4QtGraph: set timestamp", NULL);
     this->graph_config.insert("spanBegin", 0 - time_span);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
@@ -117,11 +116,10 @@ void Rrd4QtGraph::setGraphHeight(int height) {
 void Rrd4QtGraph::setGraphWidth(int width) {
 
     if (width < 250) {
-        qDebug() << "is min than 250";
         width = 250;
     }
 
-    qDebug() << "change width to: " << width;
+    clogDebug("Change width to: %i", width);
     this->graph_config.insert("width", width);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(

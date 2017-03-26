@@ -21,6 +21,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <network/qjson.h>
+#include <clog.h>
 
 #include <QThread>
 #include <QAbstractSocket>
@@ -34,36 +35,29 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPalette>
 #include <QColor>
 
-#include <QDebug>
-
 Rrd4Qt* Rrd4Qt::singleton = NULL;
 
 Rrd4Qt* Rrd4Qt::getInstance() {
     return Rrd4Qt::singleton;
 }
 
-Rrd4Qt::~Rrd4Qt() {
-
-    this->proc->kill();
-    this->proc->waitForFinished();
-    delete this->proc;
-
-    QMap<int, Rrd4QtSignal*>::iterator i;
-    for (
-            i = this->queries->begin();
-            i != this->queries->end();
-            ++i) {
-        Rrd4QtSignal* sig = i.value();
-        delete sig;
-    }
-    delete this->queries;
-
-}
-
+/*
+ * Start the java with good arguments and setup signals slots for read/write
+ * communication.
+ */
 Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent) {
 
     Rrd4Qt::singleton = this;
+
+    /*
+     * queries contains a map of "int" to signal, where the "int" represent
+     * a specific query made by a foreign object, owning the Rrd4QtSignal.
+     */
     this->queries = new QMap<int, Rrd4QtSignal*>();
+
+    /*
+     * block_size is used for stdin read function.
+     */
     this->block_size = 0;
 
     /*
@@ -78,19 +72,19 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent) {
     d.mkdir(bin_dir);
     d.mkdir(lib_dir);
 
-    QString proc_path;
+    QString java_bin;
 #if defined Q_OS_WIN
     QString bat_path = QDir(bin_dir).absoluteFilePath("rrdio.bat");
     QFile bat(":/rrdio/rrdio.bat");
     bat.copy(bat_path);
-    proc_path = bat_path;
+    java_bin = bat_path;
 #else
     QString sh_path = QDir(bin_dir).absoluteFilePath("rrdio");
     QFile sh(":/rrdio/rrdio.sh");
     sh.copy(sh_path);
     QFile sh_file(sh_path);
     sh_file.setPermissions(sh_file.permissions() | QFile::ExeOwner);
-    proc_path = sh_path;
+    java_bin = sh_path;
 #endif
 
     QFile rrdio(":/rrdio/rrdio.jar");
@@ -111,7 +105,7 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent) {
     /*
      * Start the server
      */
-    this->proc = new Rrd4QtProc(parent);
+    this->proc = new Rrd4QtProc(this);
     this->proc->setProcessChannelMode(QProcess::SeparateChannels);
     this->proc->setReadChannel(QProcess::StandardOutput);
     QObject::connect(
@@ -129,10 +123,32 @@ Rrd4Qt::Rrd4Qt(QObject* parent) : QObject(parent) {
             this, SLOT(procStderrReadyRead()));
 
     // TODO move to a thread
-    this->proc->start(proc_path);
+    this->proc->start(java_bin);
 
 }
 
+Rrd4Qt::~Rrd4Qt() {
+
+    this->proc->kill();
+    this->proc->waitForFinished();
+    delete this->proc;
+
+    QMap<int, Rrd4QtSignal*>::iterator i;
+    for (
+            i = this->queries->begin();
+            i != this->queries->end();
+            ++i) {
+        Rrd4QtSignal* sig = i.value();
+        delete sig;
+    }
+    delete this->queries;
+
+}
+
+/*
+ * Read packet header (len), then iterate while data is available. Use
+ * this->query map to trigger the reply message to the registered object.
+ */
 void Rrd4Qt::procStdoutReadyRead() {
 
     /*
@@ -182,6 +198,9 @@ void Rrd4Qt::procStdoutReadyRead() {
 
 }
 
+/*
+ * Call RRD and wait for a result message triggered by sig.
+ */
 void Rrd4Qt::callRrd(QMap<QString, QVariant> msg, Rrd4QtSignal* sig) {
 
     int queryId = 0;
@@ -197,6 +216,9 @@ void Rrd4Qt::callRrd(QMap<QString, QVariant> msg, Rrd4QtSignal* sig) {
 
 }
 
+/*
+ * Simple call to RRD.
+ */
 void Rrd4Qt::callRrd(QMap<QString, QVariant> msg) {
 
     QByteArray json_array = QJson::encode(msg).toLatin1();
@@ -225,18 +247,22 @@ QByteArray Rrd4Qt::int32ToArray(qint32 source) {
 }
 
 void Rrd4Qt::procStopped(int exitCode, QProcess::ExitStatus exitStatus) {
-
     emit this->javaStopped();
-    qDebug() << "proc stoped " << exitCode << " " << exitStatus;
-
+    if (exitStatus != QProcess::NormalExit) {
+        clogWarning("Proc stoped with exit code %i", exitCode)
+    }
 }
 
 void Rrd4Qt::procStderrReadyRead() {
 
-    qDebug() << "stderr " << this->proc->readAllStandardError();
-
+    clogWarning("Received string from java stderr: %s",
+            this->proc->readAllStandardError().data());
 }
 
+/*
+ * Called once the java process is started to initialize default colors taken
+ * from the current theme.
+ */
 void Rrd4Qt::procStarted() {
 
     /*
