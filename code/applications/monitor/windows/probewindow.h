@@ -31,6 +31,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QResizeEvent>
 #include <QCloseEvent>
 
+#include <widgets/nframecontainer.h>
+
 class ProbeWindow : public MonitorProxyWidget {
     Q_OBJECT
 private:
@@ -47,10 +49,14 @@ private:
     QTimer* timer;
     int divider;
     int margin;
+    int h_margin;
+    int graphs_number;
+    NFrameContainer* log_area;
     void resizeEvent(QResizeEvent *event);
 
     static QMap<QString, ProbeWindow*> windows;
     void restoreStateFromSettings();
+    int getOptimalHeight();
 
 public:
     static void openWindow(QString name);
@@ -69,10 +75,11 @@ public:
     static const int SPAN_TEN_YEARS = 9;
 
     static bool isThumbnail(int value);
-    static int getHeightFor(int value);
     static const int HEIGHT_SMALL = 0;
     static const int HEIGHT_NORMAL = 1;
     static const int HEIGHT_LARGE = 2;
+    static const int HEIGHT_AUTO = 3;
+    int getHeightFor(int value);
 
 
 public slots:

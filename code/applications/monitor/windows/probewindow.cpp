@@ -55,7 +55,9 @@ ProbeWindow::ProbeWindow(QString probeName)
 
     this->divider = 1;
     this->margin = 150;
+    this->h_margin = 150;
     this->name = probeName;
+    this->graphs_number = 0;
 
     /*
      * Init various element of QWidget. The newly created window is non
@@ -134,7 +136,8 @@ ProbeWindow::ProbeWindow(QString probeName)
     this->height_cbox->insertItem(ProbeWindow::HEIGHT_SMALL, "Small");
     this->height_cbox->insertItem(ProbeWindow::HEIGHT_NORMAL, "Normal");
     this->height_cbox->insertItem(ProbeWindow::HEIGHT_LARGE, "Large");
-    this->height_cbox->setCurrentIndex(ProbeWindow::HEIGHT_NORMAL);
+    this->height_cbox->insertItem(ProbeWindow::HEIGHT_AUTO, "Auto");
+    this->height_cbox->setCurrentIndex(ProbeWindow::HEIGHT_AUTO);
     QObject::connect(
             this->height_cbox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(handleHeightChanged(int)));
@@ -158,15 +161,15 @@ ProbeWindow::ProbeWindow(QString probeName)
     this->scroll_area->setWidgetResizable(true);
 
     // log area container
-    NFrameContainer* log_area = new NFrameContainer(this);
-    log_area->setAutoFillBackground(true);
-    log_area->setBackgroundRole(QPalette::Light);
-    log_area->setFrameShape(QFrame::StyledPanel);
-    log_area->setFrameShadow(QFrame::Raised);
+    this->log_area = new NFrameContainer(this);
+    this->log_area->setAutoFillBackground(true);
+    this->log_area->setBackgroundRole(QPalette::Light);
+    this->log_area->setFrameShape(QFrame::StyledPanel);
+    this->log_area->setFrameShadow(QFrame::Raised);
     NGrid* log_area_grid = new NGrid();
     log_area_grid->setRowStretch(0, 0);
     log_area_grid->setRowStretch(1, 1);
-    log_area->setLayout(log_area_grid);
+    this->log_area->setLayout(log_area_grid);
 
     log_area_grid->addWidget(log_controls, 0, 0);
     log_area_grid->addWidget(this->scroll_area, 1, 0);
@@ -176,7 +179,7 @@ ProbeWindow::ProbeWindow(QString probeName)
 
     // final grid
     NGrid* grid = new NGrid();
-    grid->addWidget(log_area, 0, 0);
+    grid->addWidget(this->log_area, 0, 0);
     grid->addWidget(this->status_bar, 1, 0);
     grid->setRowStretch(0, 1);
     grid->setRowStretch(1, 0);
@@ -200,6 +203,7 @@ ProbeWindow::~ProbeWindow() {
     QString size_str = "graph_size/" + this->name;
     s.setValue(size_str, QVariant(this->height_cbox->currentIndex()));
 
+
 }
 
 void ProbeWindow::restoreStateFromSettings() {
@@ -222,8 +226,14 @@ void ProbeWindow::restoreStateFromSettings() {
 void ProbeWindow::handleTimerTimeout() {
 
     int margins = this->margin * this->divider;
-    int size = (this->size().width() - margins) / this->divider;
-    emit this->graphWidthChanged(size);
+    int width = (this->log_area->width() - margins) / this->divider;
+    int height = this->getOptimalHeight();
+
+    /*
+     * TODO emit in one call
+     */
+    emit this->graphWidthChanged(width);
+    emit this->graphHeightChanged(height);
 
 }
 
@@ -282,6 +292,8 @@ void ProbeWindow::handleEvent(QVariant event_var) {
          */
         QStringList keys = js_graphs.keys();
         keys.sort();
+
+        this->graphs_number = keys.size();
 
         /*
          * Then iterate sorted keys
@@ -513,20 +525,32 @@ void ProbeWindow::openWindow(QString name) {
 
 }
 
+int ProbeWindow::getOptimalHeight() {
+    return this->getHeightFor(this->height_cbox->currentIndex());
+}
+
 int ProbeWindow::getHeightFor(int value) {
 
     switch (value) {
-        case ProbeWindow::HEIGHT_SMALL:
-            return 30;
-        case ProbeWindow::HEIGHT_NORMAL:
+    case ProbeWindow::HEIGHT_SMALL:
+        return 30;
+    case ProbeWindow::HEIGHT_NORMAL:
+        return 90;
+    case ProbeWindow::HEIGHT_LARGE:
+        return 180;
+    case ProbeWindow::HEIGHT_AUTO: {
+        float requested_height = (float) (this->log_area->height() - this->h_margin) / (float) this->graphs_number;
+        if (requested_height < (float) ProbeWindow::HEIGHT_SMALL) {
             return 90;
-        case ProbeWindow::HEIGHT_LARGE:
-            return 180;
-        default:
-            qWarning() << "unknown size:" << value;
-            return 150;
+        } else {
+            return (int) requested_height;
+        }
     }
 
+    default:
+        qWarning() << "unknown size:" << value;
+        return 150;
+    }
 }
 
 int ProbeWindow::getSpanFor(int value) {
@@ -578,7 +602,7 @@ bool ProbeWindow::isThumbnail(int value) {
 
 void ProbeWindow::handleHeightChanged(int height) {
 
-    int height_val = ProbeWindow::getHeightFor(height);
+    int height_val = this->getHeightFor(height);
     emit this->graphHeightChanged(height_val);
 
 }
