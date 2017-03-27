@@ -26,7 +26,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "supercastsocket.h"
 #endif
 
-#include <clog.h>
+#include <logs/clog.h>
 
 #include <QAbstractSocket>
 #include <QStringList>

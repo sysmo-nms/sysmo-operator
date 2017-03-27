@@ -21,7 +21,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "rrd4qt.h"
 #include "rrd4qtsignal.h"
 
-#include <clog.h>
+#include <logs/clog.h>
 
 #include <QObject>
 #include <QTemporaryFile>
