@@ -67,8 +67,8 @@ set (OPERATOR_SRC
     code/centralwidget.h
     code/themes.cpp
     code/themes.h
-    code/clog.h
-    code/clog.c
+    code/logs/clog.h
+    code/logs/clog.c
     code/widgets/lineedit.cpp
     code/widgets/lineedit.h
     code/widgets/messagebox.cpp

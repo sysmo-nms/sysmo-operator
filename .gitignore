@@ -7,6 +7,7 @@
 /code/config.h
 /support/packages/obs/_service
 /ressources/rrdio.qrc
+/CMakeLists.txt.user*
 
 # In source build
 /*.cpp
