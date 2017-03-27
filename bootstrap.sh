@@ -36,7 +36,7 @@ clean_all:
 	rm -f ressources/rrdio.qrc
 
 %:
-	make -C /home/seb/src/sysmo-operator/_build $@
+	make -C _build $@
 
 packages:
 	@echo "Trigger linux packages build from the current git repository revision"
