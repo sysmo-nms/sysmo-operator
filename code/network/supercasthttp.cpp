@@ -26,8 +26,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 #include <QMetaType>
 
-#include <QDebug>
-
 QNetworkRequest::Attribute SupercastHTTP::att_request =
         static_cast<QNetworkRequest::Attribute> (QNetworkRequest::User + 1);
 

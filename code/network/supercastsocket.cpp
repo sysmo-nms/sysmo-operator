@@ -133,12 +133,9 @@ void SupercastSocket::socketReadyRead() {
 void SupercastSocket::handleClientMessage(QVariant msg) {
 
     QByteArray json_array = QJson::encode(msg).toLatin1();
-    qDebug() << "will sed:" << json_array;
     qint32 json_size(json_array.size());
-    qDebug() << "will send size:" << json_array.size();
     this->socket->write(SupercastSocket::int32ToArray(json_size));
     this->socket->write(json_array.data(), json_size);
-    qDebug() << "have sent size:" << json_array.data();
 
 }
 

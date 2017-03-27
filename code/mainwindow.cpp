@@ -21,6 +21,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <applications/monitor/monitorwidget.h>
 #include <widgets/messagebox.h>
 #include <sysmo.h>
+#include <network/socketutils.h>
 
 #include <QIcon>
 #include <QMenuBar>
@@ -340,52 +341,8 @@ MainWindow::connectionStatus(int status) {
     err_box.setStandardButtons(QMessageBox::Close);
     this->setEnabled(false);
 
-    QString dialog_text;
-    QString dialog_informative_text;
-
-    switch (status) {
-        case Supercast::AUTHENTICATION_ERROR:
-        {
-            dialog_text = "Authentication failure.";
-            dialog_informative_text = "The authentication procedure has failed.";
-            break;
-        }
-        case QAbstractSocket::ConnectionRefusedError:
-        {
-            dialog_text = "The connection was refused by the peer.";
-            dialog_informative_text = "You may trying to connect to the wrong host, or the wrong port.";
-            break;
-        }
-        case QAbstractSocket::RemoteHostClosedError:
-        {
-            dialog_text = "The remote host closed the connection.";
-            dialog_informative_text = "This can append if the host came down, or if the service is restarting.";
-            break;
-        }
-        case QAbstractSocket::HostNotFoundError:
-        {
-            dialog_text = "Host not found.";
-            dialog_informative_text = "Cannot resolve hostname.";
-            break;
-        }
-        case QAbstractSocket::SocketTimeoutError:
-        {
-            dialog_text = "Socket timed out.";
-            dialog_informative_text = "You may trying to connect to the wrong host, or the wrong port.";
-            break;
-        }
-        case QAbstractSocket::NetworkError:
-        {
-            dialog_text = "Network error.";
-            dialog_informative_text = "Can not reach the host.";
-            break;
-        }
-        default:
-        {
-            dialog_text = "Unknown socket Error";
-            dialog_informative_text = "";
-        }
-    }
+    QString dialog_text = socketutils::getErrorInfo(status);
+    QString dialog_informative_text = socketutils::getErrorString(status);
 
     err_box.setText(dialog_text);
     err_box.setInformativeText(dialog_informative_text);

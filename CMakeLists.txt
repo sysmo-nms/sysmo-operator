@@ -173,6 +173,8 @@ set (OPERATOR_SRC
     code/network/supercastsignal.h
     code/network/qjson.h
     code/network/qjson.cpp
+    code/network/socketutils.h
+    code/network/socketutils.cpp
     code/rrds/rrd4qt.cpp
     code/rrds/rrd4qtgraph.cpp
     code/rrds/rrd4qtgraph.h

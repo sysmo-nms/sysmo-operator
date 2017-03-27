@@ -28,8 +28,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 #include <QTreeView>
 
-#include <QDebug>
-
 TreeModel::TreeModel(QWidget* parent) : QStandardItemModel(parent) {
 
     this->targets = new QMap<QString, ItemTarget*>();

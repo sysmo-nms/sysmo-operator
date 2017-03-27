@@ -19,9 +19,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SYSMO
 #define SYSMO
 
-#include <Qt>
-#include <QString>
-
 
 /**
  * Various constant used by sysmo-operator classes

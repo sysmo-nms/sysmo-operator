@@ -15,28 +15,26 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef QJSON_H
 #define QJSON_H
 #include <QString>
 #include <QVariant>
-#include <QDebug>
 
-class QJson
-{
+class QJson {
+
     Q_FLAGS(EncodeOption EncodeOptions)
     Q_FLAGS(DecodeOption DecodeOptions)
 
 public:
-    enum EncodeOption
-    {
+    enum EncodeOption {
         EncodeUnknownTypesAsNull = 0x01,
         Compact = 0x02
     };
+
     Q_DECLARE_FLAGS(EncodeOptions, EncodeOption)
 
-    enum DecodeOption
-    {
+    enum DecodeOption {
         DecodeObjectsAsHash = 0x01,
         AllowUnquotedStrings = 0x02,
         AllowMissingComma = 0x04,
