@@ -101,26 +101,15 @@ void Rrd4QtGraph::setTimeSpan(int time_span) {
 
 }
 
-void Rrd4QtGraph::setGraphHeight(int height) {
-
-    this->graph_config.insert("height", height);
-    Rrd4QtSignal* sig = new Rrd4QtSignal();
-    QObject::connect(
-            sig, SIGNAL(serverMessage(QVariant)),
-            this, SLOT(handleRrdReply(QVariant)));
-
-    Rrd4Qt::callRrd(this->graph_config, sig);
-
-}
-
-void Rrd4QtGraph::setGraphWidth(int width) {
+void Rrd4QtGraph::setGraphSize(int width, int height) {
 
     if (width < 250) {
         width = 250;
     }
 
-    clogDebug("Change width to: %i", width);
+    clogDebug("Change width to: %i and height to: %i ", width, height);
     this->graph_config.insert("width", width);
+    this->graph_config.insert("height", height);
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
             sig, SIGNAL(serverMessage(QVariant)),

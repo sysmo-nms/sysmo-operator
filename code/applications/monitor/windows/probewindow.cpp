@@ -55,7 +55,7 @@ ProbeWindow::ProbeWindow(QString probeName)
 
     this->divider = 1;
     this->margin = 150;
-    this->h_margin = 150;
+    this->h_margin = 200;
     this->name = probeName;
     this->graphs_number = 0;
 
@@ -140,7 +140,7 @@ ProbeWindow::ProbeWindow(QString probeName)
     this->height_cbox->setCurrentIndex(ProbeWindow::HEIGHT_AUTO);
     QObject::connect(
             this->height_cbox, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(handleHeightChanged(int)));
+            this, SLOT(handleHeightChanged()));
     lc_grid->addWidget(height_label, 0, 2);
     lc_grid->addWidget(this->height_cbox, 0, 3);
 
@@ -203,44 +203,6 @@ ProbeWindow::~ProbeWindow() {
     QString size_str = "graph_size/" + this->name;
     s.setValue(size_str, QVariant(this->height_cbox->currentIndex()));
 
-
-}
-
-void ProbeWindow::restoreStateFromSettings() {
-
-    QString geom_str = "win_geometry/" + this->name;
-    QSettings s;
-    QVariant geom_var = s.value(geom_str);
-    if (geom_var.isValid())
-        this->restoreGeometry(geom_var.toByteArray());
-    else
-        this->setGeometry(0, 0, 900, 500);
-
-    QString size_str = "graph_size/" + this->name;
-    QVariant size_var = s.value(size_str);
-    if (size_var.isValid())
-        this->height_cbox->setCurrentIndex(size_var.toInt());
-
-}
-
-void ProbeWindow::handleTimerTimeout() {
-
-    int margins = this->margin * this->divider;
-    int width = (this->log_area->width() - margins) / this->divider;
-    int height = this->getOptimalHeight();
-
-    /*
-     * TODO emit in one call
-     */
-    emit this->graphWidthChanged(width);
-    emit this->graphHeightChanged(height);
-
-}
-
-void ProbeWindow::resizeEvent(QResizeEvent *event) {
-
-    this->timer->start();
-    MonitorProxyWidget::resizeEvent(event);
 
 }
 
@@ -313,16 +275,13 @@ void ProbeWindow::handleEvent(QVariant event_var) {
                     frame); // parent
 
             QObject::connect(
-                    this, SIGNAL(graphWidthChanged(int)),
-                    graph, SLOT(setGraphWidth(int)));
+                    this, SIGNAL(graphSizeChanged(int, int)),
+                    graph, SLOT(setGraphSize(int, int)));
+
 
             QObject::connect(
                     this, SIGNAL(timeSpanChanged(int)),
                     graph, SLOT(setTimeSpan(int)));
-
-            QObject::connect(
-                    this, SIGNAL(graphHeightChanged(int)),
-                    graph, SLOT(setGraphHeight(int)));
 
 
             grid->addWidget(graph, row, 0);
@@ -438,17 +397,13 @@ void ProbeWindow::handleEvent(QVariant event_var) {
                         fr); // parent
 
                 QObject::connect(
-                        this, SIGNAL(graphWidthChanged(int)),
-                        graph, SLOT(setGraphWidth(int)));
+                        this, SIGNAL(graphSizeChanged(int,int)),
+                        graph, SLOT(setGraphSize(int,int)));
 
 
                 QObject::connect(
                         this, SIGNAL(timeSpanChanged(int)),
                         graph, SLOT(setTimeSpan(int)));
-
-                QObject::connect(
-                        this, SIGNAL(graphHeightChanged(int)),
-                        graph, SLOT(setGraphHeight(int)));
 
 
                 qDebug() << "add col: " << col;
@@ -475,6 +430,74 @@ void ProbeWindow::handleEvent(QVariant event_var) {
         frame->show();
 
     }
+
+}
+
+void ProbeWindow::restoreStateFromSettings() {
+
+    QString geom_str = "win_geometry/" + this->name;
+    QSettings s;
+    QVariant geom_var = s.value(geom_str);
+    if (geom_var.isValid())
+        this->restoreGeometry(geom_var.toByteArray());
+    else
+        this->setGeometry(0, 0, 900, 500);
+
+    QString size_str = "graph_size/" + this->name;
+    QVariant size_var = s.value(size_str);
+    if (size_var.isValid())
+        this->height_cbox->setCurrentIndex(size_var.toInt());
+
+}
+
+void ProbeWindow::handleTimerTimeout() {
+
+    this->triggerRedraw();
+}
+
+void ProbeWindow::handleHeightChanged() {
+    this->triggerRedraw();
+}
+
+void ProbeWindow::triggerRedraw() {
+
+    int margins = this->margin * this->divider;
+    int width = (this->log_area->width() - margins) / this->divider;
+    int height = this->getHeightFor(this->height_cbox->currentIndex());
+
+    emit this->graphSizeChanged(width, height);
+
+}
+
+int ProbeWindow::getHeightFor(int value) {
+
+    switch (value) {
+    case ProbeWindow::HEIGHT_SMALL:
+        return 30;
+    case ProbeWindow::HEIGHT_NORMAL:
+        return 90;
+    case ProbeWindow::HEIGHT_LARGE:
+        return 180;
+    case ProbeWindow::HEIGHT_AUTO: {
+        float requested_height = (float) (this->log_area->height() - this->h_margin) / (float) this->graphs_number;
+        if (requested_height < (float) ProbeWindow::HEIGHT_SMALL) {
+            return 90;
+        } else {
+            return (int) requested_height;
+        }
+    }
+
+    default:
+        qWarning() << "unknown size:" << value;
+        return 150;
+    }
+}
+
+
+void ProbeWindow::resizeEvent(QResizeEvent *event) {
+
+    this->timer->start();
+    MonitorProxyWidget::resizeEvent(event);
 
 }
 
@@ -525,33 +548,6 @@ void ProbeWindow::openWindow(QString name) {
 
 }
 
-int ProbeWindow::getOptimalHeight() {
-    return this->getHeightFor(this->height_cbox->currentIndex());
-}
-
-int ProbeWindow::getHeightFor(int value) {
-
-    switch (value) {
-    case ProbeWindow::HEIGHT_SMALL:
-        return 30;
-    case ProbeWindow::HEIGHT_NORMAL:
-        return 90;
-    case ProbeWindow::HEIGHT_LARGE:
-        return 180;
-    case ProbeWindow::HEIGHT_AUTO: {
-        float requested_height = (float) (this->log_area->height() - this->h_margin) / (float) this->graphs_number;
-        if (requested_height < (float) ProbeWindow::HEIGHT_SMALL) {
-            return 90;
-        } else {
-            return (int) requested_height;
-        }
-    }
-
-    default:
-        qWarning() << "unknown size:" << value;
-        return 150;
-    }
-}
 
 int ProbeWindow::getSpanFor(int value) {
 
@@ -597,13 +593,6 @@ bool ProbeWindow::isThumbnail(int value) {
     }
      */
     return false;
-
-}
-
-void ProbeWindow::handleHeightChanged(int height) {
-
-    int height_val = this->getHeightFor(height);
-    emit this->graphHeightChanged(height_val);
 
 }
 

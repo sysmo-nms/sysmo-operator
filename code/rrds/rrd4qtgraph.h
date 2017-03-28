@@ -43,8 +43,7 @@ private:
 public slots:
     void handleRrdReply(QVariant reply);
     void setTimeSpan(int time_span);
-    void setGraphHeight(int height);
-    void setGraphWidth(int width);
+    void setGraphSize(int width, int height);
 };
 
 #endif // RRD4QTGRAPH_H

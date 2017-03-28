@@ -56,6 +56,7 @@ private:
 
     static QMap<QString, ProbeWindow*> windows;
     void restoreStateFromSettings();
+    void triggerRedraw();
     int getOptimalHeight();
 
 public:
@@ -84,13 +85,12 @@ public:
 
 public slots:
     void handleSpanChanged(int span);
-    void handleHeightChanged(int height);
+    void handleHeightChanged();
     void handleTimerTimeout();
 
 signals:
     void timeSpanChanged(int span);
-    void graphHeightChanged(int height);
-    void graphWidthChanged(int size);
+    void graphSizeChanged(int width, int height);
 
 public slots:
     void closeEvent(QCloseEvent* event);
