@@ -44,9 +44,11 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent) {
     SideButton* monitor_button = new SideButton(this);
     monitor_button->setIconSize(QSize(32, 115));
     monitor_button->setIcon(QIcon(":/images/monitor-black.png"));
+    /*
     SideButton* logs_button = new SideButton(this);
     logs_button->setIconSize(QSize(32, 115));
     logs_button->setIcon(QIcon(":/images/monitor-black.png"));
+    */
 
     /* TODO
     SideButton* dashboard_button = new SideButton(this);
@@ -56,7 +58,7 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent) {
 
     QButtonGroup* selector_group = new QButtonGroup(this);
     selector_group->addButton(monitor_button, CentralWidget::APP_MONITOR);
-    selector_group->addButton(logs_button, CentralWidget::APP_LOGS);
+    //selector_group->addButton(logs_button, CentralWidget::APP_LOGS);
     //selector_group->addButton(dashboard_button, CentralWidget::APP_DASHBOARD);
     selector_group->setExclusive(true);
     monitor_button->setCheckable(true);
@@ -66,7 +68,7 @@ CentralWidget::CentralWidget(QWidget* parent) : NFrameContainer(parent) {
     selector->setLayout(selector_grid);
     selector_grid->setVerticalSpacing(4);
     selector_grid->addWidget(monitor_button, 0, 0);
-    selector_grid->addWidget(logs_button, 1, 0);
+    //selector_grid->addWidget(logs_button, 1, 0);
     //selector_grid->addWidget(dashboard_button,1,0);
 
     // Right stack

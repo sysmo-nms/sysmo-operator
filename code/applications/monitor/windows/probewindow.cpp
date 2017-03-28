@@ -80,7 +80,6 @@ ProbeWindow::ProbeWindow(QString probeName)
     QString target_display =  TargetUtils::getName(this->target.value("properties").toMap());
     QString probe_descr =  probe.value("descr").toString();
     this->setWindowTitle(target_display + " | " + probe_descr);
-    qDebug() << probe;
 
     /*
      * Read the NChecks XML graph definition.
