@@ -8,6 +8,7 @@
 /support/packages/obs/_service
 /ressources/rrdio.qrc
 /CMakeLists.txt.user*
+/*_autogen
 /*.log
 
 # In source build
