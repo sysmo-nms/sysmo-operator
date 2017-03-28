@@ -29,7 +29,7 @@ all:
 	make -C _build all
 
 clean_all:
-	rm -rf _build; rm Makefile
+	rm -rf _build
 	rm -f Makefile
 	rm -f code/config.h
 	rm -f support/packages/obs/_service

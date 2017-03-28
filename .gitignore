@@ -13,6 +13,7 @@
 /*.cxx
 /CMakeFiles
 /CMakeCache.txt
+/CMakeCache.txt.user
 /cmake_install.cmake
 /compile_commands.json
 /deps/CMakeFiles/
