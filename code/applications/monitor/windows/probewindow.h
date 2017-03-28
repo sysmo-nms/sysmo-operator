@@ -20,8 +20,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #define PROBEWINDOW_H
 #include <widgets/nowheelcombobox.h>
 
-#include <applications/monitor/monitor.h>
-
 #include <QString>
 #include <QMap>
 #include <QVariant>
@@ -31,6 +29,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QResizeEvent>
 #include <QCloseEvent>
 
+#include <applications/monitor/monitor.h>
 #include <widgets/nframecontainer.h>
 
 class ProbeWindow : public MonitorProxyWidget {
@@ -46,6 +45,7 @@ private:
     QStatusBar* status_bar;
     QScrollArea* scroll_area;
     NoWheelComboBox* height_cbox;
+    NoWheelComboBox* time_span_cbox;
     QTimer* timer;
     int divider;
     int margin;
@@ -84,13 +84,12 @@ public:
 
 
 public slots:
-    void handleSpanChanged(int span);
+    void handleSpanChanged();
     void handleHeightChanged();
     void handleTimerTimeout();
 
 signals:
-    void timeSpanChanged(int span);
-    void graphSizeChanged(int width, int height);
+    void graphConfigChanged(int width, int height, int span);
 
 public slots:
     void closeEvent(QCloseEvent* event);

@@ -42,8 +42,6 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QVariant>
 
-#include <QDebug>
-
 /**
  * Windows opened when double clicking on a probe element in the treeview
  */
@@ -113,23 +111,23 @@ ProbeWindow::ProbeWindow(QString probeName)
     log_controls->setLayout(lc_grid);
 
     QLabel* time_line_label = new QLabel("TimeLine:", this);
-    NoWheelComboBox* time_span_cbox = new NoWheelComboBox(this);
-    time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_HOURS, "2h from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_TWELVE_HOURS, "12h from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_DAYS, "2d from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_SEVEN_DAYS, "7d from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_WEEKS, "2w from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_ONE_MONTH, "1m from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_SIX_MONTH, "6m from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_ONE_YEAR, "1y from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_THREE_YEARS, "3y from now");
-    time_span_cbox->insertItem(ProbeWindow::SPAN_TEN_YEARS, "10y from now");
-    time_span_cbox->setCurrentIndex(ProbeWindow::SPAN_SEVEN_DAYS);
+    this->time_span_cbox = new NoWheelComboBox(this);
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_HOURS, "2h from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_TWELVE_HOURS, "12h from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_DAYS, "2d from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_SEVEN_DAYS, "7d from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_TWO_WEEKS, "2w from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_ONE_MONTH, "1m from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_SIX_MONTH, "6m from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_ONE_YEAR, "1y from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_THREE_YEARS, "3y from now");
+    this->time_span_cbox->insertItem(ProbeWindow::SPAN_TEN_YEARS, "10y from now");
+    this->time_span_cbox->setCurrentIndex(ProbeWindow::SPAN_SEVEN_DAYS);
     QObject::connect(
-            time_span_cbox, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(handleSpanChanged(int)));
+            this->time_span_cbox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(handleSpanChanged()));
     lc_grid->addWidget(time_line_label, 0, 0);
-    lc_grid->addWidget(time_span_cbox, 0, 1);
+    lc_grid->addWidget(this->time_span_cbox, 0, 1);
 
     QLabel* height_label = new QLabel("Graph height:", this);
     this->height_cbox = new NoWheelComboBox(this);
@@ -221,7 +219,6 @@ void ProbeWindow::handleEvent(QVariant event_var) {
      * If event is "dump". Occur only one time.
      */
     if (event.value("event").toString() != "dump") {
-        qWarning() << "unknown event:" << event;
         return;
     }
 
@@ -275,13 +272,8 @@ void ProbeWindow::handleEvent(QVariant event_var) {
                     frame); // parent
 
             QObject::connect(
-                    this, SIGNAL(graphSizeChanged(int, int)),
-                    graph, SLOT(setGraphSize(int, int)));
-
-
-            QObject::connect(
-                    this, SIGNAL(timeSpanChanged(int)),
-                    graph, SLOT(setTimeSpan(int)));
+                    this, SIGNAL(graphConfigChanged(int, int, int)),
+                    graph, SLOT(updateGraphConf(int, int, int)));
 
 
             grid->addWidget(graph, row, 0);
@@ -300,7 +292,6 @@ void ProbeWindow::handleEvent(QVariant event_var) {
          * From the "QScrollArea.setWidget(QWidget)" doc, added widget must
          * explicitely be show().
          */
-        qDebug() << "simple draw " << event;
         frame->show();
         return;
 
@@ -397,16 +388,9 @@ void ProbeWindow::handleEvent(QVariant event_var) {
                         fr); // parent
 
                 QObject::connect(
-                        this, SIGNAL(graphSizeChanged(int,int)),
-                        graph, SLOT(setGraphSize(int,int)));
+                        this, SIGNAL(graphConfigChanged(int,int,int)),
+                        graph, SLOT(updateGraphConf(int,int,int)));
 
-
-                QObject::connect(
-                        this, SIGNAL(timeSpanChanged(int)),
-                        graph, SLOT(setTimeSpan(int)));
-
-
-                qDebug() << "add col: " << col;
                 gr->addWidget(graph, 0, col);
 
                 ++col;
@@ -426,7 +410,6 @@ void ProbeWindow::handleEvent(QVariant event_var) {
          * From the "QScrollArea.setWidget(QWidget)" doc, added widget must
          * explicitely be show().
          */
-        qDebug() << "table draw " << event;
         frame->show();
 
     }
@@ -459,13 +442,21 @@ void ProbeWindow::handleHeightChanged() {
     this->triggerRedraw();
 }
 
+void ProbeWindow::handleSpanChanged() {
+
+    this->triggerRedraw();
+
+}
+
+
 void ProbeWindow::triggerRedraw() {
 
     int margins = this->margin * this->divider;
+    int span = ProbeWindow::getSpanFor(this->time_span_cbox->currentIndex());
     int width = (this->log_area->width() - margins) / this->divider;
     int height = this->getHeightFor(this->height_cbox->currentIndex());
 
-    emit this->graphSizeChanged(width, height);
+    emit this->graphConfigChanged(width, height, span);
 
 }
 
@@ -488,7 +479,6 @@ int ProbeWindow::getHeightFor(int value) {
     }
 
     default:
-        qWarning() << "unknown size:" << value;
         return 150;
     }
 }
@@ -573,7 +563,6 @@ int ProbeWindow::getSpanFor(int value) {
         case ProbeWindow::SPAN_TEN_YEARS:
             return 315360000;
         default:
-            qWarning() << "Unknown time span:" << value;
             return 604800;
     }
 
@@ -593,12 +582,5 @@ bool ProbeWindow::isThumbnail(int value) {
     }
      */
     return false;
-
-}
-
-void ProbeWindow::handleSpanChanged(int span) {
-
-    int span_val = ProbeWindow::getSpanFor(span);
-    emit this->timeSpanChanged(span_val);
 
 }

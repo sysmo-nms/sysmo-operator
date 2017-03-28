@@ -88,28 +88,16 @@ void Rrd4QtGraph::handleRrdReply(QVariant reply_var) {
 
 }
 
-void Rrd4QtGraph::setTimeSpan(int time_span) {
+void Rrd4QtGraph::updateGraphConf(int width, int height, int span) {
 
-    clogInfo("Rrd4QtGraph: set timestamp", NULL);
-    this->graph_config.insert("spanBegin", 0 - time_span);
-    Rrd4QtSignal* sig = new Rrd4QtSignal();
-    QObject::connect(
-            sig, SIGNAL(serverMessage(QVariant)),
-            this, SLOT(handleRrdReply(QVariant)));
+    clogDebug("Change width to: %i, height to: %i, and span to: %i ", width, height, span);
 
-    Rrd4Qt::callRrd(this->graph_config, sig);
-
-}
-
-void Rrd4QtGraph::setGraphSize(int width, int height) {
-
-    if (width < 250) {
+    if (width < 250)
         width = 250;
-    }
-
-    clogDebug("Change width to: %i and height to: %i ", width, height);
     this->graph_config.insert("width", width);
     this->graph_config.insert("height", height);
+    this->graph_config.insert("spanBegin", 0 - span);
+
     Rrd4QtSignal* sig = new Rrd4QtSignal();
     QObject::connect(
             sig, SIGNAL(serverMessage(QVariant)),
