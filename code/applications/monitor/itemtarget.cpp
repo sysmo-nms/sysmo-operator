@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "itemtarget.h"
+#include "targetutils.h"
 
-#include "sysmo.h"
-#include "network/qjson.h"
+#include <sysmo.h>
+#include <network/qjson.h>
 
 #include <QPixmap>
 #include <QIcon>
@@ -74,21 +75,7 @@ void ItemTarget::updateInfo(QMap<QString, QVariant> info_target) {
 
     this->setData(this->name, Sysmo::ROLE_ELEMENT_NAME);
 
-    QString hostname = this->target_properties.value("host").toString();
-    QString fixed_name = this->target_properties.value("name").toString();
-    QString sys_name = this->target_properties.value("sysName").toString();
-
-    QString display;
-
-    if ((!sys_name.isEmpty()) & (sys_name != "undefined")) {
-        display.append(sys_name);
-        display.append(QString("  (%1)").arg(hostname));
-    } else if ((!fixed_name.isEmpty()) & (fixed_name != "")) {
-        display.append(fixed_name);
-        display.append(QString("  (%1)").arg(hostname));
-    } else {
-        display.append(hostname);
-    }
+    QString display = TargetUtils::getName(this->target_properties);
 
     this->setData(display, Qt::DisplayRole);
 

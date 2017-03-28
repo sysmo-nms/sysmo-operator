@@ -123,6 +123,7 @@ set (OPERATOR_SRC
     code/applications/monitor/actions/monitoractionsdialog.cpp
     code/applications/monitor/actions/monitoractionsdialog.h
     code/applications/monitor/actions/monitoractions.h
+    code/applications/monitor/targetutils.h
     code/applications/monitor/delegateprobeprogress.cpp
     code/applications/monitor/delegateprobeprogress.h
     code/applications/monitor/itemprobe.cpp

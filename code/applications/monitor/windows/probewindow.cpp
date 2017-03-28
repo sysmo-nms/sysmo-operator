@@ -24,6 +24,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <widgets/nframe.h>
 #include <applications/monitor/nchecks.h>
 #include <applications/monitor/xml/parsecheckmakegraphcmd.h>
+#include <applications/monitor/targetutils.h>
 #include <rrds/rrd4qtgraph.h>
 #include <themes.h>
 
@@ -42,6 +43,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QVariant>
 
+#include <QDebug>
 /**
  * Windows opened when double clicking on a probe element in the treeview
  */
@@ -74,6 +76,11 @@ ProbeWindow::ProbeWindow(QString probeName)
     QString probe_id = probe.value("probeId").toString();
     QString belong_to = probe.value("target").toString();
     this->target = mon->targets->value(belong_to).toMap();
+
+    QString target_display =  TargetUtils::getName(this->target.value("properties").toMap());
+    QString probe_descr =  probe.value("descr").toString();
+    this->setWindowTitle(target_display + " | " + probe_descr);
+    qDebug() << probe;
 
     /*
      * Read the NChecks XML graph definition.
