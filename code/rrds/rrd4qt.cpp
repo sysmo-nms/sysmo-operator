@@ -21,7 +21,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <network/qjson.h>
-#include <clog.h>
+#include <logs/clog.h>
 
 #include <QThread>
 #include <QAbstractSocket>

@@ -20,7 +20,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <errno.h>
 
-#include "clog.h"
+#include <logs/clog.h>
 #include "mainwindow.h"
 #include "themes.h"
 #include "sysmo.h"
