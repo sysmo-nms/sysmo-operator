@@ -336,7 +336,9 @@ endif(WIN32)
 
 
 #
-# Windows package with CPack. The bundle is generated from the build.cmd command.
+# Windows package with CPack.
+#
+# The bundle is generated from support/packages/generate_bundle.cmd.
 #
 if (WIN32)
     set (CPACK_PACKAGE_NAME "Sysmo-Operator")

@@ -338,6 +338,7 @@ void ProbeWindow::handleEvent(QVariant event_var) {
          * Foreach rrdfiles
          */
         int row = 0;
+        this->graphs_number = rrd_files.keys().size();
         QStringListIterator i(rrd_files.keys());
         while (i.hasNext()) {
             QString rrd_id = i.next();
@@ -355,21 +356,18 @@ void ProbeWindow::handleEvent(QVariant event_var) {
             /*
              * Set rrd_id as the QLabel for the first column
              */
-            QString prop_content = this->target.value("properties").toMap()
+            QString prop_content = "Element: " + this->target.value("properties").toMap()
                     .value(prefix + rrd_id + suffix).toString();
             QString lab_text;
             if (prop_content == "undefined") {
-                lab_text = "<h3>" + rrd_id + "</h3>";
+                lab_text = "<h4>" + rrd_id + "</h4>";
             } else {
-                lab_text = "<h3>" + prop_content + "</h3>";
+                lab_text = "<h4>" + prop_content + "</h4>";
             }
             QLabel* desc_label = new QLabel(lab_text, fr);
-            desc_label->setFixedWidth(100);
-            desc_label->setBackgroundRole(QPalette::Base);
-            desc_label->setAutoFillBackground(true);
-            desc_label->setAlignment(Qt::AlignCenter);
+            desc_label->setAlignment(Qt::AlignLeft);
             gr->addWidget(desc_label, 0, 0);
-            gr->setColumnStretch(0, 0);
+            gr->setRowStretch(0, 0);
 
             /*
              * Initialize iterator.
@@ -379,7 +377,7 @@ void ProbeWindow::handleEvent(QVariant event_var) {
             /*
              * initialize grid column
              */
-            int col = 1; // 0 used by "desc_label"
+            int col = 0;
             while (j.hasNext()) {
                 QString key = j.next();
 
@@ -397,7 +395,7 @@ void ProbeWindow::handleEvent(QVariant event_var) {
                         this, SIGNAL(graphConfigChanged(int,int,int)),
                         graph, SLOT(updateGraphConf(int,int,int)));
 
-                gr->addWidget(graph, 0, col);
+                gr->addWidget(graph, 1, col);
 
                 ++col;
             }
