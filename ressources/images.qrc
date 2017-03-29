@@ -4,5 +4,6 @@
         <file alias="dashboard-black.png">images/dashboard-black.png</file>
         <file alias="login-banner.png">images/login-banner.png</file>
         <file alias="banner.png">images/banner.png</file>
+        <file alias="perf_view.png">images/perf_view.png</file>
     </qresource>
 </RCC>

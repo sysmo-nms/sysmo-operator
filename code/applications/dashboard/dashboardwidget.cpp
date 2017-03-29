@@ -18,6 +18,9 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dashboardwidget.h"
 #include "dashboardtab.h"
+#include "dialogs/newdashboard.h"
+
+#include <logs/clog.h>
 
 #include <widgets/ngridcontainer.h>
 #include <QObject>
@@ -35,16 +38,13 @@ DashboardWidget::DashboardWidget(QWidget *parent) : NFrame(parent) {
     this->setLayout(grid);
 
     QTabWidget* tab = new QTabWidget(this);
-    // tabBar() in qt4 is protected
-    /*
-    QTabBar* tab_bar = tab->tabBar();
-    tab_bar->setUsesScrollButtons(true);
-    tab_bar->setExpanding(true);
-     */
 
     QPushButton* button_add = new QPushButton(this);
     button_add->setIcon(QIcon(":/icons/list-add.png"));
     button_add->setFlat(true);
+    QObject::connect(
+                button_add, SIGNAL(clicked(bool)),
+                this, SLOT(newDashboard()));
     tab->setCornerWidget(button_add, Qt::TopLeftCorner);
 
     QPushButton* button_help = new QPushButton(this);
@@ -59,5 +59,14 @@ DashboardWidget::DashboardWidget(QWidget *parent) : NFrame(parent) {
 }
 
 DashboardWidget::~DashboardWidget() {
+
+}
+
+void
+DashboardWidget::newDashboard() {
+
+    NewDashboard *tdial = new NewDashboard(this);
+    tdial->exec();
+    tdial->deleteLater();
 
 }

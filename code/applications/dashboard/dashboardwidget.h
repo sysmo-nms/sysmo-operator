@@ -28,6 +28,10 @@ class DashboardWidget : public NFrame {
 public:
     explicit DashboardWidget(QWidget* parent = 0);
     ~DashboardWidget();
+
+public slots:
+    void newDashboard();
+
 };
 
 #endif // DASHBOARDWIDGET_H

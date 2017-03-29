@@ -16,18 +16,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CENTRALWIDGET_H
-#define CENTRALWIDGET_H
+#include "newdashboard.h"
+#include "newdashboardp1.h"
 
-#include <widgets/nframecontainer.h>
+#include <QObject>
 
-class CentralWidget : public NFrameContainer {
-private:
-    static const int APP_MONITOR = 0;
-    static const int APP_DASHBOARD = 1;
+NewDashboard::NewDashboard(QWidget* parent) : QWizard(parent) {
 
-public:
-    explicit CentralWidget(QWidget* parent = 0);
-};
+    this->setWindowTitle("New Dashboard");
+    this->setModal(true);
+    this->setOption(QWizard::NoBackButtonOnLastPage, true);
+    this->setButtonText(QWizard::FinishButton, "Create");
+    this->setButtonText(QWizard::CancelButton, "Cancel");
 
-#endif // CENTRALWIDGET_H
+    this->setMinimumHeight(300);
+    this->setMinimumWidth(300);
+
+    NewDashboardP1 *p1 = new NewDashboardP1(this);
+    this->setPage(1, p1);
+    this->setStartId(1);
+
+}

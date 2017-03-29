@@ -39,10 +39,12 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 int
 main(int argc, char** argv) {
 
+    /*
     if (NULL == clogSetOutput("mylog.log")) {
         fprintf(stderr, "Failed to open log file: %s\n", strerror(errno));
         exit(1);
     }
+    */
 
     int RETURN_CODE;
     do {

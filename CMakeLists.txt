@@ -97,6 +97,10 @@ set (OPERATOR_SRC
     code/applications/dashboard/dashboardtab.h
     code/applications/dashboard/dashboardwidget.cpp
     code/applications/dashboard/dashboardwidget.h
+    code/applications/dashboard/dialogs/newdashboard.cpp
+    code/applications/dashboard/dialogs/newdashboard.h
+    code/applications/dashboard/dialogs/newdashboardp1.cpp
+    code/applications/dashboard/dialogs/newdashboardp1.h
     code/applications/logs/logswidget.cpp
     code/applications/logs/logswidget.h
     code/applications/monitor/dialogs/newprobe.cpp
