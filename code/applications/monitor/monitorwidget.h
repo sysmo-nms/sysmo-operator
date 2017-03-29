@@ -18,14 +18,14 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef MONITORWIDGET_H
 #define MONITORWIDGET_H
-#include <widgets/nframecontainer.h>
 #include "dialogs/newprobe.h"
 #include "monitor.h"
 
 #include <QWidget>
 #include <QString>
+#include <QSplitter>
 
-class MonitorWidget : public NFrameContainer {
+class MonitorWidget : public QSplitter {
     Q_OBJECT
 
 public:
@@ -42,6 +42,7 @@ public slots:
 
 private:
     static MonitorWidget* singleton;
+    void restoreStateFromSettings();
     Monitor* mon;
 };
 

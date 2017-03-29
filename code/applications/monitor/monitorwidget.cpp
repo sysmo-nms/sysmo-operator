@@ -41,6 +41,8 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUrl>
 #include <QPalette>
 #include <QPixmap>
+#include <QSettings>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -51,10 +53,11 @@ MonitorWidget* MonitorWidget::getInstance() {
     return MonitorWidget::singleton;
 }
 
-MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent) {
+MonitorWidget::MonitorWidget(QWidget* parent) : QSplitter(parent) {
 
     MonitorWidget::singleton = this;
 
+    this->setContentsMargins(0,0,0,0);
     /*
      * Initialize utils first
      */
@@ -68,14 +71,12 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent) {
 
     // timeline panel
     NFrame* timelineFrame = new NFrame(this);
-    timelineFrame->setFixedHeight(173);
+    timelineFrame->setMinimumWidth(150);
     NGrid* tgrid = new NGrid();
     timelineFrame->setLayout(tgrid);
     timelineFrame->setFrameShape(QFrame::StyledPanel);
 
     MonitorLogs* timeline = new MonitorLogs(this);
-    //timeline->setBackgroundRole(QPalette::AlternateBase);
-    //timeline->setAutoFillBackground(true);
     tgrid->addWidget(timeline, 0, 1);
     //tgrid->addWidget(statusBox, 0,0);
     tgrid->setColumnStretch(0, 0);
@@ -83,20 +84,15 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent) {
 
     // tree frame
     NFrame* treeFrame = new NFrame(this);
+    treeFrame->setMinimumWidth(150);
     treeFrame->setFrameShape(QFrame::StyledPanel);
     NGrid* treegrid = new NGrid();
     treegrid->setVerticalSpacing(4);
     treeFrame->setLayout(treegrid);
 
-    NGridContainer* container = new NGridContainer();
-    container->setVerticalSpacing(2);
-    container->setHorizontalSpacing(2);
-    //container->addWidget(controlFrame, 0,0);
-    container->addWidget(treeFrame, 0, 0);
-    container->addWidget(timelineFrame, 1, 0);
-    container->setRowStretch(0, 1);
-    container->setRowStretch(1, 0);
-    this->setLayout(container);
+    this->setOrientation(Qt::Vertical);
+    this->addWidget(treeFrame);
+    this->addWidget(timelineFrame);
 
     /*
      * top controls
@@ -191,13 +187,22 @@ MonitorWidget::MonitorWidget(QWidget* parent) : NFrameContainer(parent) {
     treegrid->setColumnStretch(2, 3);
     treegrid->setRowStretch(0, 0);
     treegrid->setRowStretch(1, 1);
+    this->restoreStateFromSettings();
 
 }
 
 MonitorWidget::~MonitorWidget() {
-    /*
-     * Save state
-     */
+    QSettings s;
+    s.setValue("monitor/splitter_state", this->saveState());
+}
+
+void
+MonitorWidget::restoreStateFromSettings() {
+    QSettings s;
+    QVariant splitter_state = s.value("monitor/splitter_state");
+    if (splitter_state.isValid()) {
+        this->restoreState(splitter_state.toByteArray());
+    }
 }
 
 void MonitorWidget::connectionStatus(int status) {
