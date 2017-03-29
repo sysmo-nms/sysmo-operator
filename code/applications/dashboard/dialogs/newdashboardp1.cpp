@@ -36,7 +36,6 @@ NewDashboardP1::NewDashboardP1(QWidget* parent) : QWizardPage(parent) {
     NFrame *left = new NFrame(this);
     left->setFixedWidth(300);
 
-
     QPixmap right_pix(":/images/perf_view.png");
     QLabel *right = new QLabel(this);
     right->setFixedHeight(300);
@@ -63,19 +62,43 @@ NewDashboardP1::NewDashboardP1(QWidget* parent) : QWizardPage(parent) {
     QCommandLinkButton *status_view = new QCommandLinkButton(left);
     status_view->setCheckable(true);
     status_view->setText("Status View");
-    status_view->setDescription("Create a view of any probes/target status and labels.");
+    status_view->setDescription("Create a map of probes/target status with labels and shapes.");
+
+    QCommandLinkButton *map_view = new QCommandLinkButton(left);
+    map_view->setCheckable(true);
+    map_view->setText("Map View");
+    map_view->setDescription("Show your managed elements on a OSM or Google map.");
+
+    QCommandLinkButton *composition_view = new QCommandLinkButton(left);
+    composition_view->setCheckable(true);
+    composition_view->setText("Composition");
+    composition_view->setDescription("Compose a dashboard with any of the above views into one.");
+
+
+    QCommandLinkButton *roundrobin_view = new QCommandLinkButton(left);
+    roundrobin_view->setCheckable(true);
+    roundrobin_view->setText("Round Robin");
+    roundrobin_view->setDescription("Compose a display with any of the above views into one rotating at a defined interval.");
 
     QButtonGroup *group = new QButtonGroup(left);
     group->addButton(perf_view);
     group->addButton(status_view);
+    group->addButton(map_view);
+    group->addButton(composition_view);
+    group->addButton(roundrobin_view);
     group->setExclusive(true);
     perf_view->setChecked(true);
 
     lgrid->addWidget(perf_view, 0,0);
     lgrid->addWidget(status_view, 1,0);
+    lgrid->addWidget(map_view, 2,0);
+    lgrid->addWidget(composition_view, 3,0);
+    lgrid->addWidget(roundrobin_view, 4,0);
     lgrid->setRowStretch(0,0);
     lgrid->setRowStretch(1,0);
-    lgrid->setRowStretch(2,1);
-
+    lgrid->setRowStretch(2,0);
+    lgrid->setRowStretch(3,0);
+    lgrid->setRowStretch(4,0);
+    lgrid->setRowStretch(5,1);
 
 }

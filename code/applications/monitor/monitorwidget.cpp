@@ -100,6 +100,7 @@ MonitorWidget::MonitorWidget(QWidget* parent) : QSplitter(parent) {
     QPushButton* create = new QPushButton(this);
     create->setIcon(QIcon(":/icons/list-add.png"));
     create->setStatusTip("Create a new target.");
+    create->setToolTip("Create a new target.");
     QObject::connect(
             create, SIGNAL(clicked(bool)),
             this, SLOT(showNewTargetDialog()));
@@ -107,10 +108,12 @@ MonitorWidget::MonitorWidget(QWidget* parent) : QSplitter(parent) {
     QPushButton* clear = new QPushButton(this);
     clear->setIcon(QIcon(":/icons/edit-clear.png"));
     clear->setStatusTip("Clear filter line");
+    clear->setToolTip("Clear filter line");
 
     LineEdit* search = new LineEdit(this);
     search->setFixedWidth(250);
     search->setStatusTip("Filter the target/probe view");
+    search->setToolTip("Filter the target/probe view");
     QObject::connect(
             clear, SIGNAL(pressed()),
             search, SLOT(clear()));
