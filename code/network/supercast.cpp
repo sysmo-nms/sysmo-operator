@@ -20,11 +20,7 @@ along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.
 #include "supercasthttp.h"
 #include "socketutils.h"
 
-#ifdef USE_WEBSOCKET
-#include "supercastwebsocket.h"
-#else
 #include "supercastsocket.h"
-#endif
 
 #include <logs/clog.h>
 
@@ -129,11 +125,7 @@ void Supercast::tryConnect(
     this->user_pass = user_pass;
     this->data_base_url.setHost(host.toString());
 
-#ifdef USE_WEBSOCKET
-    SupercastWebSocket* socket_t = new SupercastWebSocket(host, port);
-#else
     SupercastSocket* socket_t = new SupercastSocket(host, port);
-#endif
 
     // server -> message -> client
     QObject::connect(

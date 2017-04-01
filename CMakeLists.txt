@@ -176,6 +176,8 @@ set (OPERATOR_SRC
     code/network/supercasthttprequest.h
     code/network/supercastsignal.cpp
     code/network/supercastsignal.h
+    code/network/supercastsocket.cpp
+    code/network/supercastsocket.h
     code/network/qjson.h
     code/network/qjson.cpp
     code/network/socketutils.h
@@ -205,80 +207,58 @@ set (OPERATOR_QRC
     ressources/operator-ui.qrc)
 
 
+#
+# Our executable
+#
+set (CMAKE_AUTORCC ON)
+set (CMAKE_AUTOMOC ON)
+include_directories(code)
+add_executable(sysmo-operator ${OPERATOR_SRC})
+
 
 #
 # Find Qt (4 or 5), and set correct libs/includes/ressources
 #
-set (OPERATOR_LIBS "")
-set (OPERATOR_QRCS "")
-set (OPERATOR_INCLUDES "")
 find_package(Qt4 QUIET)
 if (QT4_FOUND)
-    message(STATUS "QtWebsockets not supported. Fallback to TCP.")
+
+    message(STATUS "Use QT4, QtWebsockets not supported. Fallback to TCP.")
+
     find_package (Qt4 REQUIRED QtCore QtGui QtNetwork QtXml)
+
     include (${QT_USE_FILE})
-    set (OPERATOR_INCLUDES
-        ${Qt4Core_INCLUDE_DIRS}
-        ${Qt4Gui_INCLUDE_DIRS}
-        ${Qt4Network_INCLUDE_DIRS}
-        ${Qt4Xml_INCLUDE_DIRS})
-    set (OPERATOR_SRC ${OPERATOR_SRC}
-        code/network/supercastsocket.cpp
-        code/network/supercastsocket.h)
-    set (OPERATOR_LIBS ${QT_LIBRARIES})
     QT4_ADD_RESOURCES(OPERATOR_QRCS ${OPERATOR_QRC})
+    target_sources(sysmo-operator PRIVATE ${OPERATOR_QRCS})
+    target_link_libraries(sysmo-operator ${QT_LIBRARIES})
+
 else()
+
     find_package(Qt5Widgets REQUIRED)
     find_package(Qt5Core REQUIRED)
     find_package(Qt5Gui REQUIRED)
     find_package(Qt5Xml REQUIRED)
     find_package(Qt5Network REQUIRED)
-    set (OPERATOR_INCLUDES
-        ${Qt5Widgets_INCLUDE_DIRS}
-        ${Qt5Core_INCLUDE_DIRS}
-        ${Qt5Gui_INCLUDE_DIRS}
-        ${Qt5Network_INCLUDE_DIRS}
-        ${Qt5Xml_INCLUDE_DIRS})
-    set (OPERATOR_LIBS
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Network
-        Qt5::Xml
-        Qt5::Widgets)
+    target_link_libraries(sysmo-operator
+        Qt5::Core Qt5::Gui Qt5::Network Qt5::Xml Qt5::Widgets)
+
     # Use websocket if available
     find_package(Qt5WebSockets QUIET)
     if (Qt5WebSockets_FOUND)
-        message(STATUS "QtWebsockets found.")
+
         add_definitions(-DUSE_WEBSOCKET)
-        find_package(Qt5Websockets REQUIRED)
-        set (OPERATOR_INCLUDES
-            ${OPERATOR_INCLUDES}
-            ${Qt5WebSockets_INCLUDE_DIRS})
-        set(OPERATOR_LIBS
-            ${OPERATOR_LIBS}
-            Qt5::WebSockets)
-        set (OPERATOR_SRC
-            ${OPERATOR_SRC}
-            code/network/supercastwebsocket.cpp
-            code/network/supercastwebsocket.h)
+        message(STATUS "QtWebsockets found.")
+        target_link_libraries(sysmo-operator Qt5::WebSockets)
+
     else()
+
         message(STATUS "QtWebsockets not supported. Fallback to TCP.")
-        set (OPERATOR_SRC
-            ${OPERATOR_SRC}
-            code/network/supercastsocket.cpp
-            code/network/supercastsocket.h)
+
     endif (Qt5WebSockets_FOUND)
+
     QT5_ADD_RESOURCES(OPERATOR_QRCS ${OPERATOR_QRC})
+    target_sources(sysmo-operator PRIVATE ${OPERATOR_QRCS})
+
 endif(QT4_FOUND)
-
-
-#
-# This is allmost it!
-#
-set (CMAKE_AUTORCC ON)
-set (CMAKE_AUTOMOC ON)
-include_directories(code ${OPERATOR_INCLUDES})
-add_executable(sysmo-operator ${OPERATOR_SRC} ${OPERATOR_QRCS})
 
 
 #
@@ -294,7 +274,7 @@ if (WIN32)
         # Needed for windowed applications
         set_target_properties(sysmo-operator PROPERTIES
             LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-        set(OPERATOR_LIBS ${OPERATOR_LIBS} Qt5::WinMain)
+        target_link_libraries(sysmo-operator Qt5::WinMain)
 
         # Icon for executable
         message("-- Configure support/packages/win/icon-ressource.rc")
@@ -304,18 +284,14 @@ if (WIN32)
         add_custom_command(
             TARGET sysmo-operator PRE_BUILD
             COMMAND rc /fo ${CMAKE_BINARY_DIR}/icon-ressource.res ${CMAKE_BINARY_DIR}/icon-ressource.rc)
-        set(OPERATOR_LIBS
-            ${OPERATOR_LIBS}
-            ${CMAKE_BINARY_DIR}/icon-ressource.res)
+        target_link_libraries(sysmo-operator ${CMAKE_BINARY_DIR}/icon-ressource.res)
 
     endif(MSVC)
 endif(WIN32)
 
-
 #
-# The END
+# The end
 #
-target_link_libraries(sysmo-operator ${OPERATOR_LIBS})
 
 
 #

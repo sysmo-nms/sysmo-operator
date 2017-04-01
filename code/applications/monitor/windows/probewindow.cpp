@@ -77,8 +77,8 @@ ProbeWindow::ProbeWindow(QString probeName)
     QString belong_to = probe.value("target").toString();
     this->target = mon->targets->value(belong_to).toMap();
 
-    QString target_display =  TargetUtils::getName(this->target.value("properties").toMap());
-    QString probe_descr =  probe.value("descr").toString();
+    QString target_display = TargetUtils::getName(this->target.value("properties").toMap());
+    QString probe_descr = probe.value("descr").toString();
     this->setWindowTitle(target_display + " | " + probe_descr);
 
     /*
@@ -103,7 +103,7 @@ ProbeWindow::ProbeWindow(QString probeName)
      */
     this->timer = new QTimer(this);
     this->timer->setSingleShot(true);
-    this->timer->setInterval(500);
+    this->timer->setInterval(300);
     QObject::connect(
             this->timer, SIGNAL(timeout()),
             this, SLOT(handleTimerTimeout()));
@@ -392,8 +392,8 @@ void ProbeWindow::handleEvent(QVariant event_var) {
                         fr); // parent
 
                 QObject::connect(
-                        this, SIGNAL(graphConfigChanged(int,int,int)),
-                        graph, SLOT(updateGraphConf(int,int,int)));
+                        this, SIGNAL(graphConfigChanged(int, int, int)),
+                        graph, SLOT(updateGraphConf(int, int, int)));
 
                 gr->addWidget(graph, 1, col);
 
@@ -452,7 +452,6 @@ void ProbeWindow::handleSpanChanged() {
 
 }
 
-
 void ProbeWindow::triggerRedraw() {
 
     int margins = this->margin * this->divider;
@@ -467,26 +466,26 @@ void ProbeWindow::triggerRedraw() {
 int ProbeWindow::getHeightFor(int value) {
 
     switch (value) {
-    case ProbeWindow::HEIGHT_SMALL:
-        return 30;
-    case ProbeWindow::HEIGHT_NORMAL:
-        return 90;
-    case ProbeWindow::HEIGHT_LARGE:
-        return 180;
-    case ProbeWindow::HEIGHT_AUTO: {
-        float requested_height = (float) (this->log_area->height() - this->h_margin) / (float) this->graphs_number;
-        if (requested_height < (float) ProbeWindow::HEIGHT_SMALL) {
+        case ProbeWindow::HEIGHT_SMALL:
+            return 30;
+        case ProbeWindow::HEIGHT_NORMAL:
             return 90;
-        } else {
-            return (int) requested_height;
+        case ProbeWindow::HEIGHT_LARGE:
+            return 180;
+        case ProbeWindow::HEIGHT_AUTO:
+        {
+            float requested_height = (float) (this->log_area->height() - this->h_margin) / (float) this->graphs_number;
+            if (requested_height < (float) ProbeWindow::HEIGHT_SMALL) {
+                return 90;
+            } else {
+                return (int) requested_height;
+            }
         }
-    }
 
-    default:
-        return 150;
+        default:
+            return 150;
     }
 }
-
 
 void ProbeWindow::resizeEvent(QResizeEvent *event) {
 
@@ -541,7 +540,6 @@ void ProbeWindow::openWindow(QString name) {
     qApp->setActiveWindow(win);
 
 }
-
 
 int ProbeWindow::getSpanFor(int value) {
 
