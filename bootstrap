@@ -31,6 +31,9 @@ all:
 clean_all:
 	git clean -Xdf
 
+indent:
+	find . -name *.h -o -name *.c -o -name *.cpp -exec clang-format -i {} \;
+
 %:
 	make -C _build $@
 
@@ -41,4 +44,3 @@ packages:
 " > Makefile
 
 echo "You can now run \"make\""
-
