@@ -1,0 +1,5 @@
+#!/bin/bash -eux 
+
+yum -y install epel-release
+yum -y update 
+yum -y install qt5-qtbase-devel gcc gcc-c++
