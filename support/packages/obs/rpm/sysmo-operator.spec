@@ -8,7 +8,7 @@ Release:	1%{?dist}
 Summary:	Sysmo Core client UI
 Group:		Application/Productivity
 License:	GPLv3+
-URL:		http://www.sysmo.io/
+URL:		https://sysmo-nms.github.io/
 Source:         %{name}-%{version}.tar.gz
 
 

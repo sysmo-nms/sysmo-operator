@@ -11,11 +11,11 @@
 		IconSourceFile="support\packages\win\bundle.ico"
 		DisableModify="no"
 		DisableRemove="no"
-		HelpUrl="www.sysmo.io/help.html"
-		UpdateUrl="www.sysmo.io/updates.html"
-		AboutUrl="www.sysmo.io/about.html">
+		HelpUrl="sysmo-nms.github.io/help.html"
+		UpdateUrl="sysmo-nms.github.io/updates.html"
+		AboutUrl="sysmo-nms.github.io/about.html">
 		<Log Disable="no" Extension=".log" PathVariable="[TempFolder]" Prefix="sysmoSetup" />
-		<Update Location="www.sysmo.io/sysmo-core-x86_updates/latestBundel.exe" />
+		<Update Location="sysmo-nms.github.io/sysmo-core-x86_updates/latestBundel.exe" />
 		<BootstrapperApplicationRef
 			Id="WixStandardBootstrapperApplication.RtfLicense">
 			<bal:WixStandardBootstrapperApplication

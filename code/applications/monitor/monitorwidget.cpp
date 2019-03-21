@@ -1,5 +1,5 @@
 /*
-Sysmo NMS Network Management and Monitoring solution (http://www.sysmo.io)
+Sysmo NMS Network Management and Monitoring solution (https://sysmo-nms.github.io)
 
 Copyright (c) 2012-2017 Sebastien Serre <ssbx@sysmo.io>
 
@@ -244,6 +244,6 @@ void MonitorWidget::showNewProbeDialog(QString forTarget) {
 
 void MonitorWidget::handleHelpClicked() {
 
-    QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community/"));
+    QDesktopServices::openUrl(QUrl("https://sysmo-nms.github.io/Community/"));
 
 }

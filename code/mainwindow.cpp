@@ -1,5 +1,5 @@
 /*
-Sysmo NMS Network Management and Monitoring solution (http://www.sysmo.io)
+Sysmo NMS Network Management and Monitoring solution (https://sysmo-nms.github.io)
 
 Copyright (c) 2012-2017 Sebastien Serre <ssbx@sysmo.io>
 
@@ -363,7 +363,7 @@ MainWindow::handleAboutAction() {
     msg += "You should have received a copy of the GNU General Public License along with Sysmo.  If not, see <http://www.gnu.org/licenses/>.";
 
 
-    QMessageBox::about(this, "Sysmo NMS (www.sysmo.io)", msg);
+    QMessageBox::about(this, "Sysmo NMS (sysmo-nms.github.io)", msg);
 }
 
 /*
@@ -371,7 +371,7 @@ MainWindow::handleAboutAction() {
  */
 void
 MainWindow::handleMainWebsiteAction() {
-    QDesktopServices::openUrl(QUrl("http://www.sysmo.io"));
+    QDesktopServices::openUrl(QUrl("https://sysmo-nms.github.io"));
 }
 
 /*
@@ -379,7 +379,7 @@ MainWindow::handleMainWebsiteAction() {
  */
 void
 MainWindow::handleHelpAction() {
-    QDesktopServices::openUrl(QUrl("http://www.sysmo.io/Community"));
+    QDesktopServices::openUrl(QUrl("https://sysmo-nms.github.io/Community"));
 }
 
 void
